@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "toolカタログ",
+  "description": "awesome-copilotのtoolカタログのスキーマ（website/data/tools.yml）",
+  "type": "object",
+  "required": ["tools"],
+  "additionalProperties": false,
+  "properties": {
+    "tools": {
+      "type": "array",
+      "description": "カタログ内のtoolのリスト",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "category"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "toolのID",
+            "pattern": "^[a-z0-9-]+$",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "description": "toolの表示名",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "toolの機能の説明",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "category": {
+            "type": "string",
+            "description": "toolのカテゴリー",
+            "minLength": 1,
+            "maxLength": 50,
+            "examples": ["MCP Servers", "VS Code Extensions", "CLI Tools", "Visual Studio Extensions"]
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "toolが注目されているかどうか（最初に表示される）",
+            "default": false
+          },
+          "requirements": {
+            "type": "array",
+            "description": "toolを使用するための要件のリスト",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "maxItems": 10
+          },
+          "features": {
+            "type": "array",
+            "description": "主な機能のリスト",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "maxItems": 20
+          },
+          "links": {
+            "type": "object",
+            "description": "toolに関連するリンク",
+            "additionalProperties": false,
+            "properties": {
+              "blog": {
+                "type": "string",
+                "description": "toolに関するブログ投稿へのリンク",
+                "format": "uri"
+              },
+              "documentation": {
+                "type": "string",
+                "description": "ドキュメントへのリンク",
+                "format": "uri"
+              },
+              "github": {
+                "type": "string",
+                "description": "GitHubリポジトリへのリンク",
+                "format": "uri"
+              },
+              "marketplace": {
+                "type": "string",
+                "description": "VS CodeまたはVisual Studio Marketplaceへのリンク",
+                "format": "uri"
+              },
+              "npm": {
+                "type": "string",
+                "description": "npmパッケージへのリンク",
+                "format": "uri"
+              },
+              "pypi": {
+                "type": "string",
+                "description": "PyPIパッケージへのリンク",
+                "format": "uri"
+              },
+              "vscode": {
+                "type": "string",
+                "description": "VS Codeインストールリンク（vscode: URIまたはaka.msリンク)"
+              },
+              "vscode-insiders": {
+                "type": "string",
+                "description": "VS Code Insidersインストールリンク"
+              },
+              "visual-studio": {
+                "type": "string",
+                "description": "Visual Studioインストールリンク"
+              }
+            }
+          },
+          "configuration": {
+            "type": "object",
+            "description": "toolの設定スニペット",
+            "required": ["type", "content"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "設定の種類（構文の強調表示用）",
+                "enum": ["json", "yaml", "bash", "toml", "ini"]
+              },
+              "content": {
+                "type": "string",
+                "description": "設定内容"
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "description": "フィルタリングと分類のためのタグ",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            "uniqueItems": true,
+            "maxItems": 15
+          }
+        }
+      }
+    }
+  }
+}

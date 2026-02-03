@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.agent.md": "chatagent",
+    "*.instructions.md": "instructions",
+    "*.prompt.md": "prompt"
+  },
+  "yaml.schemas": {
+    "./.schemas/collection.schema.json": "*.collection.yml",
+    "./.schemas/tools.schema.json": "website/data/tools.yml",
+  }
+}

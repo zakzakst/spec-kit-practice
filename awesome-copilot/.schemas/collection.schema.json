@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "collectionマニフェスト",
+  "description": "awesome-copilotのcollectionマニフェストのスキーマ",
+  "type": "object",
+  "required": ["id", "name", "description", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "collectionのID",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "name": {
+      "type": "string",
+      "description": "collectionの表示名",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "description": "collectionに含まれるものの説明",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "tags": {
+      "type": "array",
+      "description": "発見のためのオプションタグ",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$",
+        "minLength": 1,
+        "maxLength": 30
+      },
+      "uniqueItems": true,
+      "maxItems": 10
+    },
+    "items": {
+      "type": "array",
+      "description": "collectionのアイテム一覧",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": ["path", "kind"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "リポジトリルートからアイテムファイルへの相対パス",
+            "pattern": "^(?:skills/[^/]+/SKILL\\.md|(prompts|instructions|agents)/[^/]+\\.(prompt|instructions|agent)\\.md)$",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "description": "アイテムの種類",
+            "enum": ["prompt", "instruction", "agent", "skill"]
+          },
+          "usage": {
+            "type": "string",
+            "description": "[オプション] アイテムの使用コンテキスト"
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "display": {
+      "type": "object",
+      "description": "[オプション] collectionの表示設定",
+      "additionalProperties": false,
+      "properties": {
+        "ordering": {
+          "type": "string",
+          "description": "アイテムの表示順",
+          "enum": ["manual", "alpha"],
+          "default": "alpha"
+        },
+        "show_badge": {
+          "type": "boolean",
+          "description": "アイテムにcollectionバッジを表示するかどうか",
+          "default": false
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "collectionがメインページに掲載されているかどうか",
+          "default": false
+        }
+      }
+    }
+  }
+}

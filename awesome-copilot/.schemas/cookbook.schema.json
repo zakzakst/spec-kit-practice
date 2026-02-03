@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cookbookマニフェスト",
+  "description": "cookbookとレシピを定義するマニフェストのスキーマ",
+  "type": "object",
+  "required": ["cookbooks"],
+  "properties": {
+    "cookbooks": {
+      "type": "array",
+      "description": "cookbookのリスト",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "path", "languages", "recipes"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "cookbookのID",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "cookbookの表示名"
+          },
+          "description": {
+            "type": "string",
+            "description": "cookbookの簡単な説明"
+          },
+          "path": {
+            "type": "string",
+            "description": "cookbookフォルダへの相対パス"
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "cookbookを特集すべきかどうか",
+            "default": false
+          },
+          "languages": {
+            "type": "array",
+            "description": "cookbookでサポートされているプログラミング言語",
+            "items": {
+              "type": "object",
+              "required": ["id", "name"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "言語ID（フォルダ名）",
+                  "pattern": "^[a-z0-9-]+$"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "言語の表示名"
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "言語の絵文字アイコン"
+                },
+                "extension": {
+                  "type": "string",
+                  "description": "実行可能なファイル拡張子の例",
+                  "pattern": "^\\.[a-z]+$"
+                }
+              }
+            }
+          },
+          "recipes": {
+            "type": "array",
+            "description": "cookbookのレシピ一覧",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "description"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "レシピID（拡張子なしのマークダウンファイル名に一致）",
+                  "pattern": "^[a-z0-9-]+$"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "レシピの表示名"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "レシピの内容の簡単な説明"
+                },
+                "tags": {
+                  "type": "array",
+                  "description": "フィルタリングと分類のためのタグ",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
