@@ -13,3 +13,4 @@
 - collection: https://github.com/github/awesome-copilot/blob/main/.github/copilot-instructions.md?plain=1#L58
 - tasks.json: https://github.com/github/awesome-copilot/blob/main/.vscode/tasks.json
 - cookbook: https://github.com/github/awesome-copilot/blob/main/.schemas/cookbook.schema.json
+- fetch_webpage ツール
