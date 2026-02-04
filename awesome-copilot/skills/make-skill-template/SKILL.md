@@ -1,147 +1,147 @@
 ---
 name: make-skill-template
-description: 'プロンプトから、またはこのテンプレートを複製することで、GitHub Copilot 用の新しいエージェントスキルを作成できます。「スキルを作成」​​「新しいスキルを作成」​​「スキルのスキャフォールディング」を求められた場合、またはバンドルされたリソースを使用して特殊な AI 機能を構築する場合に使用します。適切なフロントマター、ディレクトリ構造、およびオプションの scripts/references/assets フォルダを含む SKILL.md ファイルを生成します。'
+description: "プロンプトから、またはこのテンプレートを複製することで、GitHub Copilot 用の新しいエージェントスキルを作成できます。「スキルを作成」​​「新しいスキルを作成」​​「スキルのスキャフォールディング」を求められた場合、またはバンドルされたリソースを使用して特殊な AI 機能を構築する場合に使用します。適切なフロントマター、ディレクトリ構造、およびオプションの scripts/references/assets フォルダを含む SKILL.md ファイルを生成します。"
 ---
 
-# Make Skill Template
+# スキルテンプレートを作成する
 
-A meta-skill for creating new Agent Skills. Use this skill when you need to scaffold a new skill folder, generate a SKILL.md file, or help users understand the Agent Skills specification.
+新しいエージェントスキルを作成するためのメタスキルです。新しいスキルフォルダのスキャフォールディング、SKILL.mdファイルの生成、またはユーザーがエージェントスキルの仕様を理解できるように支援する必要がある場合に、このスキルを使用します。
 
-## When to Use This Skill
+## このスキルを使うタイミング
 
-- User asks to "create a skill", "make a new skill", or "scaffold a skill"
-- User wants to add a specialized capability to their GitHub Copilot setup
-- User needs help structuring a skill with bundled resources
-- User wants to duplicate this template as a starting point
+- ユーザーが「スキルを作成する」、「新しいスキルを作る」、「スキルをスキャフォールディングする」ように要求する
+- ユーザーがGitHub Copilotのセットアップに特別な機能を追加したいと考えている
+- ユーザーがバンドルされたリソースを使用してスキルを構成する際にサポートを必要としている
+- ユーザーがこのテンプレートを出発点として複製したいと考えている
 
-## Prerequisites
+## 前提条件
 
-- Understanding of what the skill should accomplish
-- A clear, keyword-rich description of capabilities and triggers
-- Knowledge of any bundled resources needed (scripts, references, assets, templates)
+- スキルが達成すべきことの理解
+- 機能とトリガーの明確でキーワード豊富な説明
+- 必要なバンドル リソース (スクリプト、参照、アセット、テンプレート) に関する知識
 
-## Creating a New Skill
+## 新しいスキルを作成する
 
-### Step 1: Create the Skill Directory
+### ステップ1: スキルディレクトリを作成する
 
-Create a new folder with a lowercase, hyphenated name:
+小文字でハイフンでつながれた名前を持つ新しいフォルダーを作成します。
 
 ```
 skills/<skill-name>/
-└── SKILL.md          # Required
+└── SKILL.md          # 必須
 ```
 
-### Step 2: Generate SKILL.md with Frontmatter
+### ステップ2: フロントマターでSKILL.mdを生成する
 
-Every skill requires YAML frontmatter with `name` and `description`:
+すべてのスキルには、`name` と `description` を含む YAML フロントマターが必要です。
 
 ```yaml
 ---
 name: <skill-name>
-description: '<What it does>. Use when <specific triggers, scenarios, keywords users might say>.'
+description: "<何をするのか>。<ユーザーが発する可能性のある具体的なトリガー、シナリオ、キーワード> がある場合に使用します。"
 ---
 ```
 
-#### Frontmatter Field Requirements
+#### フロントマターフィールドの要件
 
-| Field | Required | Constraints |
-|-------|----------|-------------|
-| `name` | **Yes** | 1-64 chars, lowercase letters/numbers/hyphens only, must match folder name |
-| `description` | **Yes** | 1-1024 chars, must describe WHAT it does AND WHEN to use it |
-| `license` | No | License name or reference to bundled LICENSE.txt |
-| `compatibility` | No | 1-500 chars, environment requirements if needed |
-| `metadata` | No | Key-value pairs for additional properties |
-| `allowed-tools` | No | Space-delimited list of pre-approved tools (experimental) |
+| フィールド      | 必須    | 制約                                                                    |
+| --------------- | ------- | ----------------------------------------------------------------------- |
+| `name`          | **Yes** | 1～64文字、小文字/数字/ハイフンのみ、フォルダ名と一致する必要があります |
+| `description`   | **Yes** | 1～1024文字で、何をするのか、いつ使用するのかを説明する必要があります。 |
+| `license`       | No      | ライセンス名またはバンドルされたLICENSE.txtへの参照                     |
+| `compatibility` | No      | 1～500文字、必要に応じて環境要件                                        |
+| `metadata`      | No      | 追加プロパティのキーと値のペア                                          |
+| `allowed-tools` | No      | スペースで区切られた事前承認済みツールのリスト（実験的）                |
 
-#### Description Best Practices
+#### 説明のベストプラクティス
 
-**CRITICAL**: The `description` is the PRIMARY mechanism for automatic skill discovery. Include:
+**重要**: `description` は、スキルを自動検出するための主要なメカニズムです。以下の情報を含めてください。
 
-1. **WHAT** the skill does (capabilities)
-2. **WHEN** to use it (triggers, scenarios, file types)
-3. **Keywords** users might mention in prompts
+1. **何を** するスキルか (機能)
+2. **いつ** 使うスキルか (トリガー、シナリオ、ファイルタイプ)
+3. **キーワード** ユーザーがプロンプトで言及する可能性がある文言
 
-**Good example:**
-
-```yaml
-description: 'Toolkit for testing local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, or view browser console logs. Supports Chrome, Firefox, and WebKit.'
-```
-
-**Poor example:**
+**良い例:**
 
 ```yaml
-description: 'Web testing helpers'
+description: "Playwrightを使用してローカルWebアプリケーションをテストするためのツールキットです。フロントエンドの機能検証、UIの動作デバッグ、ブラウザのスクリーンショットのキャプチャ、ブラウザのコンソールログの表示などが必要な場合にご利用ください。Chrome、Firefox、WebKitをサポートしています。"
 ```
 
-### Step 3: Write the Skill Body
+**悪い例:**
 
-After the frontmatter, add markdown instructions. Recommended sections:
+```yaml
+description: "Webテストヘルパー"
+```
 
-| Section | Purpose |
-|---------|---------|
-| `# Title` | Brief overview |
-| `## When to Use This Skill` | Reinforces description triggers |
-| `## Prerequisites` | Required tools, dependencies |
-| `## Step-by-Step Workflows` | Numbered steps for tasks |
-| `## Troubleshooting` | Common issues and solutions |
-| `## References` | Links to bundled docs |
+### ステップ3: スキル本体を書く
 
-### Step 4: Add Optional Directories (If Needed)
+フロントマターの後に、マークダウンによる指示を追加します。推奨セクション：
 
-| Folder | Purpose | When to Use |
-|--------|---------|-------------|
-| `scripts/` | Executable code (Python, Bash, JS) | Automation that performs operations |
-| `references/` | Documentation agent reads | API references, schemas, guides |
-| `assets/` | Static files used AS-IS | Images, fonts, templates |
-| `templates/` | Starter code agent modifies | Scaffolds to extend |
+| セクション                              | 目的                                 |
+| --------------------------------------- | ------------------------------------ |
+| `# タイトル`                            | 概要                                 |
+| `## このスキルを使うタイミング`         | 説明トリガーを強化する               |
+| `## 前提条件`                           | 必要なツール、依存関係               |
+| `## ステップバイステップのワークフロー` | タスクの番号付きステップ             |
+| `## トラブルシューティング`             | よくある問題と解決策                 |
+| `## 参考文献`                           | バンドルされたドキュメントへのリンク |
 
-## Example: Complete Skill Structure
+### ステップ4: オプションのディレクトリを追加する（必要な場合）
+
+| フォルダ      | 目的                               | いつ使うか                        |
+| ------------- | ---------------------------------- | --------------------------------- |
+| `scripts/`    | 実行可能コード（Python、Bash、JS） | 操作を実行する自動化              |
+| `references/` | エージェントが読む文書             | APIリファレンス、スキーマ、ガイド |
+| `assets/`     | 静的ファイルはそのまま使用されます | 画像、フォント、テンプレート      |
+| `templates/`  | スターターコードエージェントの変更 | 拡張するための足場                |
+
+## 例: 完成したスキル構造
 
 ```
 my-awesome-skill/
-├── SKILL.md                    # Required instructions
-├── LICENSE.txt                 # Optional license file
+├── SKILL.md                    # 必要な指示
+├── LICENSE.txt                 # オプションのライセンスファイル
 ├── scripts/
-│   └── helper.py               # Executable automation
+│   └── helper.py               # 実行可能な自動化
 ├── references/
-│   ├── api-reference.md        # Detailed docs
-│   └── examples.md             # Usage examples
+│   ├── api-reference.md        # 詳細なドキュメント
+│   └── examples.md             # 使用例
 ├── assets/
-│   └── diagram.png             # Static resources
+│   └── diagram.png             # 静的リソース
 └── templates/
-    └── starter.ts              # Code scaffold
+    └── starter.ts              # コードスキャフォールド
 ```
 
-## Quick Start: Duplicate This Template
+## クイックスタート: このテンプレートを複製する
 
-1. Copy the `make-skill-template/` folder
-2. Rename to your skill name (lowercase, hyphens)
-3. Update `SKILL.md`:
-   - Change `name:` to match folder name
-   - Write a keyword-rich `description:`
-   - Replace body content with your instructions
-4. Add bundled resources as needed
-5. Validate with `npm run skill:validate`
+1. `make-skill-template/`フォルダをコピーします
+2. スキル名に変更します（小文字、ハイフン）
+3. `SKILL.md` を更新します。
+   - フォルダ名に合わせて `name:` を変更します
+   - キーワードを豊富に含む「説明」を記述します。
+   - 本文を指示に置き換えます
+4. 必要に応じてバンドルリソースを追加する
+5. `npm run skill:validate` で検証する
 
-## Validation Checklist
+## 検証チェックリスト
 
-- [ ] Folder name is lowercase with hyphens
-- [ ] `name` field matches folder name exactly
-- [ ] `description` is 10-1024 characters
-- [ ] `description` explains WHAT and WHEN
-- [ ] `description` is wrapped in single quotes
-- [ ] Body content is under 500 lines
-- [ ] Bundled assets are under 5MB each
+- [ ] フォルダ名は小文字でハイフン付きです
+- [ ] `name` フィールドはフォルダ名と完全に一致します
+- [ ] `description` は10〜1024文字です
+- [ ] `description` は「何を」「いつ」行うかを説明する
+- [ ] `description` は一重引用符で囲まれています
+- [ ] 本文は500行以下
+- [ ] バンドルされたアセットはそれぞれ5MB未満です
 
-## Troubleshooting
+## トラブルシューティング
 
-| Issue | Solution |
-|-------|----------|
-| Skill not discovered | Improve description with more keywords and triggers |
-| Validation fails on name | Ensure lowercase, no consecutive hyphens, matches folder |
-| Description too short | Add capabilities, triggers, and keywords |
-| Assets not found | Use relative paths from skill root |
+| 問題                     | 解決方法                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| スキルが発見されなかった | キーワードとトリガーを増やして説明を改善する                                             |
+| 名前の検証に失敗する     | 小文字であること、連続したハイフンがないこと、フォルダーに一致することを確認してください |
+| 説明が短すぎる           | 機能、トリガー、キーワードを追加する                                                     |
+| アセットが見つからない   | スキルルートからの相対パスを使用する                                                     |
 
-## References
+## 参考文献
 
-- Agent Skills official spec: <https://agentskills.io/specification>
+- エージェントスキルの公式仕様: <https://agentskills.io/specification>
