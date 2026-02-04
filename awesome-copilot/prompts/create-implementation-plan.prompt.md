@@ -1,157 +1,176 @@
 ---
-agent: 'agent'
-description: '新しい機能、既存コードのリファクタリング、パッケージ、設計、アーキテクチャ、インフラストラクチャのアップグレードのための新しい実装計画ファイルを作成します。'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+agent: "agent"
+description: "新しい機能、既存コードのリファクタリング、パッケージ、設計、アーキテクチャ、インフラストラクチャのアップグレードのための新しい実装計画ファイルを作成します。"
+tools:
+  [
+    "changes",
+    "search/codebase",
+    "edit/editFiles",
+    "extensions",
+    "web/fetch",
+    "githubRepo",
+    "openSimpleBrowser",
+    "problems",
+    "runTasks",
+    "search",
+    "search/searchResults",
+    "runCommands/terminalLastCommand",
+    "runCommands/terminalSelection",
+    "testFailure",
+    "usages",
+    "vscodeAPI",
+  ]
 ---
-# Create Implementation Plan
 
-## Primary Directive
+# 実装計画を作成する
 
-Your goal is to create a new implementation plan file for `${input:PlanPurpose}`. Your output must be machine-readable, deterministic, and structured for autonomous execution by other AI systems or humans.
+## 主要指令
 
-## Execution Context
+目標は、`${input:PlanPurpose}` の新しい実装計画ファイルを作成することです。出力は機械可読で、決定論的であり、他の AI システムや人間による自律実行のために構造化されている必要があります。
 
-This prompt is designed for AI-to-AI communication and automated processing. All instructions must be interpreted literally and executed systematically without human interpretation or clarification.
+## 実行コンテキスト
 
-## Core Requirements
+このプロンプトは、AI同士の通信と自動処理を目的として設計されています。すべての指示は、人間による解釈や説明なしに、文字通りに解釈され、体系的に実行される必要があります。
 
-- Generate implementation plans that are fully executable by AI agents or humans
-- Use deterministic language with zero ambiguity
-- Structure all content for automated parsing and execution
-- Ensure complete self-containment with no external dependencies for understanding
+## 主要要件
 
-## Plan Structure Requirements
+- AIエージェントまたは人間によって完全に実行可能な実装計画を生成する
+- 曖昧さのない決定論的な言語を使用する
+- すべてのコンテンツを構造化し、自動解析と実行を行う
+- 理解のために外部に依存しない完全な自己完結性を確保する
 
-Plans must consist of discrete, atomic phases containing executable tasks. Each phase must be independently processable by AI agents or humans without cross-phase dependencies unless explicitly declared.
+## プラン構造の要件
 
-## Phase Architecture
+計画は、実行可能なタスクを含む個別のアトミックフェーズで構成されている必要があります。各フェーズは、明示的に宣言されない限り、フェーズ間の依存関係なしに、AIエージェントまたは人間によって独立して処理可能でなければなりません。
 
-- Each phase must have measurable completion criteria
-- Tasks within phases must be executable in parallel unless dependencies are specified
-- All task descriptions must include specific file paths, function names, and exact implementation details
-- No task should require human interpretation or decision-making
+## フェーズアーキテクチャ
 
-## AI-Optimized Implementation Standards
+- 各フェーズには測定可能な完了基準が必要です
+- フェーズ内のタスクは、依存関係が指定されていない限り、並列実行可能である必要がある
+- すべてのタスクの説明には、特定のファイルパス、関数名、正確な実装の詳細を含める必要があります。
+- いかなるタスクも人間の解釈や意思決定を必要としない
 
-- Use explicit, unambiguous language with zero interpretation required
-- Structure all content as machine-parseable formats (tables, lists, structured data)
-- Include specific file paths, line numbers, and exact code references where applicable
-- Define all variables, constants, and configuration values explicitly
-- Provide complete context within each task description
-- Use standardized prefixes for all identifiers (REQ-, TASK-, etc.)
-- Include validation criteria that can be automatically verified
+## AI最適化実装標準
 
-## Output File Specifications
+- 解釈を必要としない明確で明確な言語を使用する
+- すべてのコンテンツを機械が解析可能な形式（表、リスト、構造化データ）として構造化する
+- 該当する場合は、具体的なファイルパス、行番号、正確なコード参照を含めます
+- すべての変数、定数、設定値を明示的に定義する
+- 各タスクの説明に完全なコンテキストを提供する
+- すべての識別子に標準化されたプレフィックスを使用します (REQ-、TASK- など)
+- 自動的に検証できる検証基準を含める
 
-- Save implementation plan files in `/plan/` directory
-- Use naming convention: `[purpose]-[component]-[version].md`
-- Purpose prefixes: `upgrade|refactor|feature|data|infrastructure|process|architecture|design`
-- Example: `upgrade-system-command-4.md`, `feature-auth-module-1.md`
-- File must be valid Markdown with proper front matter structure
+## 出力ファイルの仕様
 
-## Mandatory Template Structure
+- 実装計画ファイルを `/plan/` ディレクトリに保存します
+- 命名規則を使用する: `[目的]-[コンポーネント]-[バージョン].md`
+- 目的の接頭辞: `upgrade|refactor|feature|data|infrastructure|process|architecture|design`
+- 例: `upgrade-system-command-4.md`, `feature-auth-module-1.md`
+- ファイルは適切なフロントマター構造を持つ有効なマークダウンでなければなりません
 
-All implementation plans must strictly adhere to the following template. Each section is required and must be populated with specific, actionable content. AI agents must validate template compliance before execution.
+## 必須テンプレート構造
 
-## Template Validation Rules
+すべての実装計画は、以下のテンプレートに厳密に準拠する必要があります。各セクションは必須であり、具体的かつ実用的なコンテンツを入力する必要があります。AIエージェントは、実行前にテンプレートの準拠を検証する必要があります。
 
-- All front matter fields must be present and properly formatted
-- All section headers must match exactly (case-sensitive)
-- All identifier prefixes must follow the specified format
-- Tables must include all required columns
-- No placeholder text may remain in the final output
+## テンプレート検証ルール
 
-## Status
+- すべてのフロントマターフィールドが存在し、適切にフォーマットされている必要があります
+- すべてのセクションヘッダーは完全に一致する必要があります（大文字と小文字が区別されます）
+- すべての識別子プレフィックスは指定された形式に従う必要があります
+- 表には必要な列がすべて含まれている必要があります
+- 最終出力にプレースホルダーテキストが残らない
 
-The status of the implementation plan must be clearly defined in the front matter and must reflect the current state of the plan. The status can be one of the following (status_color in brackets): `Completed` (bright green badge), `In progress` (yellow badge), `Planned` (blue badge), `Deprecated` (red badge), or `On Hold` (orange badge). It should also be displayed as a badge in the introduction section.
+## ステータス
+
+実装計画のステータスは、フロントマターで明確に定義し、計画の現状を反映する必要があります。ステータスは、次のいずれかになります（括弧内のステータスカラーは「完了」（明るい緑色のバッジ）、「進行中」（黄色のバッジ）、「計画中」（青色のバッジ）、「非推奨」（赤色のバッジ）、または「保留中」（オレンジ色のバッジ）です。また、導入セクションにもバッジとして表示する必要があります。
 
 ```md
 ---
-goal: [Concise Title Describing the Package Implementation Plan's Goal]
-version: [Optional: e.g., 1.0, Date]
-date_created: [YYYY-MM-DD]
-last_updated: [Optional: YYYY-MM-DD]
-owner: [Optional: Team/Individual responsible for this spec]
-status: 'Completed'|'In progress'|'Planned'|'Deprecated'|'On Hold'
-tags: [Optional: List of relevant tags or categories, e.g., `feature`, `upgrade`, `chore`, `architecture`, `migration`, `bug` etc]
+ゴール: [パッケージ実装計画のゴールを説明する簡潔なタイトル]
+バージョン: [任意: (例: 1.0, Date)]
+作成日: [YYYY-MM-DD]
+最終更新日: [任意: YYYY-MM-DD]
+担当者: [任意: この仕様を担当するチーム/個人]
+ステータス: 'Completed'|'In progress'|'Planned'|'Deprecated'|'On Hold'
+タグ: [任意: 関連するタグまたはカテゴリのリスト(例: `feature`, `upgrade`, `chore`, `architecture`, `migration`, `bug` など)。]
 ---
-
-# Introduction
-
-![Status: <status>](https://img.shields.io/badge/status-<status>-<status_color>)
-
-[A short concise introduction to the plan and the goal it is intended to achieve.]
-
-## 1. Requirements & Constraints
-
-[Explicitly list all requirements & constraints that affect the plan and constrain how it is implemented. Use bullet points or tables for clarity.]
-
-- **REQ-001**: Requirement 1
-- **SEC-001**: Security Requirement 1
-- **[3 LETTERS]-001**: Other Requirement 1
-- **CON-001**: Constraint 1
-- **GUD-001**: Guideline 1
-- **PAT-001**: Pattern to follow 1
-
-## 2. Implementation Steps
-
-### Implementation Phase 1
-
-- GOAL-001: [Describe the goal of this phase, e.g., "Implement feature X", "Refactor module Y", etc.]
-
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-001 | Description of task 1 | ✅ | 2025-04-25 |
-| TASK-002 | Description of task 2 | |  |
-| TASK-003 | Description of task 3 | |  |
-
-### Implementation Phase 2
-
-- GOAL-002: [Describe the goal of this phase, e.g., "Implement feature X", "Refactor module Y", etc.]
-
-| Task | Description | Completed | Date |
-|------|-------------|-----------|------|
-| TASK-004 | Description of task 4 | |  |
-| TASK-005 | Description of task 5 | |  |
-| TASK-006 | Description of task 6 | |  |
-
-## 3. Alternatives
-
-[A bullet point list of any alternative approaches that were considered and why they were not chosen. This helps to provide context and rationale for the chosen approach.]
-
-- **ALT-001**: Alternative approach 1
-- **ALT-002**: Alternative approach 2
-
-## 4. Dependencies
-
-[List any dependencies that need to be addressed, such as libraries, frameworks, or other components that the plan relies on.]
-
-- **DEP-001**: Dependency 1
-- **DEP-002**: Dependency 2
-
-## 5. Files
-
-[List the files that will be affected by the feature or refactoring task.]
-
-- **FILE-001**: Description of file 1
-- **FILE-002**: Description of file 2
-
-## 6. Testing
-
-[List the tests that need to be implemented to verify the feature or refactoring task.]
-
-- **TEST-001**: Description of test 1
-- **TEST-002**: Description of test 2
-
-## 7. Risks & Assumptions
-
-[List any risks or assumptions related to the implementation of the plan.]
-
-- **RISK-001**: Risk 1
-- **ASSUMPTION-001**: Assumption 1
-
-## 8. Related Specifications / Further Reading
-
-[Link to related spec 1]
-[Link to relevant external documentation]
 ```
+
+# 導入
+
+![ステータス: <status>](https://img.shields.io/badge/status-<status>-<status_color>)
+
+[計画とそれが達成しようとする目標についての簡潔な概要。]
+
+## 1. 要件と制約
+
+[計画に影響を与え、その実施方法を制約するすべての要件と制約を明示的にリストアップしてください。箇条書きや表などを用いて明確にしてください。]
+
+- **REQ-001**: 要件1
+- **SEC-001**: セキュリティ要件1
+- **[3 LETTERS]-001**: その他の要件1
+- **CON-001**: 制約1
+- **GUD-001**: ガイドライン1
+- **PAT-001**: 従うべきパターン1
+
+## 2. 実装手順
+
+### 実装フェーズ1
+
+- GOAL-001: [このフェーズの目標を説明します(例: 「機能 X を実装する」、「モジュール Y をリファクタリングする」など)。]
+
+| Task     | Description   | Completed | Date       |
+| -------- | ------------- | --------- | ---------- |
+| TASK-001 | タスク1の説明 | ✅        | 2025-04-25 |
+| TASK-002 | タスク2の説明 |           |            |
+| TASK-003 | タスク3の説明 |           |            |
+
+### 実装フェーズ2
+
+- GOAL-002: [このフェーズの目標を説明します (例: 「機能 X を実装する」、「モジュール Y をリファクタリングする」など)。]
+
+| Task     | Description   | Completed | Date |
+| -------- | ------------- | --------- | ---- |
+| TASK-004 | タスク4の説明 |           |      |
+| TASK-005 | タスク5の説明 |           |      |
+| TASK-006 | タスク6の説明 |           |      |
+
+## 3. 代替案
+
+[検討された代替アプローチと、それらが選択されなかった理由を箇条書きでリストアップします。これにより、選択されたアプローチの背景と根拠が明確になります。]
+
+- **ALT-001**: 代替アプローチ1
+- **ALT-002**: 代替アプローチ2
+
+## 4. 依存関係
+
+[計画が依存するライブラリ、フレームワーク、その他のコンポーネントなど、対処する必要がある依存関係をリストします。]
+
+- **DEP-001**: 依存1
+- **DEP-002**: 依存2
+
+## 5. ファイル
+
+[機能またはリファクタリング タスクの影響を受けるファイルを一覧表示します。]
+
+- **FILE-001**: ファイル1の説明
+- **FILE-002**: ファイル2の説明
+
+## 6. テスト
+
+[機能またはリファクタリング タスクを検証するために実装する必要があるテストをリストします。]
+
+- **TEST-001**: テスト1の説明
+- **TEST-002**: テスト2の説明
+
+## 7. リスクと仮定
+
+[計画の実施に関連するリスクや前提条件をすべてリストします。]
+
+- **RISK-001**: リスク1
+- **ASSUMPTION-001**: 予測1
+
+## 8. 関連仕様 / さらに詳しい情報
+
+[関連仕様1へのリンク]
+[関連する外部ドキュメントへのリンク]

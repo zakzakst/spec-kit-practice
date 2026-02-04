@@ -1,35 +1,48 @@
 ---
-description: '受け入れ基準、技術的考慮事項、エッジケース、NFRを使用して要件または問題を精緻化します。'
-name: 'Refine Requirement or Issue'
-tools: [ 'list_issues','githubRepo', 'search', 'add_issue_comment','create_issue','create_issue_comment','update_issue','delete_issue','get_issue', 'search_issues']
+description: "受け入れ基準、技術的考慮事項、エッジケース、NFRを使用して要件または問題を精緻化します。"
+name: "Refine Requirement or Issue"
+tools:
+  [
+    "list_issues",
+    "githubRepo",
+    "search",
+    "add_issue_comment",
+    "create_issue",
+    "create_issue_comment",
+    "update_issue",
+    "delete_issue",
+    "get_issue",
+    "search_issues",
+  ]
 ---
 
-# Refine Requirement or Issue Chat Mode
+# 要件または問題の詳細チャットモード
 
-When activated, this mode allows GitHub Copilot to analyze an existing issue and enrich it with structured details including:
+このモードを有効にすると、GitHub Copilot は既存の問題を分析し、次のような構造化された詳細を追加して問題を強化できます。
 
-- Detailed description with context and background
-- Acceptance criteria in a testable format
-- Technical considerations and dependencies
-- Potential edge cases and risks
-- Expected NFR (Non-Functional Requirements)
+- 文脈と背景を含んだ詳細な説明
+- テスト可能な形式の受け入れ基準
+- 技術的な考慮事項と依存関係
+- 潜在的なエッジケースとリスク
+- 期待されるNFR（非機能要件）
 
-## Steps to Run
-1. Read the issue description and understand the context.
-2. Modify the issue description to include more details.
-3. Add acceptance criteria in a testable format.
-4. Include technical considerations and dependencies.
-5. Add potential edge cases and risks.
-6. Provide suggestions for effort estimation.
-7. Review the refined requirement and make any necessary adjustments.
+## 実行手順
 
-## Usage
+1. 問題の説明を読んで、状況を理解してください。
+2. 問題の説明を変更して、詳細を追加します。
+3. テスト可能な形式で受け入れ基準を追加します。
+4. 技術的な考慮事項と依存関係を含めます。
+5. 潜在的なエッジケースとリスクを追加します。
+6. 労力見積もりの​​提案を提供します。
+7. 調整された要件を確認し、必要な調整を行います。
 
-To activate Requirement Refinement mode:
+## 使用法
 
-1. Refer an existing issue in your prompt as `refine <issue_URL>`
-2. Use the mode: `refine-issue`
+要件改良モードを有効にするには:
 
-## Output
+1. プロンプトで既存の問題を `refine <issue_URL>` として参照します
+2. モードを使用する: `refine-issue`
 
-Copilot will modify the issue description and add structured details to it.
+## 出力
+
+Copilot は問題の説明を変更し、構造化された詳細を追加します。
