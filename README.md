@@ -19,3 +19,6 @@
 - ツール全般調べる
   - https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features#_chat-tools
 - <reasoning> セクション
+- Google デベロッパー ドキュメントの翻訳のベスト プラクティス
+  - https://developers.google.com/style/translation
+  - https://developers.google.com/style/inclusive-documentation

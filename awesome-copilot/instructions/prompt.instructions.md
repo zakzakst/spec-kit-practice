@@ -1,68 +1,68 @@
 ---
-description: "Guidelines for creating high-quality prompt files for GitHub Copilot"
+description: "GitHub Copilot 用の高品質なプロンプトファイルを作成するためのガイドライン"
 applyTo: "**/*.prompt.md"
 ---
 
-# Copilot Prompt Files Guidelines
+# Copilot プロンプトファイルのガイドライン
 
-Instructions for creating effective and maintainable prompt files that guide GitHub Copilot in delivering consistent, high-quality outcomes across any repository.
+あらゆるリポジトリで一貫した高品質の結果を提供できるように GitHub Copilot をガイドする、効果的で保守可能なプロンプト ファイルを作成する手順。
 
-## Scope and Principles
+## 範囲と原則
 
-- Target audience: maintainers and contributors authoring reusable prompts for Copilot Chat.
-- Goals: predictable behaviour, clear expectations, minimal permissions, and portability across repositories.
-- Primary references: VS Code documentation on prompt files and organization-specific conventions.
+- 対象者: Copilot Chat の再利用可能なプロンプトを作成するメンテナーと貢献者。
+- 目標: 予測可能な動作、明確な期待、最小限の権限、リポジトリ間の移植性。
+- 主な参考資料: プロンプト ファイルと組織固有の規則に関する VS Code ドキュメント。
 
-## Frontmatter Requirements
+## 前書きの要件
 
-Every prompt file should include YAML frontmatter with the following fields:
+すべてのプロンプト ファイルには、次のフィールドを含む YAML フロントマターが含まれている必要があります。
 
 ### Required/Recommended Fields
 
-| Field           | Required    | Description                                                                                 |
-| --------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| `description`   | Recommended | A short description of the prompt (single sentence, actionable outcome)                     |
-| `name`          | Optional    | The name shown after typing `/` in chat. Defaults to filename if not specified              |
-| `agent`         | Recommended | The agent to use: `ask`, `edit`, `agent`, or a custom agent name. Defaults to current agent |
-| `model`         | Optional    | The language model to use. Defaults to the currently selected model                         |
-| `tools`         | Optional    | List of tool/tool set names available for this prompt                                       |
-| `argument-hint` | Optional    | Hint text shown in chat input to guide user interaction                                     |
+| フィールド      | 必須 | 説明                                                                                                       |
+| --------------- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| `description`   | 推奨 | プロンプトの簡単な説明（1文、実行可能な結果）                                                              |
+| `name`          | 任意 | チャットで「/」を入力した後に表示される名前。指定されていない場合はファイル名がデフォルトになります。      |
+| `agent`         | 推奨 | 使用するエージェント: `ask`、`edit`、`agent`、またはカスタムエージェント名。デフォルトは現在のエージェント |
+| `model`         | 任意 | 使用する言語モデル。デフォルトは現在選択されているモデルです。                                             |
+| `tools`         | 任意 | このプロンプトで使用できるツール/ツールセット名のリスト                                                    |
+| `argument-hint` | 任意 | チャット入力時にユーザーインタラクションをガイドするためのヒントテキストが表示されます                     |
 
-### Guidelines
+### ガイドライン
 
-- Use consistent quoting (single quotes recommended) and keep one field per line for readability and version control clarity
-- If `tools` are specified and the current agent is `ask` or `edit`, the default agent becomes `agent`
-- Preserve any additional metadata (`language`, `tags`, `visibility`, etc.) required by your organization
+- 読みやすさとバージョン管理の明確さを保つために、一貫した引用符（一重引用符を推奨）を使用し、1 行につき 1 つのフィールドを維持します。
+- `tools` が指定されていて、現在のエージェントが `ask` または `edit` の場合、デフォルトのエージェントは `agent` になります。
+- 組織で必要な追加のメタデータ（`language`, `tags`, `visibility`など）を保存します
 
-## File Naming and Placement
+## ファイルの命名と配置
 
-- Use kebab-case filenames ending with `.prompt.md` and store them under `.github/prompts/` unless your workspace standard specifies another directory.
-- Provide a short filename that communicates the action (for example, `generate-readme.prompt.md` rather than `prompt1.prompt.md`).
+- ワークスペース標準で別のディレクトリが指定されていない限り、`.prompt.md` で終わるケバブケースのファイル名を使用し、`.github/prompts/` の下に保存します。
+- アクションを伝える短いファイル名を指定します (たとえば、`prompt1.prompt.md` ではなく `generate-readme.prompt.md`)。
 
-## Body Structure
+## 内容の構造
 
-- Start with an `#` level heading that matches the prompt intent so it surfaces well in Quick Pick search.
-- Organize content with predictable sections. Recommended baseline: `Mission` or `Primary Directive`, `Scope & Preconditions`, `Inputs`, `Workflow` (step-by-step), `Output Expectations`, and `Quality Assurance`.
-- Adjust section names to fit the domain, but retain the logical flow: why → context → inputs → actions → outputs → validation.
-- Reference related prompts or instruction files using relative links to aid discoverability.
+- プロンプトの意図に一致する `#` レベルの見出しから始めると、クイックピック検索で適切に表示されます。
+- コンテンツを予測可能なセクションで構成します。推奨されるベースラインは、「ミッション」または「主要指令」、「スコープと前提条件」、「入力」、「ワークフロー」（ステップバイステップ）、「出力の期待値」、「品質保証」です。
+- セクション名はドメインに合わせて調整しますが、論理的な流れを維持します: 理由 → コンテキスト → 入力 → アクション → 出力 → 検証。
+- 発見しやすくするために、相対リンクを使用して関連するプロンプトまたは説明ファイルを参照します。
 
-## Input and Context Handling
+## 入力とコンテキスト処理
 
-- Use `${input:variableName[:placeholder]}` for required values and explain when the user must supply them. Provide defaults or alternatives where possible.
-- Call out contextual variables such as `${selection}`, `${file}`, `${workspaceFolder}` only when they are essential, and describe how Copilot should interpret them.
-- Document how to proceed when mandatory context is missing (for example, “Request the file path and stop if it remains undefined”).
+- 必須値には `${input:variableName[:placeholder]}` を使用し、ユーザーが入力しなければならない場合について説明します。可能な場合は、デフォルト値または代替値を提供してください。
+- `${selection}`、`${file}`、`${workspaceFolder}` などのコンテキスト変数は、必要な場合にのみ呼び出し、Copilot がそれらをどのように解釈するかを説明します。
+- 必須のコンテキストが欠落している場合の続行方法を文書化します (たとえば、「ファイル パスを要求し、未定義のままの場合は停止する」)。
 
-## Tool and Permission Guidance
+## ツールと権限のガイダンス
 
-- Limit `tools` to the smallest set that enables the task. List them in the preferred execution order when the sequence matters.
-- If the prompt inherits tools from a chat mode, mention that relationship and state any critical tool behaviours or side effects.
-- Warn about destructive operations (file creation, edits, terminal commands) and include guard rails or confirmation steps in the workflow.
+- `tools` は、タスクを実行できる最小限のツールセットに限定してください。順序が重要な場合は、優先実行順にリストしてください。
+- プロンプトがチャット モードからツールを継承する場合は、その関係について言及し、重要なツールの動作や副作用を述べます。
+- 破壊的な操作 (ファイルの作成、編集、ターミナル コマンド) について警告し、ワークフローにガードレールまたは確認手順を含めます。
 
-## Instruction Tone and Style
+## 指導のトーンとスタイル
 
-- Write in direct, imperative sentences targeted at Copilot (for example, “Analyze”, “Generate”, “Summarize”).
-- Keep sentences short and unambiguous, following Google Developer Documentation translation best practices to support localization.
-- Avoid idioms, humor, or culturally specific references; favor neutral, inclusive language.
+- Copilot を対象とした直接的で命令形の文章で記述します (例:「分析する」、「生成する」、「要約する」)。
+- ローカリゼーションをサポートするには、Google デベロッパー ドキュメントの翻訳のベスト プラクティスに従って、文章を短く明確にしてください。
+- 慣用句、ユーモア、または文化特有の言及は避け、中立的で包括的な言語を優先します。
 
 ## Output Definition
 
