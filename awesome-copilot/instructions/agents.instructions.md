@@ -1,28 +1,28 @@
 ---
-description: "Guidelines for creating custom agent files for GitHub Copilot"
+description: "GitHub Copilot のカスタムエージェントファイルを作成するためのガイドライン"
 applyTo: "**/*.agent.md"
 ---
 
-# Custom Agent File Guidelines
+# カスタムエージェントファイルのガイドライン
 
-Instructions for creating effective and maintainable custom agent files that provide specialized expertise for specific development tasks in GitHub Copilot.
+GitHub Copilot の特定の開発タスクに関する専門知識を提供する、効果的で保守可能なカスタム エージェント ファイルを作成する手順。
 
-## Project Context
+## プロジェクトの背景
 
-- Target audience: Developers creating custom agents for GitHub Copilot
-- File format: Markdown with YAML frontmatter
-- File naming convention: lowercase with hyphens (e.g., `test-specialist.agent.md`)
-- Location: `.github/agents/` directory (repository-level) or `agents/` directory (organization/enterprise-level)
-- Purpose: Define specialized agents with tailored expertise, tools, and instructions for specific tasks
-- Official documentation: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents
+- 対象者: GitHub Copilot 用のカスタムエージェントを作成する開発者
+- ファイル形式: YAML フロントマター付き Markdown
+- ファイル名の命名規則: 小文字とハイフン (例: `test-specialist.agent.md`)
+- 場所: `.github/agents/` ディレクトリ (リポジトリ レベル) または `agents/` ディレクトリ (組織/エンタープライズ レベル)
+- 目的: 特定のタスクに合わせた専門知識、ツール、指示を備えた専門エージェントを定義する
+- 公式ドキュメント: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents
 
-## Required Frontmatter
+## 必須の前文
 
-Every agent file must include YAML frontmatter with the following fields:
+すべてのエージェントファイルには、次のフィールドを含むYAMLフロントマターを含める必要があります。:
 
 ```yaml
 ---
-description: "Brief description of the agent purpose and capabilities"
+description: "エージェントの目的と機能の簡単な説明"
 name: "Agent Display Name"
 tools: ["read", "edit", "search"]
 model: "Claude Sonnet 4.5"
@@ -31,345 +31,345 @@ infer: true
 ---
 ```
 
-### Core Frontmatter Properties
+### コアフロントマタープロパティ
 
-#### **description** (REQUIRED)
+#### **description** (必須)
 
-- Single-quoted string, clearly stating the agent's purpose and domain expertise
-- Should be concise (50-150 characters) and actionable
-- Example: `'Focuses on test coverage, quality, and testing best practices'`
+- エージェントの目的とドメインの専門知識を明確に示す一重引用符で囲まれた文字列
+- 簡潔（50～150文字）で実用的な内容であること
+- 例: 「テストの範囲、品質、テストのベストプラクティスに焦点を当てます」
 
-#### **name** (OPTIONAL)
+#### **name** (オプション)
 
-- Display name for the agent in the UI
-- If omitted, defaults to filename (without `.md` or `.agent.md`)
-- Use title case and be descriptive
-- Example: `'Testing Specialist'`
+- UI でのエージェントの表示名
+- 省略された場合は、デフォルトでファイル名（`.md` または `.agent.md` なし）になります。
+- タイトルを大文字にして説明的にする
+- 例: `'Testing Specialist'`
 
-#### **tools** (OPTIONAL)
+#### **tools** (オプション)
 
-- List of tool names or aliases the agent can use
-- Supports comma-separated string or YAML array format
-- If omitted, agent has access to all available tools
-- See "Tool Configuration" section below for details
+- エージェントが使用できるツール名またはエイリアスのリスト
+- カンマ区切りの文字列またはYAML配列形式をサポート
+- 省略した場合、エージェントは利用可能なすべてのツールにアクセスできます
+- 詳細については、以下の「ツール設定」セクションを参照してください。
 
 #### **model** (STRONGLY RECOMMENDED)
 
-- Specifies which AI model the agent should use
-- Supported in VS Code, JetBrains IDEs, Eclipse, and Xcode
-- Example: `'Claude Sonnet 4.5'`, `'gpt-4'`, `'gpt-4o'`
-- Choose based on agent complexity and required capabilities
+- エージェントが使用するAIモデルを指定します
+- VS Code、JetBrains IDE、Eclipse、Xcode でサポートされています
+- 例: `'Claude Sonnet 4.5'`, `'gpt-4'`, `'gpt-4o'`
+- エージェントの複雑さと必要な機能に基づいて選択する
 
-#### **target** (OPTIONAL)
+#### **target** (オプション)
 
-- Specifies target environment: `'vscode'` or `'github-copilot'`
-- If omitted, agent is available in both environments
-- Use when agent has environment-specific features
+- ターゲット環境を指定します: `'vscode'` または `'github-copilot'`
+- 省略した場合、エージェントは両方の環境で使用可能です
+- エージェントに環境固有の機能がある場合に使用します
 
-#### **infer** (OPTIONAL)
+#### **infer** (オプション)
 
-- Boolean controlling whether Copilot can automatically use this agent based on context
-- Default: `true` if omitted
-- Set to `false` to require manual agent selection
+- Copilot がコンテキストに基づいてこのエージェントを自動的に使用できるかどうかを制御するブール値
+- デフォルト: 省略した場合は `true`
+- エージェントを手動で選択する必要がある場合は `false` に設定します
 
-#### **metadata** (OPTIONAL, GitHub.com only)
+#### **metadata** (オプション, GitHub.comのみ)
 
-- Object with name-value pairs for agent annotation
-- Example: `metadata: { category: 'testing', version: '1.0' }`
-- Not supported in VS Code
+- エージェント注釈の名前と値のペアを持つオブジェクト
+- 例: `metadata: { category: 'testing', version: '1.0' }`
+- VS Codeではサポートされていません
 
-#### **mcp-servers** (OPTIONAL, Organization/Enterprise only)
+#### **mcp-servers** (オプション, Organization/Enterpriseのみ)
 
-- Configure MCP servers available only to this agent
-- Only supported for organization/enterprise level agents
-- See "MCP Server Configuration" section below
+- このエージェントのみが利用できるMCPサーバーを構成する
+- 組織/エンタープライズレベルのエージェントのみサポートされます
+- 下記の「MCPサーバーの構成」セクションを参照してください。
 
-#### **handoffs** (OPTIONAL, VS Code only)
+#### **handoffs** (オプション, VS Codeのみ)
 
-- Enable guided sequential workflows that transition between agents with suggested next steps
-- List of handoff configurations, each specifying a target agent and optional prompt
-- After a chat response completes, handoff buttons appear allowing users to move to the next agent
-- Only supported in VS Code (version 1.106+)
-- See "Handoffs Configuration" section below for details
+- エージェント間の遷移と次のステップの提案を行うガイド付きシーケンシャルワークフローを有効にする
+- ハンドオフ設定のリスト（それぞれターゲットエージェントとオプションのプロンプトを指定）
+- チャットの応答が完了すると、ハンドオフボタンが表示され、ユーザーは次のエージェントに移動できます。
+- VS Code（バージョン 1.106 以降）でのみサポートされます
+- 詳細については、以下の「ハンドオフ設定」セクションを参照してください。
 
-## Handoffs Configuration
+## ハンドオフ設定
 
-Handoffs enable you to create guided sequential workflows that transition seamlessly between custom agents. This is useful for orchestrating multi-step development workflows where users can review and approve each step before moving to the next one.
+ハンドオフを使用すると、カスタムエージェント間をシームレスに遷移するガイド付きのシーケンシャルワークフローを作成できます。これは、ユーザーが次のステップに進む前に各ステップをレビューして承認できる、複数ステップの開発ワークフローをオーケストレーションするのに役立ちます。
 
-### Common Handoff Patterns
+### 一般的なハンドオフパターン
 
-- **Planning → Implementation**: Generate a plan in a planning agent, then hand off to an implementation agent to start coding
-- **Implementation → Review**: Complete implementation, then switch to a code review agent to check for quality and security issues
-- **Write Failing Tests → Write Passing Tests**: Generate failing tests, then hand off to implement the code that makes those tests pass
-- **Research → Documentation**: Research a topic, then transition to a documentation agent to write guides
+- **計画 → 実行**: 計画エージェントで計画を生成し、実装エージェントに渡してコーディングを開始します。
+- **実装 → レビュー**: 実装を完了したら、コードレビューエージェントに切り替えて品質とセキュリティの問題をチェックします。
+- **失敗するテストを書く → 成功するテストを書く**: 失敗するテストを生成し、それらのテストをパスさせるコードを実装するために引き渡す
+- **研究 → 文書化**: トピックを調査し、その後、ガイドを作成するためにドキュメンテーションエージェントに移行します
 
-### Handoff Frontmatter Structure
+### ハンドオフ前文構造
 
-Define handoffs in the agent file's YAML frontmatter using the `handoffs` field:
+エージェントファイルのYAMLフロントマターで「handoffs」フィールドを使用してハンドオフを定義します:
 
 ```yaml
 ---
-description: "Brief description of the agent"
+description: "エージェントの簡単な説明"
 name: "Agent Name"
 tools: ["search", "read"]
 handoffs:
-  - label: Start Implementation
+  - label: 実装を開始する
     agent: implementation
-    prompt: "Now implement the plan outlined above."
+    prompt: "次に、上記で概説した計画を実行します。"
     send: false
-  - label: Code Review
+  - label: コードレビュー
     agent: code-review
-    prompt: "Please review the implementation for quality and security issues."
+    prompt: "品質とセキュリティの問題がないか実装を確認してください。"
     send: false
 ---
 ```
 
-### Handoff Properties
+### ハンドオフプロパティ
 
-Each handoff in the list must include the following properties:
+リスト内の各ハンドオフには次のプロパティが含まれている必要があります:
 
-| Property | Type    | Required | Description                                                                        |
-| -------- | ------- | -------- | ---------------------------------------------------------------------------------- |
-| `label`  | string  | Yes      | The display text shown on the handoff button in the chat interface                 |
-| `agent`  | string  | Yes      | The target agent identifier to switch to (name or filename without `.agent.md`)    |
-| `prompt` | string  | No       | The prompt text to pre-fill in the target agent's chat input                       |
-| `send`   | boolean | No       | If `true`, automatically submits the prompt to the target agent (default: `false`) |
+| プロパティ | タイプ  | 必須 | 説明                                                                                        |
+| ---------- | ------- | ---- | ------------------------------------------------------------------------------------------- |
+| `label`    | string  | Yes  | チャットインターフェースのハンドオフボタンに表示される表示テキスト                          |
+| `agent`    | string  | Yes  | 切り替え先のターゲットエージェント識別子（名前または`.agent.md` のないファイル名）          |
+| `prompt`   | string  | No   | 対象エージェントのチャット入力に事前入力するプロンプトテキスト                              |
+| `send`     | boolean | No   | `true` の場合、プロンプトをターゲットエージェントに自動的に送信します (デフォルト: `false`) |
 
-### Handoff Behavior
+### ハンドオフ動作
 
-- **Button Display**: Handoff buttons appear as interactive suggestions after a chat response completes
-- **Context Preservation**: When users select a handoff button, they switch to the target agent with conversation context maintained
-- **Pre-filled Prompt**: If a `prompt` is specified, it appears pre-filled in the target agent's chat input
-- **Manual vs Auto**: When `send: false`, users must review and manually send the pre-filled prompt; when `send: true`, the prompt is automatically submitted
+- **ボタン表示**: チャットの応答が完了すると、対話型の提案としてハンドオフ ボタンが表示されます。
+- **コンテキストの保存**: ユーザーがハンドオフボタンを選択すると、会話のコンテキストを維持したままターゲットエージェントに切り替わります。
+- **事前入力されたプロンプト**: `prompt` が指定されている場合は、ターゲットエージェントのチャット入力に事前に入力されて表示されます。
+- **手動 vs 自動**: `send: false` の場合、ユーザーは事前に入力されたプロンプトを確認して手動で送信する必要があります。`send: true` の場合、プロンプトは自動的に送信されます。
 
-### Handoff Configuration Guidelines
+### ハンドオフ構成ガイドライン
 
-#### When to Use Handoffs
+#### ハンドオフを使用するタイミング
 
-- **Multi-step workflows**: Breaking down complex tasks across specialized agents
-- **Quality gates**: Ensuring review steps between implementation phases
-- **Guided processes**: Directing users through a structured development process
-- **Skill transitions**: Moving from planning/design to implementation/testing specialists
+- **複数ステップのワークフロー**: 複雑なタスクを専門のエージェントに分割する
+- **品質ゲート**: 実装フェーズ間のレビュー手順の確保
+- **ガイド付きプロセス**: 構造化された開発プロセスを通じてユーザーを誘導する
+- **スキルの移行**: 計画・設計から実装・テストの専門家へ
 
-#### Best Practices
+#### ベストプラクティス
 
-- **Clear Labels**: Use action-oriented labels that clearly indicate the next step
-  - ✅ Good: "Start Implementation", "Review for Security", "Write Tests"
-  - ❌ Avoid: "Next", "Go to agent", "Do something"
+- **クリアラベル**: 次のステップを明確に示すアクション指向のラベルを使用する
+  - ✅ Good: 「実装の開始」、「セキュリティのレビュー」、「テストの作成」
+  - ❌ Avoid: "Next", 「エージェントに行く」、「何かする」
 
-- **Relevant Prompts**: Provide context-aware prompts that reference the completed work
-  - ✅ Good: `'Now implement the plan outlined above.'`
-  - ❌ Avoid: Generic prompts without context
+- **関連するプロンプト**: 完了した作業を参照するコンテキスト認識プロンプトを提供する
+  - ✅ Good: `'次に、上記で概説した計画を実行します。'`
+  - ❌ Avoid: 文脈のない一般的なプロンプト
 
-- **Selective Use**: Don't create handoffs to every possible agent; focus on logical workflow transitions
-  - Limit to 2-3 most relevant next steps per agent
-  - Only add handoffs for agents that naturally follow in the workflow
+- **選択的使用**: あらゆるエージェントに引き継ぎを作成せず、論理的なワークフローの遷移に焦点を当てます
+  - エージェントごとに最も関連性の高い次のステップを 2～3 つに制限します
+  - ワークフローに自然に従うエージェントにのみハンドオフを追加します
 
-- **Agent Dependencies**: Ensure target agents exist before creating handoffs
-  - Handoffs to non-existent agents will be silently ignored
-  - Test handoffs to verify they work as expected
+- **エージェントの依存関係**: ハンドオフを作成する前にターゲットエージェントが存在することを確認する
+  - 存在しないエージェントへのハンドオフは無視されます
+  - ハンドオフをテストして期待通りに動作するか確認する
 
-- **Prompt Content**: Keep prompts concise and actionable
-  - Refer to work from the current agent without duplicating content
-  - Provide any necessary context the target agent might need
+- **プロンプト内容**: プロンプトは簡潔かつ実行可能なものにする
+  - コンテンツを重複させずに現在のエージェントの作業を参照する
+  - 対象エージェントが必要とする可能性のあるコンテキストを提供する
 
-### Example: Complete Workflow
+### 例: 完成したワークフロー
 
-Here's an example of three agents with handoffs creating a complete workflow:
+3人のエージェントがハンドオフを行い、完全なワークフローを作成する例を示します:
 
-**Planning Agent** (`planner.agent.md`):
+**計画エージェント** (`planner.agent.md`):
 
 ```yaml
 ---
-description: 'Generate an implementation plan for new features or refactoring'
+description: '新機能やリファクタリングの実装計画を作成する'
 name: 'Planner'
 tools: ['search', 'read']
 handoffs:
-  - label: Implement Plan
+  - label: 計画を実行する
     agent: implementer
-    prompt: 'Implement the plan outlined above.'
+    prompt: '上記の計画を実行します。'
     send: false
 ---
-# Planner Agent
-You are a planning specialist. Your task is to:
-1. Analyze the requirements
-2. Break down the work into logical steps
-3. Generate a detailed implementation plan
-4. Identify testing requirements
+# 計画エージェント
+あなたはプランニングスペシャリストです。あなたの仕事は:
+1. 要件を分析する
+2. 作業を論理的なステップに分解する
+3. 詳細な実装計画を作成する
+4. テスト要件を特定する
 
-Do not write any code - focus only on planning.
+コードを書かずに、計画だけに集中してください。
 ```
 
-**Implementation Agent** (`implementer.agent.md`):
+**実装エージェント** (`implementer.agent.md`):
 
 ```yaml
 ---
-description: 'Implement code based on a plan or specification'
+description: '計画や仕様に基づいてコードを実装する'
 name: 'Implementer'
 tools: ['read', 'edit', 'search', 'execute']
 handoffs:
-  - label: Review Implementation
+  - label: 実装のレビュー
     agent: reviewer
-    prompt: 'Please review this implementation for code quality, security, and adherence to best practices.'
+    prompt: 'コードの品質、セキュリティ、ベスト プラクティスの遵守については、この実装を確認してください。'
     send: false
 ---
-# Implementer Agent
-You are an implementation specialist. Your task is to:
-1. Follow the provided plan or specification
-2. Write clean, maintainable code
-3. Include appropriate comments and documentation
-4. Follow project coding standards
+# 実装エージェント
+あなたは実装スペシャリストです。あなたの仕事は:
+1. 提供された計画または仕様に従う
+2. クリーンで保守しやすいコードを書く
+3. 適切なコメントとドキュメントを含める
+4. プロジェクトのコーディング標準に従う
 
-Implement the solution completely and thoroughly.
+ソリューションを完全に徹底的に実装します。
 ```
 
-**Review Agent** (`reviewer.agent.md`):
+**レビューエージェント** (`reviewer.agent.md`):
 
 ```yaml
 ---
-description: 'Review code for quality, security, and best practices'
+description: '品質、セキュリティ、ベストプラクティスについてコードをレビューする'
 name: 'Reviewer'
 tools: ['read', 'search']
 handoffs:
-  - label: Back to Planning
+  - label: 計画に戻る
     agent: planner
-    prompt: 'Review the feedback above and determine if a new plan is needed.'
+    prompt: '上記のフィードバックを確認し、新しい計画が必要かどうかを判断します。'
     send: false
 ---
-# Code Review Agent
-You are a code review specialist. Your task is to:
-1. Check code quality and maintainability
-2. Identify security issues and vulnerabilities
-3. Verify adherence to project standards
-4. Suggest improvements
+# コードレビューエージェント
+あなたはコードレビューの専門家です。あなたの仕事は:
+1. コードの品質と保守性をチェックする
+2. セキュリティ上の問題と脆弱性を特定する
+3. プロジェクト標準の遵守を確認する
+4. 改善を提案する
 
-Provide constructive feedback on the implementation.
+実装に関する建設的なフィードバックを提供します。
 ```
 
-This workflow allows a developer to:
+このワークフローにより、開発者は:
 
-1. Start with the Planner agent to create a detailed plan
-2. Hand off to the Implementer agent to write code based on the plan
-3. Hand off to the Reviewer agent to check the implementation
-4. Optionally hand off back to planning if significant issues are found
+1. プランナーエージェントを使って詳細な計画を作成しましょう
+2. 計画に基づいてコードを書くために実装エージェントに引き渡す
+3. 実装を確認するためにレビュー担当者に引き継ぎます
+4. 重大な問題が見つかった場合は、必要に応じて計画に引き継ぐ
 
-### Version Compatibility
+### バージョンの互換性
 
-- **VS Code**: Handoffs are supported in VS Code 1.106 and later
-- **GitHub.com**: Not currently supported; agent transition workflows use different mechanisms
-- **Other IDEs**: Limited or no support; focus on VS Code implementations for maximum compatibility
+- **VS Code**: ハンドオフはVS Code 1.106以降でサポートされています
+- **GitHub.com**: 現在サポートされていません。エージェント移行ワークフローでは異なるメカニズムが使用されます
+- **Other IDEs**: サポートは限定的または全くなく、最大限の互換性のために VS Code 実装に重点を置いています
 
-## Tool Configuration
+## ツール構成
 
-### Tool Specification Strategies
+### ツール仕様戦略
 
-**Enable all tools** (default):
+**すべてのツールを有効にする** (default):
 
 ```yaml
-# Omit tools property entirely, or use:
+# toolsプロパティを完全に省略するか、下記の記述をする:
 tools: ["*"]
 ```
 
-**Enable specific tools**:
+**特定のツールを有効にする**:
 
 ```yaml
 tools: ["read", "edit", "search", "execute"]
 ```
 
-**Enable MCP server tools**:
+**MCPサーバーツールを有効にする**:
 
 ```yaml
 tools: ["read", "edit", "github/*", "playwright/navigate"]
 ```
 
-**Disable all tools**:
+**すべてのツールを無効にする**:
 
 ```yaml
 tools: []
 ```
 
-### Standard Tool Aliases
+### 標準ツールエイリアス
 
-All aliases are case-insensitive:
+すべてのエイリアスは大文字と小文字を区別しません:
 
-| Alias     | Alternative Names                    | Category         | Description                                 |
-| --------- | ------------------------------------ | ---------------- | ------------------------------------------- |
-| `execute` | shell, Bash, powershell              | Shell execution  | Execute commands in appropriate shell       |
-| `read`    | Read, NotebookRead, view             | File reading     | Read file contents                          |
-| `edit`    | Edit, MultiEdit, Write, NotebookEdit | File editing     | Edit and modify files                       |
-| `search`  | Grep, Glob, search                   | Code search      | Search for files or text in files           |
-| `agent`   | custom-agent, Task                   | Agent invocation | Invoke other custom agents                  |
-| `web`     | WebSearch, WebFetch                  | Web access       | Fetch web content and search                |
-| `todo`    | TodoWrite                            | Task management  | Create and manage task lists (VS Code only) |
+| エイリアス | 別名                                 | カテゴリ         | 説明                                         |
+| ---------- | ------------------------------------ | ---------------- | -------------------------------------------- |
+| `execute`  | shell, Bash, powershell              | Shell execution  | 適切なシェルでコマンドを実行する             |
+| `read`     | Read, NotebookRead, view             | File reading     | ファイルの内容を読み取る                     |
+| `edit`     | Edit, MultiEdit, Write, NotebookEdit | File editing     | ファイルの編集と変更                         |
+| `search`   | Grep, Glob, search                   | Code search      | ファイルまたはファイル内のテキストを検索する |
+| `agent`    | custom-agent, Task                   | Agent invocation | 他のカスタムエージェントを呼び出す           |
+| `web`      | WebSearch, WebFetch                  | Web access       | ウェブコンテンツを取得して検索する           |
+| `todo`     | TodoWrite                            | Task management  | タスク リストの作成と管理 (VS Code のみ)     |
 
-### Built-in MCP Server Tools
+### 組み込みのMCPサーバーツール
 
 **GitHub MCP Server**:
 
 ```yaml
-tools: ['github/*']  # All GitHub tools
-tools: ['github/get_file_contents', 'github/search_repositories']  # Specific tools
+tools: ['github/*']  # すべてのGitHubツール
+tools: ['github/get_file_contents', 'github/search_repositories']  # 特定のツール
 ```
 
-- All read-only tools available by default
-- Token scoped to source repository
+- すべての読み取り専用ツールはデフォルトで使用可能
+- ソースリポジトリにスコープされたトークン
 
 **Playwright MCP Server**:
 
 ```yaml
-tools: ['playwright/*']  # All Playwright tools
-tools: ['playwright/navigate', 'playwright/screenshot']  # Specific tools
+tools: ['playwright/*']  # すべてのPlaywrightツール
+tools: ['playwright/navigate', 'playwright/screenshot']  # 特定のツール
 ```
 
-- Configured to access localhost only
-- Useful for browser automation and testing
+- ローカルホストのみにアクセスするように設定
+- ブラウザの自動化とテストに役立ちます
 
-### Tool Selection Best Practices
+### ツール選択のベストプラクティス
 
-- **Principle of Least Privilege**: Only enable tools necessary for the agent's purpose
-- **Security**: Limit `execute` access unless explicitly required
-- **Focus**: Fewer tools = clearer agent purpose and better performance
-- **Documentation**: Comment why specific tools are required for complex configurations
+- **最小権限の原則**: エージェントの目的に必要なツールのみを有効にする
+- **セキュリティ**: 明示的に要求されない限り、`execute` アクセスを制限する
+- **集中**: ツールが少ない = エージェントの目的が明確になり、パフォーマンスが向上する
+- **ドキュメント化**: 複雑な構成に特定のツールが必要な理由をコメントしてください
 
-## Sub-Agent Invocation (Agent Orchestration)
+## サブエージェントの呼び出し（エージェントオーケストレーション）
 
-Agents can invoke other agents using the **agent invocation tool** (the `agent` tool) to orchestrate multi-step workflows.
+エージェントは、**エージェント呼び出しツール** (`エージェント` ツール) を使用して他のエージェントを呼び出し、複数ステップのワークフローを調整できます。
 
-The recommended approach is **prompt-based orchestration**:
+推奨されるアプローチは**プロンプトベースのオーケストレーション**です:
 
-- The orchestrator defines a step-by-step workflow in natural language.
-- Each step is delegated to a specialized agent.
-- The orchestrator passes only the essential context (e.g., base path, identifiers) and requires each sub-agent to read its own `.agent.md` spec for tools/constraints.
+- オーケストレーターは、自然言語でステップバイステップのワークフローを定義します。
+- 各ステップは専門のエージェントに委任されます。
+- オーケストレーターは、必須のコンテキスト (基本パス、識別子など) のみを渡し、各サブエージェントにツール/制約の独自の `.agent.md` 仕様を読み取ることを要求します。
 
-### How It Works
+### 仕組み
 
-1. Enable agent invocation by including `agent` in the orchestrator's tools list:
+1. オーケストレーターのツールリストに `agent` を含めることでエージェントの呼び出しを有効にします:
 
 ```yaml
 tools: ["read", "edit", "search", "agent"]
 ```
 
-2. For each step, invoke a sub-agent by providing:
+2. 各ステップで、以下を指定してサブエージェントを起動します。:
 
-- **Agent name** (the identifier users select/invoke)
-- **Agent spec path** (the `.agent.md` file to read and follow)
-- **Minimal shared context** (e.g., `basePath`, `projectName`, `logFile`)
+- **エージェント名** （ユーザーが選択/呼び出す識別子）
+- **エージェント仕様パス** （読んで従うべき `.agent.md` ファイル）
+- **最小限の共有コンテキスト** （例: `basePath`、`projectName`、`logFile`）
 
-### Prompt Pattern (Recommended)
+### プロンプトパターン（推奨）
 
-Use a consistent “wrapper prompt” for every step so sub-agents behave predictably:
+サブエージェントが予測通りに動作するように、すべてのステップで一貫した「ラッパープロンプト」を使用します:
 
 ```text
-This phase must be performed as the agent "<AGENT_NAME>" defined in "<AGENT_SPEC_PATH>".
+このフェーズは、「<AGENT_SPEC_PATH>」で定義されたエージェント「<AGENT_NAME>」として実行する必要があります。
 
-IMPORTANT:
-- Read and apply the entire .agent.md spec (tools, constraints, quality standards).
-- Work on "<WORK_UNIT_NAME>" with base path: "<BASE_PATH>".
-- Perform the necessary reads/writes under this base path.
-- Return a clear summary (actions taken + files produced/modified + issues).
+重要:
+- .agent.md 仕様全体 (ツール、制約、品質基準) を読んで適用します。
+- ベース パスが「<BASE_PATH>」である「<WORK_UNIT_NAME>」で作業します。
+- この基本パスの下で必要な読み取り/書き込みを実行します。
+- 明確な概要を返します (実行されたアクション + 作成/変更されたファイル + 問題)。
 ```
 
-Optional: if you need a lightweight, structured wrapper for traceability, embed a small JSON block in the prompt (still human-readable and tool-agnostic):
+オプション: 追跡可能性のために軽量で構造化されたラッパーが必要な場合は、プロンプトに小さな JSON ブロックを埋め込みます (人間が読めるツールに依存しないまま):
 
 ```text
 {
@@ -380,79 +380,79 @@ Optional: if you need a lightweight, structured wrapper for traceability, embed 
 }
 ```
 
-### Orchestrator Structure (Keep It Generic)
+### オーケストレーターの構造（汎用性を保つ）
 
-For maintainable orchestrators, document these structural elements:
+保守可能なオーケストレーターのために、これらの構造要素を文書化する:
 
-- **Dynamic parameters**: what values are extracted from the user (e.g., `projectName`, `fileName`, `basePath`).
-- **Sub-agent registry**: a list/table mapping each step to `agentName` + `agentSpecPath`.
-- **Step ordering**: explicit sequence (Step 1 → Step N).
-- **Trigger conditions** (optional but recommended): define when a step runs vs is skipped.
-- **Logging strategy** (optional but recommended): a single log/report file updated after each step.
+- **動的パラメータ**: ユーザーから抽出される値 （例: `projectName`、`fileName`、`basePath`）。
+- **サブエージェントレジストリ**: 各ステップを `agentName` + `agentSpecPath` にマッピングするリスト/テーブル。
+- **ステップの順序**: 明示的なシーケンス（ステップ 1 → ステップ N）。
+- **トリガー条件** （オプションですが推奨）: ステップが実行されるタイミングとスキップされるタイミングを定義します。
+- **ログ戦略** （オプションですが推奨）: 各ステップの後に更新される単一のログ/レポート ファイル。
 
-Avoid embedding orchestration “code” (JavaScript, Python, etc.) inside the orchestrator prompt; prefer deterministic, tool-driven coordination.
+オーケストレータープロンプト内にオーケストレーション「コード」（JavaScript、Python など）を埋め込むことは避け、決定論的なツール駆動型の調整を優先します。
 
-### Basic Pattern
+### 基本パターン
 
-Structure each step invocation with:
+各ステップの呼び出しを構成する:
 
-1. **Step description**: Clear one-line purpose (used for logs and traceability)
-2. **Agent identity**: `agentName` + `agentSpecPath`
-3. **Context**: A small, explicit set of variables (paths, IDs, environment name)
-4. **Expected outputs**: Files to create/update and where they should be written
-5. **Return summary**: Ask the sub-agent to return a short, structured summary
+1. **ステップの説明**: 明確な一行の目的（ログとトレーサビリティに使用）
+2. **エージェントID**: `agentName` + `agentSpecPath`
+3. **コンテクスト**: 小さな明示的な変数セット（パス、ID、環境名）
+4. **期待される出力**: 作成/更新するファイルとその書き込み先
+5. **返却概要**: サブエージェントに短く構造化された要約を返すように依頼する
 
-### Example: Multi-Step Processing
+### 例: マルチステップ処理
 
 ```text
-Step 1: Transform raw input data
+Step 1: 生の入力データを変換する
 Agent: data-processor
 Spec: .github/agents/data-processor.agent.md
 Context: projectName=${projectName}, basePath=${basePath}
 Input: ${basePath}/raw/
 Output: ${basePath}/processed/
-Expected: write ${basePath}/processed/summary.md
+Expected: `${basePath}/processed/summary.md`に書き込む
 
-Step 2: Analyze processed data (depends on Step 1 output)
+Step 2: 処理されたデータを分析する（ステップ1の出力に依存）
 Agent: data-analyst
 Spec: .github/agents/data-analyst.agent.md
 Context: projectName=${projectName}, basePath=${basePath}
 Input: ${basePath}/processed/
 Output: ${basePath}/analysis/
-Expected: write ${basePath}/analysis/report.md
+Expected: `${basePath}/analysis/report.md`に書き込む
 ```
 
-### Key Points
+### 要点
 
-- **Pass variables in prompts**: Use `${variableName}` for all dynamic values
-- **Keep prompts focused**: Clear, specific tasks for each sub-agent
-- **Return summaries**: Each sub-agent should report what it accomplished
-- **Sequential execution**: Run steps in order when dependencies exist between outputs/inputs
-- **Error handling**: Check results before proceeding to dependent steps
+- **プロンプトで変数を渡す**: すべての動的な値には `${variableName}` を使用します
+- **プロンプトを集中させる**: 各サブエージェントの明確で具体的なタスク
+- **返却概要**: 各サブエージェントは達成したことを報告する必要がある
+- **順次実行**: 出力と入力の間に依存関係がある場合にステップを順番に実行する
+- **エラー処理**: 依存する手順に進む前に結果を確認する
 
-### ⚠️ Tool Availability Requirement
+### ⚠️ ツールの可用性要件
 
-**Critical**: If a sub-agent requires specific tools (e.g., `edit`, `execute`, `search`), the orchestrator must include those tools in its own `tools` list. Sub-agents cannot access tools that aren't available to their parent orchestrator.
+**クリティカル**: サブエージェントが特定のツール（例：`edit`、`execute`、`search`）を必要とする場合、オーケストレーターはそれらのツールを自身の`tools`リストに含める必要があります。サブエージェントは、親オーケストレーターが利用できないツールにアクセスできません。
 
-**Example**:
+**例**:
 
 ```yaml
-# If your sub-agents need to edit files, execute commands, or search code
+# サブエージェントがファイルを編集したり、コマンドを実行したり、コードを検索したりする必要がある場合
 tools: ["read", "edit", "search", "execute", "agent"]
 ```
 
-The orchestrator's tool permissions act as a ceiling for all invoked sub-agents. Plan your tool list carefully to ensure all sub-agents have the tools they need.
+オーケストレーターのツール権限は、呼び出されるすべてのサブエージェントの上限として機能します。すべてのサブエージェントに必要なツールが確実に提供されるよう、ツールリストを慎重に計画してください。
 
-### ⚠️ Important Limitation
+### ⚠️ 重要な制限事項
 
-**Sub-agent orchestration is NOT suitable for large-scale data processing.** Avoid using multi-step sub-agent pipelines when:
+**サブエージェント オーケストレーションは、大規模なデータ処理には適していません。** マルチステップサブエージェントパイプラインの使用を避ける:
 
-- Processing hundreds or thousands of files
-- Handling large datasets
-- Performing bulk transformations on big codebases
-- Orchestrating more than 5-10 sequential steps
+- 数百または数千のファイルの処理
+- 大規模データセットの取り扱い
+- 大規模なコードベースでの一括変換の実行
+- 5～10以上の連続ステップのオーケストレーション
 
-Each sub-agent invocation adds latency and context overhead. For high-volume processing, implement logic directly in a single agent instead. Use orchestration only for coordinating specialized tasks on focused, manageable datasets.
+サブエージェントの呼び出しごとにレイテンシとコンテキストのオーバーヘッドが増加します。大量の処理が必要な場合は、単一のエージェントに直接ロジックを実装してください。オーケストレーションは、集中管理可能なデータセットにおける特殊なタスクの調整にのみ使用してください。
 
 ## Agent Prompt Structure
 
