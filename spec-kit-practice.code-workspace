@@ -1,8 +1,8 @@
 {
   "folders": [
     {
-      "path": "./"
-    }
+      "path": "./",
+    },
   ],
   "settings": {
     "workbench.editor.pinnedTabsOnSeparateRow": true,
@@ -19,9 +19,10 @@
     "github.copilot.enable": {
       "*": false,
       "typescript": false,
-      "yaml": false
+      "yaml": false,
     },
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "chat.useAgentSkills": true,
+  },
 }
