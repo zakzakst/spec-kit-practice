@@ -64,35 +64,35 @@ applyTo: "**/*.prompt.md"
 - ローカリゼーションをサポートするには、Google デベロッパー ドキュメントの翻訳のベスト プラクティスに従って、文章を短く明確にしてください。
 - 慣用句、ユーモア、または文化特有の言及は避け、中立的で包括的な言語を優先します。
 
-## Output Definition
+## 出力定義
 
-- Specify the format, structure, and location of expected results (for example, “Create `docs/adr/adr-XXXX.md` using the template below”).
-- Include success criteria and failure triggers so Copilot knows when to halt or retry.
-- Provide validation steps—manual checks, automated commands, or acceptance criteria lists—that reviewers can execute after running the prompt.
+- 期待される結果の形式、構造、および場所を指定します (例: 「以下のテンプレートを使用して `docs/adr/adr-XXXX.md` を作成します」)。
+- 成功基準と失敗トリガーを組み込むことで、Copilot がいつ停止または再試行するかを判断できるようになります。
+- プロンプトの実行後にレビュー担当者が実行できる検証手順 (手動チェック、自動コマンド、受け入れ基準リストなど) を提供します。
 
-## Examples and Reusable Assets
+## 例と再利用可能な資産
 
-- Embed Good/Bad examples or scaffolds (Markdown templates, JSON stubs) that the prompt should produce or follow.
-- Maintain reference tables (capabilities, status codes, role descriptions) inline to keep the prompt self-contained. Update these tables when upstream resources change.
-- Link to authoritative documentation instead of duplicating lengthy guidance.
+- プロンプトが生成または従うべき良い例/悪い例またはスキャフォールディング (Markdown テンプレート、JSON スタブ) を埋め込みます。
+- プロンプトを自己完結型に保つために、参照テーブル（機能、ステータスコード、ロールの説明）をインラインで維持します。上流のリソースが変更された場合は、これらのテーブルを更新します。
+- 長いガイダンスを重複して記載するのではなく、信頼できるドキュメントにリンクしてください。
 
-## Quality Assurance Checklist
+## 品質保証チェックリスト
 
-- [ ] Frontmatter fields are complete, accurate, and least-privilege.
-- [ ] Inputs include placeholders, default behaviours, and fallbacks.
-- [ ] Workflow covers preparation, execution, and post-processing without gaps.
-- [ ] Output expectations include formatting and storage details.
-- [ ] Validation steps are actionable (commands, diff checks, review prompts).
-- [ ] Security, compliance, and privacy policies referenced by the prompt are current.
-- [ ] Prompt executes successfully in VS Code (`Chat: Run Prompt`) using representative scenarios.
+- [ ] Frontmatter フィールドは完全かつ正確で、最小限の権限しか与えられていません。
+- [ ] 入力には、プレースホルダー、デフォルトの動作、フォールバックが含まれます。
+- [ ] ワークフローは、準備、実行、後処理を隙間なくカバーします。
+- [ ] 出力の期待には、フォーマットと保存の詳細が含まれます。
+- [ ] 検証手順は実行可能です (コマンド、差分チェック、レビュー プロンプト)。
+- [ ] プロンプトによって参照されるセキュリティ、コンプライアンス、およびプライバシー ポリシーは最新のものです。
+- [ ] 代表的なシナリオを使用して、VS Code (`Chat: Run Prompt`) で Prompt が正常に実行されます。
 
-## Maintenance Guidance
+## メンテナンスガイダンス
 
-- Version-control prompts alongside the code they affect; update them when dependencies, tooling, or review processes change.
-- Review prompts periodically to ensure tool lists, model requirements, and linked documents remain valid.
-- Coordinate with other repositories: when a prompt proves broadly useful, extract common guidance into instruction files or shared prompt packs.
+- バージョン管理は、影響を受けるコードの横にプロンプ​​トを表示します。依存関係、ツール、またはレビュー プロセスが変更されたときに更新します。
+- ツール リスト、モデル要件、およびリンクされたドキュメントが有効なままであることを確認するために、定期的にプロンプ​​トを確認します。
+- 他のリポジトリと調整する: プロンプトが広く有用であることが判明した場合は、共通のガイダンスを説明ファイルまたは共有プロンプト パックに抽出します。
 
-## Additional Resources
+## 追加リソース
 
 - [Prompt Files Documentation](https://code.visualstudio.com/docs/copilot/customization/prompt-files#_prompt-file-format)
 - [Awesome Copilot Prompt Files](https://github.com/github/awesome-copilot/tree/main/prompts)
