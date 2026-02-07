@@ -1,270 +1,270 @@
 ---
-description: "Guidelines for creating high-quality Agent Skills for GitHub Copilot"
+description: "GitHub Copilot 向け高品質エージェントスキル作成ガイドライン"
 applyTo: "**/.github/skills/**/SKILL.md, **/.claude/skills/**/SKILL.md"
 ---
 
-# Agent Skills File Guidelines
+# エージェントスキルファイルガイドライン
 
-Instructions for creating effective and portable Agent Skills that enhance GitHub Copilot with specialized capabilities, workflows, and bundled resources.
+特殊な機能、ワークフロー、バンドルされたリソースを使用して GitHub Copilot を強化する、効果的で移植可能なエージェント スキルを作成する手順。
 
-## What Are Agent Skills?
+## エージェントスキルとは何ですか?
 
-Agent Skills are self-contained folders with instructions and bundled resources that teach AI agents specialized capabilities. Unlike custom instructions (which define coding standards), skills enable task-specific workflows that can include scripts, examples, templates, and reference data.
+エージェントスキルは、AIエージェントに特殊な機能を学習させるための指示とバンドルされたリソースが含まれた自己完結型のフォルダです。カスタム指示（コーディング標準を定義するもの）とは異なり、スキルはスクリプト、サンプル、テンプレート、参照データなどを含むタスク固有のワークフローを実現します。
 
-Key characteristics:
+主な特徴:
 
-- **Portable**: Works across VS Code, Copilot CLI, and Copilot coding agent
-- **Progressive loading**: Only loaded when relevant to the user's request
-- **Resource-bundled**: Can include scripts, templates, examples alongside instructions
-- **On-demand**: Activated automatically based on prompt relevance
+- **ポータブル**: VS Code、Copilot CLI、Copilot コーディング エージェントで動作します
+- **プログレッシブローディング**: ユーザーのリクエストに関連する場合にのみ読み込まれます
+- **リソースバンドル**: スクリプト、テンプレート、例を手順と一緒に含めることができます
+- **オンデマンド**: プロンプトの関連性に基づいて自動的にアクティブ化されます
 
-## Directory Structure
+## ディレクトリ構造
 
-Skills are stored in specific locations:
+スキルは特定の場所に保存されます:
 
-| Location                         | Scope                | Recommendation                     |
-| -------------------------------- | -------------------- | ---------------------------------- |
-| `.github/skills/<skill-name>/`   | Project/repository   | Recommended for project skills     |
-| `.claude/skills/<skill-name>/`   | Project/repository   | Legacy, for backward compatibility |
-| `~/.github/skills/<skill-name>/` | Personal (user-wide) | Recommended for personal skills    |
-| `~/.claude/skills/<skill-name>/` | Personal (user-wide) | Legacy, for backward compatibility |
+| 場所                             | 範囲                    | 推奨                         |
+| -------------------------------- | ----------------------- | ---------------------------- |
+| `.github/skills/<skill-name>/`   | プロジェクト/リポジトリ | プロジェクトスキルにおすすめ |
+| `.claude/skills/<skill-name>/`   | プロジェクト/リポジトリ | レガシー、下位互換性のため   |
+| `~/.github/skills/<skill-name>/` | 個人（ユーザー全体）    | 個人スキルにおすすめ         |
+| `~/.claude/skills/<skill-name>/` | 個人（ユーザー全体）    | レガシー、下位互換性のため   |
 
-Each skill **must** have its own subdirectory containing at minimum a `SKILL.md` file.
+各スキルには、少なくとも `SKILL.md` ファイルを含む独自のサブディレクトリが **必要** です。
 
-## Required SKILL.md Format
+## 必要なSKILL.md形式
 
-### Frontmatter (Required)
+### 前書き（必須）
 
 ```yaml
 ---
 name: webapp-testing
-description: Toolkit for testing local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, check for visual regressions, or view browser console logs. Supports Chrome, Firefox, and WebKit browsers.
+description: Playwrightを使用してローカルWebアプリケーションをテストするためのツールキットです。フロントエンドの機能検証、UIの動作デバッグ、ブラウザのスクリーンショットのキャプチャ、表示の不具合チェック、ブラウザのコンソールログの表示など、必要な場合にご利用ください。Chrome、Firefox、WebKitブラウザをサポートしています。
 license: Complete terms in LICENSE.txt
 ---
 ```
 
-| Field         | Required | Constraints                                                                         |
-| ------------- | -------- | ----------------------------------------------------------------------------------- |
-| `name`        | Yes      | Lowercase, hyphens for spaces, max 64 characters (e.g., `webapp-testing`)           |
-| `description` | Yes      | Clear description of capabilities AND use cases, max 1024 characters                |
-| `license`     | No       | Reference to LICENSE.txt (e.g., `Complete terms in LICENSE.txt`) or SPDX identifier |
+| フィールド    | 必須 | 制約                                                                 |
+| ------------- | ---- | -------------------------------------------------------------------- |
+| `name`        | Yes  | 小文字、スペースはハイフン、最大 64 文字 (例: `webapp-testing`)      |
+| `description` | Yes  | 機能と使用例の明確な説明（最大 1024 文字）                           |
+| `license`     | No   | LICENSE.txtへの参照（例：`LICENSE.txtの完全な条項`）またはSPDX識別子 |
 
-### Description Best Practices
+### 説明のベストプラクティス
 
-**CRITICAL**: The `description` field is the PRIMARY mechanism for automatic skill discovery. Copilot reads ONLY the `name` and `description` to decide whether to load a skill. If your description is vague, the skill will never be activated.
+**クリティカル**: `description` フィールドは、スキルの自動検出における主要なメカニズムです。Copilot は、スキルを読み込むかどうかを判断する際に `name` と `description` のみを読み取ります。説明が曖昧な場合、スキルは有効になりません。
 
-**What to include in description:**
+**説明に含める内容:**
 
-1. **WHAT** the skill does (capabilities)
-2. **WHEN** to use it (specific triggers, scenarios, file types, or user requests)
-3. **Keywords** that users might mention in their prompts
+1. **何を** するスキルか（能力）
+2. **いつ** 使用するか（特定のトリガー、シナリオ、ファイルタイプ、またはユーザーリクエスト）
+3. **キーワード** ユーザーがプロンプトで言及する可能性がある
 
-**Good description:**
-
-```yaml
-description: Toolkit for testing local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, check for visual regressions, or view browser console logs. Supports Chrome, Firefox, and WebKit browsers.
-```
-
-**Poor description:**
+**良い説明:**
 
 ```yaml
-description: Web testing helpers
+description: Playwrightを使用してローカルWebアプリケーションをテストするためのツールキットです。フロントエンドの機能検証、UIの動作デバッグ、ブラウザのスクリーンショットのキャプチャ、表示の不具合チェック、ブラウザのコンソールログの表示など、必要な場合にご利用ください。Chrome、Firefox、WebKitブラウザをサポートしています。
 ```
 
-The poor description fails because:
+**説明が不十分:**
 
-- No specific triggers (when should Copilot load this?)
-- No keywords (what user prompts would match?)
-- No capabilities (what can it actually do?)
+```yaml
+description: Webテストヘルパー
+```
 
-### Body Content
+不十分な説明は、
 
-The body contains detailed instructions that Copilot loads AFTER the skill is activated. Recommended sections:
+- 特定のトリガーはありません（Copilot はいつこれをロードする必要がありますか?）
+- キーワードなし（どのユーザープロンプトが一致するでしょうか?）
+- 機能なし（実際に何ができるのか？）
 
-| Section                     | Purpose                                             |
-| --------------------------- | --------------------------------------------------- |
-| `# Title`                   | Brief overview of what this skill enables           |
-| `## When to Use This Skill` | List of scenarios (reinforces description triggers) |
-| `## Prerequisites`          | Required tools, dependencies, environment setup     |
-| `## Step-by-Step Workflows` | Numbered steps for common tasks                     |
-| `## Troubleshooting`        | Common issues and solutions table                   |
-| `## References`             | Links to bundled docs or external resources         |
+### 本文
 
-## Bundling Resources
+本文には、スキルが起動された後にCopilotが読み込む詳細な指示が含まれています。推奨セクション:
 
-Skills can include additional files that Copilot accesses on-demand:
+| セクション                              | 目的                                                   |
+| --------------------------------------- | ------------------------------------------------------ |
+| `# タイトル`                            | このスキルで何ができるのかの簡単な概要                 |
+| `## このスキルを使うタイミング`         | シナリオのリスト（説明トリガーを強化）                 |
+| `## 前提条件`                           | 必要なツール、依存関係、環境設定                       |
+| `## ステップバイステップのワークフロー` | 一般的なタスクの番号付き手順                           |
+| `## トラブルシューティング`             | よくある問題と解決策の表                               |
+| `## 参考文献`                           | バンドルされたドキュメントまたは外部リソースへのリンク |
 
-### Supported Resource Types
+## リソースのバンドル
 
-| Folder        | Purpose                                                               | Loaded into Context? | Example Files                                             |
-| ------------- | --------------------------------------------------------------------- | -------------------- | --------------------------------------------------------- |
-| `scripts/`    | Executable automation that performs specific operations               | When executed        | `helper.py`, `validate.sh`, `build.ts`                    |
-| `references/` | Documentation the AI agent reads to inform decisions                  | Yes, when referenced | `api_reference.md`, `schema.md`, `workflow_guide.md`      |
-| `assets/`     | **Static files used AS-IS** in output (not modified by the AI agent)  | No                   | `logo.png`, `brand-template.pptx`, `custom-font.ttf`      |
-| `templates/`  | **Starter code/scaffolds that the AI agent MODIFIES** and builds upon | Yes, when referenced | `viewer.html` (insert algorithm), `hello-world/` (extend) |
+スキルには、Copilot がオンデマンドでアクセスする追加フ​​ァイルを含めることができます。:
 
-### Directory Structure Example
+### サポートされているリソースの種類
+
+| フォルダ      | 目的                                                                                | コンテキストにロードされるか | サンプルファイル                                            |
+| ------------- | ----------------------------------------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
+| `scripts/`    | 特定の操作を実行する実行可能な自動化                                                | 実行時                       | `helper.py`, `validate.sh`, `build.ts`                      |
+| `references/` | AIエージェントが意思決定の参考として読むドキュメント                                | はい、参照されている場合     | `api_reference.md`, `schema.md`, `workflow_guide.md`        |
+| `assets/`     | **静的ファイルは出力でそのまま使用されます** (AIエージェントによって変更されません) | いいえ                       | `logo.png`, `brand-template.pptx`, `custom-font.ttf`        |
+| `templates/`  | **AIエージェントが変更し、構築するスターターコード/スキャフォールディング**         | はい、参照されている場合     | `viewer.html`（アルゴリズムを挿入）, `hello-world/`（拡張） |
+
+### ディレクトリ構造の例
 
 ```
 .github/skills/my-skill/
-├── SKILL.md              # Required: Main instructions
-├── LICENSE.txt           # Recommended: License terms (Apache 2.0 typical)
-├── scripts/              # Optional: Executable automation
-│   ├── helper.py         # Python script
-│   └── helper.ps1        # PowerShell script
-├── references/           # Optional: Documentation loaded into context
+├── SKILL.md              # 必須: メインの指示
+├── LICENSE.txt           # 推奨: ライセンス条項 (Apache 2.0 標準)
+├── scripts/              # オプション: 実行可能な自動化
+│   ├── helper.py         # Pythonスクリプト
+│   └── helper.ps1        # PowerShellスクリプト
+├── references/           # オプション: コンテキストにロードされたドキュメント
 │   ├── api_reference.md
-│   ├── workflow-setup.md     # Detailed workflow (>5 steps)
+│   ├── workflow-setup.md     # 詳細なワークフロー（5ステップ以上）
 │   └── workflow-deployment.md
-├── assets/               # Optional: Static files used AS-IS in output
-│   ├── baseline.png      # Reference image for comparison
+├── assets/               # オプション: 出力では静的ファイルをそのまま使用します
+│   ├── baseline.png      # 比較のための参考画像
 │   └── report-template.html
-└── templates/            # Optional: Starter code the AI agent modifies
-    ├── scaffold.py       # Code scaffold the AI agent customizes
-    └── config.template   # Config template the AI agent fills in
+└── templates/            # オプション: AIエージェントが変更するスターターコード
+    ├── scaffold.py       # AIエージェントがカスタマイズするコードスキャフォールド
+    └── config.template   # AIエージェントが入力する設定テンプレート
 ```
 
-> **LICENSE.txt**: When creating a skill, download the Apache 2.0 license text from https://www.apache.org/licenses/LICENSE-2.0.txt and save as `LICENSE.txt`. Update the copyright year and owner in the appendix section.
+> **LICENSE.txt**: スキルを作成する際は、https://www.apache.org/licenses/LICENSE-2.0.txt からApache 2.0ライセンステキストをダウンロードし、`LICENSE.txt` として保存してください。付録セクションの著作権年と所有者を更新してください。
 
-### Assets vs Templates: Key Distinction
+### アセットとテンプレート: 主な違い
 
-**Assets** are static resources **consumed unchanged** in the output:
+**アセット**は出力で**変更されずに消費される**静的リソースです:
 
-- A `logo.png` that gets embedded into a generated document
-- A `report-template.html` copied as output format
-- A `custom-font.ttf` applied to text rendering
+- 生成されたドキュメントに埋め込まれる `logo.png`
+- 出力形式としてコピーされた `report-template.html`
+- テキストレンダリングに適用された `custom-font.ttf`
 
-**Templates** are starter code/scaffolds that **the AI agent actively modifies**:
+**テンプレート** は、**AI エージェントが積極的に変更する** スターター コード/スキャフォールドです:
 
-- A `scaffold.py` where the AI agent inserts logic
-- A `config.template` where the AI agent fills in values based on user requirements
-- A `hello-world/` project directory that the AI agent extends with new features
+- AIエージェントがロジックを挿入する「scaffold.py」
+- AIエージェントがユーザーの要件に基づいて値を入力する「config.template」
+- AIエージェントが新しい機能で拡張する「hello-world/」プロジェクトディレクトリ
 
-**Rule of thumb**: If the AI agent reads and builds upon the file content → `templates/`. If the file is used as-is in output → `assets/`.
+**経験則**: AIエージェントがファイルの内容を読み取ってビルドする場合 → `templates/`。ファイルがそのまま出力に使用される場合 → `assets/`。
 
-### Referencing Resources in SKILL.md
+### SKILL.md でのリソースの参照
 
-Use relative paths to reference files within the skill directory:
+スキルディレクトリ内のファイルを参照するには相対パスを使用します:
 
 ```markdown
-## Available Scripts
+## 利用可能なスクリプト
 
-Run the [helper script](./scripts/helper.py) to automate common tasks.
+[helper script](./scripts/helper.py)を実行して、一般的なタスクを自動化します。
 
-See [API reference](./references/api_reference.md) for detailed documentation.
+詳細なドキュメントについては、[API reference](./references/api_reference.md)を参照してください。
 
-Use the [scaffold](./templates/scaffold.py) as a starting point.
+[scaffold](./templates/scaffold.py) を開始点として使用します。
 ```
 
-## Progressive Loading Architecture
+## プログレッシブローディングアーキテクチャ
 
-Skills use three-level loading for efficiency:
+スキルは効率化のために3段階のロードを使用する:
 
-| Level           | What Loads                    | When                              |
-| --------------- | ----------------------------- | --------------------------------- |
-| 1. Discovery    | `name` and `description` only | Always (lightweight metadata)     |
-| 2. Instructions | Full `SKILL.md` body          | When request matches description  |
-| 3. Resources    | Scripts, examples, docs       | Only when Copilot references them |
+| レベル      | 何をロードするか             | いつ                           |
+| ----------- | ---------------------------- | ------------------------------ |
+| 1. 発見     | `name` と `description` のみ | 常に（軽量メタデータ）         |
+| 2. 説明書   | 完全な `SKILL.md` 本体       | リクエストが説明と一致した場合 |
+| 3. リソース | Scripts, examples, docs      | Copilotが参照する場合のみ      |
 
-This means:
+これはつまり:
 
-- Install many skills without consuming context
-- Only relevant content loads per task
-- Resources don't load until explicitly needed
+- コンテキストを消費せずに多くのスキルをインストール
+- タスクごとに関連コンテンツのみが読み込まれます
+- 明示的に必要になるまでリソースは読み込まれません
 
-## Content Guidelines
+## コンテンツガイドライン
 
-### Writing Style
+### 文体
 
-- Use imperative mood: "Run", "Create", "Configure" (not "You should run")
-- Be specific and actionable
-- Include exact commands with parameters
-- Show expected outputs where helpful
-- Keep sections focused and scannable
+- 命令形を使用します。「実行する」、「作成する」、「構成する」（「実行する必要があります」ではありません）
+- 具体的かつ実行可能な内容にする
+- パラメータ付きの正確なコマンドを含める
+- 役立つ場合は期待される出力を表示する
+- セクションを焦点を絞って読みやすいものにする
 
-### Script Requirements
+### スクリプトの要件
 
-When including scripts, prefer cross-platform languages:
+スクリプトを含める場合は、クロスプラットフォーム言語を優先する:
 
-| Language   | Use Case                            |
-| ---------- | ----------------------------------- |
-| Python     | Complex automation, data processing |
-| pwsh       | PowerShell Core scripting           |
-| Node.js    | JavaScript-based tooling            |
-| Bash/Shell | Simple automation tasks             |
+| 言語       | 使用事例                   |
+| ---------- | -------------------------- |
+| Python     | 複雑な自動化、データ処理   |
+| pwsh       | PowerShell Core スクリプト |
+| Node.js    | JavaScriptベースのツール   |
+| Bash/Shell | シンプルな自動化タスク     |
 
-Best practices:
+ベストプラクティス:
 
-- Include help/usage documentation (`--help` flag)
-- Handle errors gracefully with clear messages
-- Avoid storing credentials or secrets
-- Use relative paths where possible
+- ヘルプ/使用方法のドキュメントを含める (`--help` フラグ)
+- 明確なメッセージでエラーを適切に処理する
+- 資格情報や秘密を保存しない
+- 可能な場合は相対パスを使用する
 
-### When to Bundle Scripts
+### スクリプトをバンドルするタイミング
 
-Include scripts in your skill when:
+スキルにスクリプトを含める場合:
 
-- The same code would be rewritten repeatedly by the agent
-- Deterministic reliability is critical (e.g., file manipulation, API calls)
-- Complex logic benefits from being pre-tested rather than generated each time
-- The operation has a self-contained purpose that can evolve independently
-- Testability matters — scripts can be unit tested and validated
-- Predictable behavior is preferred over dynamic generation
+- 同じコードがエージェントによって繰り返し書き換えられる
+- 決定論的な信頼性が重要（例：ファイル操作、API 呼び出し）
+- 複雑なロジックは、毎回生成するのではなく、事前にテストしておくことでメリットが得られます
+- この作戦は独立して発展できる自己完結的な目的を持っている
+- テスト可能性は重要です。スクリプトは単体テストと検証が可能です
+- 動的な生成よりも予測可能な動作が優先される
 
-Scripts enable evolution: even simple operations benefit from being implemented as scripts when they may grow in complexity, need consistent behavior across invocations, or require future extensibility.
+スクリプトは進化を可能にします。単純な操作であっても、複雑性が増したり、呼び出し間で一貫した動作が必要になったり、将来の拡張性が必要になったりする可能性がある場合には、スクリプトとして実装することでメリットが得られます。
 
-### Security Considerations
+### セキュリティに関する考慮事項
 
-- Scripts rely on existing credential helpers (no credential storage)
-- Include `--force` flags only for destructive operations
-- Warn users before irreversible actions
-- Document any network operations or external calls
+- スクリプトは既存の認証情報ヘルパーに依存します（認証情報は保存されません）
+- 破壊的な操作の場合のみ `--force` フラグを含める
+- 取り返しのつかない行動を起こす前にユーザーに警告する
+- ネットワーク操作や外部呼び出しを文書化する
 
-## Common Patterns
+## 一般的なパターン
 
-### Parameter Table Pattern
+### パラメータテーブルパターン
 
-Document parameters clearly:
+パラメータを明確に文書化する:
 
 ```markdown
-| Parameter   | Required | Default | Description                  |
-| ----------- | -------- | ------- | ---------------------------- |
-| `--input`   | Yes      | -       | Input file or URL to process |
-| `--action`  | Yes      | -       | Action to perform            |
-| `--verbose` | No       | `false` | Enable verbose output        |
+| パラメータ  | 必須 | デフォルト | 説明                          |
+| ----------- | ---- | ---------- | ----------------------------- |
+| `--input`   | Yes  | -          | 処理する入力ファイルまたはURL |
+| `--action`  | Yes  | -          | 実行するアクション            |
+| `--verbose` | No   | `false`    | 詳細出力を有効にする          |
 ```
 
-## Validation Checklist
+## 検証チェックリスト
 
-Before publishing a skill:
+スキルを公開する前に:
 
-- [ ] `SKILL.md` has valid frontmatter with `name` and `description`
-- [ ] `name` is lowercase with hyphens, ≤64 characters
-- [ ] `description` clearly states **WHAT** it does, **WHEN** to use it, and relevant **KEYWORDS**
-- [ ] Body includes when to use, prerequisites, and step-by-step workflows
-- [ ] SKILL.md body kept under 500 lines (split large content into `references/` folder)
-- [ ] Large workflows (>5 steps) split into `references/` folder with clear links from SKILL.md
-- [ ] Scripts include help documentation and error handling
-- [ ] Relative paths used for all resource references
-- [ ] No hardcoded credentials or secrets
+- [ ] `SKILL.md` には `name` と `description` を含む有効なフロントマターがあります
+- [ ] `name` は小文字でハイフンを含み、64文字以下です
+- [ ] `description` では、**何を**行うのか、**いつ**使用するのか、関連する **キーワード** が明確に述べられています
+- [ ] 本文には、使用時期、前提条件、ステップバイステップのワークフローが含まれます
+- [ ] SKILL.md 本体は 500 行以下に抑えられています (大きなコンテンツは `references/` フォルダに分割されています)
+- [ ] 大規模なワークフロー（5 ステップ以上）は、SKILL.md からの明確なリンクを持つ `references/` フォルダに分割されます
+- [ ] スクリプトにはヘルプドキュメントとエラー処理が含まれています
+- [ ] すべてのリソース参照に使用される相対パス
+- [ ] ハードコードされた資格情報や秘密情報はありません
 
-## Workflow Execution Pattern
+## ワークフロー実行パターン
 
-When executing multi-step workflows, create a TODO list where each step references the relevant documentation:
+複数ステップのワークフローを実行する場合は、各ステップで関連するドキュメントを参照するTODOリストを作成します:
 
 ```markdown
 ## TODO
 
-- [ ] Step 1: Configure environment - see [workflow-setup.md](./references/workflow-setup.md#environment)
-- [ ] Step 2: Build project - see [workflow-setup.md](./references/workflow-setup.md#build)
-- [ ] Step 3: Deploy to staging - see [workflow-deployment.md](./references/workflow-deployment.md#staging)
-- [ ] Step 4: Run validation - see [workflow-deployment.md](./references/workflow-deployment.md#validation)
-- [ ] Step 5: Deploy to production - see [workflow-deployment.md](./references/workflow-deployment.md#production)
+- [ ] Step 1: 環境を構成する - [workflow-setup.md](./references/workflow-setup.md#environment) を参照してください
+- [ ] Step 2: プロジェクトのビルド - [workflow-setup.md](./references/workflow-setup.md#build) を参照してください
+- [ ] Step 3: ステージングにデプロイする - [workflow-deployment.md](./references/workflow-deployment.md#staging) を参照してください
+- [ ] Step 4: 検証を実行します - [workflow-deployment.md](./references/workflow-deployment.md#validation) を参照してください
+- [ ] Step 5: 本番環境にデプロイする - [workflow-deployment.md](./references/workflow-deployment.md#production) を参照してください
 ```
 
-This ensures traceability and allows resuming workflows if interrupted.
+これにより、追跡可能性が確保され、中断された場合でもワークフローを再開できるようになります。
 
-## Related Resources
+## 関連リソース
 
 - [Agent Skills Specification](https://agentskills.io/)
 - [VS Code Agent Skills Documentation](https://code.visualstudio.com/docs/copilot/customization/agent-skills)
