@@ -454,263 +454,263 @@ tools: ["read", "edit", "search", "execute", "agent"]
 
 サブエージェントの呼び出しごとにレイテンシとコンテキストのオーバーヘッドが増加します。大量の処理が必要な場合は、単一のエージェントに直接ロジックを実装してください。オーケストレーションは、集中管理可能なデータセットにおける特殊なタスクの調整にのみ使用してください。
 
-## Agent Prompt Structure
+## エージェントプロンプトの構造
 
-The markdown content below the frontmatter defines the agent's behavior, expertise, and instructions. Well-structured prompts typically include:
+フロントマターの下のマークダウンコンテンツは、エージェントの行動、専門知識、指示を定義します。適切に構成されたプロンプトには通常、次のような内容が含まれます。:
 
-1. **Agent Identity and Role**: Who the agent is and its primary role
-2. **Core Responsibilities**: What specific tasks the agent performs
-3. **Approach and Methodology**: How the agent works to accomplish tasks
-4. **Guidelines and Constraints**: What to do/avoid and quality standards
-5. **Output Expectations**: Expected output format and quality
+1. **エージェントのアイデンティティと役割**: エージェントとは誰であり、その主な役割は何か
+2. **主な責任**: エージェントが実行する具体的なタスク
+3. **アプローチと方法論**: エージェントがタスクを達成する仕組み
+4. **ガイドラインと制約**: 何をすべきか/避けるべきか、そして品質基準
+5. **出力の期待値**: 期待される出力形式と品質
 
-### Prompt Writing Best Practices
+### プロンプトライティングのベストプラクティス
 
-- **Be Specific and Direct**: Use imperative mood ("Analyze", "Generate"); avoid vague terms
-- **Define Boundaries**: Clearly state scope limits and constraints
-- **Include Context**: Explain domain expertise and reference relevant frameworks
-- **Focus on Behavior**: Describe how the agent should think and work
-- **Use Structured Format**: Headers, bullets, and lists make prompts scannable
+- **具体的かつ直接的に**: 命令形（「分析する」「生成する」）を使用する；曖昧な表現は避ける
+- **境界を定義する**: 範囲の制限と制約を明確に示す
+- **コンテキストを含める**: ドメインの専門知識を説明し、関連するフレームワークを参照する
+- **行動に焦点を当てる**: エージェントがどのように考え、行動すべきかを説明する
+- **構造化フォーマットを使用する**: ヘッダー、箇条書き、リストによりプロンプトが読みやすくなります
 
-## Variable Definition and Extraction
+## 変数の定義と抽出
 
-Agents can define dynamic parameters to extract values from user input and use them throughout the agent's behavior and sub-agent communications. This enables flexible, context-aware agents that adapt to user-provided data.
+エージェントは動的なパラメータを定義してユーザー入力から値を抽出し、エージェント自身の動作やサブエージェント間の通信で使用することができます。これにより、ユーザーが提供するデータに適応する、柔軟でコンテキストを認識するエージェントが実現します。
 
-### When to Use Variables
+### 変数を使用する場合
 
-**Use variables when**:
+**変数を使用するのは**:
 
-- Agent behavior depends on user input
-- Need to pass dynamic values to sub-agents
-- Want to make agents reusable across different contexts
-- Require parameterized workflows
-- Need to track or reference user-provided context
+- エージェントの動作はユーザーの入力に依存する
+- サブエージェントに動的な値を渡す必要がある
+- エージェントをさまざまなコンテキストで再利用できるようにしたい
+- パラメータ化されたワークフローを必要とする
+- ユーザーが提供するコンテキストを追跡または参照する必要がある
 
-**Examples**:
+**例**:
 
-- Extract project name from user prompt
-- Capture certification name for pipeline processing
-- Identify file paths or directories
-- Extract configuration options
-- Parse feature names or module identifiers
+- ユーザープロンプトからプロジェクト名を抽出する
+- パイプライン処理の認証名を取得する
+- ファイルパスまたはディレクトリを識別する
+- 設定オプションを抽出する
+- 機能名またはモジュール識別子を解析する
 
-### Variable Declaration Pattern
+### 変数宣言パターン
 
-Define variables section early in the agent prompt to document expected parameters:
-
-```markdown
-# Agent Name
-
-## Dynamic Parameters
-
-- **Parameter Name**: Description and usage
-- **Another Parameter**: How it's extracted and used
-
-## Your Mission
-
-Process [PARAMETER_NAME] to accomplish [task].
-```
-
-### Variable Extraction Methods
-
-#### 1. **Explicit User Input**
-
-Ask the user to provide the variable if not detected in the prompt:
+エージェントプロンプトの早い段階で変数セクションを定義して、予想されるパラメータを文書化します:
 
 ```markdown
-## Your Mission
+# エージェント名
 
-Process the project by analyzing your codebase.
+## 動的パラメータ
 
-### Step 1: Identify Project
+- **パラメータ名**: 説明と使用方法
+- **別のパラメータ**: 抽出方法と使用方法
 
-If no project name is provided, **ASK THE USER** for:
+## あなたの使命
 
-- Project name or identifier
-- Base path or directory location
-- Configuration type (if applicable)
-
-Use this information to contextualize all subsequent tasks.
+[task] を完了するには [PARAMETER_NAME] を処理します。
 ```
 
-#### 2. **Implicit Extraction from Prompt**
+### 変数抽出法
 
-Automatically extract variables from the user's natural language input:
+#### 1. **明示的なユーザー入力**
+
+プロンプトで変数が検出されない場合は、ユーザーに変数を提供するよう求めます:
+
+```markdown
+## あなたの使命
+
+コードベースを分析してプロジェクトを処理します。
+
+### Step 1: プロジェクトの特定
+
+プロジェクト名が指定されていない場合は、**ユーザーに問い合わせてください**:
+
+- プロジェクト名または識別子
+- ベースパスまたはディレクトリの場所
+- 構成タイプ（該当する場合）
+
+この情報を使用して、後続のすべてのタスクのコンテキストを設定します。
+```
+
+#### 2. **プロンプトからの暗黙的な抽出**
+
+ユーザーの自然言語入力から変数を自動的に抽出する:
 
 ```javascript
-// Example: Extract certification name from user input
+// 例: ユーザー入力から認証名を抽出する
 const userInput = "Process My Certification";
 
-// Extract key information
+// 重要な情報を抽出する
 const certificationName = extractCertificationName(userInput);
-// Result: "My Certification"
+// 結果: "My Certification"
 
 const basePath = `certifications/${certificationName}`;
-// Result: "certifications/My Certification"
+// 結果: "certifications/My Certification"
 ```
 
-#### 3. **Contextual Variable Resolution**
+#### 3. **コンテキスト変数の解決**
 
-Use file context or workspace information to derive variables:
+ファイルコンテキストまたはワークスペース情報を使用して変数を導出する:
 
 ```markdown
-## Variable Resolution Strategy
+## 可変解像度戦略
 
-1. **From User Prompt**: First, look for explicit mentions in user input
-2. **From File Context**: Check current file name or path
-3. **From Workspace**: Use workspace folder or active project
-4. **From Settings**: Reference configuration files
-5. **Ask User**: If all else fails, request missing information
+1. **ユーザープロンプトから**: まず、ユーザー入力で明示的な言及を探す
+2. **ファイルコンテキストから**: 現在のファイル名またはパスを確認する
+3. **ワークスペースから**: ワークスペースフォルダまたはアクティブなプロジェクトを使用する
+4. **設定から**: 参照設定ファイル
+5. **ユーザーに質問する**: それでもダメなら、不足している情報をリクエストする
 ```
 
-### Using Variables in Agent Prompts
+### エージェントプロンプトでの変数の使用
 
-#### Variable Substitution in Instructions
+#### 命令における変数の置換
 
-Use template variables in agent prompts to make them dynamic:
+エージェントプロンプトでテンプレート変数を使用して動的にする:
 
 ```markdown
-# Agent Name
+# エージェント名
 
-## Dynamic Parameters
+## 動的パラメータ
 
-- **Project Name**: ${projectName}
-- **Base Path**: ${basePath}
-- **Output Directory**: ${outputDir}
+- **プロジェクト名**: ${projectName}
+- **ベースパス**: ${basePath}
+- **出力ディレクトリ**: ${outputDir}
 
-## Your Mission
+## あなたの使命
 
-Process the **${projectName}** project located at `${basePath}`.
+`${basePath}` にある **${projectName}** プロジェクトを処理します。
 
-## Process Steps
+## プロセスステップ
 
-1. Read input from: `${basePath}/input/`
-2. Process files according to project configuration
-3. Write results to: `${outputDir}/`
-4. Generate summary report
+1. `${basePath}/input/`から入力を読み込む
+2. プロジェクト構成に従ってファイルを処理する
+3. `${outputDir}/`へ結果を書き込む
+4. 概要レポートを生成する
 
-## Quality Standards
+## 品質基準
 
-- Maintain project-specific coding standards for **${projectName}**
-- Follow directory structure: `${basePath}/[structure]`
+- **${projectName}** のプロジェクト固有のコーディング標準を維持する
+- `${basePath}/[structure]`のディレクトリ構造に従う
 ```
 
-#### Passing Variables to Sub-Agents
+#### サブエージェントへの変数の受け渡し
 
-When invoking a sub-agent, pass all context through substituted variables in the prompt. Prefer passing **paths and identifiers**, not entire file contents.
+サブエージェントを呼び出す際は、プロンプト内の置換変数を通してすべてのコンテキストを渡します。ファイルの内容全体ではなく、**パスと識別子**を渡すことをお勧めします。
 
-Example (prompt template):
+例（プロンプトテンプレート）:
 
 ```text
-This phase must be performed as the agent "documentation-writer" defined in ".github/agents/documentation-writer.agent.md".
+このフェーズは、「.github/agents/documentation-writer.agent.md」で定義されているエージェント「documentation-writer」として実行する必要があります。
 
-IMPORTANT:
-- Read and apply the entire .agent.md spec.
-- Project: "${projectName}"
-- Base path: "projects/${projectName}"
-- Input: "projects/${projectName}/src/"
-- Output: "projects/${projectName}/docs/"
+重要:
+- .agent.md 仕様全体を読んで適用します。
+- プロジェクト: "${projectName}"
+- ベースパス: "projects/${projectName}"
+- 入力: "projects/${projectName}/src/"
+- 出力: "projects/${projectName}/docs/"
 
-Task:
-1. Read source files under the input path.
-2. Generate documentation.
-3. Write outputs under the output path.
-4. Return a concise summary (files created/updated, key decisions, issues).
+タスク:
+1. 入力パスの下のソース ファイルを読み取ります。
+2. ドキュメントを生成します。
+3. 出力パスの下に出力を書き込みます。
+4. 簡潔な概要（作成/更新されたファイル、主要な決定、問題）を返します。
 ```
 
-The sub-agent receives all necessary context embedded in the prompt. Variables are resolved before sending the prompt, so the sub-agent works with concrete paths and values, not variable placeholders.
+サブエージェントは、プロンプトに埋め込まれた必要なコンテキストをすべて受け取ります。変数はプロンプトを送信する前に解決されるため、サブエージェントは変数プレースホルダーではなく、具体的なパスと値で動作します。
 
-### Real-World Example: Code Review Orchestrator
+### 実例: コードレビューオーケストレーター
 
-Example of a simple orchestrator that validates code through multiple specialized agents:
+複数の専門エージェントを通じてコードを検証するシンプルなオーケストレーターの例:
 
-1. Determine shared context:
+1. 共通のコンテキストを決定する:
 
 - `repositoryName`, `prNumber`
-- `basePath` (e.g., `projects/${repositoryName}/pr-${prNumber}`)
+- `basePath`（例：`projects/${repositoryName}/pr-${prNumber}`）
 
-2. Invoke specialized agents sequentially (each agent reads its own `.agent.md` spec):
+2. 特殊エージェントを順番に呼び出します（各エージェントは独自の `.agent.md` 仕様を読み取ります）:
 
 ```text
-Step 1: Security Review
+Step 1: セキュリティレビュー
 Agent: security-reviewer
 Spec: .github/agents/security-reviewer.agent.md
 Context: repositoryName=${repositoryName}, prNumber=${prNumber}, basePath=projects/${repositoryName}/pr-${prNumber}
 Output: projects/${repositoryName}/pr-${prNumber}/security-review.md
 
-Step 2: Test Coverage
+Step 2: テスト範囲
 Agent: test-coverage
 Spec: .github/agents/test-coverage.agent.md
 Context: repositoryName=${repositoryName}, prNumber=${prNumber}, basePath=projects/${repositoryName}/pr-${prNumber}
 Output: projects/${repositoryName}/pr-${prNumber}/coverage-report.md
 
-Step 3: Aggregate
+Step 3: 集計
 Agent: review-aggregator
 Spec: .github/agents/review-aggregator.agent.md
 Context: repositoryName=${repositoryName}, prNumber=${prNumber}, basePath=projects/${repositoryName}/pr-${prNumber}
 Output: projects/${repositoryName}/pr-${prNumber}/final-review.md
 ```
 
-#### Example: Conditional Step Orchestration (Code Review)
+#### 例: 条件付きステップオーケストレーション（コードレビュー）
 
-This example shows a more complete orchestration with **pre-flight checks**, **conditional steps**, and **required vs optional** behavior.
+この例では、**事前チェック**、**条件付きステップ**、**必須とオプション**の動作を含む、より完全なオーケストレーションを示します。
 
-**Dynamic parameters (inputs):**
+**動的パラメータ（入力）:**
 
 - `repositoryName`, `prNumber`
-- `basePath` (e.g., `projects/${repositoryName}/pr-${prNumber}`)
-- `logFile` (e.g., `${basePath}/.review-log.md`)
+- `basePath`（例：`projects/${repositoryName}/pr-${prNumber}`）
+- `logFile`（例：`${basePath}/.review-log.md`）
 
-**Pre-flight checks (recommended):**
+**事前チェック（推奨）:**
 
-- Verify expected folders/files exist (e.g., `${basePath}/changes/`, `${basePath}/reports/`).
-- Detect high-level characteristics that influence step triggers (e.g., repo language, presence of `package.json`, `pom.xml`, `requirements.txt`, test folders).
-- Log the findings once at the start.
+- 必要なフォルダ/ファイルが存在することを確認する。（例：`${basePath}/changes/`, `${basePath}/reports/`）
+- ステップ トリガーに影響する高レベルの特性（リポジトリ言語、`package.json`、`pom.xml`、`requirements.txt`、テスト フォルダーの存在など）を検出します。
+- 開始時に調査結果を一度記録します。
 
-**Step trigger conditions:**
+**ステップトリガー条件:**
 
-| Step                   | Status       | Trigger Condition                                                 | On Failure    |
-| ---------------------- | ------------ | ----------------------------------------------------------------- | ------------- |
-| 1: Security Review     | **Required** | Always run                                                        | Stop pipeline |
-| 2: Dependency Audit    | Optional     | If a dependency manifest exists (`package.json`, `pom.xml`, etc.) | Continue      |
-| 3: Test Coverage Check | Optional     | If test projects/files are present                                | Continue      |
-| 4: Performance Checks  | Optional     | If perf-sensitive code changed OR a perf config exists            | Continue      |
-| 5: Aggregate & Verdict | **Required** | Always run if Step 1 completed                                    | Stop pipeline |
+| ステップ                    | ステータス | トリガー条件                                                                         | 失敗した場合       |
+| --------------------------- | ---------- | ------------------------------------------------------------------------------------ | ------------------ |
+| 1: セキュリティレビュー     | **必須**   | 常に実行する                                                                         | パイプラインを停止 |
+| 2: 依存関係監査             | オプション | 依存関係マニフェストが存在する場合（`package.json`、`pom.xml` など）                 | 続ける             |
+| 3: テストカバレッジチェック | オプション | テストプロジェクト/ファイルが存在する場合                                            | 続ける             |
+| 4: パフォーマンスチェック   | オプション | パフォーマンスに敏感なコードが変更された場合、またはパフォーマンス設定が存在する場合 | 続ける             |
+| 5: 集計と評決               | **必須**   | ステップ1が完了したら常に実行                                                        | パイプラインを停止 |
 
-**Execution flow (natural language):**
+**実行フロー（自然言語）:**
 
-1. Initialize `basePath` and create/update `logFile`.
-2. Run pre-flight checks and record them.
-3. Execute Step 1 → N sequentially.
-4. For each step:
+1. `basePath` を初期化し、`logFile` を作成/更新します。
+2. 事前チェックを実行し、記録します。
+3. ステップ1→Nを順に実行します。
+4. 各ステップごとに:
 
-- If trigger condition is false: mark as **SKIPPED** and continue.
-- Otherwise: invoke the sub-agent using the wrapper prompt and capture its summary.
-- Mark as **SUCCESS** or **FAILED**.
-- If the step is **Required** and failed: stop the pipeline and write a failure summary.
+- トリガー条件が偽の場合: **SKIPPED** としてマークし、続行します。
+- それ以外の場合: ラッパープロンプトを使用してサブエージェントを呼び出し、その概要を取得します。
+- **成功** または **失敗** としてマークします。
+- ステップが **必須** であり失敗した場合: パイプラインを停止し、失敗の概要を書き込みます。
 
-5. End with a final summary section (overall status, artifacts, next actions).
+5. 最終要約セクション（全体的なステータス、成果物、次のアクション）で終了します。
 
-**Sub-agent invocation prompt (example):**
+**サブエージェント呼び出しプロンプト（例）:**
 
 ```text
-This phase must be performed as the agent "security-reviewer" defined in ".github/agents/security-reviewer.agent.md".
+このフェーズは、「.github/agents/security-reviewer.agent.md」で定義されているエージェント「security-reviewer」として実行する必要があります。
 
-IMPORTANT:
-- Read and apply the entire .agent.md spec.
-- Work on repository "${repositoryName}" PR "${prNumber}".
-- Base path: "${basePath}".
+重要:
+- .agent.md 仕様全体を読んで適用します。
+- リポジトリ「${repositoryName}」の PR「${prNumber}」で作業します。
+- ベースパス: "${basePath}"
 
-Task:
-1. Review the changes under "${basePath}/changes/".
-2. Write findings to "${basePath}/reports/security-review.md".
-3. Return a short summary with: critical findings, recommended fixes, files created/modified.
+タスク:
+1. 「${basePath}/changes/」の下の変更を確認します。
+2. 調査結果を「${basePath}/reports/security-review.md」に書き込みます。
+3. 重要な発見、推奨される修正、作成/変更されたファイルを含む短い概要を返します。
 ```
 
-**Logging format (example):**
+**ログ形式（例）:**
 
 ```markdown
-## Step 2: Dependency Audit
+## Step 2: 依存関係監査
 
 **Status:** ✅ SUCCESS / ⚠️ SKIPPED / ❌ FAILED
 **Trigger:** package.json present
@@ -718,89 +718,89 @@ Task:
 **Completed:** 2026-01-16T10:31:05Z
 **Duration:** 00:00:50
 **Artifacts:** reports/dependency-audit.md
-**Summary:** [brief agent summary]
+**Summary:** [エージェントの簡単な概要]
 ```
 
-This pattern applies to any orchestration scenario: extract variables, call sub-agents with clear context, await results.
+このパターンは、変数を抽出し、明確なコンテキストでサブエージェントを呼び出し、結果を待機するなど、あらゆるオーケストレーション シナリオに適用されます。
 
-### Variable Best Practices
+### 変数のベストプラクティス
 
-#### 1. **Clear Documentation**
+#### 1. **明確なドキュメント**
 
-Always document what variables are expected:
+どのような変数が予想されるかを常に文書化する:
 
 ```markdown
-## Required Variables
+## 必須変数
 
-- **projectName**: The name of the project (string, required)
-- **basePath**: Root directory for project files (path, required)
+- **projectName**: プロジェクト名（文字列、必須）
+- **basePath**: プロジェクト ファイルのルート ディレクトリ（パス、必須）
 
-## Optional Variables
+## オプション変数
 
-- **mode**: Processing mode - quick/standard/detailed (enum, default: standard)
-- **outputFormat**: Output format - markdown/json/html (enum, default: markdown)
+- **mode**: 処理モード - クイック/標準/詳細（列挙型、デフォルト: 標準）
+- **outputFormat**: 出力形式 - markdown/json/html（列挙型、デフォルト: markdown）
 
-## Derived Variables
+## 派生変数
 
-- **outputDir**: Automatically set to ${basePath}/output
-- **logFile**: Automatically set to ${basePath}/.log.md
+- **outputDir**: 自動的に${basePath}/outputに設定されます
+- **logFile**: 自動的に ${basePath}/.log.md に設定されます
 ```
 
-#### 2. **Consistent Naming**
+#### 2. **一貫した命名**
 
-Use consistent variable naming conventions:
+一貫した変数命名規則を使用する:
 
 ```javascript
-// Good: Clear, descriptive naming
+// 良い: 明確で説明的な命名
 const variables = {
-  projectName, // What project to work on
-  basePath, // Where project files are located
-  outputDirectory, // Where to save results
-  processingMode, // How to process (detail level)
-  configurationPath, // Where config files are
+  projectName, // どのプロジェクトに取り組むか
+  basePath, // プロジェクトファイルの保存場所
+  outputDirectory, // 結果を保存する場所
+  processingMode, // 処理方法（詳細レベル）
+  configurationPath, // 設定ファイルの場所
 };
 
-// Avoid: Ambiguous or inconsistent
+// 避けるべきこと: 曖昧または矛盾
 const bad_variables = {
-  name, // Too generic
-  path, // Unclear which path
-  mode, // Too short
-  config, // Too vague
+  name, // 一般的すぎる
+  path, // どのパスか不明
+  mode, // 短すぎる
+  config, // 曖昧すぎる
 };
 ```
 
-#### 3. **Validation and Constraints**
+#### 3. **検証と制約**
 
-Document valid values and constraints:
+有効な値と制約を文書化する:
 
 ```markdown
-## Variable Constraints
+## 変数制約
 
 **projectName**:
 
-- Type: string (alphanumeric, hyphens, underscores allowed)
-- Length: 1-100 characters
+- Type: 文字列（英数字、ハイフン、アンダースコアが使用可能）
+- Length: 1～100文字
 - Required: yes
 - Pattern: `/^[a-zA-Z0-9_-]+$/`
 
 **processingMode**:
 
 - Type: enum
-- Valid values: "quick" (< 5min), "standard" (5-15min), "detailed" (15+ min)
+- Valid values: "quick"（5分未満）、"standard"（5～15分）、"detailed"（15分以上）
 - Default: "standard"
 - Required: no
 ```
 
-## MCP Server Configuration (Organization/Enterprise Only)
+## MCP サーバー構成（組織/エンタープライズのみ）
 
-MCP servers extend agent capabilities with additional tools. Only supported for organization and enterprise-level agents.
+MCPサーバーは追加ツールによってエージェントの機能を拡張します。組織レベルおよびエンタープライズレベルのエージェントでのみサポートされます。
 
-### Configuration Format
+### 設定形式
 
 ```yaml
 ---
 name: my-custom-agent
-description: "Agent with MCP integration"
+description: "MCP統合エージェント"
 tools: ["read", "edit", "custom-mcp/tool-1"]
 mcp-servers:
   custom-mcp:
@@ -813,256 +813,256 @@ mcp-servers:
 ---
 ```
 
-### MCP Server Properties
+### MCP サーバーのプロパティ
 
-- **type**: Server type (`'local'` or `'stdio'`)
-- **command**: Command to start the MCP server
-- **args**: Array of command arguments
-- **tools**: Tools to enable from this server (`["*"]` for all)
-- **env**: Environment variables (supports secrets)
+- **type**: サーバータイプ（`'local'` または `'stdio'`）
+- **command**: MCPサーバーを起動するコマンド
+- **args**: コマンド引数の配列
+- **tools**: このサーバーから有効にするツール（すべて有効の場合は `["*"]`）
+- **env**: 環境変数（シークレットをサポート）
 
-### Environment Variables and Secrets
+### 環境変数とシークレット
 
-Secrets must be configured in repository settings under "copilot" environment.
+シークレットは、「copilot」環境のリポジトリ設定で設定する必要があります。
 
-**Supported syntax**:
+**サポートされている構文**:
 
 ```yaml
 env:
-  # Environment variable only
+  # 環境変数のみ
   VAR_NAME: COPILOT_MCP_ENV_VAR_VALUE
 
-  # Variable with header
+  # ヘッダー付き変数
   VAR_NAME: $COPILOT_MCP_ENV_VAR_VALUE
   VAR_NAME: ${COPILOT_MCP_ENV_VAR_VALUE}
 
-  # GitHub Actions-style (YAML only)
+  # GitHub Actions スタイル（YAML のみ）
   VAR_NAME: ${{ secrets.COPILOT_MCP_ENV_VAR_VALUE }}
   VAR_NAME: ${{ var.COPILOT_MCP_ENV_VAR_VALUE }}
 ```
 
-## File Organization and Naming
+## ファイルの構成と命名
 
-### Repository-Level Agents
+### リポジトリレベルのエージェント
 
-- Location: `.github/agents/`
-- Scope: Available only in the specific repository
-- Access: Uses repository-configured MCP servers
+- 場所: `.github/agents/`
+- スコープ: 特定のリポジトリでのみ利用可能
+- アクセス: リポジトリが設定された MCP サーバーを使用します
 
-### Organization/Enterprise-Level Agents
+### 組織/エンタープライズレベルのエージェント
 
-- Location: `.github-private/agents/` (then move to `agents/` root)
-- Scope: Available across all repositories in org/enterprise
-- Access: Can configure dedicated MCP servers
+- 場所: `.github-private/agents/`（その後 `agents/` ルートに移動）
+- 範囲: org/enterprise 内のすべてのリポジトリで利用可能
+- アクセス: 専用の MCP サーバーを構成できます
 
-### Naming Conventions
+### 命名規則
 
-- Use lowercase with hyphens: `test-specialist.agent.md`
-- Name should reflect agent purpose
-- Filename becomes default agent name (if `name` not specified)
-- Allowed characters: `.`, `-`, `_`, `a-z`, `A-Z`, `0-9`
+- ハイフン付きの小文字を使用します: `test-specialist.agent.md`
+- 名前はエージェントの目的を反映する必要があります
+- ファイル名はデフォルトのエージェント名になります（`name` が指定されていない場合）
+- 使用できる文字: `.`、`-`、`_`、`a-z`、`A-Z`、`0-9`
 
-## Agent Processing and Behavior
+## エージェントの処理と動作
 
-### Versioning
+### バージョン管理
 
-- Based on Git commit SHAs for the agent file
-- Create branches/tags for different agent versions
-- Instantiated using latest version for repository/branch
-- PR interactions use same agent version for consistency
+- エージェントファイルのGitコミットSHAに基づく
+- 異なるエージェントバージョン用のブランチ/タグを作成する
+- リポジトリ/ブランチの最新バージョンを使用してインスタンス化されました
+- PRインタラクションでは一貫性を保つために同じエージェントバージョンを使用します
 
-### Name Conflicts
+### 名前の競合
 
-Priority (highest to lowest):
+優先度（最高から最低）:
 
-1. Repository-level agent
-2. Organization-level agent
-3. Enterprise-level agent
+1. リポジトリレベルのエージェント
+2. 組織レベルのエージェント
+3. エンタープライズレベルのエージェント
 
-Lower-level configurations override higher-level ones with the same name.
+下位レベルの構成は、同じ名前の上位レベルの構成をオーバーライドします。
 
-### Tool Processing
+### ツール処理
 
-- `tools` list filters available tools (built-in and MCP)
-- No tools specified = all tools enabled
-- Empty list (`[]`) = all tools disabled
-- Specific list = only those tools enabled
-- Unrecognized tool names are ignored (allows environment-specific tools)
+- `tools` リストは利用可能なツール（組み込みおよび MCP）をフィルタリングします
+- ツールが指定されていない = すべてのツールが有効
+- 空のリスト (`[]`) = すべてのツールが無効
+- 特定のリスト = 有効になっているツールのみ
+- 認識されないツール名は無視されます（環境固有のツールを許可します）
 
-### MCP Server Processing Order
+### MCP サーバーの処理順序
 
-1. Out-of-the-box MCP servers (e.g., GitHub MCP)
-2. Custom agent MCP configuration (org/enterprise only)
-3. Repository-level MCP configurations
+1. すぐに使える MCP サーバー（例: GitHub MCP）
+2. カスタム エージェント MCP 構成（組織/エンタープライズのみ）
+3. リポジトリレベルのMCP構成
 
-Each level can override settings from previous levels.
+各レベルでは、前のレベルの設定を上書きできます。
 
-## Agent Creation Checklist
+## エージェント作成チェックリスト
 
-### Frontmatter
+### 前書き
 
-- [ ] `description` field present and descriptive (50-150 chars)
-- [ ] `description` wrapped in single quotes
-- [ ] `name` specified (optional but recommended)
-- [ ] `tools` configured appropriately (or intentionally omitted)
-- [ ] `model` specified for optimal performance
-- [ ] `target` set if environment-specific
-- [ ] `infer` set to `false` if manual selection required
+- [ ] `description` フィールドが存在し、説明的である（50 ～ 150 文字）
+- [ ] `description` は一重引用符で囲まれています
+- [ ] `name` を指定（オプションだが推奨）
+- [ ] `tools` が適切に設定されている（または意図的に省略されている）
+- [ ] 最適なパフォーマンスを得るために`model`を指定
+- [ ] 環境固有の場合は`target`を設定します
+- [ ] 手動選択が必要な場合は`infer`を`false`に設定する
 
-### Prompt Content
+### プロンプト内容
 
-- [ ] Clear agent identity and role defined
-- [ ] Core responsibilities listed explicitly
-- [ ] Approach and methodology explained
-- [ ] Guidelines and constraints specified
-- [ ] Output expectations documented
-- [ ] Examples provided where helpful
-- [ ] Instructions are specific and actionable
-- [ ] Scope and boundaries clearly defined
-- [ ] Total content under 30,000 characters
+- [ ] エージェントのアイデンティティと役割を明確に定義
+- [ ] 主要な責任が明確に記載
+- [ ] アプローチと方法論の説明
+- [ ] 指定されたガイドラインと制約
+- [ ] 出力期待を文書化
+- [ ] 役立つ場合は例を示します
+- [ ] 指示は具体的かつ実行可能である
+- [ ] 範囲と境界が明確に定義されている
+- [ ] 総コンテンツ数は30,000文字未満
 
-### File Structure
+### ファイル構造
 
-- [ ] Filename follows lowercase-with-hyphens convention
-- [ ] File placed in correct directory (`.github/agents/` or `agents/`)
-- [ ] Filename uses only allowed characters
-- [ ] File extension is `.agent.md`
+- [ ] ファイル名は小文字とハイフンの規則に従います
+- [ ] ファイルは正しいディレクトリ（`.github/agents/` または `agents/`）に配置されます
+- [ ] ファイル名には許可された文字のみを使用します
+- [ ] ファイル拡張子は `.agent.md` です
 
-### Quality Assurance
+### 品質保証
 
-- [ ] Agent purpose is unique and not duplicative
-- [ ] Tools are minimal and necessary
-- [ ] Instructions are clear and unambiguous
-- [ ] Agent has been tested with representative tasks
-- [ ] Documentation references are current
-- [ ] Security considerations addressed (if applicable)
+- [ ] エージェントの目的は一意であり、重複しない
+- [ ] ツールは最小限で必要なもの
+- [ ] 指示は明確で曖昧さがない
+- [ ] エージェントは代表的なタスクでテストされています
+- [ ] ドキュメントの参照は最新です
+- [ ] セキュリティ上の考慮事項（該当する場合）
 
-## Common Agent Patterns
+## 一般的なエージェントパターン
 
-### Testing Specialist
+### テストスペシャリスト
 
-**Purpose**: Focus on test coverage and quality
-**Tools**: All tools (for comprehensive test creation)
-**Approach**: Analyze, identify gaps, write tests, avoid production code changes
+**目的**: テストの範囲と品質に重点を置く
+**ツール**: すべてのツール（包括的なテスト作成用）
+**アプローチ**: 分析し、ギャップを特定し、テストを記述し、本番環境のコード変更を回避する
 
-### Implementation Planner
+### 実装プランナー
 
-**Purpose**: Create detailed technical plans and specifications
-**Tools**: Limited to `['read', 'search', 'edit']`
-**Approach**: Analyze requirements, create documentation, avoid implementation
+**目的**: 詳細な技術計画と仕様を作成する
+**ツール**: `['read', 'search', 'edit']` に限定されます
+**アプローチ**: 要件を分析し、ドキュメントを作成し、実装を回避する
 
-### Code Reviewer
+### コードレビュー担当者
 
-**Purpose**: Review code quality and provide feedback
-**Tools**: `['read', 'search']` only
-**Approach**: Analyze, suggest improvements, no direct modifications
+**目的**: コードの品質をレビューし、フィードバックを提供する
+**ツール**: `['read', 'search']` のみ
+**アプローチ**: 分析し、改善を提案するが、直接的な変更は行わない
 
-### Refactoring Specialist
+### リファクタリングスペシャリスト
 
-**Purpose**: Improve code structure and maintainability
-**Tools**: `['read', 'search', 'edit']`
-**Approach**: Analyze patterns, propose refactorings, implement safely
+**目的**: コード構造と保守性を改善する
+**ツール**: `['read', 'search', 'edit']`
+**アプローチ**: パターンを分析し、リファクタリングを提案し、安全に実装する
 
-### Security Auditor
+### セキュリティ監査人
 
-**Purpose**: Identify security issues and vulnerabilities
-**Tools**: `['read', 'search', 'web']`
-**Approach**: Scan code, check against OWASP, report findings
+**目的**: セキュリティ上の問題と脆弱性を特定する
+**ツール**: `['read', 'search', 'web']`
+**アプローチ**: コードをスキャンし、OWASP に照らし合わせてチェックし、結果を報告します
 
-## Common Mistakes to Avoid
+## 避けるべきよくある間違い
 
-### Frontmatter Errors
+### 前書きのエラー
 
-- ❌ Missing `description` field
-- ❌ Description not wrapped in quotes
-- ❌ Invalid tool names without checking documentation
-- ❌ Incorrect YAML syntax (indentation, quotes)
+- ❌ `description`フィールドがありません
+- ❌ 説明が引用符で囲まれていない
+- ❌ ドキュメントを確認せずに無効なツール名を使用している
+- ❌ YAML構文が正しくありません（インデント、引用符）
 
-### Tool Configuration Issues
+### ツール設定の問題
 
-- ❌ Granting excessive tool access unnecessarily
-- ❌ Missing required tools for agent's purpose
-- ❌ Not using tool aliases consistently
-- ❌ Forgetting MCP server namespace (`server-name/tool`)
+- ❌ 不必要に過剰なツールアクセスを許可している
+- ❌ エージェントの目的に必要なツールが不足している
+- ❌ ツールエイリアスを一貫して使用していない
+- ❌ MCP サーバーの名前空間を忘れています（`server-name/tool`）
 
-### Prompt Content Problems
+### プロンプトコンテンツの問題
 
-- ❌ Vague, ambiguous instructions
-- ❌ Conflicting or contradictory guidelines
-- ❌ Lack of clear scope definition
-- ❌ Missing output expectations
-- ❌ Overly verbose instructions (exceeding character limits)
-- ❌ No examples or context for complex tasks
+- ❌ 曖昧で不明瞭な指示
+- ❌ 矛盾するガイドライン
+- ❌ 明確な範囲定義の欠如
+- ❌ 期待される成果が達成されていない
+- ❌ 過度に詳細な指示（文字数制限を超える）
+- ❌ 複雑なタスクの例やコンテキストがない
 
-### Organizational Issues
+### 構成上の問題
 
-- ❌ Filename doesn't reflect agent purpose
-- ❌ Wrong directory (confusing repo vs org level)
-- ❌ Using spaces or special characters in filename
-- ❌ Duplicate agent names causing conflicts
+- ❌ ファイル名はエージェントの目的を反映していません
+- ❌ 間違ったディレクトリ（リポジトリと組織レベルの混同）
+- ❌ ファイル名にスペースや特殊文字を使用する
+- ❌ エージェント名の重複による競合の発生
 
-## Testing and Validation
+## テストと検証
 
-### Manual Testing
+### 手動テスト
 
-1. Create the agent file with proper frontmatter
-2. Reload VS Code or refresh GitHub.com
-3. Select the agent from the dropdown in Copilot Chat
-4. Test with representative user queries
-5. Verify tool access works as expected
-6. Confirm output meets expectations
+1. 適切な前書きでエージェントファイルを作成する
+2. VS Code を再読み込みするか、GitHub.com を更新してください
+3. Copilot Chatのドロップダウンからエージェントを選択します
+4. 代表的なユーザークエリでテストする
+5. ツールアクセスが期待どおりに機能することを確認する
+6. 出力が期待どおりであることを確認する
 
-### Integration Testing
+### 統合テスト
 
-- Test agent with different file types in scope
-- Verify MCP server connectivity (if configured)
-- Check agent behavior with missing context
-- Test error handling and edge cases
-- Validate agent switching and handoffs
+- スコープ内の異なるファイルタイプを持つテストエージェント
+- MCP サーバーの接続を確認する（構成されている場合）
+- コンテキストが欠落しているエージェントの動作を確認する
+- エラー処理とエッジケースをテストする
+- エージェントの切り替えと引き継ぎを検証する
 
-### Quality Checks
+### 品質チェック
 
-- Run through agent creation checklist
-- Review against common mistakes list
-- Compare with example agents in repository
-- Get peer review for complex agents
-- Document any special configuration needs
+- エージェント作成チェックリストを実行する
+- よくある間違いのリストを確認する
+- リポジトリ内のサンプルエージェントと比較する
+- 複雑なエージェントのピアレビューを取得する
+- 特別な構成の必要性を文書化する
 
-## Additional Resources
+## 追加リソース
 
-### Official Documentation
+### 公式ドキュメント
 
 - [Creating Custom Agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
 - [Custom Agents Configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
 - [Custom Agents in VS Code](https://code.visualstudio.com/docs/copilot/customization/custom-agents)
 - [MCP Integration](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp)
 
-### Community Resources
+### コミュニティリソース
 
 - [Awesome Copilot Agents Collection](https://github.com/github/awesome-copilot/tree/main/agents)
 - [Customization Library Examples](https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents)
 - [Your First Custom Agent Tutorial](https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents/your-first-custom-agent)
 
-### Related Files
+### 関連ファイル
 
-- [Prompt Files Guidelines](./prompt.instructions.md) - For creating prompt files
-- [Instructions Guidelines](./instructions.instructions.md) - For creating instruction files
+- [プロンプトファイルのガイドライン](./prompt.instructions.md) - プロンプトファイルを作成する場合
+- [指示ガイドライン](./instructions.instructions.md) - 指示ファイルを作成するため
 
-## Version Compatibility Notes
+## バージョン互換性に関する注意事項
 
-### GitHub.com (Coding Agent)
+### GitHub.com（コーディングエージェント）
 
-- ✅ Fully supports all standard frontmatter properties
-- ✅ Repository and org/enterprise level agents
-- ✅ MCP server configuration (org/enterprise)
-- ❌ Does not support `model`, `argument-hint`, `handoffs` properties
+- ✅ すべての標準的なフロントマタープロパティを完全にサポート
+- ✅ リポジトリと組織/エンタープライズレベルのエージェント
+- ✅ MCP サーバー構成（org/enterprise）
+- ❌ `model`、`argument-hint`、`handoffs` プロパティをサポートしていません
 
 ### VS Code / JetBrains / Eclipse / Xcode
 
-- ✅ Supports `model` property for AI model selection
-- ✅ Supports `argument-hint` and `handoffs` properties
-- ✅ User profile and workspace-level agents
-- ❌ Cannot configure MCP servers at repository level
-- ⚠️ Some properties may behave differently
+- ✅ AIモデル選択のための`model`プロパティをサポート
+- ✅ `argument-hint` および `handoffs` プロパティをサポートします
+- ✅ ユーザープロファイルとワークスペースレベルのエージェント
+- ❌ リポジトリレベルでMCPサーバーを構成できません
+- ⚠️ 一部のプロパティは異なる動作をする場合があります
 
-When creating agents for multiple environments, focus on common properties and test in all target environments. Use `target` property to create environment-specific agents when necessary.
+複数の環境向けにエージェントを作成する場合は、共通プロパティに重点を置き、すべてのターゲット環境でテストを実施してください。必要に応じて、`target` プロパティを使用して環境固有のエージェントを作成してください。
