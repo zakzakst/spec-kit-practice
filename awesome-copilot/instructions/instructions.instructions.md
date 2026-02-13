@@ -80,70 +80,70 @@ applyTo: "対象ファイルの glob パターン (例: **/*.ts、**/*.py)"
 
 ### 4. 検証と確認（オプションだが推奨）
 
-- Build commands to verify code
-- Linting and formatting tools
-- Testing requirements
-- Verification steps
+- コードを検証するためのビルドコマンド
+- リンティングとフォーマットツール
+- テスト要件
+- 検証手順
 
-## Content Guidelines
+## コンテンツガイドライン
 
-### Writing Style
+### 文体
 
-- Use clear, concise language
-- Write in imperative mood ("Use", "Implement", "Avoid")
-- Be specific and actionable
-- Avoid ambiguous terms like "should", "might", "possibly"
-- Use bullet points and lists for readability
-- Keep sections focused and scannable
+- 明確で簡潔な言葉を使う
+- 命令形で書く（「使用する」「実装する」「避ける」）
+- 具体的かつ実行可能な内容にする
+- 「～すべき」「～かもしれない」「～かもしれない」といった曖昧な表現は避けましょう
+- 読みやすさのために箇条書きやリストを使用する
+- セクションを焦点を絞って読みやすいものにする
 
-### Best Practices
+### ベストプラクティス
 
-- **Be Specific**: Provide concrete examples rather than abstract concepts
-- **Show Why**: Explain the reasoning behind recommendations when it adds value
-- **Use Tables**: For comparing options, listing rules, or showing patterns
-- **Include Examples**: Real code snippets are more effective than descriptions
-- **Stay Current**: Reference current versions and best practices
-- **Link Resources**: Include official documentation and authoritative sources
+- **具体的に**: 抽象的な概念ではなく具体的​​な例を挙げる
+- **理由を示す**: 価値を追加する場合の推奨理由を説明する
+- **表を使用する**: オプションの比較、ルールの一覧表示、パターンの表示
+- **例を含める**: 実際のコードスニペットは説明よりも効果的です
+- **最新情報を入手**: 現在のバージョンとベストプラクティスを参照する
+- **リンクリソース**: 公式文書と信頼できる情報源を含める
 
-### Common Patterns to Include
+### 含める一般的なパターン
 
-1. **Naming Conventions**: How to name variables, functions, classes, files
-2. **Code Organization**: File structure, module organization, import order
-3. **Error Handling**: Preferred error handling patterns
-4. **Dependencies**: How to manage and document dependencies
-5. **Comments and Documentation**: When and how to document code
-6. **Version Information**: Target language/framework versions
+1. **命名規則**: 変数、関数、クラス、ファイルの命名方法
+2. **コードの構成**: ファイル構造、モジュール構成、インポート順序
+3. **エラー処理**: 推奨されるエラー処理パターン
+4. **依存関係**: 依存関係を管理および文書化する方法
+5. **コメントとドキュメント**: コードをいつ、どのように文書化するか
+6. **バージョン情報**: 対象言語/フレームワークのバージョン
 
-## Patterns to Follow
+## 従うべきパターン
 
-### Bullet Points and Lists
+### 箇条書きとリスト
 
 ```markdown
-## Security Best Practices
+## セキュリティのベストプラクティス
 
-- Always validate user input before processing
-- Use parameterized queries to prevent SQL injection
-- Store secrets in environment variables, never in code
-- Implement proper authentication and authorization
-- Enable HTTPS for all production endpoints
+- 処理前に常にユーザー入力を検証する
+- パラメータ化されたクエリを使用してSQLインジェクションを防ぐ
+- 秘密はコードではなく環境変数に保存する
+- 適切な認証と承認を実装する
+- すべての本番エンドポイントでHTTPSを有効にする
 ```
 
-### Tables for Structured Information
+### 構造化情報のための表
 
 ```markdown
-## Common Issues
+## よくある問題
 
-| Issue            | Solution            | Example                       |
-| ---------------- | ------------------- | ----------------------------- |
-| Magic numbers    | Use named constants | `const MAX_RETRIES = 3`       |
-| Deep nesting     | Extract functions   | Refactor nested if statements |
-| Hardcoded values | Use configuration   | Store API URLs in config      |
+| 問題                 | 解決方法               | 例                                       |
+| -------------------- | ---------------------- | ---------------------------------------- |
+| マジックナンバー     | 名前付き定数を使用する | `const MAX_RETRIES = 3`                  |
+| 深いネスト           | 関数の抽出             | ネストされた if 文をリファクタリングする |
+| ハードコードされた値 | 設定を使用する         | API URLをconfigに保存する                |
 ```
 
-### Code Comparison
+### コード比較
 
 ```markdown
-### Good Example - Using TypeScript interfaces
+### 良い例 - TypeScriptインターフェースの使用
 
 \`\`\`typescript
 interface User {
@@ -157,7 +157,7 @@ function getUser(id: string): User {
 }
 \`\`\`
 
-### Bad Example - Using any type
+### 悪い例 - 任意の型の使用
 
 \`\`\`typescript
 function getUser(id: any): any {
@@ -166,99 +166,99 @@ function getUser(id: any): any {
 \`\`\`
 ```
 
-### Conditional Guidance
+### 条件付きガイダンス
 
 ```markdown
-## Framework Selection
+## フレームワークの選択
 
-- **For small projects**: Use Minimal API approach
-- **For large projects**: Use controller-based architecture with clear separation
-- **For microservices**: Consider domain-driven design patterns
+- **小規模プロジェクトの場合**: 最小限のAPIアプローチを使用する
+- **大規模プロジェクトの場合**: 明確に分離されたコントローラベースのアーキテクチャを使用する
+- **マイクロサービスの場合**: ドメイン駆動設計パターンを検討する
 ```
 
-## Patterns to Avoid
+## 避けるべきパターン
 
-- **Overly verbose explanations**: Keep it concise and scannable
-- **Outdated information**: Always reference current versions and practices
-- **Ambiguous guidelines**: Be specific about what to do or avoid
-- **Missing examples**: Abstract rules without concrete code examples
-- **Contradictory advice**: Ensure consistency throughout the file
-- **Copy-paste from documentation**: Add value by distilling and contextualizing
+- **過度に冗長な説明**: 簡潔で読みやすいものにする
+- **古い情報**: 常に最新のバージョンと実践を参照する
+- **曖昧なガイドライン**: 何をすべきか、何を避けるべきかを具体的に伝える
+- **不足している例**: 具体的なコード例のない抽象的なルール
+- **矛盾したアドバイス**: ファイル全体の一貫性を確保する
+- **ドキュメントからコピー＆ペースト**: 抽出して文脈化することで価値を付加する
 
-## Testing Your Instructions
+## 指示のテスト
 
-Before finalizing instruction files:
+指示ファイルを確定する前に:
 
-1. **Test with Copilot**: Try the instructions with actual prompts in VS Code
-2. **Verify Examples**: Ensure code examples are correct and run without errors
-3. **Check Glob Patterns**: Confirm `applyTo` patterns match intended files
+1. **Copilotでテストする**: VS Codeで実際のプロンプトを使って手順を試してみましょう
+2. **例を確認する**: コード例が正しく、エラーなく実行されることを確認する
+3. **Globパターンを確認する**: `applyTo` パターンが意図したファイルに一致することを確認する
 
-## Example Structure
+## 構造例
 
-Here's a minimal example structure for a new instruction file:
+新しい指示ファイルの最小限の例の構造は次のとおりです:
 
 ```markdown
 ---
-description: "Brief description of purpose"
+description: "目的の簡単な説明"
 applyTo: "**/*.ext"
 ---
 
-# Technology Name Development
+# 技術名開発
 
-Brief introduction and context.
+簡単な紹介と背景。
 
-## General Instructions
+## 一般的な指示
 
-- High-level guideline 1
-- High-level guideline 2
+- 高レベルガイドライン1
+- 高レベルガイドライン2
 
-## Best Practices
+## ベストプラクティス
 
-- Specific practice 1
-- Specific practice 2
+- 具体的な実践1
+- 具体的な実践2
 
-## Code Standards
+## コード標準
 
-### Naming Conventions
+### 命名規則
 
-- Rule 1
-- Rule 2
+- ルール1
+- ルール2
 
-### File Organization
+### ファイル構成
 
-- Structure 1
-- Structure 2
+- 構造1
+- 構造2
 
-## Common Patterns
+## 一般的なパターン
 
-### Pattern 1
+### パターン1
 
-Description and example
+説明と例
 
 \`\`\`language
 code example
 \`\`\`
 
-### Pattern 2
+### パターン2
 
-Description and example
+説明と例
 
-## Validation
+## 検証
 
 - Build command: `command to verify`
 - Linting: `command to lint`
 - Testing: `command to test`
 ```
 
-## Maintenance
+## メンテナンス
 
-- Review instructions when dependencies or frameworks are updated
-- Update examples to reflect current best practices
-- Remove outdated patterns or deprecated features
-- Add new patterns as they emerge in the community
-- Keep glob patterns accurate as project structure evolves
+- 依存関係やフレームワークが更新された場合は指示を確認する
+- 現在のベストプラクティスを反映するように例を更新します
+- 古くなったパターンや廃止された機能を削除する
+- コミュニティ内で新しいパターンが出現したら追加する
+- プロジェクト構造の変化に応じて glob パターンを正確に保つ
 
-## Additional Resources
+## 追加リソース
 
 - [Custom Instructions Documentation](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
 - [Awesome Copilot Instructions](https://github.com/github/awesome-copilot/tree/main/instructions)
