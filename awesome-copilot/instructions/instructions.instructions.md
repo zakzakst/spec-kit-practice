@@ -1,84 +1,84 @@
 ---
-description: "Guidelines for creating high-quality custom instruction files for GitHub Copilot"
+description: "GitHub Copilot 用の高品質なカスタム指示ファイルを作成するためのガイドライン"
 applyTo: "**/*.instructions.md"
 ---
 
-# Custom Instructions File Guidelines
+# カスタム指示ファイルのガイドライン
 
-Instructions for creating effective and maintainable custom instruction files that guide GitHub Copilot in generating domain-specific code and following project conventions.
+GitHub Copilot がドメイン固有のコードを生成し、プロジェクトの規則に従うようにガイドする、効果的で保守可能なカスタム指示ファイルを作成する手順。
 
-## Project Context
+## プロジェクトの背景
 
-- Target audience: Developers and GitHub Copilot working with domain-specific code
-- File format: Markdown with YAML frontmatter
-- File naming convention: lowercase with hyphens (e.g., `react-best-practices.instructions.md`)
-- Location: `.github/instructions/` directory
-- Purpose: Provide context-aware guidance for code generation, review, and documentation
+- 対象読者: ドメイン固有のコードを扱う開発者とGitHub Copilot
+- ファイル形式: YAML フロントマターを使用した Markdown
+- ファイルの命名規則: ハイフン付きの小文字（例：`react-best-practices.instructions.md`）
+- 場所: `.github/instructions/` 配下
+- 目的: コード生成、レビュー、ドキュメント化のためのコンテキスト認識ガイダンスを提供する
 
-## Required Frontmatter
+## 必須の前文
 
-Every instruction file must include YAML frontmatter with the following fields:
+すべての指示ファイルには、次のフィールドを含むYAMLフロントマターを含める必要があります。:
 
 ```yaml
 ---
-description: "Brief description of the instruction purpose and scope"
-applyTo: "glob pattern for target files (e.g., **/*.ts, **/*.py)"
+description: "指導の目的と範囲の簡単な説明"
+applyTo: "対象ファイルの glob パターン (例: **/*.ts、**/*.py)"
 ---
 ```
 
-### Frontmatter Guidelines
+### 前書きガイドライン
 
-- **description**: Single-quoted string, 1-500 characters, clearly stating the purpose
-- **applyTo**: Glob pattern(s) specifying which files these instructions apply to
-  - Single pattern: `'**/*.ts'`
-  - Multiple patterns: `'**/*.ts, **/*.tsx, **/*.js'`
-  - Specific files: `'src/**/*.py'`
-  - All files: `'**'`
+- **description**: 目的を明確に示す、1～500文字の単一引用符で囲まれた文字列
+- **applyTo**: これらの命令が適用されるファイルを指定する glob パターン
+  - 単一パターン: `'**/*.ts'`
+  - 複数パターン: `'**/*.ts, **/*.tsx, **/*.js'`
+  - 特定のファイル: `'src/**/*.py'`
+  - すべてのファイル: `'**'`
 
-## File Structure
+## ファイル構造
 
-A well-structured instruction file should include the following sections:
+適切に構成された指示ファイルには、以下のセクションが含まれている必要があります:
 
-### 1. Title and Overview
+### 1. タイトルと概要
 
-- Clear, descriptive title using `#` heading
-- Brief introduction explaining the purpose and scope
-- Optional: Project context section with key technologies and versions
+- `#` 見出しを使用した明確で説明的なタイトル
+- 目的と範囲を説明する簡単な紹介
+- オプション: 主要なテクノロジーとバージョンを含むプロジェクトコンテキストセクション
 
-### 2. Core Sections
+### 2. コアセクション
 
-Organize content into logical sections based on the domain:
+ドメインに基づいてコンテンツを論理的なセクションに整理する:
 
-- **General Instructions**: High-level guidelines and principles
-- **Best Practices**: Recommended patterns and approaches
-- **Code Standards**: Naming conventions, formatting, style rules
-- **Architecture/Structure**: Project organization and design patterns
-- **Common Patterns**: Frequently used implementations
-- **Security**: Security considerations (if applicable)
-- **Performance**: Optimization guidelines (if applicable)
-- **Testing**: Testing standards and approaches (if applicable)
+- **一般的な指示**: 高レベルのガイドラインと原則
+- **ベストプラクティス**: 推奨されるパターンとアプローチ
+- **コード標準**: 命名規則、フォーマット、スタイルルール
+- **建築/構造**: プロジェクトの構成と設計パターン
+- **一般的なパターン**: よく使用される実装
+- **セキュリティ**: セキュリティに関する考慮事項（該当する場合）
+- **パフォーマンス**: 最適化ガイドライン（該当する場合）
+- **テスト**: テスト基準とアプローチ（該当する場合）
 
-### 3. Examples and Code Snippets
+### 3. 例とコードスニペット
 
-Provide concrete examples with clear labels:
+明確なラベルを付けて具体的な例を挙げる:
 
 ```markdown
-### Good Example
+### 良い例
 
 \`\`\`language
-// Recommended approach
-code example here
+// 推奨されるアプローチ
+コード例はこちら
 \`\`\`
 
-### Bad Example
+### 悪い例
 
 \`\`\`language
-// Avoid this pattern
-code example here
+// このパターンを避ける
+コード例はこちら
 \`\`\`
 ```
 
-### 4. Validation and Verification (Optional but Recommended)
+### 4. 検証と確認（オプションだが推奨）
 
 - Build commands to verify code
 - Linting and formatting tools
