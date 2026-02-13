@@ -1,34 +1,34 @@
 ---
-description: "Guidelines for writing Node.js and JavaScript code with Vitest testing"
+description: "Vitest テストで Node.js および JavaScript コードを書くためのガイドライン"
 applyTo: "**/*.js, **/*.mjs, **/*.cjs"
 ---
 
-# Code Generation Guidelines
+# コード生成ガイドライン
 
-## Coding standards
+## コーディング標準
 
-- Use JavaScript with ES2022 features and Node.js (20+) ESM modules
-- Use Node.js built-in modules and avoid external dependencies where possible
-- Ask the user if you require any additional dependencies before adding them
-- Always use async/await for asynchronous code, and use 'node:util' promisify function to avoid callbacks
-- Keep the code simple and maintainable
-- Use descriptive variable and function names
-- Do not add comments unless absolutely necessary, the code should be self-explanatory
-- Never use `null`, always use `undefined` for optional values
-- Prefer functions over classes
+- ES2022 機能と Node.js (20+) ESM モジュールを使用して JavaScript を使用する
+- Node.jsの組み込みモジュールを使用し、可能な限り外部依存関係を避ける
+- 追加の依存関係を追加する前に、ユーザーに追加の依存関係が必要かどうかを確認します
+- 非同期コードには常にasync/awaitを使用し、コールバックを避けるために「node:util」promisify関数を使用してください
+- コードをシンプルかつ保守しやすいものにする
+- 説明的な変数名と関数名を使用する
+- 絶対に必要な場合を除き、コメントを追加しないでください。コードは説明不要です
+- `null` は使用せず、オプションの値には常に `undefined` を使用してください
+- クラスよりも関数を優先する
 
-## Testing
+## テスト
 
-- Use Vitest for testing
-- Write tests for all new features and bug fixes
-- Ensure tests cover edge cases and error handling
-- NEVER change the original code to make it easier to test, instead, write tests that cover the original code as it is
+- テストにはVitestを使用する
+- すべての新機能とバグ修正のテストを書く
+- テストがエッジケースとエラー処理をカバーしていることを確認する
+- テストを容易にするために元のコードを変更しないでください。代わりに、元のコードをそのままカバーするテストを記述してください
 
-## Documentation
+## ドキュメント
 
-- When adding new features or making significant changes, update the README.md file where necessary
+- 新しい機能を追加したり、大幅な変更を加えたりする場合は、必要に応じて README.md ファイルを更新してください
 
-## User interactions
+## ユーザーインタラクション
 
-- Ask questions if you are unsure about the implementation details, design choices, or need clarification on the requirements
-- Always answer in the same language as the question, but use english for the generated content like code, comments or docs
+- 実装の詳細、設計の選択について不明な点がある場合、または要件を明確にする必要がある場合は質問してください
+- 質問と同じ言語で回答してください。ただし、コード、コメント、ドキュメントなどの生成されたコンテンツには英語を使用してください
