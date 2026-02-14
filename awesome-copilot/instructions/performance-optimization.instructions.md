@@ -1,9 +1,9 @@
 ---
 applyTo: "*"
-description: "The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips."
+description: "あらゆる言語、フレームワーク、スタックに対応した、エンジニアが執筆した、最も包括的で実践的なパフォーマンス最適化の手順です。実用的なガイダンス、シナリオベースのチェックリスト、トラブルシューティング、プロのヒントなど、フロントエンド、バックエンド、データベースのベストプラクティスを網羅しています。"
 ---
 
-# Performance Optimization Best Practices
+# パフォーマンス最適化のベストプラクティス
 
 ## Introduction
 
