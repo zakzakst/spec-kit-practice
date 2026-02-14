@@ -3,6 +3,11 @@
 - https://dev.classmethod.jp/articles/spec-driven-development-with-github-spec-kit/
 - https://zenn.dev/rakuten_tech/articles/try-github-spec-kit
 
+## UI Skills
+
+- https://zenn.dev/redamoon/articles/article39-ui-skills-accessibility
+- https://www.ui-skills.com/
+
 ## awesome-copilot写経
 
 - 次ここから
