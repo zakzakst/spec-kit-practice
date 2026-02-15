@@ -1,45 +1,45 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.
-license: Complete terms in LICENSE.txt
+description: 高いデザイン品質を備えた、個性的でプロダクショングレードのフロントエンドインターフェースを構築します。このスキルは、ユーザーからWebコンポーネント、ページ、アーティファクト、ポスター、アプリケーション（例：Webサイト、ランディングページ、ダッシュボード、Reactコンポーネント、HTML/CSSレイアウト、またはWeb UIのスタイル設定/美化など）の構築を依頼された際に活用します。AI特有の美的感覚にとらわれない、クリエイティブで洗練されたコードとUIデザインを生成します。
+license: 完全な規約はLICENSE.txtに記載
 ---
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+このスキルは、ありきたりな「AIの雑さ」を回避し、独自性のあるプロダクショングレードのフロントエンドインターフェースの作成を支援します。美的ディテールとクリエイティブな選択に細心の注意を払い、実際に動作するコードを実装します。
 
-The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
+ユーザーがフロントエンドの要件を提供する: 構築するコンポーネント、ページ、アプリケーション、またはインターフェース。目的、対象ユーザー、技術的な制約に関するコンテキストが含まれる場合があります。
 
-## Design Thinking
+## デザイン思考
 
-Before coding, understand the context and commit to a BOLD aesthetic direction:
+コーディングする前に、コンテキストを理解し、大胆な美的方向性を定めましょう:
 
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+- **目的**: このインターフェースはどのような問題を解決しますか? 誰が使用しますか?
+- **トーン**: 極端なものを選びましょう。極限までミニマル、マキシマリストなカオス、レトロフューチャリスティック、オーガニック／ナチュラル、ラグジュアリー／洗練、遊び心のある／おもちゃのようなデザイン、エディトリアル／マガジン、ブルータリスト／粗削り、アールデコ／幾何学模様、ソフト／パステル、インダストリアル／実用主義など。選択肢は実に多種多様です。これらを参考にしながら、美的方向性に忠実なデザインを作り上げてください。
+- **制約**: 技術要件 (フレームワーク、パフォーマンス、アクセシビリティ)。
+- **差別化**: これを忘れられないものにする要因は何でしょうか？ 人々が記憶に留めておくべきことは何でしょうか？
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+**重要**: 明確なコンセプトの方向性を定め、それを正確に実行しましょう。大胆なマキシマリズムと洗練されたミニマリズムはどちらも効果的です。重要なのは、強烈さではなく、意図的なアプローチです。
 
-Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
+次に、動作するコード（HTML/CSS/JS、React、Vueなど）を実装します:
 
-- Production-grade and functional
-- Visually striking and memorable
-- Cohesive with a clear aesthetic point-of-view
-- Meticulously refined in every detail
+- 生産グレードで機能的
+- 視覚的に印象的で記憶に残る
+- 明確な美的観点に基づいたまとまりのある
+- 細部まで丁寧に仕上げた
 
-## Frontend Aesthetics Guidelines
+## フロントエンドの美的ガイドライン
 
-Focus on:
+焦点を当てる:
 
-- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
-- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
-- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
-- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+- **タイポグラフィ**: 美しく、個性的で、興味深いフォントを選びましょう。ArialやInternationalといった一般的なフォントは避け、フロントエンドの美しさを高める個性的なフォント、意外性のある個性的なフォントを選びましょう。個性的なディスプレイフォントと洗練された本文フォントを組み合わせるのも良いでしょう。
+- **色とテーマ**: 統一感のある美的感覚を心がけましょう。CSS変数を使って一貫性を保ちましょう。シャープなアクセントのある支配的な色は、控えめで均等に分散されたパレットよりも効果的です。
+- **モーション**: エフェクトやマイクロインタラクションにはアニメーションを活用しましょう。HTMLにはCSSのみのソリューションを優先しましょう。React用のMotionライブラリが利用可能な場合は使用しましょう。インパクトの強い瞬間に焦点を当てましょう。ページ読み込みを1回にまとめ、アニメーション表示を段階的に行う（アニメーション遅延）ことで、散在するマイクロインタラクションよりも、より魅力的な体験を演出できます。スクロールトリガーやホバー状態など、ユーザーを驚かせる要素を活用しましょう。
+- **空間構成**: 予想外のレイアウト。非対称性。重なり。対角線の流れ。グリッドを破る要素。豊かなネガティブスペース、あるいはコントロールされた密度。
+- **背景とビジュアルの詳細**: 単色で統一するのではなく、雰囲気と奥行きを演出しましょう。全体の美観にマッチするコンテキストエフェクトやテクスチャを追加しましょう。グラデーションメッシュ、ノイズテクスチャ、幾何学模様、レイヤー化された透明効果、ドラマチックな影、装飾的なボーダー、カスタムカーソル、粒子オーバーレイなど、クリエイティブな表現を取り入れることができます。
 
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+使い古されたフォント ファミリ (Inter、Roboto、Arial、システム フォント)、決まりきったカラー スキーム (特に白い背景の紫のグラデーション)、予測可能なレイアウトとコンポーネント パターン、コンテキスト固有の特性が欠如している型どおりのデザインなど、AI によって生成された一般的な美観は絶対に使用しないでください。
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
+創造的に解釈し、真に文脈に合わせてデザインされたと感じられる、予想外の選択をしましょう。デザインはどれも同じであってはなりません。明るいテーマと暗いテーマ、異なるフォント、異なる美的感覚など、様々なバリエーションを取り入れましょう。世代を超えて、決して共通の選択（例えばSpace Grotesk）に収束させてはいけません。
 
-**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
+**重要**: 実装の複雑さと美的ビジョンを一致させましょう。マキシマリスト的なデザインには、精巧なコードと豊富なアニメーションやエフェクトが必要です。ミニマリスト的、あるいは洗練されたデザインには、抑制されたデザイン、精密さ、そしてスペース、タイポグラフィ、そして繊細なディテールへの細心の注意が必要です。エレガンスは、ビジョンをうまく実現することで生まれます。
 
-Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+覚えておいてください。Claudeは並外れた創造力を発揮する能力を持っています。ためらうことなく、既成概念にとらわれず、独自のビジョンに全力を尽くすことで、真に何が創造できるかを示してください。
