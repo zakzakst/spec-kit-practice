@@ -1,6 +1,6 @@
 ---
 name: 12-principles-of-animation
-description: Apply Disney's 12 animation principles to web interfaces. Use when implementing motion, reviewing animation quality, designing micro-interactions, or making UI feel alive. Triggers on tasks involving CSS animations, transitions, motion libraries, easing curves, springs, or UX feedback.
+description: ディズニーの12のアニメーション原則をWebインターフェースに適用します。モーションの実装、アニメーション品質の確認、マイクロインタラクションの設計、UIに躍動感を与える際に活用できます。CSSアニメーション、トランジション、モーションライブラリ、イージングカーブ、スプリング、UXフィードバックなどのタスクでトリガーされます。
 license: MIT
 metadata:
   author: raphael-salaja
@@ -8,95 +8,95 @@ metadata:
   source: /content/12-principles-of-animation/index.mdx
 ---
 
-# 12 Principles of Animation
+# アニメーションの12の原則
 
-Disney animators codified these principles in the 1930s to make drawings feel real. We use them to make pixels feel human. The problems are surprisingly similar.
+ディズニーのアニメーターたちは、1930年代にこれらの原則を体系化し、絵にリアルさを持たせました。私たちはそれを、ピクセルに人間らしさを与えるために使っています。問題は驚くほど似ています。
 
-## When to Apply
+## いつ利用するか
 
-Reference these guidelines when:
+以下のガイドラインを参考にしてください:
 
-- Adding motion to UI components
-- Reviewing animation quality and feel
-- Designing micro-interactions and feedback
-- Making interfaces feel more alive and responsive
-- Deciding what should (and shouldn't) animate
+- UIコンポーネントにモーションを追加する
+- アニメーションの品質と感触のレビュー
+- マイクロインタラクションとフィードバックの設計
+- インターフェースをより生き生きと、反応良く感じさせる
+- 何をアニメーション化すべきか（すべきでないか）を決める
 
-## Principles Overview
+## 原則の概要
 
-| #   | Principle                     | Web Application                                           |
-| --- | ----------------------------- | --------------------------------------------------------- |
-| 1   | Squash and Stretch            | Convey weight and elasticity in morphing elements         |
-| 2   | Anticipation                  | Prepare users for what comes next (wind-up before action) |
-| 3   | Staging                       | Direct attention through sequential animation             |
-| 4   | Straight Ahead & Pose to Pose | Define keyframes, let browser interpolate                 |
-| 5   | Follow Through & Overlapping  | Use springs for organic overshoot-and-settle              |
-| 6   | Slow In & Slow Out            | Apply easing curves for natural acceleration              |
-| 7   | Arcs                          | Add curved paths for organic movement                     |
-| 8   | Secondary Action              | Reinforce primary actions with subtle flourishes          |
-| 9   | Timing                        | Keep interactions under 300ms, be consistent              |
-| 10  | Exaggeration                  | Amplify motion for emphasis (sparingly)                   |
-| 11  | Solid Drawing                 | Use perspective, shadows, and depth                       |
-| 12  | Appeal                        | The sum of all techniques applied with care               |
+| #   | 原理                                   | ウェブアプリケーション                                   |
+| --- | -------------------------------------- | -------------------------------------------------------- |
+| 1   | スクワッシュとストレッチ               | モーフィング要素で重さと弾力性を伝える                   |
+| 2   | 期待                                   | 次に何が起こるかをユーザーに準備させる（行動前の準備）   |
+| 3   | 演出                                   | 連続アニメーションで注目を集める                         |
+| 4   | まっすぐ前へ、そしてポーズからポーズへ | キーフレームを定義し、ブラウザに補間させる               |
+| 5   | フォロースルーとオーバーラッピング     | 有機的なオーバーシュートとセトルにはスプリングを使用する |
+| 6   | スローイン＆スローアウト               | 自然な加速のためにイージングカーブを適用する             |
+| 7   | 弧                                     | 有機的な動きのために曲線パスを追加する                   |
+| 8   | 二次アクション                         | 微妙な装飾で主要なアクションを強化する                   |
+| 9   | タイミング                             | インタラクションを300ミリ秒以内に抑え、一貫性を保つ      |
+| 10  | 誇張                                   | 強調するために動きを増幅する（控えめに）                 |
+| 11  | ソリッド図面                           | 遠近感、影、奥行きを活用する                             |
+| 12  | アピール                               | 注意深く適用されたすべての技術の合計                     |
 
-## Quick Reference
+## クイックリファレンス
 
-### 1. Squash and Stretch
+### 1. スクワッシュとストレッチ
 
-Digital objects don't have physics, so we fake it. Subtle deformation conveys weight—but don't overdo it or professional software becomes a cartoon.
+デジタルオブジェクトには物理的な特性がないので、私たちはそれを模倣します。微妙な変形は重みを伝えますが、やりすぎるとプロ仕様のソフトウェアが漫画のようになってしまうので注意が必要です。
 
-### 2. Anticipation
+### 2. 期待
 
-Give cues before major actions. Pull-to-refresh hints, buttons that compress before sending. Reserve for moments that matter—too many wind-ups make apps feel sluggish.
+重要なアクションの前にヒントを表示しましょう。プルして更新するヒントや、送信前にボタンが圧縮される機能などです。重要な瞬間にのみヒントを表示しましょう。ヒントが多すぎるとアプリの動作が重たく感じられます。
 
-### 3. Staging
+### 3. 演出
 
-Guide the eye through sequential animation. Dim backgrounds, focus on important elements. Direct attention like a film.
+連続したアニメーションを通して視線を誘導します。背景を暗くし、重要な要素に焦点を当てます。まるで映画のように視線を誘導します。
 
-### 4. Straight Ahead & Pose to Pose
+### 4. まっすぐ前へ、そしてポーズからポーズへ
 
-Focus on key poses: start state, end state, maybe a midpoint. Context menus animate on exit only—entrance animation compounds into irritation.
+重要なポーズに焦点を当てましょう。開始状態、終了状態、そして中間点などです。コンテキストメニューは終了時にのみアニメーションします。開始時のアニメーションはイライラを募らせます。
 
-### 5. Follow Through & Overlapping
+### 5. フォロースルーとオーバーラッピング
 
-Nothing moves as a single rigid unit. Springs add organic overshoot-and-settle that easing curves can't replicate. But too much stagger makes interfaces feel slow.
+単一の剛体として動くものはありません。スプリングは、イージングカーブでは再現できない有機的なオーバーシュートとセトリングを加えます。しかし、あまりにずれるとインターフェースが遅く感じられます。
 
-### 6. Slow In & Slow Out
+### 6. スローイン＆スローアウト
 
-- `ease-out`: Entrances (arrive fast, settle gently)
-- `ease-in`: Exits (build momentum before departure)
-- `ease-in-out`: Deliberate movements
+- `ease-out`: 入り口（早く到着し、静かに落ち着く）
+- `ease-in`: 出口（出発前に勢いをつける）
+- `ease-in-out`: 意図的な動き
 
-### 7. Arcs
+### 7. 弧
 
-Curved paths feel inevitable, like water finding its level. Best for hero moments and playful interactions. Utilitarian interfaces work fine with straight lines.
+曲線は、水が水位を見つけるように、必然的な印象を与えます。ヒーローの瞬間や遊び心のあるインタラクションに最適です。実用的なインターフェースには直線が適しています。
 
-### 8. Secondary Action
+### 8. 二次アクション
 
-Flourishes supporting the main action—sparkles after success, sound effects on impact. Think games: they combine sound and visual effects for impact.
+メインアクションをサポートする華やかな演出 ― 成功後の輝き、インパクト時の効果音など。ゲームを思い浮かべてみてください。サウンドとビジュアル効果を組み合わせ、インパクトを生み出します。
 
-### 9. Timing
+### 9. タイミング
 
-Keep interactions under 300ms. Be consistent—if one button animates at 200ms, all buttons should. Define timing scales early, reuse everywhere.
+インタラクションの遅延は300ミリ秒以内に抑えましょう。一貫性を保ちましょう。例えば、あるボタンのアニメーションが200ミリ秒であれば、他のボタンも同様に200ミリ秒で動作するように設定しましょう。タイミングスケールは早めに定義し、あらゆる場面で再利用しましょう。
 
-### 10. Exaggeration
+### 10. 誇張
 
-Push past physical accuracy to make points land harder. Use sparingly for onboarding, empty states, confirmations, or errors.
+物理的な精度を超えて、ポイントを獲得しにくくします。オンボーディング、空の状態、確認、エラーなどには控えめに使用してください。
 
-### 11. Solid Drawing
+### 11. ソリッド図面
 
-Shadows suggest depth. Layering implies hierarchy. CSS `perspective` gives 3D transforms actual depth.
+影は奥行きを暗示し、レイヤーは階層構造を暗示します。CSS の「perspective」は3D変換に実際の奥行きを与えます。
 
-### 12. Appeal
+### 12. アピール
 
-The difference between software you tolerate and software you love. Not one technique—the sum of all techniques applied with care and taste.
+我慢できるソフトウェアと愛せるソフトウェアの違い。それは、たった一つの技術ではなく、細心の注意とセンスをもって適用された全ての技術の総和です。
 
-## Key Guidelines
+## 主要なガイドライン
 
-- **Balance**: Too much animation turns professional software into a cartoon
-- **Consistency**: Define timing scales early, reuse everywhere
-- **Purpose**: Great animation is invisible—users think "this feels good"
-- **Restraint**: Not everything needs to be animated
+- **バランス**: アニメーションが多すぎると、プロ仕様のソフトウェアが漫画のようになってしまいます
+- **一貫性**: タイミングスケールを早期に定義し、どこでも再利用する
+- **目的**: 素晴らしいアニメーションは目に見えない。ユーザーは「これは気持ちいい」と思う。
+- **制限**: すべてをアニメ化する必要はない
 
 ## References
 
