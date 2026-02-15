@@ -32,3 +32,6 @@
   - https://zenn.dev/microsoft/articles/91e88d7914e5bc
   - https://zenn.dev/openjny/articles/e11450f61d067f
   - https://zenn.dev/microsoft/articles/a9d4f6ec2a05c2
+- safe-area-inset
+- prefers-reduced-motion
+- tabular-nums
