@@ -1,44 +1,44 @@
 ---
 name: interaction-design
-description: Design and implement microinteractions, motion design, transitions, and user feedback patterns. Use when adding polish to UI interactions, implementing loading states, or creating delightful user experiences.
+description: マイクロインタラクション、モーションデザイン、トランジション、ユーザーフィードバックパターンを設計・実装します。UIインタラクションの洗練度を高めたり、読み込み状態を実装したり、快適なユーザーエクスペリエンスを実現したりする際に活用できます。
 ---
 
-# Interaction Design
+# インタラクションデザイン
 
-Create engaging, intuitive interactions through motion, feedback, and thoughtful state transitions that enhance usability and delight users.
+モーション、フィードバック、思慮深い状態遷移を通じて魅力的で直感的なインタラクションを作成し、使いやすさを向上させてユーザーを満足させます。
 
-## When to Use This Skill
+## このスキルを使うタイミング
 
-- Adding microinteractions to enhance user feedback
-- Implementing smooth page and component transitions
-- Designing loading states and skeleton screens
-- Creating gesture-based interactions
-- Building notification and toast systems
-- Implementing drag-and-drop interfaces
-- Adding scroll-triggered animations
-- Designing hover and focus states
+- ユーザーフィードバックを強化するためのマイクロインタラクションの追加
+- スムーズなページとコンポーネントの遷移を実装する
+- 読み込み状態とスケルトン画面の設計
+- ジェスチャーベースのインタラクションの作成
+- 通知とトーストシステムの構築
+- ドラッグアンドドロップインターフェースの実装
+- スクロールトリガーアニメーションの追加
+- ホバー状態とフォーカス状態の設計
 
-## Core Principles
+## コア原則
 
-### 1. Purposeful Motion
+### 1. 意図的な動き
 
-Motion should communicate, not decorate:
+動きは装飾ではなくコミュニケーションであるべき:
 
-- **Feedback**: Confirm user actions occurred
-- **Orientation**: Show where elements come from/go to
-- **Focus**: Direct attention to important changes
-- **Continuity**: Maintain context during transitions
+- **フィードバック**: ユーザーアクションが発生したことを確認する
+- **方向**: 要素の出所/行き先を表示する
+- **フォーカス**: 重要な変更に直接注意を払う
+- **連続**: 遷移中にコンテキストを維持する
 
-### 2. Timing Guidelines
+### 2. タイミングガイドライン
 
-| Duration  | Use Case                                  |
-| --------- | ----------------------------------------- |
-| 100-150ms | Micro-feedback (hovers, clicks)           |
-| 200-300ms | Small transitions (toggles, dropdowns)    |
-| 300-500ms | Medium transitions (modals, page changes) |
-| 500ms+    | Complex choreographed animations          |
+| Duration  | 使用事例                                         |
+| --------- | ------------------------------------------------ |
+| 100-150ms | マイクロフィードバック（ホバー、クリック）       |
+| 200-300ms | 小さな遷移（トグル、ドロップダウン）             |
+| 300-500ms | 中程度のトランジション（モーダル、ページの変更） |
+| 500ms+    | 複雑に振り付けられたアニメーション               |
 
-### 3. Easing Functions
+### 3. イージング関数
 
 ```css
 /* Common easings */
@@ -48,7 +48,7 @@ Motion should communicate, not decorate:
 --spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Overshoot - playful */
 ```
 
-## Quick Start: Button Microinteraction
+## クイックスタート: ボタンのマイクロインタラクション
 
 ```tsx
 import { motion } from "framer-motion";
@@ -68,11 +68,11 @@ export function InteractiveButton({ children, onClick }) {
 }
 ```
 
-## Interaction Patterns
+## インタラクションパターン
 
-### 1. Loading States
+### 1. 読み込み状態
 
-**Skeleton Screens**: Preserve layout while loading
+**スケルトンスクリーン**: 読み込み中にレイアウトを維持する
 
 ```tsx
 function CardSkeleton() {
@@ -86,7 +86,7 @@ function CardSkeleton() {
 }
 ```
 
-**Progress Indicators**: Show determinate progress
+**進捗インジケーター**: 明確な進捗状況を示す
 
 ```tsx
 function ProgressBar({ progress }: { progress: number }) {
@@ -103,9 +103,9 @@ function ProgressBar({ progress }: { progress: number }) {
 }
 ```
 
-### 2. State Transitions
+### 2. 状態遷移
 
-**Toggle with smooth transition**:
+**スムーズな切り替え**:
 
 ```tsx
 function Toggle({ checked, onChange }) {
@@ -129,9 +129,9 @@ function Toggle({ checked, onChange }) {
 }
 ```
 
-### 3. Page Transitions
+### 3. ページ遷移
 
-**Framer Motion layout animations**:
+**Framer Motionレイアウトアニメーション**:
 
 ```tsx
 import { AnimatePresence, motion } from "framer-motion";
@@ -153,9 +153,9 @@ function PageTransition({ children, key }) {
 }
 ```
 
-### 4. Feedback Patterns
+### 4. フィードバックパターン
 
-**Ripple effect on click**:
+**クリックによる波及効果**:
 
 ```tsx
 function RippleButton({ children, onClick }) {
@@ -190,9 +190,9 @@ function RippleButton({ children, onClick }) {
 }
 ```
 
-### 5. Gesture Interactions
+### 5. ジェスチャーインタラクション
 
-**Swipe to dismiss**:
+**スワイプして閉じる**:
 
 ```tsx
 function SwipeCard({ children, onDismiss }) {
@@ -213,7 +213,7 @@ function SwipeCard({ children, onDismiss }) {
 }
 ```
 
-## CSS Animation Patterns
+## CSSアニメーションパターン
 
 ### Keyframe Animations
 
@@ -271,10 +271,10 @@ function SwipeCard({ children, onDismiss }) {
 }
 ```
 
-## Accessibility Considerations
+## アクセシビリティに関する考慮事項
 
 ```css
-/* Respect user motion preferences */
+/* ユーザーのモーション設定を尊重する */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -301,25 +301,25 @@ function AnimatedComponent() {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
-1. **Performance First**: Use `transform` and `opacity` for smooth 60fps
-2. **Reduce Motion Support**: Always respect `prefers-reduced-motion`
-3. **Consistent Timing**: Use a timing scale across the app
-4. **Natural Physics**: Prefer spring animations over linear
-5. **Interruptible**: Allow users to cancel long animations
-6. **Progressive Enhancement**: Work without JS animations
-7. **Test on Devices**: Performance varies significantly
+1. **パフォーマンス第一**: スムーズな60fpsを実現するには、`transform`と`opacity`を使用します。
+2. **モーションサポートの削減**: 常に`prefers-reduced-motion`を尊重する
+3. **一貫したタイミング**: アプリ全体でタイミングスケールを使用する
+4. **自然物理学**: 線形アニメーションよりもスプリングアニメーションを好む
+5. **中断可能**: 長いアニメーションをユーザーがキャンセルできるようにする
+6. **プログレッシブエンハンスメント**: JSアニメーションなしで動作する
+7. **デバイスでのテスト**: パフォーマンスは大きく異なる
 
-## Common Issues
+## よくある問題
 
-- **Janky Animations**: Avoid animating `width`, `height`, `top`, `left`
-- **Over-animation**: Too much motion causes fatigue
-- **Blocking Interactions**: Never prevent user input during animations
-- **Memory Leaks**: Clean up animation listeners on unmount
-- **Flash of Content**: Use `will-change` sparingly for optimization
+- **ぎこちないアニメーション**: `width`、`height`、`top`、`left` のアニメーションを避ける
+- **オーバーアニメーション**: 動きすぎると疲労を引き起こす
+- **ブロッキングインタラクション**: アニメーション中にユーザー入力を妨げない
+- **メモリリーク**: アンマウント時にアニメーションリスナーをクリーンアップする
+- **コンテンツのフラッシュ**: 最適化のために `will-change` を控えめに使用してください
 
-## Resources
+## リソース
 
 - [Framer Motion Documentation](https://www.framer.com/motion/)
 - [CSS Animation Guide](https://web.dev/animations-guide/)
