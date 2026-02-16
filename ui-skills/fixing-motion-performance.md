@@ -1,128 +1,128 @@
 ---
 name: fixing-motion-performance
-description: Fix animation performance issues.
+description: アニメーションのパフォーマンスの問題を修正
 ---
 
 # fixing-motion-performance
 
-Fix animation performance issues.
+アニメーションのパフォーマンスの問題を修正
 
-## how to use
+## 使い方
 
 - `/fixing-motion-performance`
-  Apply these constraints to any UI animation work in this conversation.
+  これらの制約を、この会話内のすべての UI アニメーション作業に適用します。
 
 - `/fixing-motion-performance <file>`
-  Review the file against all rules below and report:
-  - violations (quote the exact line or snippet)
-  - why it matters (one short sentence)
-  - a concrete fix (code-level suggestion)
+  以下のすべてのルールに照らしてファイルを確認し、報告してください:
+  - 違反（正確な行または抜粋を引用してください）
+  - なぜそれが重要なのか（短い一文）
+  - 具体的な修正（コードレベルの提案）
 
-Do not migrate animation libraries unless explicitly requested. Apply rules within the existing stack.
+明示的に要求されない限り、アニメーションライブラリを移行しないでください。既存のスタック内でルールを適用してください。
 
-## when to apply
+## いつ利用するか
 
-Reference these guidelines when:
+以下のガイドラインを参考にしてください:
 
-- adding or changing UI animations (CSS, WAAPI, Motion, rAF, GSAP)
-- refactoring janky interactions or transitions
-- implementing scroll-linked motion or reveal-on-scroll
-- animating layout, filters, masks, gradients, or CSS variables
-- reviewing components that use will-change, transforms, or measurement
+- UIアニメーションの追加または変更（CSS、WAAPI、Motion、rAF、GSAP）
+- ぎこちないインタラクションや遷移をリファクタリングする
+- スクロール連動モーションやスクロール時に表示する機能を実装する
+- レイアウト、フィルター、マスク、グラデーション、CSS変数のアニメーション化
+- 意志変化、変換、測定を使用するコンポーネントを確認する
 
-## rendering steps glossary
+## レンダリング手順の用語集
 
 - composite: transform, opacity
 - paint: color, borders, gradients, masks, images, filters
 - layout: size, position, flow, grid, flex
 
-## rule categories by priority
+## 優先度別のルールカテゴリ
 
-| priority | category             | impact      |
-| -------- | -------------------- | ----------- |
-| 1        | never patterns       | critical    |
-| 2        | choose the mechanism | critical    |
-| 3        | measurement          | high        |
-| 4        | scroll               | high        |
-| 5        | paint                | medium-high |
-| 6        | layers               | medium      |
-| 7        | blur and filters     | medium      |
-| 8        | view transitions     | low         |
-| 9        | tool boundaries      | critical    |
+| 優先度 | カテゴリ               | 影響度 |
+| ------ | ---------------------- | ------ |
+| 1      | 決してやらないパターン | 重要   |
+| 2      | メカニズムを選択する   | 重要   |
+| 3      | 測定                   | 高     |
+| 4      | スクロール             | 高     |
+| 5      | ペイント               | 中-高  |
+| 6      | レイヤー               | 中     |
+| 7      | ぼかしとフィルター     | 中     |
+| 8      | view transitions       | 低     |
+| 9      | ツールの境界           | 重要   |
 
-## quick reference
+## クイックリファレンス
 
-### 1. never patterns (critical)
+### 1. 決してやらないパターン（重要）
 
-- do not interleave layout reads and writes in the same frame
-- do not animate layout continuously on large or meaningful surfaces
-- do not drive animation from scrollTop, scrollY, or scroll events
-- no requestAnimationFrame loops without a stop condition
-- do not mix multiple animation systems that each measure or mutate layout
+- レイアウトの読み取りと書き込みを同じフレーム内でインターリーブしない
+- 大きな面や意味のある面ではレイアウトを連続的にアニメーション化しない
+- scrollTop、scrollY、またはscrollイベントからアニメーションを駆動しないでください。
+- requestAnimationFrame は停止条件なしでループしません
+- レイアウトを測定または変更する複数のアニメーションシステムを混在させないでください。
 
-### 2. choose the mechanism (critical)
+### 2. メカニズムを選択する（重要）
 
-- default to transform and opacity for motion
-- use JS-driven animation only when interaction requires it
-- paint or layout animation is acceptable only on small, isolated surfaces
-- one-shot effects are acceptable more often than continuous motion
-- prefer downgrading technique over removing motion entirely
+- transformとopacityを動きのデフォルトにする
+- インタラクションで必要な場合にのみ JS 駆動アニメーションを使用する
+- ペイントやレイアウトアニメーションは、小さな孤立したサーフェス上でのみ許容されます
+- 連続した動きよりもワンショット効果の方が受け入れられることが多い
+- モーションを完全に削除するよりも、テクニックをダウングレードすることを好む
 
-### 3. measurement (high)
+### 3. 測定（高）
 
-- measure once, then animate via transform or opacity
-- batch all DOM reads before writes
-- do not read layout repeatedly during an animation
-- prefer FLIP-style transitions for layout-like effects
-- prefer approaches that batch measurement and writes
+- 一度測定し、transformまたはopacityを使用してアニメーション化する
+- 書き込み前にすべてのDOM読み取りをバッチ処理する
+- アニメーション中にレイアウトを繰り返し読み上げない
+- レイアウトのような効果にはFLIPスタイルのトランジションを好む
+- バッチ測定と書き込みのアプローチを好む
 
-### 4. scroll (high)
+### 4. スクロール（高）
 
-- prefer Scroll or View Timelines for scroll-linked motion when available
-- use IntersectionObserver for visibility and pausing
-- do not poll scroll position for animation
-- pause or stop animations when off-screen
-- scroll-linked motion must not trigger continuous layout or paint on large surfaces
+- スクロールリンクモーションが利用可能な場合は、スクロールまたはタイムラインの表示を優先します。
+- 可視性と一時停止にはIntersectionObserverを使用する
+- アニメーションのスクロール位置をポーリングしない
+- 画面外のときにアニメーションを一時停止または停止する
+- スクロール連動モーションは、大きな表面での連続レイアウトやペイントをトリガーしてはならない。
 
-### 5. paint (medium-high)
+### 5. ペイント（中-高）
 
-- paint-triggering animation is allowed only on small, isolated elements
-- do not animate paint-heavy properties on large containers
-- do not animate CSS variables for transform, opacity, or position
-- do not animate inherited CSS variables
-- scope animated CSS variables locally and avoid inheritance
+- ペイントをトリガーするアニメーションは、小さな独立した要素にのみ許可されます。
+- 大きなコンテナ上のペイントを多用するプロパティをアニメーション化しない
+- transform, opacity, positionのCSS変数をアニメーション化しない
+- 継承されたCSS変数をアニメーション化しない
+- アニメーションCSS変数をローカルにスコープし、継承を避ける
 
-### 6. layers (medium)
+### 6. レイヤー（中）
 
-- compositor motion requires layer promotion, never assume it
-- use will-change temporarily and surgically
-- avoid many or large promoted layers
-- validate layer behavior with tooling when performance matters
+- コンポジターの動きにはレイヤーの昇格が必要です。決してそれを前提としないでください。
+- 一時的かつ外科的にwill-changeを使用する
+- 多数のまたは大規模なプロモーション レイヤーを避ける
+- パフォーマンスが重要な場合はツールを使用してレイヤーの動作を検証する
 
-### 7. blur and filters (medium)
+### 7. ぼかしとフィルター（中）
 
-- keep blur animation small (<=8px)
-- use blur only for short, one-time effects
-- never animate blur continuously
-- never animate blur on large surfaces
-- prefer opacity and translate before blur
+- ぼかしアニメーションを小さく保つ（<=8px）
+- ぼかしは短時間の1回限りの効果にのみ使用してください
+- ぼかしを継続的にアニメーション化しない
+- 大きな表面ではぼかしをアニメーション化しないでください
+- ぼかしの前に不透明度と翻訳を優先する
 
-### 8. view transitions (low)
+### 8. view transitions（低）
 
-- use view transitions only for navigation-level changes
-- avoid view transitions for interaction-heavy UI
-- avoid view transitions when interruption or cancellation is required
-- treat size changes as potentially layout-triggering
+- ナビゲーションレベルの変更にのみview transitionsを使用する
+- インタラクションの多いUIではview transitionsを避ける
+- 中断やキャンセルが必要な場合、view transitionsを避ける
+- サイズ変更をレイアウトトリガーとして扱う
 
-### 9. tool boundaries (critical)
+### 9. ツールの境界（重要）
 
-- do not migrate or rewrite animation libraries unless explicitly requested
-- apply these rules within the existing animation system
-- never partially migrate APIs or mix styles within the same component
+- 明示的に要求されない限り、アニメーションライブラリを移行または書き換えないでください
+- 既存のアニメーションシステム内でこれらのルールを適用する
+- APIを部分的に移行したり、同じコンポーネント内でスタイルを混在させたりしないでください。
 
-## review guidance
+## レビューガイダンス
 
-- enforce critical rules first (never patterns, tool boundaries)
-- choose the least expensive rendering work that matches the intent
-- for any non-default choice, state the constraint that justifies it (surface size, duration, or interaction requirement)
-- when reviewing, prefer actionable notes and concrete alternatives over theory
+- 重要なルールを最初に強制する（パターンやツールの境界は強制しない）
+- 意図に合った最も安価なレンダリング作業を選択する
+- デフォルト以外の選択肢については、それを正当化する制約（表面のサイズ、持続時間、またはインタラクション要件）を明記する
+- レビューする際には、理論よりも実行可能なメモや具体的な代替案を優先する
