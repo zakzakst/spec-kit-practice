@@ -13,6 +13,11 @@
 - https://learn.microsoft.com/ja-jp/azure/architecture/ai-ml/guide/ai-agent-design-patterns
 - https://docs.cloud.google.com/architecture/choose-design-pattern-agentic-ai-system?hl=ja
 
+## OpenSpec
+
+- https://note.com/brave_quince241/n/n6d4bb3ee0a12
+- https://iret.media/183621
+
 ## awesome-copilot写経
 
 - 次ここから
