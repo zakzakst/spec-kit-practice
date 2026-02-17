@@ -120,155 +120,155 @@ description: このスキルは、ダッシュボード、管理パネル、ア�
 - あなたの署名要素
 - 各デフォルトを置き換えるもの
 
-**The test:** Read your proposal. Remove the product name. Could someone identify what this is for? If not, it's generic. Explore deeper.
+**テスト:** 提案書をよく読んでください。製品名を削除してください。これが何の用途なのか、誰かに分かりますか？もし分からないなら、それは一般的な名称です。もっと深く掘り下げてください。
 
 ---
 
-# The Mandate
+# 使命
 
-**Before showing the user, look at what you made.**
+**ユーザーに見せる前に、自分が作ったものを見てみましょう。**
 
-Ask yourself: "If they said this lacks craft, what would they mean?"
+自分自身に問いかけてみよう: 「もし彼らが、これは技巧に欠けていると言ったら、それはどういう意味でしょうか？」
 
-That thing you just thought of — fix it first.
+今思いついたことをまず直しましょう。
 
-Your first output is probably generic. That's normal. The work is catching it before the user has to.
+最初の出力はおそらく汎用的なものでしょう。これは正常な動作です。ユーザーが気づく前に、この作業でそれを検出します。
 
-## The Checks
+## チェック
 
-Run these against your output before presenting:
+プレゼンテーションの前に、これらを出力結果と照らし合わせて実行してください:
 
-- **The swap test:** If you swapped the typeface for your usual one, would anyone notice? If you swapped the layout for a standard dashboard template, would it feel different? The places where swapping wouldn't matter are the places you defaulted.
+- **スワップテスト:** いつも使っている書体に変更したら、気づく人はいるでしょうか？レイアウトを標準のダッシュボードテンプレートに変更したら、印象は変わりますか？変更しても問題にならないのは、デフォルト設定になっている部分です。
 
-- **The squint test:** Blur your eyes. Can you still perceive hierarchy? Is anything jumping out harshly? Craft whispers.
+- **斜視検査:** 目をぼやけさせて。まだ階層構造を認識できますか？何か耳障りなものが飛び出していませんか？クラフトのささやき。
 
-- **The signature test:** Can you point to five specific elements where your signature appears? Not "the overall feel" — actual components. A signature you can't locate doesn't exist.
+- **署名テスト:** あなたの署名が現れる具体的な5つの要素を挙げられますか？「全体的な雰囲気」ではなく、実際の構成要素です。見つけられない署名は存在しないのです。
 
-- **The token test:** Read your CSS variables out loud. Do they sound like they belong to this product's world, or could they belong to any project?
+- **トークンテスト:** CSS変数を声に出して読んでみてください。この製品特有の変数のように聞こえますか？それとも、どのプロジェクトにも当てはまる変数のように聞こえますか？
 
-If any check fails, iterate before showing.
-
----
-
-# Craft Foundations
-
-## Subtle Layering
-
-This is the backbone of craft. Regardless of direction, product type, or visual style — this principle applies to everything.
-
-**Surfaces must be barely different but still distinguishable.** Study Vercel, Supabase, Linear. Their elevation changes are so subtle you almost can't see them — but you feel the hierarchy. Not dramatic jumps. Not obviously different colors. Whisper-quiet shifts.
-
-**Borders must be light but not invisible.** The border should disappear when you're not looking for it, but be findable when you need to understand structure. If borders are the first thing you notice, they're too strong. If you can't tell where regions begin and end, they're too weak.
-
-**The squint test:** Blur your eyes at the interface. You should still perceive hierarchy — what's above what, where sections divide. But nothing should jump out. No harsh lines. No jarring color shifts. Just quiet structure.
-
-This separates professional interfaces from amateur ones. Get this wrong and nothing else matters.
-
-## Infinite Expression
-
-Every pattern has infinite expressions. **No interface should look the same.**
-
-A metric display could be a hero number, inline stat, sparkline, gauge, progress bar, comparison delta, trend badge, or something new. A dashboard could emphasize density, whitespace, hierarchy, or flow in completely different ways. Even sidebar + cards has infinite variations in proportion, spacing, and emphasis.
-
-**Before building, ask:**
-
-- What's the ONE thing users do most here?
-- What products solve similar problems brilliantly? Study them.
-- Why would this interface feel designed for its purpose, not templated?
-
-**NEVER produce identical output.** Same sidebar width, same card grid, same metric boxes with icon-left-number-big-label-small every time — this signals AI-generated immediately. It's forgettable.
-
-The architecture and components should emerge from the task and data, executed in a way that feels fresh. Linear's cards don't look like Notion's. Vercel's metrics don't look like Stripe's. Same concepts, infinite expressions.
-
-## Color Lives Somewhere
-
-Every product exists in a world. That world has colors.
-
-Before you reach for a palette, spend time in the product's world. What would you see if you walked into the physical version of this space? What materials? What light? What objects?
-
-Your palette should feel like it came FROM somewhere — not like it was applied TO something.
-
-**Beyond Warm and Cold:** Temperature is one axis. Is this quiet or loud? Dense or spacious? Serious or playful? Geometric or organic? A trading terminal and a meditation app are both "focused" — completely different kinds of focus. Find the specific quality, not the generic label.
-
-**Color Carries Meaning:** Gray builds structure. Color communicates — status, action, emphasis, identity. Unmotivated color is noise. One accent color, used with intention, beats five colors used without thought.
+いずれかのチェックが失敗した場合は、表示する前に繰り返します。
 
 ---
 
-# Design Principles
+# クラフトの基礎
 
-## Spacing
+## 微妙な重ね着
 
-Pick a base unit and stick to multiples. Consistency matters more than the specific number. Random values signal no system.
+これはクラフトの根幹です。方向性、製品の種類、ビジュアルスタイルを問わず、この原則はすべてに当てはまります。
 
-## Padding
+**表面はほとんど違いがなく、それでも区別できる必要があります。** Vercel, Supabase, Linearを研究してみましょう。その高度変化は非常に微妙で、ほとんど目に見えないほどです。しかし、階層構造は感じられます。劇的な変化ではなく、明らかに色が違うわけでもなく、ささやくような静かな変化です。
 
-Keep it symmetrical. If one side is 16px, others should match unless there's a clear reason.
+**境界線は薄くする必要がありますが、見えなくなるほどで​​はありません。** 境界線は、探していないときには消えるべきだ。しかし、構造を理解する必要があるときには見つけられるべきだ。境界線が最初に目に入るなら、境界線は強すぎる。一方、領域がどこから始まり、どこで終わるのかがわからないなら、境界線は弱すぎる。
 
-## Depth
+**斜視検査:** インターフェースをぼかして見てみましょう。階層構造――何が何の上にあるのか、どこでセクションが区切られているのか――は認識できるはずです。しかし、飛び出してくるものがあってはなりません。荒々しい線や、不快な色の変化は避けましょう。静かな構造だけが必要です。
 
-Choose ONE approach and commit:
+これがプロフェッショナルなインターフェースとアマチュアのインターフェースを分けるものです。これを間違えると、他のことは何も意味をなさなくなります。
 
-- **Borders-only** — Clean, technical. For dense tools.
-- **Subtle shadows** — Soft lift. For approachable products.
-- **Layered shadows** — Premium, dimensional. For cards that need presence.
+## 無限の表現
 
-Don't mix approaches.
+すべてのパターンには無限の表現があります。**インターフェースは同じであってはなりません。**
+
+指標の表示には、ヒーローナンバー、インライン統計、スパークライン、ゲージ、プログレスバー、比較デルタ、トレンドバッジなど、新しいものも考えられます。ダッシュボードでは、密度、空白、階層、フローなどを全く異なる方法で強調できます。サイドバーとカードの組み合わせでも、比率、間隔、強調のバリエーションは無限にあります。
+
+**作成前に尋ねる:**
+
+- ここでユーザーが最もよく行うことは何か?
+- 同じような問題を見事に解決する製品は何か？それらを研究してみましょう。
+- なぜこのインターフェースはテンプレート化されておらず、目的に合わせて設計されているように感じるのでしょうか?
+
+**決して同一の出力を生成しないでください。** サイドバーの幅、カードのグリッド、アイコン左、数字、大、ラベル小の同じメトリックボックスが毎回同じなので、AI生成であることがすぐに分かります。忘れられやすいです。
+
+アーキテクチャとコンポーネントはタスクとデータから生まれ、斬新な方法で実行されるべきです。LinearのカードはNotionのカードとは似ても似つきません。VercelのメトリクスはStripeのメトリクスとは似ても似つきません。コンセプトは同じですが、表現は無限です。
+
+## 色はどこかに生きている
+
+すべての製品は世界の中に存在します。その世界には色があります。
+
+パレットに手を伸ばす前に、製品の世界にじっくりと浸ってみてください。この空間の物理的なバージョンに足を踏み入れたら、何が見えるでしょうか？どんな素材が使われているでしょうか？どんな光が使われているでしょうか？どんなオブジェが使われているでしょうか？
+
+パレットは、何かに適用されたようにではなく、どこかから来たように感じられる必要があります。
+
+**暖かさと寒さを超えて:** 温度は一つの軸です。静かでしょうか、それとも騒々しいでしょうか？密度が高いでしょうか、それとも広々としているでしょうか？真面目でしょうか、それとも遊び心があるでしょうか？幾何学的でしょうか、それとも有機的でしょうか？取引端末と瞑想アプリはどちらも「集中」していますが、その集中の種類は全く異なります。一般的なラベルではなく、具体的な質を見つけてください。
+
+**色には意味がある:** グレーは構造を構築します。色は、ステータス、行動、強調、アイデンティティを伝えるものです。動機のない色はノイズです。意図を持って使われる1色のアクセントカラーは、考えなしに使われる5色よりも優れています。
+
+---
+
+# 設計原則
+
+## 間隔
+
+基本単位を選び、その倍数に固執してください。特定の数値よりも一貫性が重要です。ランダムな値は体系がないことを示しています。
+
+## パディング
+
+左右対称にしましょう。片側が16ピクセルの場合、明確な理由がない限り、他の辺もそれに合わせてください。
+
+## 奥行き
+
+1つのアプローチを選択してコミットする:
+
+- **ボーダーのみ** — クリーンでテクニカル。緻密なツールに最適。
+- **微妙な影** — ソフトリフト。親しみやすい製品のために。
+- **重ねた影** — プレミアムで立体的。存在感のあるカードに最適です。
+
+アプローチを混在させないでください。
 
 ## Border Radius
 
-Sharper feels technical. Rounder feels friendly. Pick a scale and apply consistently.
+シャープにするとテクニカルな印象に、丸みを帯びると親しみやすさが増します。スケールを選び、一貫して適用しましょう。
 
-## Typography
+## タイポグラフィ
 
-Headlines need weight and tight tracking. Body needs readability. Data needs monospace. Build a hierarchy.
+見出しには重みと正確なトラッキングが必要です。本文には読みやすさが必要です。データには等幅フォントが必要です。階層構造を構築しましょう。
 
-## Color & Surfaces
+## 色と表面
 
-Build from primitives: foreground (text hierarchy), background (surface elevation), border (separation hierarchy), brand, and semantic (destructive, warning, success). Every color should trace back to these. No random hex values — everything maps to the system.
+プリミティブから構築します。前景（テキスト階層）、背景（サーフェスの高度）、境界（分離階層）、ブランド、セマンティック（破壊的、警告、成功）です。すべての色はこれらに紐づいている必要があります。ランダムな16進数値は使用せず、すべてがシステムにマッピングされます。
 
-## Animation
+## アニメーション
 
-Fast micro-interactions (~150ms), smooth easing. No bouncy/spring effects.
+高速なマイクロインタラクション（約150ミリ秒）、スムーズなイージング。弾むような動きや跳ねるような動きはありません。
 
-## States
+## 状態
 
-Every interactive element needs states: default, hover, active, focus, disabled. Data needs states too: loading, empty, error. Missing states feel broken.
+インタラクティブな要素には、デフォルト、ホバー、アクティブ、フォーカス、無効といった状態が必要です。データにも状態が必要です。読み込み中、空、エラーといった状態です。状態がないと、壊れているように感じられます。
 
-## Controls
+## コントロール
 
-Native `<select>` and `<input type="date">` can't be styled. Build custom components.
-
----
-
-# Avoid
-
-- **Harsh borders** — if borders are the first thing you see, they're too strong
-- **Dramatic surface jumps** — elevation changes should be whisper-quiet
-- **Inconsistent spacing** — the clearest sign of no system
-- **Mixed depth strategies** — pick one approach and commit
-- **Missing interaction states** — hover, focus, disabled, loading, error
-- **Dramatic drop shadows** — shadows should be subtle, not attention-grabbing
-- **Large radius on small elements**
-- **Pure white cards on colored backgrounds**
-- **Thick decorative borders**
-- **Gradients and color for decoration** — color should mean something
-- **Multiple accent colors** — dilutes focus
+ネイティブの `<select>` と `<input type="date">` にはスタイルを設定できません。カスタムコンポーネントを作成してください。
 
 ---
 
-# Workflow
+# 避ける
 
-## Communication
+- **荒々しいボーダー** — ボーダーが最初に目につくなら、それは強すぎる
+- **劇的な表面ジャンプ** — 標高の変化は静かになるはずです
+- **不均一な間隔** — システムが存在しない最も明確な兆候
+- **奥行き戦略の混合** — 一つのアプローチを選んでコミットする
+- **相互作用状態が欠落している** — ホバー、フォーカス、無効、読み込み中、エラー
+- **ドラマチックなドロップシャドウ** — 影は目立たず、控えめなものにすべきです
+- **小さな要素に大きな半径**
+- **色付きの背景に純白のカード**
+- **太い装飾枠**
+- **装飾用のグラデーションと色** — 色は何か意味を持つべきだ
+- **複数のアクセントカラー** — 焦点が薄れる
 
-Be invisible. Don't announce modes or narrate process.
+---
 
-**Never say:** "I'm in ESTABLISH MODE", "Let me check system.md..."
+# ワークフロー
 
-**Instead:** Jump into work. State suggestions with reasoning.
+## コミュニケーション
 
-## Suggest + Ask
+目に見えないようにする。モードをアナウンスしたり、プロセスを説明したりしないでください。
 
-Lead with your exploration and recommendation, then confirm:
+**決して言わない:** 「確立モード中です」、「system.md を確認させてください...」
+
+**その代わり:** 仕事に取り掛かりましょう。提案には理由を添えましょう。
+
+## 提案 + 質問
+
+調査と提案を先導し、確認する:
 
 ```
 "Domain: [5+ concepts from the product's world]
@@ -281,49 +281,49 @@ Direction: [approach that connects to the above]"
 [AskUserQuestion: "Does that direction feel right?"]
 ```
 
-## If Project Has system.md
+## プロジェクトにsystem.mdがある場合
 
-Read `.interface-design/system.md` and apply. Decisions are made.
+`.interface-design/system.md` を読んで適用してください。決定が下されます。
 
-## If No system.md
+## system.mdがない場合
 
-1. Explore domain — Produce all four required outputs
-2. Propose — Direction must reference all four
-3. Confirm — Get user buy-in
-4. Build — Apply principles
-5. **Evaluate** — Run the mandate checks before showing
-6. Offer to save
-
----
-
-# After Completing a Task
-
-When you finish building something, **always offer to save**:
-
-```
-"Want me to save these patterns for future sessions?"
-```
-
-If yes, write to `.interface-design/system.md`:
-
-- Direction and feel
-- Depth strategy (borders/shadows/layered)
-- Spacing base unit
-- Key component patterns
-
-This compounds — each save makes future work faster and more consistent.
+1. ドメインを探索する - 必要な4つの出力をすべて生成する
+2. 提案 — 方向性は4つすべてを参照する必要があります
+3. 確認 - ユーザーの同意を得る
+4. 構築 - 原則を適用する
+5. **評価** — 表示する前に義務チェックを実行します
+6. 保存を申し出る
 
 ---
 
-# Deep Dives
+# タスクを完了した後
 
-For more detail on specific topics:
+何かを作り終えたら、**必ず保存することを提案してください**:
 
-- `references/principles.md` — Code examples, specific values, dark mode
-- `references/validation.md` — Memory management, when to update system.md
+```
+「これらのパターンを将来のセッション用に保存しますか？」
+```
 
-# Commands
+はいの場合は、`.interface-design/system.md` に書き込みます。:
 
-- `/interface-design:status` — Current system state
-- `/interface-design:audit` — Check code against system
-- `/interface-design:extract` — Extract patterns from code
+- 方向性と感触
+- 奥行き戦略（境界線/影/レイヤー）
+- 間隔基本単位
+- 主要コンポーネントパターン
+
+これにより、保存するたびに将来の作業がより高速になり、一貫性が高まります。
+
+---
+
+# ディープダイブ
+
+特定のトピックの詳細については:
+
+- `references/principles.md` — コード例、具体的な値、ダークモード
+- `references/validation.md` — メモリ管理、system.md を更新するタイミング
+
+# コマンド
+
+- `/interface-design:status` — 現在のシステム状態
+- `/interface-design:audit` — システムとコードをチェック
+- `/interface-design:extract` — コードからパターンを抽出する
