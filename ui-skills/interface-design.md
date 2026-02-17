@@ -1,124 +1,124 @@
 ---
 name: interface-design
-description: This skill is for interface design — dashboards, admin panels, apps, tools, and interactive products. NOT for marketing design (landing pages, marketing sites, campaigns).
+description: このスキルは、ダッシュボード、管理パネル、アプリ、ツール、インタラクティブ製品といったインターフェースデザインのためのものです。マーケティングデザイン（ランディングページ、マーケティングサイト、キャンペーン）のためのものではありません。
 ---
 
-# Interface Design
+# インターフェースデザイン
 
-Build interface design with craft and consistency.
+技術と一貫性をもってインターフェース デザインを構築します。
 
-## Scope
+## 範囲
 
-**Use for:** Dashboards, admin panels, SaaS apps, tools, settings pages, data interfaces.
+**Use for:** ダッシュボード、管理パネル、SaaS アプリ、ツール、設定ページ、データ インターフェース。
 
-**Not for:** Landing pages, marketing sites, campaigns. Redirect those to `/frontend-design`.
-
----
-
-# The Problem
-
-You will generate generic output. Your training has seen thousands of dashboards. The patterns are strong.
-
-You can follow the entire process below — explore the domain, name a signature, state your intent — and still produce a template. Warm colors on cold structures. Friendly fonts on generic layouts. "Kitchen feel" that looks like every other app.
-
-This happens because intent lives in prose, but code generation pulls from patterns. The gap between them is where defaults win.
-
-The process below helps. But process alone doesn't guarantee craft. You have to catch yourself.
+**Not for:** ランディングページ、マーケティングサイト、キャンペーン。これらを `/frontend-design` にリダイレクトします。
 
 ---
 
-# Where Defaults Hide
+# 問題
 
-Defaults don't announce themselves. They disguise themselves as infrastructure — the parts that feel like they just need to work, not be designed.
+汎用的な出力を生成します。トレーニングでは何千ものダッシュボードを学習しました。パターンは明確です。
 
-**Typography feels like a container.** Pick something readable, move on. But typography isn't holding your design — it IS your design. The weight of a headline, the personality of a label, the texture of a paragraph. These shape how the product feels before anyone reads a word. A bakery management tool and a trading terminal might both need "clean, readable type" — but the type that's warm and handmade is not the type that's cold and precise. If you're reaching for your usual font, you're not designing.
+以下のプロセス全体（ドメインの調査、署名の命名、意図の表明）に従うだけで、テンプレートを作成できます。冷たい構造に温かみのある色調。一般的なレイアウトに親しみやすいフォント。他のアプリと同じような「キッチン感覚」。
 
-**Navigation feels like scaffolding.** Build the sidebar, add the links, get to the real work. But navigation isn't around your product — it IS your product. Where you are, where you can go, what matters most. A page floating in space is a component demo, not software. The navigation teaches people how to think about the space they're in.
+これは、意図が文章に宿るのに対し、コード生成はパターンに基づいて行われるため起こります。両者のギャップこそが、デフォルトが勝利する理由です。
 
-**Data feels like presentation.** You have numbers, show numbers. But a number on screen is not design. The question is: what does this number mean to the person looking at it? What will they do with it? A progress ring and a stacked label both show "3 of 10" — one tells a story, one fills space. If you're reaching for number-on-label, you're not designing.
-
-**Token names feel like implementation detail.** But your CSS variables are design decisions. `--ink` and `--parchment` evoke a world. `--gray-700` and `--surface-2` evoke a template. Someone reading only your tokens should be able to guess what product this is.
-
-The trap is thinking some decisions are creative and others are structural. There are no structural decisions. Everything is design. The moment you stop asking "why this?" is the moment defaults take over.
+以下のプロセスは役立ちます。しかし、プロセスだけでは技術が保証されるわけではありません。自分自身で気付く必要があります。
 
 ---
 
-# Intent First
+# デフォルトが隠れている場所
 
-Before touching code, answer these. Not in your head — out loud, to yourself or the user.
+デフォルトは、それ自体を明示しません。インフラストラクチャを装い、設計する必要はなく、ただ機能すればいいだけの部品のように見えます。
 
-**Who is this human?**
-Not "users." The actual person. Where are they when they open this? What's on their mind? What did they do 5 minutes ago, what will they do 5 minutes after? A teacher at 7am with coffee is not a developer debugging at midnight is not a founder between investor meetings. Their world shapes the interface.
+**タイポグラフィはコンテナのように感じられます。** 読みやすいものを選んで、次に進みましょう。しかし、タイポグラフィはデザインを支えるものではなく、デザインそのものなのです。見出しの重み、ラベルの個性、段落の質感。これらは、人が一文字も読む前に、製品がどのように感じられるかを形作ります。パン屋の管理ツールと取引端末はどちらも「クリーンで読みやすい書体」を必要としますが、温かみのある手作り感のある書体は、冷たく精密な書体とは異なります。いつものフォントに手を伸ばしているなら、それはデザインではありません。
 
-**What must they accomplish?**
-Not "use the dashboard." The verb. Grade these submissions. Find the broken deployment. Approve the payment. The answer determines what leads, what follows, what hides.
+**ナビゲーションは足場のように感じられます。** サイドバーを構築し、リンクを追加して、実際の作業に取り掛かりましょう。しかし、ナビゲーションは製品の周囲にあるのではなく、製品そのものなのです。あなたがどこにいるのか、どこに行けるのか、それが最も重要なのです。空間に浮かぶページはコンポーネントのデモであり、ソフトウェアではありません。ナビゲーションは、人々に自分がいる空間についてどのように考えるかを教えてくれます。
 
-**What should this feel like?**
-Say it in words that mean something. "Clean and modern" means nothing — every AI says that. Warm like a notebook? Cold like a terminal? Dense like a trading floor? Calm like a reading app? The answer shapes color, type, spacing, density — everything.
+**データはプレゼンテーションのように感じられます。** 数字があれば、数字を見せてください。しかし、画面上の数字はデザインではありません。問題は、この数字が見る人にとって何を意味するのか、そして、それを使って何をするのかということです。進捗状況リングと積み重ねられたラベルはどちらも「10分の3」と表示されています。一方は物語を伝え、もう一方はスペースを埋める役割を果たします。ラベルに数字を表示しようとするなら、それはデザインではありません。
 
-If you cannot answer these with specifics, stop. Ask the user. Do not guess. Do not default.
+**トークン名は実装の詳細のように感じられます。** しかし、CSS変数はデザイン上の決定です。`--ink`と`--parchment`は世界を想起させます。`--gray-700`と`--surface-2`はテンプレートを想起させます。トークンだけを読んだ人は、これがどんな製品なのか推測できるはずです。
 
-## Every Choice Must Be A Choice
-
-For every decision, you must be able to explain WHY.
-
-- Why this layout and not another?
-- Why this color temperature?
-- Why this typeface?
-- Why this spacing scale?
-- Why this information hierarchy?
-
-If your answer is "it's common" or "it's clean" or "it works" — you haven't chosen. You've defaulted. Defaults are invisible. Invisible choices compound into generic output.
-
-**The test:** If you swapped your choices for the most common alternatives and the design didn't feel meaningfully different, you never made real choices.
-
-## Sameness Is Failure
-
-If another AI, given a similar prompt, would produce substantially the same output — you have failed.
-
-This is not about being different for its own sake. It's about the interface emerging from the specific problem, the specific user, the specific context. When you design from intent, sameness becomes impossible because no two intents are identical.
-
-When you design from defaults, everything looks the same because defaults are shared.
-
-## Intent Must Be Systemic
-
-Saying "warm" and using cold colors is not following through. Intent is not a label — it's a constraint that shapes every decision.
-
-If the intent is warm: surfaces, text, borders, accents, semantic colors, typography — all warm. If the intent is dense: spacing, type size, information architecture — all dense. If the intent is calm: motion, contrast, color saturation — all calm.
-
-Check your output against your stated intent. Does every token reinforce it? Or did you state an intent and then default anyway?
+罠は、ある決定は創造的であり、他の決定は構造的であると考えることです。構造的な決定など存在しません。すべてはデザインです。「なぜこうなのか？」と問うことをやめた瞬間、デフォルトが支配するのです。
 
 ---
 
-# Product Domain Exploration
+# 意図を第一に
 
-This is where defaults get caught — or don't.
+コードに触れる前に、これらの質問に答えましょう。頭の中で考えるのではなく、声に出して、自分自身やユーザーに向けて答えましょう。
 
-Generic output: Task type → Visual template → Theme
-Crafted output: Task type → Product domain → Signature → Structure + Expression
+**この人間は誰ですか？**
+「ユーザー」ではありません。実際の人です。これを開いた時、彼らはどこにいるのでしょうか？何を考えているのでしょうか？5分前に何をしていたのでしょうか？5分後には何をするつもりなのでしょうか？朝7時にコーヒーを飲んでいる先生は、真夜中にデバッグをしている開発者ではありませんし、投資家とのミーティングの合間にいる創業者でもありません。彼らの世界がインターフェースを形作るのです。
 
-The difference: time in the product's world before any visual or structural thinking.
+**彼らは何を達成しなければならないのでしょうか?**
+「ダッシュボードを使う」ではなく、動詞を使う。提出物に点数を付け、問題のある展開を見つけ、支払いを承認する。その答えによって、何が導き、何が続き、何が隠れているのかが決まる。
 
-## Required Outputs
+**これはどんな感じでしょうか?**
+意味のある言葉で伝えましょう。「クリーンでモダン」という言葉は、どんなAIもそう言います。ノートのように温かみのある雰囲気？端末のように冷たく？取引フロアのように密集した雰囲気？読書アプリのように落ち着いた雰囲気？答えは色、文字、間隔、密度など、あらゆるものを形作ります。
 
-**Do not propose any direction until you produce all four:**
+具体的な答えが見つからない場合は、諦めてください。ユーザーに尋ねてください。推測したり、デフォルト設定をしたりしないでください。
 
-**Domain:** Concepts, metaphors, vocabulary from this product's world. Not features — territory. Minimum 5.
+## すべての選択は選択であるべきだ
 
-**Color world:** What colors exist naturally in this product's domain? Not "warm" or "cool" — go to the actual world. If this product were a physical space, what would you see? What colors belong there that don't belong elsewhere? List 5+.
+あらゆる決定に対して、その理由を説明できなければなりません。
 
-**Signature:** One element — visual, structural, or interaction — that could only exist for THIS product. If you can't name one, keep exploring.
+- なぜ他のレイアウトではなくこのレイアウトなのですか?
+- なぜこの色温度なのですか?
+- なぜこの書体なのですか?
+- なぜこの間隔スケールなのでしょうか?
+- なぜこのような情報階層になっているのでしょうか?
 
-**Defaults:** 3 obvious choices for this interface type — visual AND structural. You can't avoid patterns you haven't named.
+もしあなたの答えが「一般的だから」「クリーンだから」「機能するから」なら、それは選択していないということです。デフォルト設定をしているのです。デフォルト設定は目に見えません。目に見えない選択肢が積み重なって、汎用的な出力を生み出しているのです。
 
-## Proposal Requirements
+**テスト:** 選択肢を最も一般的な代替案に置き換えてもデザインに大きな違いを感じられなかった場合は、本当の選択をしたとは言えません。
 
-Your direction must explicitly reference:
+## 同一性は失敗である
 
-- Domain concepts you explored
-- Colors from your color world exploration
-- Your signature element
-- What replaces each default
+同様のプロンプトを与えられた別の AI が実質的に同じ出力を生成する場合、失敗となります。
+
+これは、違い自体を追求することではありません。特定の問題、特定のユーザー、特定のコンテキストから生まれるインターフェースこそが重要なのです。意図に基づいてデザインすると、全く同じ意図は存在しないため、同一性は不可能になります。
+
+デフォルトから設計する場合、デフォルトが共有されるため、すべてが同じに見えます。
+
+## 意図は体系的である必要がある
+
+「暖色系」と言いながら寒色系を使うのは、その意図を貫いていないことになります。意図はラベルではなく、あらゆる決定を形作る制約なのです。
+
+暖色系のデザインを意図する場合：表面、テキスト、境界線、アクセント、セマンティックカラー、タイポグラフィなど、すべて暖色系になります。濃色系のデザインを意図する場合：間隔、文字サイズ、情報アーキテクチャなど、すべて濃色系になります。穏やか系のデザインを意図する場合：動き、コントラスト、彩度など、すべて穏やか系になります。
+
+出力結果が、表明した意図と合致しているか確認してください。すべてのトークンが意図を裏付けていますか？それとも、意図を表明したにもかかわらず、結局はデフォルト状態になっていませんか？
+
+---
+
+# 製品ドメイン探索
+
+ここでデフォルトがキャッチされるか、またはキャッチされないかが決まります。
+
+一般的な出力：タスクタイプ → ビジュアルテンプレート → テーマ
+細工された出力：タスクタイプ → 製品ドメイン → シグネチャ → 構造 + 表現
+
+違いは、視覚的または構造的な思考の前に、製品の世界で過ごす時間です。
+
+## 必要な出力
+
+**4つすべてを作成するまで、方向性を提案しないでください:**
+
+**ドメイン:** この製品の世界観から生まれた概念、メタファー、語彙。機能ではなく、領域です。最低5つ。
+
+**色の世界:** この製品の領域には、どんな色が自然に存在するでしょうか？「暖色系」や「寒色系」ではなく、現実世界に目を向けてみましょう。もしこの製品が物理的な空間だとしたら、何が見えるでしょうか？他の場所にはない、この空間にふさわしい色は何でしょうか？5つ以上挙げてみてください。
+
+**署名:** この製品にしか存在しない要素（視覚的、構造的、またはインタラクション）を一つ挙げてみましょう。もし思い浮かばないなら、探し続けてください。
+
+**デフォルト:** このインターフェースタイプには、視覚的かつ構造的な3つの選択肢があります。名前を付けていないパターンを避けることはできません。
+
+## 提案要件
+
+あなたの指示は明示的に参照する必要があります:
+
+- 探索したドメインの概念
+- 色の世界の探検からの色
+- あなたの署名要素
+- 各デフォルトを置き換えるもの
 
 **The test:** Read your proposal. Remove the product name. Could someone identify what this is for? If not, it's generic. Explore deeper.
 
