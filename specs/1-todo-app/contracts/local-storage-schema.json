@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TodoItem Array",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string", "format": "uuid" },
+      "title": { "type": "string", "minLength": 1 },
+      "completed": { "type": "boolean" },
+      "createdAt": { "type": "string", "format": "date-time" }
+    },
+    "required": ["id", "title", "completed", "createdAt"],
+    "additionalProperties": false
+  }
+}
