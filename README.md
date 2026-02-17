@@ -8,6 +8,11 @@
 - https://zenn.dev/redamoon/articles/article39-ui-skills-accessibility
 - https://www.ui-skills.com/
 
+## オーケストレーション参考
+
+- https://learn.microsoft.com/ja-jp/azure/architecture/ai-ml/guide/ai-agent-design-patterns
+- https://docs.cloud.google.com/architecture/choose-design-pattern-agentic-ai-system?hl=ja
+
 ## awesome-copilot写経
 
 - 次ここから
