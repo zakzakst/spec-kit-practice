@@ -40,3 +40,5 @@
 - safe-area-inset
 - prefers-reduced-motion
 - tabular-nums
+- アンサンブル推論
+- クォーラム
