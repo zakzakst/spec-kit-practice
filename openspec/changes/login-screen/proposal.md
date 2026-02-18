@@ -1,25 +1,25 @@
-## Why
+## なぜ
 
-We need a login screen to allow users to authenticate before accessing protected parts of the application. Currently there is no mechanism for users to sign in, which limits the app to an unauthenticated state. Adding a login screen is the first step toward user-specific data and functionality.
+アプリケーションの保護された部分にアクセスする前にユーザーが認証できるように、ログイン画面が必要です。現在、ユーザーがサインインするための仕組みがないため、アプリは認証されていない状態のままになっています。ログイン画面の追加は、ユーザー固有のデータと機能を実現するための第一歩です。
 
-## What Changes
+## 何が変わるのか
 
-- Introduce a new login UI view containing fields for username/email and password.
-- Include client-side validation and error display for incorrect credentials.
-- Implement authentication flow against the existing API (or a stub if none exists).
-- Update navigation to redirect unauthenticated users to the login screen.
-- **BREAKING**: Routes previously accessible without auth will now require a valid session.
+- ユーザー名/メールとパスワードのフィールドを含む新しいログイン UI ビューを導入します。
+- 不正な資格情報に対するクライアント側の検証とエラー表示を含めます。
+- 既存の API (存在しない場合はスタブ) に対して認証フローを実装します。
+- 認証されていないユーザーをログイン画面にリダイレクトするようにナビゲーションを更新します。
+- **重要**: これまで認証なしでアクセス可能だったルートには、有効なセッションが必要になります。
 
-## Capabilities
+## 機能
 
-### New Capabilities
+### 新しい機能
 
-- `user-login`: provide a login screen and authentication flow for users.
+- `user-login`: ユーザーにログイン画面と認証フローを提供します。
 
-### Modified Capabilities
+### 変更された機能
 
-- None
+- なし
 
-## Impact
+## 影響
 
-Affected code will include UI components, routing logic, and any existing pages that should be protected. Dependencies may include authentication libraries or API endpoints. The change will require updates to navigation and potentially backend auth endpoints if they are added or modified.
+影響を受けるコードには、UIコンポーネント、ルーティングロジック、および保護が必要な既存のページが含まれます。依存関係には、認証ライブラリやAPIエンドポイントが含まれる場合があります。この変更により、ナビゲーションの更新、およびバックエンド認証エンドポイントの追加または変更が必要となる場合があります。

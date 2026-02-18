@@ -1,61 +1,61 @@
-## Context
+## コンテクスト
 
-The application currently operates entirely in an unauthenticated state; any user can access all routes and functionality. As requirements expand to support user-specific data or secure areas, an authentication mechanism becomes necessary. This change introduces a login screen and associated flow. The system is assumed to have (or will be provided with) an API endpoint for verifying credentials; if such an endpoint doesn’t yet exist, a stub/mock will be used initially. Frontend technology is a React-based SPA (as per existing project structure).
+アプリケーションは現在、完全に認証なしの状態で動作しており、すべてのユーザーがすべてのルートと機能にアクセスできます。ユーザー固有のデータやセキュアな領域のサポートなど、要件が拡大するにつれて、認証メカニズムが必要になります。この変更により、ログイン画面と関連フローが導入されます。システムには、資格情報を確認するためのAPIエンドポイントが存在する（または提供される予定である）ことが想定されています。そのようなエンドポイントがまだ存在しない場合は、まずスタブ/モックを使用します。フロントエンドテクノロジーは、既存のプロジェクト構造に基づき、ReactベースのSPAです。
 
-## Goals / Non-Goals
+## 目標 / 非目標
 
-**Goals:**
+**目標:**
 
-- Provide a user-facing login page with username/email and password fields.
-- Validate inputs client-side and display errors.
-- Authenticate credentials via backend API and establish a session/token.
-- Redirect unauthenticated users to login when they attempt to access protected routes.
-- Allow easy extension for signup or password recovery in the future.
+- ユーザー名/メール アドレスとパスワード フィールドを備えたユーザー向けのログイン ページを提供します。
+- クライアント側で入力を検証し、エラーを表示します。
+- バックエンド API を介して資格情報を認証し、セッション/トークンを確立します。
+- 認証されていないユーザーが保護されたルートにアクセスしようとしたときに、ログインにリダイレクトします。
+- 将来的にサインアップやパスワード回復を簡単に拡張できるようにします。
 
-**Non-Goals:**
+**非目標:**
 
-- Implementing user registration or password reset workflows (these belong to separate features).
-- Designing or altering backend authentication mechanisms beyond consuming an existing API.
-- Supporting OAuth/SSO or external providers; only basic credential check is in scope.
-- Persisting session data beyond in-memory/token storage handled by existing app conventions.
+- ユーザー登録またはパスワード リセット ワークフローを実装します (これらは別の機能に属します)。
+- 既存の API を使用するだけでなく、バ​​ックエンドの認証メカニズムを設計または変更します。
+- OAuth/SSO または外部プロバイダーをサポートします。範囲内には基本的な資格情報チェックのみが含まれます。
+- 既存のアプリ規則によって処理されるメモリ内/トークン ストレージを超えてセッション データを保持します。
 
-## Decisions
+## 決定
 
-1. **Session Management Strategy**
-   - _Choice_: Use JWT tokens stored in a secure http-only cookie (preferred) or localStorage as a fallback for simplicity.
-   - _Rationale_: Cookies provide better protection against XSS; however, if backend isn’t yet configured for cookies, localStorage simplifies initial iteration. We'll start with localStorage and refactor when server supports http-only cookies.
-   - _Alternatives considered_: Full OAuth flow (too heavy), storing session in Redux store only (wouldn’t persist across reloads).
+1. **セッション管理戦略**
+   - _選択_: 簡潔にするために、安全な http 専用 Cookie (推奨) または localStorage に保存されている JWT トークンをフォールバックとして使用します。
+   - _理由_: CookieはXSSに対するより優れた保護を提供します。ただし、バックエンドがまだCookieに対応していない場合は、localStorageを使用すると初期のイテレーションが簡素化されます。まずはlocalStorageから始め、サーバーがhttpのみのCookieをサポートしたらリファクタリングします。
+   - _検討された代替案_: 完全な OAuth フロー (重すぎる)、セッションを Redux ストアにのみ保存 (リロードすると保持されない)。
 
-2. **Routing Enforcement**
-   - _Choice_: Wrap protected routes with a higher-order component or hook (`useAuth`) that checks auth state and redirects to login if missing.
-   - _Rationale_: Keeps route definitions clean and centralizes logic.
-   - _Alternatives considered_: Redirect logic inside each page component (error-prone) or server-side enforcement (not applicable in SPA).
+2. **ルーティングの強制**
+   - _選択_: 保護されたルートを、認証状態をチェックし、認証がない場合はログインにリダイレクトする高次コンポーネントまたはフック (`useAuth`) でラップします。
+   - _理由_: ルート定義をクリーンな状態に保ち、ロジックを集中管理します。
+   - _検討される代替案_: 各ページ コンポーネント内のリダイレクト ロジック (エラーが発生しやすい) またはサーバー側の強制 (SPA では適用されません)。
 
-3. **Form Library**
-   - _Choice_: Use native React state with simple handlers rather than pulling in a form library (e.g. Formik).
-   - _Rationale_: The login form is very simple; additional dependencies are unnecessary.
+3. **フォームライブラリ**
+   - _選択_: フォーム ライブラリ (Formik など) を取り込むのではなく、シンプルなハンドラーでネイティブの React 状態を使用します。
+   - _理由_: ログイン フォームは非常にシンプルなので、追加の依存関係は不要です。
 
-4. **Error Handling**
-   - _Choice_: Display inline error messages for validation and a generic banner message for authentication failure.
-   - _Rationale_: Consistent with existing UI patterns.
+4. **エラー処理**
+   - _Choice_: 検証の場合はインライン エラー メッセージを表示し、認証失敗の場合は一般的なバナー メッセージを表示します。
+   - _理由_: 既存の UI パターンと一致している。
 
-## Risks / Trade-offs
+## リスク/トレードオフ
 
-- **[Risk]** Storing tokens in localStorage exposes them to JavaScript and increases XSS risk. → _Mitigation_: sanitize all inputs, plan migration to http-only cookies when backend supports it.
-- **[Risk]** Redirect loops if the auth check is misconfigured (e.g., login page itself requires auth). → _Mitigation_: clearly mark login route as public and test thoroughly with e2e tests.
-- **[Risk]** Backend API may have undefined behavior or delays leading to poor UX. → _Mitigation_: implement loading indicators and timeout/ retry logic.
+- **[リスク]** トークンを localStorage に保存すると、JavaScript に公開され、XSS のリスクが高まります。→ _軽減策_: すべての入力をサニタイズし、バックエンドがサポートしている場合は http のみの Cookie への移行を計画します。
+- **[リスク]** 認証チェックが誤って構成されている場合（例：ログインページ自体に認証が必要な場合）、リダイレクトがループします。→ _軽減策_：ログインルートをパブリックとして明確にマークし、e2e テストで徹底的にテストします。
+- **[リスク]** バックエンド API に未定義の動作や遅延が発生し、UX が低下する可能性があります。→ _軽減策_: 読み込みインジケーターとタイムアウト/再試行ロジックを実装します。
 
-## Migration Plan
+## 移行計画
 
-1. Add login components and auth utilities alongside existing codebase.
-2. Deploy frontend update that includes login but leaves all routes open (the redirect logic can be turned on via feature flag or config).
-3. Coordinate with backend team to expose `/api/login` endpoint if not already present.
-4. Once backend supports cookie-based sessions, update auth hook and move token storage from localStorage to cookies.
-5. Roll out protected-route wrapper, enabling redirects progressively starting with a non-critical route.
-6. Monitor for user issues and provide rollback via reverting feature flag or deploying previous frontend.
+1. 既存のコードベースに加えて、ログイン コンポーネントと認証ユーティリティを追加します。
+2. ログインを含むすべてのルートを開いたままにするフロントエンド更新をデプロイします (リダイレクト ロジックは、機能フラグまたは構成によってオンにすることができます)。
+3. まだ存在しない場合は、バックエンド チームと調整して `/api/login` エンドポイントを公開します。
+4. バックエンドが Cookie ベースのセッションをサポートしたら、認証フックを更新し、トークン ストレージを localStorage から Cookie に移動します。
+5. 保護されたルート ラッパーを展開し、重要でないルートから段階的にリダイレクトを有効にします。
+6. ユーザーの問題を監視し、機能フラグを元に戻すか、以前のフロントエンドをデプロイすることでロールバックを提供します。
 
-## Open Questions
+## 未解決の質問
 
-- Does the backend already provide a login endpoint, and what response format does it use? (JWT, session cookie, etc.)
-- Should the login screen include a "Remember me" checkbox and, if so, how does that affect token expiration?
-- Are there any style guidelines or branding requirements for the login page layout?
+- バックエンドはすでにログインエンドポイントを提供していますか？また、どのような応答形式を使用していますか？(JWT、セッション Cookie など)
+- ログイン画面に「Remember me」チェックボックスを含める必要がありますか? 含める場合、トークンの有効期限にどのような影響がありますか?
+- ログイン ページのレイアウトにはスタイル ガイドラインやブランド要件はありますか?

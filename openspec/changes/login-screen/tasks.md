@@ -1,37 +1,37 @@
-## 1. Setup
+## 1. セットアップ
 
-- [ ] 1.1 Create `frontend/src/components/LoginForm.tsx` component file
-- [ ] 1.2 Add authentication utility `frontend/src/hooks/useAuth.ts` for token storage and state
-- [ ] 1.3 Update `frontend/src/types/auth.ts` to include `AuthToken` type definition
-- [ ] 1.4 Add route `/login` in application router configuration (`frontend/src/App.tsx` or equivalent)
+- [ ] 1.1 `frontend/src/components/LoginForm.tsx` コンポーネント ファイルを作成する
+- [ ] 1.2 トークンの保存と状態のための認証ユーティリティ `frontend/src/hooks/useAuth.ts` を追加します。
+- [ ] 1.3 `frontend/src/types/auth.ts` を更新して `AuthToken` 型定義を追加します
+- [ ] 1.4 アプリケーション ルーター構成 (`frontend/src/App.tsx` または同等のもの) にルート `/login` を追加します。
 
-## 2. Login Form and Validation
+## 2. ログインフォームと検証
 
-- [ ] 2.1 Implement JSX for username/email and password fields in `LoginForm.tsx`
-- [ ] 2.2 Add client-side validation logic to `LoginForm.tsx` that prevents submission with empty fields and displays inline errors
-- [ ] 2.3 Add submit button and loading indicator to `LoginForm.tsx`
+- [ ] 2.1 `LoginForm.tsx` のユーザー名/メール アドレスとパスワード フィールドに JSX を実装します。
+- [ ] 2.2 `LoginForm.tsx` にクライアント側の検証ロジックを追加し、空のフィールドでの送信を防ぎ、インラインエラーを表示します。
+- [ ] 2.3 `LoginForm.tsx` に送信ボタンと読み込みインジケーターを追加します。
 
-## 3. Authentication Flow
+## 3. 認証フロー
 
-- [ ] 3.1 Implement `login` function in `useAuth.ts` that posts credentials to `/api/login` and handles response
-- [ ] 3.2 Store returned token in `localStorage` under key `authToken` within `useAuth.ts`
-- [ ] 3.3 Update `useAuth` to provide `isAuthenticated`, `login`, and `logout` methods
-- [ ] 3.4 Handle authentication errors in `LoginForm.tsx`, displaying a banner message on failure
+- [ ] 3.1 `useAuth.ts` に `login` 関数を実装し、`/api/login` に資格情報を投稿してレスポンスを処理します。
+- [ ] 3.2 返されたトークンを `useAuth.ts` 内のキー `authToken` の下の `localStorage` に保存します。
+- [ ] 3.3 `useAuth` を更新して `isAuthenticated`、`login`、`logout` メソッドを提供します
+- [ ] 3.4 `LoginForm.tsx` で認証エラーを処理し、失敗した場合はバナーメッセージを表示します。
 
-## 4. Routing Protection
+## 4. ルーティング保護
 
-- [ ] 4.1 Create a `RequireAuth` higher-order component or hook that checks `isAuthenticated` and redirects to `/login` if false
-- [ ] 4.2 Wrap protected route components (e.g. `Dashboard`, `Profile`) with `RequireAuth` in router configuration
-- [ ] 4.3 Ensure `/login` route is excluded from protection logic to avoid redirect loops
+- [ ] 4.1 `RequireAuth` 上位コンポーネントまたはフックを作成し、`isAuthenticated` をチェックして false の場合は `/login` にリダイレクトします。
+- [ ] 4.2 ルータ設定で、保護されたルートコンポーネント（例：`Dashboard`、`Profile`）を `RequireAuth` でラップします。
+- [ ] 4.3 リダイレクトループを回避するために、`/login` ルートが保護ロジックから除外されていることを確認します。
 
-## 5. Testing
+## 5. テスト
 
-- [ ] 5.1 Write unit tests for `LoginForm.tsx` validating behavior of form fields and submission (frontend/tests/unit/login-form.spec.tsx)
-- [ ] 5.2 Add unit tests for `useAuth.ts` verifying token storage and auth state changes
-- [ ] 5.3 Create Playwright e2e test `frontend/tests/e2e/login-flow.spec.ts` covering successful login, invalid credentials, and redirect behavior
+- [ ] 5.1 フォームフィールドと送信の動作を検証する `LoginForm.tsx` のユニットテストを記述します (frontend/tests/unit/login-form.spec.tsx)
+- [ ] 5.2 トークンの保存と認証状態の変更を検証する `useAuth.ts` の単体テストを追加します。
+- [ ] 5.3 ログイン成功、無効な資格情報、リダイレクト動作をカバーする Playwright e2e テスト `frontend/tests/e2e/login-flow.spec.ts` を作成します。
 
-## 6. Polish & Documentation
+## 6. 施策とドキュメント
 
-- [ ] 6.1 Update `frontend/README.md` with instructions for running auth-related tests
-- [ ] 6.2 Add doc snippet to `specs/login-screen/quickstart.md` (or global quickstart) describing the login screen
-- [ ] 6.3 Ensure linting and formatting pass across new files
+- [ ] 6.1 認証関連のテストを実行するための手順を `frontend/README.md` に更新します
+- [ ] 6.2 ログイン画面を説明するドキュメント スニペットを `specs/login-screen/quickstart.md` (またはグローバル クイックスタート) に追加します。
+- [ ] 6.3 新しいファイル間でリンティングとフォーマットを確実に実行
