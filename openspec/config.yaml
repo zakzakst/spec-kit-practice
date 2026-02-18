@@ -1,20 +1,20 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# プロジェクトのコンテキスト（オプション）
+# これは、アーティファクトを作成するときに AI に表示されます。
+# 技術スタック、規則、スタイル ガイド、ドメイン知識などを追加します。
 # Example:
 #   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+#     技術スタック: TypeScript, React, Node.js
+#     従来のコミットを使用します
+#     ドメイン: 電子商取引プラットフォーム
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
+# アーティファクトごとのルール（オプション）
+# 特定のアーティファクトのカスタム ルールを追加します。
 # Example:
 #   rules:
 #     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
+#       - 提案は500語以内にしてください
+#       - 必ず「非目標」セクションを含める
 #     tasks:
-#       - Break tasks into chunks of max 2 hours
+#       - タスクを最大2時間単位に分割する

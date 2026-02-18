@@ -7,7 +7,7 @@
 
 - タスクの作成・完了・削除ができるWebアプリケーション"
 
-## User Scenarios & Testing _(mandatory)_
+## ユーザーシナリオとテスト（必須）
 
 ### ユーザーストーリー1 - タスクを追加（優先度：P1）
 
@@ -28,57 +28,57 @@
 
 タスクを作成した後、ユーザーは何かが完了したことを示す手段が必要です。タスクを完了するには、チェックボックスなどのコントロールをクリックします。
 
-**なぜこの優先順位なのか**: Completion tracking is the secondary value; users can still create tasks without it but it improves usefulness.
+**なぜこの優先順位なのか**: 完了追跡は二次的な価値です。ユーザーはそれがなくてもタスクを作成できますが、有用性が向上します。
 
-**独立テスト**: With at least one unfinished task, mark it complete and verify its state changes to "done"; this can be done separate from other stories.
+**独立テスト**: 少なくとも 1 つの未完了のタスクがある場合は、それを完了としてマークし、その状態が「完了」に変わることを確認します。これは、他のストーリーとは別に実行できます。
 
 **受け入れシナリオ**:
 
-1. **Given** an existing incomplete task, **When** the user triggers the completion control, **Then** the task is visually distinguished as completed and optionally moved or styled differently.
+1. **Given** 既存の未完了のタスク, **When** ユーザーが完了コントロールをトリガーする, **Then** タスクは完了したものとして視覚的に区別され、オプションで移動または異なるスタイルで表示されます。
 
 ---
 
 ### ユーザーストーリー3 - タスクを削除する（優先度：P3）
 
-Users should be able to remove tasks they no longer need. They select an option to delete a task from the list.
+ユーザーは不要になったタスクを削除できる必要があります。リストからタスクを削除するオプションを選択します。
 
-**なぜこの優先順位なのか**: Deletion cleans up but is less critical than adding or marking; it is still necessary for a usable list.
+**なぜこの優先順位なのか**: 削除はクリーンアップしますが、追加やマークほど重要ではありません。使用可能なリストのためには依然として必要です。
 
-**独立テスト**: With a task present, use the delete action and verify the task is removed; can be tested alone.
+**独立テスト**: タスクが存在する場合は、削除アクションを使用してタスクが削除されたことを確認します。単独でテストできます。
 
 **受け入れシナリオ**:
 
-1. **Given** an existing task (completed or not), **When** the user chooses to delete it, **Then** the task is no longer shown in the list.
+1. **Given** 既存のタスク（完了または未完了）, **When** ユーザーが削除することを選択した, **Then** タスクはリストに表示されなくなります。
 
 ---
 
-### Edge Cases
+### エッジケース
 
-- What happens when the user attempts to add a task with an empty title? The system should prevent creation and show an error.
-- How does the system behave if the user misses a network connection while adding, completing, or deleting (if a server-backed implementation)? The UI should inform the user and allow retry.
-- Trying to complete or delete a task that no longer exists (e.g., due to concurrent action) should result in a graceful error message.
-- Handling extremely long titles or special characters.
+- ユーザーがタイトルが空のタスクを追加しようとするとどうなりますか？システムはタスクの作成を阻止し、エラーを表示する必要があります。
+- ユーザーが追加、完了、または削除中にネットワーク接続を失った場合、システムはどのように動作しますか (サーバーベースの実装の場合)? UI はユーザーに通知し、再試行を許可する必要があります。
+- 存在しなくなったタスク (同時アクションなどにより) を完了または削除しようとすると、適切なエラー メッセージが表示される必要があります。
+- 非常に長いタイトルや特殊文字の処理。
 
-## Requirements _(mandatory)_
+## 要件（必須）
 
-### Functional Requirements
+### 機能要件
 
-- **FR-001**: System MUST allow users to create a new todo item by entering a title and submitting it.
-- **FR-002**: System MUST display all existing todo items in a list, showing their title and current state (incomplete or complete).
-- **FR-003**: System MUST allow users to mark an existing todo item as complete.
-- **FR-004**: System MUST allow users to delete an existing todo item.
-- **FR-005**: System MUST validate that a new todo item has a non-empty title and provide feedback if validation fails.
-- **FR-006**: System MUST persist the list of todos so that they remain available across page reloads or sessions.
+- **FR-001**: システムは、ユーザーがタイトルを入力して送信することで新しい ToDo 項目を作成できるようにする必要があります。
+- **FR-002**: システムは、既存のすべての ToDo 項目をリストに表示し、そのタイトルと現在の状態 (未完了または完了) を表示する必要があります。
+- **FR-003**: システムは、ユーザーが既存の ToDo 項目を完了としてマークできるようにする必要があります。
+- **FR-004**: システムは、ユーザーが既存の ToDo 項目を削除できるようにする必要があります。
+- **FR-005**: システムは、新しい ToDo 項目に空でないタイトルがあるかどうかを検証し、検証が失敗した場合はフィードバックを提供する必要があります。
+- **FR-006**: システムは、ページの再読み込みやセッションをまたいで ToDo リストが利用できるように、ToDo リストを保持する必要があります。
 
-### Key Entities _(include if feature involves data)_
+### キーエンティティ（フィーチャにデータが含まれる場合は含める）
 
-- **Todo Item**: Represents a task entered by the user; key attributes include `title` (text), `status` (incomplete/complete), and optionally `createdAt` timestamp.
+- **Todo Item**: ユーザーが入力したタスクを表します。主な属性には、`title` (テキスト)、`status` (未完了/完了)、およびオプションで `createdAt` タイムスタンプが含まれます。
 
-## Success Criteria _(mandatory)_
+## 成功基準（必須）
 
-### Measurable Outcomes
+### 測定可能な成果
 
-- **SC-001**: 90% of first-time users can add a task without assistance within 30 seconds of opening the app.
-- **SC-002**: Tasks persist and reappear after a page reload in 100% of tests across supported browsers.
-- **SC-003**: Completing or deleting a task updates the UI within 2 seconds in 95% of user trials.
-- **SC-004**: User satisfaction survey shows at least 80% of respondents find the app easy to use for basic todo management.
+- **SC-001**: 初めて使用するユーザーの 90% は、アプリを開いてから 30 秒以内に、サポートなしでタスクを追加できます。
+- **SC-002**: サポートされているブラウザでのテストでは、100% でページの再読み込み後にタスクが保持され、再表示されます。
+- **SC-003**: タスクを完了または削除すると、ユーザー トライアルの 95% で 2 秒以内に UI が更新されます。
+- **SC-004**: ユーザー満足度調査によると、回答者の少なくとも 80% が、このアプリは基本的な ToDo 管理に使いやすいと感じています。

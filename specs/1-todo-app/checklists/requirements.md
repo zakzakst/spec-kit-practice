@@ -1,34 +1,34 @@
-# Specification Quality Checklist: シンプルなTodoアプリ
+# 仕様品質チェックリスト: シンプルなTodoアプリ
 
-**Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026年2月17日
-**Feature**: [Link to spec.md](../spec.md)
+**目的**: 計画に進む前に仕様の完全性と品質を検証する
+**作成日**: 2026年2月17日
+**機能**: [Link to spec.md](../spec.md)
 
-## Content Quality
+## コンテンツの質
 
-- [x] No implementation details (languages, frameworks, APIs)
-- [x] Focused on user value and business needs
-- [x] Written for non-technical stakeholders
-- [x] All mandatory sections completed
+- [x] 実装の詳細（言語、フレームワーク、API）なし
+- [x] ユーザー価値とビジネスニーズに焦点を当てる
+- [x] 非技術系の関係者向けに書かれたもの
+- [x] 必須セクションはすべて完了
 
-## Requirement Completeness
+## 要件の完全性
 
-- [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous
-- [x] Success criteria are measurable
-- [x] Success criteria are technology-agnostic (no implementation details)
-- [x] All acceptance scenarios are defined
-- [x] Edge cases are identified
-- [x] Scope is clearly bounded
-- [x] Dependencies and assumptions identified
+- [x] [明確化が必要]マーカーは残っていない
+- [x] 要件はテスト可能で明確である
+- [x] 成功基準は測定可能
+- [x] 成功基準はテクノロジーに依存しない（実装の詳細は不明）
+- [x] すべての受け入れシナリオが定義されている
+- [x] エッジケースが特定される
+- [x] 範囲は明確に限定されている
+- [x] 特定された依存関係と仮定
 
-## Feature Readiness
+## 機能の準備
 
-- [x] All functional requirements have clear acceptance criteria
-- [x] User scenarios cover primary flows
-- [x] Feature meets measurable outcomes defined in Success Criteria
-- [x] No implementation details leak into specification
+- [x] すべての機能要件には明確な受け入れ基準がある
+- [x] ユーザーシナリオは主要なフローをカバーします
+- [x] 機能は成功基準で定義された測定可能な成果を満たしている
+- [x] 実装の詳細が仕様に漏れることはありません
 
-## Notes
+## 注記
 
-- Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`
+- 不完全とマークされた項目は、`/speckit.clarify` または `/speckit.plan` の前に仕様を更新する必要があります。

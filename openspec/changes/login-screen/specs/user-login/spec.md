@@ -1,57 +1,57 @@
-## ADDED Requirements
+## 追加された要件
 
-### Requirement: Login screen exists
+### 要件: ログイン画面が存在する
 
-The system SHALL display a login page when an unauthenticated user navigates to a protected route or explicitly visits the login URL.
+認証されていないユーザーが保護されたルートに移動するか、明示的にログイン URL にアクセスした場合、システムはログイン ページを表示する必要があります。
 
-#### Scenario: Navigate to protected route
+#### シナリオ: 保護されたルートに移動する
 
-- **WHEN** an unauthenticated user attempts to visit `/dashboard` (or other protected URL)
-- **THEN** they are redirected to the login page with an empty username and password fields
+- **いつ** 認証されていないユーザーが `/dashboard` (またはその他の保護された URL) にアクセスしようとした場合
+- **その後**、ユーザー名とパスワードのフィールドが空のログインページにリダイレクトされます。
 
-#### Scenario: Direct login URL
+#### シナリオ: 直接ログイン URL
 
-- **WHEN** a user enters `/login` in the browser
-- **THEN** the login page loads with appropriate form elements
+- **いつ** ユーザーがブラウザに `/login` を入力すると
+- **その後** ログインページが適切なフォーム要素とともに読み込まれます
 
-### Requirement: User can submit credentials
+### 要件: ユーザーが資格情報を送信できる
 
-The login page SHALL allow the user to enter a username/email and password and submit them for validation.
+ログイン ページでは、ユーザーがユーザー名/メール アドレスとパスワードを入力し、検証のために送信できるようにする必要があります。
 
-#### Scenario: Submit valid credentials
+#### シナリオ: 有効な資格情報を送信する
 
-- **WHEN** the user fills both fields and clicks the submit button
-- **THEN** the credentials are sent to the authentication endpoint and the system displays a loading indicator
+- **いつ** ユーザーが両方のフィールドに入力し、送信ボタンをクリックする
+- **その後** 資格情報は認証エンドポイントに送信され、システムは読み込みインジケータを表示します。
 
-#### Scenario: Submit empty fields
+#### シナリオ: 空のフィールドを送信する
 
-- **WHEN** the user clicks submit with one or both fields empty
-- **THEN** inline validation errors appear and the request is not sent
+- **いつ** ユーザーが1つまたは両方のフィールドを空のまま送信をクリックする
+- **その後** インライン検証エラーが表示され、リクエストが送信されない
 
-### Requirement: Authentication feedback
+### 要件: 認証フィードバック
 
-The system SHALL inform the user of success or failure of credential validation.
+システムは、資格情報の検証が成功したか失敗したかをユーザーに通知する必要があります。
 
-#### Scenario: Correct credentials
+#### シナリオ: 正しい資格情報
 
-- **WHEN** the authentication endpoint responds with success
-- **THEN** the user is redirected to the originally requested protected page or a default post-login page
+- **いつ** 認証エンドポイントが成功を応答する
+- **その後** ユーザーは、最初に要求された保護されたページまたはデフォルトのログイン後のページにリダイレクトされます。
 
-#### Scenario: Incorrect credentials
+#### シナリオ: 資格情報が正しくない
 
-- **WHEN** the authentication endpoint responds with failure
-- **THEN** an error message is displayed indicating the credentials are invalid and the form remains populated
+- **いつ** 認証エンドポイントが失敗を応答する
+- **その後** 資格情報が無効であることを示すエラーメッセージが表示され、フォームは入力されたままになります
 
-### Requirement: Session token handling
+### 要件: セッショントークンの処理
 
-Upon successful login, the system SHALL store an authentication token in localStorage (or cookie) and include it in subsequent API requests.
+ログインが成功すると、システムは認証トークンを localStorage (または Cookie) に保存し、後続の API リクエストに含める必要があります。
 
-#### Scenario: Token stored
+#### シナリオ: トークンが保存される
 
-- **WHEN** login succeeds
-- **THEN** a token value is saved under `authToken` in localStorage
+- **いつ** ログイン成功
+- **その後** トークン値はlocalStorageの`authToken`に保存されます
 
-#### Scenario: Missing token
+#### シナリオ: トークンの不足
 
-- **WHEN** a protected API request is made without a token
-- **THEN** the request is blocked and the user is redirected to the login screen
+- **いつ** 保護されたAPIリクエストがトークンなしで行われた
+- **その後** リクエストはブロックされ、ユーザーはログイン画面にリダイレクトされます
