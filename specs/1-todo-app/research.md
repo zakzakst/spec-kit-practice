@@ -1,65 +1,65 @@
 # Research for シンプルなTodoアプリ
 
-## Decision: Frontend-only React application with localStorage persistence
+## 決定: ローカルストレージの永続性を備えたフロントエンドのみの React アプリケーション
 
-**Rationale**:
+**根拠**:
 
-- The feature description specifies a simple web app; no mention of user accounts or server state.
-- A single-page application (SPA) written in React can deliver the required interactions quickly and keeps complexity low.
-- Using `localStorage` satisfies the persistence requirement (FR-006) without needing a backend, simplifying development and deployment.
-- React ecosystems (Vite, Create React App, Next.js) have well-known toolchains, good testing support, and are appropriate for a small project.
+- 機能の説明では、単純な Web アプリが指定されており、ユーザー アカウントやサーバーの状態については言及されていません。
+- React で記述されたシングルページ アプリケーション (SPA) は、必要なインタラクションを迅速に提供し、複雑さを低く抑えることができます。
+- `localStorage` を使用すると、バックエンドを必要とせずに永続性要件 (FR-006) を満たすことができ、開発と展開が簡素化されます。
+- React エコシステム (Vite、Create React App、Next.js) にはよく知られたツールチェーンと優れたテスト サポートがあり、小規模なプロジェクトに適しています。
 
-**Alternatives considered**:
+**検討された代替案**:
 
-- **Vanilla JS/HTML/CSS**: This would minimize dependencies but offers less structure and harder scaling even for a tiny app. For this exercise, React provides a clearer data-driven model.
-- **Backend-backed application (Node/Express, etc.)**: Introducing a server would satisfy persistence but adds unnecessary infrastructure for a local todo list. Could be revisited if requirements expand.
-- **Use a wrapper like Electron or mobile**: out of scope; spec targets web.
+- **バニラJS/HTML/CSS**: これにより依存関係は最小限に抑えられますが、構造が弱くなり、小規模なアプリであってもスケーリングが難しくなります。この演習では、React がより明確なデータ駆動型モデルを提供します。
+- **バックエンドアプリケーション (Node/Express など)**: サーバーの導入は永続性という点では満足できるものの、ローカルToDoリスト用の不要なインフラストラクチャが追加されてしまいます。要件が拡大した場合には再検討される可能性があります。
+- **Electronやモバイルのようなラッパーを使用する**: 範囲外。仕様は Web を対象としています。
 
-## Decision: TypeScript for type safety
+## 決定: 型安全性のための TypeScript
 
-**Rationale**:
+**根拠**:
 
-- TypeScript catches common errors at compile time and improves developer experience when modelling entities like Todo Item.
-- The overhead is small for a new project and aligns with modern frontend best practices.
+- TypeScript はコンパイル時に一般的なエラーをキャッチし、Todo 項目などのエンティティをモデル化する際の開発エクスペリエンスを向上させます。
+- 新しいプロジェクトの場合、オーバーヘッドは小さく、最新のフロントエンドのベスト プラクティスと一致しています。
 
-**Alternatives considered**:
+**検討された代替案**:
 
-- Plain JavaScript: quicker setup but lacks type guarantees. For a simple app TS is still beneficial.
+- プレーンJavaScript：セットアップは速いですが、型の保証がありません。シンプルなアプリであれば、TSは依然として有益です。
 
-## Decision: Testing with Vitest (unit) and Playwright (integration)
+## 決定: Vitest (単体) と Playwright (統合) によるテスト
 
-**Rationale**:
+**根拠**:
 
-- Vitest pairs naturally with Vite for unit/component tests.
-- Playwright provides cross-browser automation for end-to-end tests, allowing independent verification of acceptance scenarios.
+- Vitest は、ユニット/コンポーネント テストのために Vite と自然に組み合わせられます。
+- Playwright は、エンドツーエンドのテストにクロスブラウザ自動化を提供し、受け入れシナリオの独立した検証を可能にします。
 
-**Alternatives considered**:
+**検討された代替案**:
 
-- Jest for testing: widely used but would require additional configuration alongside Vite.
-- Cypress for e2e: powerful, but Playwright is also lightweight and supports headless automation.
+- テスト用の Jest: 広く使用されていますが、Vite と一緒に追加の構成が必要になります。
+- e2e 用の Cypress: 強力ですが、Playwright も軽量で、ヘッドレス オートメーションをサポートします。
 
-## Decision: Project scaffolding with Vite
+## 決定: Vite によるプロジェクトの足場構築
 
-**Rationale**:
+**根拠**:
 
-- Vite offers fast build times, simple configuration, and official templates for React + TypeScript.
+- Vite は、高速なビルド時間、シンプルな構成、React + TypeScript の公式テンプレートを提供します。
 
-**Alternatives considered**:
+**検討された代替案**:
 
-- Create React App: stable but slower dev server, more boilerplate.
+- React アプリの作成: 安定しているが開発サーバーが遅く、定型文が多くなります。
 
-## Storage Mechanism: Browser `localStorage`
+## ストレージメカニズム: ブラウザの `localStorage`
 
-**Rationale**:
+**根拠**:
 
-- Requirement FR-006 only states persistence across reloads/sessions; localStorage fulfills this without server dependency.
-- Data volume is small, so storage quotas aren't an issue.
+- 要件 FR-006 では、リロード/セッション間の永続性のみが規定されています。localStorage は、サーバー依存なしでこれを実現します。
+- データ量が少ないため、ストレージのクォータは問題になりません。
 
-**Alternatives considered**:
+**検討された代替案**:
 
-- IndexedDB: overkill for simple objects.
-- Server API: complexity not justified.
+- IndexedDB: 単純なオブジェクトには過剰です。
+- サーバー API: 複雑さが正当化されません。
 
-## Summary
+## まとめ
 
-The app will be a single React+TypeScript SPA bootstrapped with Vite, persisting todo items in localStorage. Testing will use Vitest and Playwright to cover unit and end-to-end scenarios.
+アプリはViteでブートストラップされた単一のReact+TypeScript SPAで、ToDoアイテムはlocalStorageに保存されます。テストではVitestとPlaywrightを使用し、ユニットテストとエンドツーエンドテストをカバーします。

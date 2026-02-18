@@ -15,6 +15,7 @@
 
 ## OpenSpec
 
+- https://github.com/Fission-AI/OpenSpec/tree/main
 - https://note.com/brave_quince241/n/n6d4bb3ee0a12
 - https://iret.media/183621
 

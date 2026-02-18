@@ -1,24 +1,24 @@
 # Data Model for シンプルなTodoアプリ
 
-This project stores and manipulates a single entity:
+このプロジェクトは単一のエンティティを保存および操作します:
 
 ## TodoItem
 
-Represents a user-created task.
+ユーザーが作成したタスクを表します。
 
-| Field     | Type    | Description                               | Validation          |
-| --------- | ------- | ----------------------------------------- | ------------------- |
-| id        | string  | Unique identifier (UUID)                  | Required, unique    |
-| title     | string  | Short text describing the task            | Required, non-empty |
-| completed | boolean | Whether the task has been marked complete | Defaults to `false` |
-| createdAt | string  | ISO timestamp when the task was created   | Auto-populated      |
+| フィールド | 型      | 説明                                       | 検証                      |
+| ---------- | ------- | ------------------------------------------ | ------------------------- |
+| id         | string  | 一意の識別子（UUID）                       | 必須、一意                |
+| title      | string  | タスクを説明する短いテキスト               | 必須、空欄不可            |
+| completed  | boolean | タスクが完了としてマークされているかどうか | デフォルトは `false` です |
+| createdAt  | string  | タスクが作成された際の ISO タイムスタンプ  | 自動入力                  |
 
-### Storage Format
+### 保存形式
 
-Todos are stored as a JSON-serialized array under the `localStorage` key `todos`.
+Todos は、`localStorage` キー `todos` の下に JSON シリアル化された配列として保存されます。
 
 ```json
-// Example value in localStorage
+// localStorage内の値の例
 [
   {
     "id": "c0a80123-4567-89ab-cdef-0123456789ab",
@@ -29,15 +29,15 @@ Todos are stored as a JSON-serialized array under the `localStorage` key `todos`
 ]
 ```
 
-### State Transitions
+### 状態遷移
 
-- **Create**: new item added with `completed=false` and current `createdAt`.
-- **Complete**: toggling `completed` from `false` to `true`; UI may allow toggling back.
-- **Delete**: item removed from array.
+- **Create**: `completed=false` および現在の `createdAt` で新しい項目が追加される
+- **Complete**: `completed` を `false` から `true` に切り替える。UI によって元に戻せる場合がある
+- **Delete**: 配列から項目が削除される
 
-### Validation Rules
+### 検証ルール
 
-- `title` must be trimmed and non-empty; maximum length could be capped (e.g. 255 characters).
-- `id` generated via stable UUID library.
+- `title` 切り詰められており、空であってはなりません。最大長には上限を設定できます (例: 255 文字)。
+- `id` 安定した UUID ライブラリによって生成されます。
 
-No other entities are required for this simple app.
+このシンプルなアプリには他のエンティティは必要ありません。
