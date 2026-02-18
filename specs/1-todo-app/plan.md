@@ -1,35 +1,35 @@
-# Implementation Plan: シンプルなTodoアプリ
+# 実施計画: シンプルなTodoアプリ
 
 **Branch**: `1-todo-app` | **Date**: 2026年2月17日 | **Spec**: [link](spec.md)
-**Input**: Feature specification from `/specs/1-todo-app/spec.md`
+**Input**: `/specs/1-todo-app/spec.md` からの機能仕様
 
-## Summary
+## 概要
 
-Build a lightweight web-based todo application where users can add, complete, and delete tasks. The primary requirement is a responsive single-page interface with persistent storage across reloads; we'll implement it as a React + TypeScript SPA bootstrapped with Vite and leveraging browser `localStorage` for persistence. Testing will include unit/component tests with Vitest and e2e flows with Playwright.
+ユーザーがタスクを追加、完了、削除できる軽量なWebベースのToDoアプリケーションを構築します。主な要件は、リロード後も永続的なストレージを備えたレスポンシブなシングルページインターフェースです。Viteでブートストラップし、ブラウザの`localStorage`を永続化に利用するReact + TypeScript SPAとして実装します。テストには、Vitestを使用したユニットテストとコンポーネントテスト、そしてPlaywrightを使用したE2Eフローが含まれます。
 
-## Technical Context
+## 技術
 
-**Language/Version**: TypeScript (4.x) targeting modern browsers
-**Primary Dependencies**: React 18, Vite, uuid (for IDs)
-**Storage**: Browser `localStorage` (JSON-serialized array)
-**Testing**: Vitest for unit/component tests; Playwright for end-to-end scenarios
-**Target Platform**: Web browsers (desktop, mobile modern browsers)
-**Project Type**: Single web frontend project
-**Performance Goals**: UI operations should feel instantaneous; updates must reflect within 2 seconds (SC-003)
-**Constraints**: Data must persist between page reloads without a server; offline-capable by default since state is local.
-**Scale/Scope**: Lightweight toy app; expected < 500 lines of source code and limited to single-user local usage.
+**言語/バージョン**: TypeScript (4.x) targeting modern browsers
+**主な依存関係**: React 18, Vite, uuid (for IDs)
+**ストレージ**: Browser `localStorage` (JSON-serialized array)
+**テスト**: Vitest for unit/component tests; Playwright for end-to-end scenarios
+**ターゲットプラットフォーム**: Web browsers (desktop, mobile modern browsers)
+**プロジェクトの種類**: Single web frontend project
+**パフォーマンス目標**: UI 操作は瞬時に感じられるようにする必要があり、更新は 2 秒以内に反映される必要があります (SC-003)
+**制約**: データはサーバーなしでページの再読み込み間で保持される必要があります。状態がローカルであるため、デフォルトでオフライン可能です。
+**規模/範囲**: 軽量のおもちゃのアプリ。ソース コードは 500 行未満で、単一ユーザーのローカル使用に限定されます。
 
-## Constitution Check
+## 構成チェック
 
-All gates are satisfied: project is small, no complex architecture required, and the plan does not violate any placeholder principles. Since the constitution file contains generic placeholders, no specific violations apply.
+すべてのゲートは満たされています。プロジェクトは小規模で、複雑なアーキテクチャは不要であり、計画はプレースホルダの原則に違反していません。構成ファイルには汎用的なプレースホルダが含まれているため、具体的な違反は適用されません。
 
-## Project Structure
+## プロジェクト構造
 
-### Documentation (this feature)
+### ドキュメント（この機能）
 
 ```
 specs/1-todo-app/
-├── plan.md              # This file (/speckit.plan command output)
+├── plan.md              # このファイル（/speckit.planコマンド出力）
 ├── research.md          # Phase 0 output (/speckit.plan command)
 ├── data-model.md        # Phase 1 output (/speckit.plan command)
 ├── quickstart.md        # Phase 1 output (/speckit.plan command)
@@ -37,29 +37,29 @@ specs/1-todo-app/
 └── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
-### Source Code (repository root)
+### ソースコード（リポジトリルート）
 
 ```text
-# Single project web application structure
+# 単一プロジェクトのWebアプリケーション構造
 frontend/
 ├── src/
-│   ├── components/      # React UI components (TodoList, TodoItem, etc.)
-│   ├── hooks/           # custom hooks for storage and logic
-│   ├── types/           # TypeScript interfaces (e.g., TodoItem)
-│   └── App.tsx          # entry point
-├── public/              # static assets, index.html
-├── vitest.config.ts     # unit test configuration
-├── playwright.config.ts # e2e test configuration
+│   ├── components/      # React UI コンポーネント (TodoList、TodoItem など)
+│   ├── hooks/           # ストレージとロジック用のカスタムフック
+│   ├── types/           # TypeScript インターフェース (例: TodoItem)
+│   └── App.tsx          # エントリーポイント
+├── public/              # 静的アセット、index.html
+├── vitest.config.ts     # ユニットテスト構成
+├── playwright.config.ts # e2eテスト構成
 ├── package.json
 └── tsconfig.json
 
-tests/                   # optional separate tests directory
-├── e2e/                 # Playwright test files
-└── unit/                # additional unit tests
+tests/                   # オプションの個別のテストディレクトリ
+├── e2e/                 # Playwright テストファイル
+└── unit/                # 追加のユニットテスト
 ```
 
-**Structure Decision**: A single frontend project under `frontend/` fits the scope; no backend or mobile layers are needed.
+**構造決定**: `frontend/` の下にある単一のフロントエンド プロジェクトが範囲に適合します。バックエンド レイヤーやモバイル レイヤーは必要ありません。
 
-## Complexity Tracking
+## 複雑性の追跡
 
-No constitution violations detected; the chosen structure is minimal and matches the feature's simplicity.
+憲法違反は検出されませんでした。選択された構造は最小限であり、機能の単純さと一致しています。

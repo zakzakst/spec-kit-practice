@@ -1,52 +1,52 @@
 # Feature Specification: シンプルなTodoアプリ
 
-**Feature Branch**: `1-todo-app`  
-**Created**: 2026年2月17日  
-**Status**: Draft  
+**Feature Branch**: `1-todo-app`
+**Created**: 2026年2月17日
+**Status**: Draft
 **Input**: User description: "シンプルなTodoアプリ
 
 - タスクの作成・完了・削除ができるWebアプリケーション"
 
 ## User Scenarios & Testing _(mandatory)_
 
-### User Story 1 - Add a task (Priority: P1)
+### ユーザーストーリー1 - タスクを追加（優先度：P1）
 
-A user visits the web app and wants to record something they need to do. They enter a brief title and save the task.
+ユーザーはウェブアプリにアクセスし、やるべきことを記録したいと考えます。簡単なタイトルを入力してタスクを保存します。
 
-**Why this priority**: Creating tasks is the fundamental action; without it the app has no value.
+**なぜこの優先順位なのか**: タスクの作成は基本的なアクションであり、これがなければアプリには価値がありません。
 
-**Independent Test**: Start with an empty list, add a task, and verify the task appears; this can be tested on its own.
+**独立テスト**: 空のリストから開始し、タスクを追加して、タスクが表示されることを確認します。これは単独でテストできます。
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
-1. **Given** the user is on the main page with no tasks, **When** they type a title and submit, **Then** the new task is shown in the list.
-2. **Given** there are existing tasks, **When** the user adds another, **Then** the list includes the new entry at the appropriate position.
+1. **Given** ユーザーはタスクのないメインページにいる, **When** タイトルを入力して送信する, **Then** 新しいタスクがリストに表示されます
+2. **Given** 既存のタスクがある, **When** ユーザーが別のものを追加する, **Then** リストには適切な位置に新しいエントリが含まれます
 
 ---
 
-### User Story 2 - Mark task as complete (Priority: P2)
+### ユーザーストーリー2 - タスクを完了としてマークする（優先度：P2）
 
-After creating tasks, a user needs a way to indicate that something has been done. They click a checkbox or similar control to mark a task complete.
+タスクを作成した後、ユーザーは何かが完了したことを示す手段が必要です。タスクを完了するには、チェックボックスなどのコントロールをクリックします。
 
-**Why this priority**: Completion tracking is the secondary value; users can still create tasks without it but it improves usefulness.
+**なぜこの優先順位なのか**: Completion tracking is the secondary value; users can still create tasks without it but it improves usefulness.
 
-**Independent Test**: With at least one unfinished task, mark it complete and verify its state changes to "done"; this can be done separate from other stories.
+**独立テスト**: With at least one unfinished task, mark it complete and verify its state changes to "done"; this can be done separate from other stories.
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
 1. **Given** an existing incomplete task, **When** the user triggers the completion control, **Then** the task is visually distinguished as completed and optionally moved or styled differently.
 
 ---
 
-### User Story 3 - Delete a task (Priority: P3)
+### ユーザーストーリー3 - タスクを削除する（優先度：P3）
 
 Users should be able to remove tasks they no longer need. They select an option to delete a task from the list.
 
-**Why this priority**: Deletion cleans up but is less critical than adding or marking; it is still necessary for a usable list.
+**なぜこの優先順位なのか**: Deletion cleans up but is less critical than adding or marking; it is still necessary for a usable list.
 
-**Independent Test**: With a task present, use the delete action and verify the task is removed; can be tested alone.
+**独立テスト**: With a task present, use the delete action and verify the task is removed; can be tested alone.
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
 1. **Given** an existing task (completed or not), **When** the user chooses to delete it, **Then** the task is no longer shown in the list.
 
