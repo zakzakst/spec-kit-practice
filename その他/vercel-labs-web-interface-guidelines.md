@@ -1,174 +1,174 @@
 ---
-description: Review UI code for Vercel Web Interface Guidelines compliance
+description: Vercel Webインターフェースガイドラインに準拠したUIコードを確認する
 argument-hint: <file-or-pattern>
 ---
 
-# Web Interface Guidelines
+# Webインターフェースガイドライン
 
-Review these files for compliance: $ARGUMENTS
+これらのファイルのコンプライアンスを確認する: $ARGUMENTS
 
-Read files, check against rules below. Output concise but comprehensive—sacrifice grammar for brevity. High signal-to-noise.
+ファイルを読み、以下のルールに照らし合わせてチェックしてください。簡潔かつ包括的な出力を心がけてください。簡潔さを優先し、文法は犠牲にしてください。高いS/N比（有効な信号成分（Signal）と、妨害となる雑音成分（Noise）との比率を示す指標）を実現してください。
 
-## Rules
+## ルール
 
-### Accessibility
+### アクセシビリティ
 
-- Icon-only buttons need `aria-label`
-- Form controls need `<label>` or `aria-label`
-- Interactive elements need keyboard handlers (`onKeyDown`/`onKeyUp`)
-- `<button>` for actions, `<a>`/`<Link>` for navigation (not `<div onClick>`)
-- Images need `alt` (or `alt=""` if decorative)
-- Decorative icons need `aria-hidden="true"`
-- Async updates (toasts, validation) need `aria-live="polite"`
-- Use semantic HTML (`<button>`, `<a>`, `<label>`, `<table>`) before ARIA
-- Headings hierarchical `<h1>`–`<h6>`; include skip link for main content
-- `scroll-margin-top` on heading anchors
+- アイコンのみのボタンには `aria-label` が必要です
+- フォームコントロールには `<label>` または `aria-label` が必要です
+- インタラクティブな要素にはキーボード ハンドラー (`onKeyDown`/`onKeyUp`) が必要です。
+- アクションには`<div onClick>`ではなく`<button>`を利用してください、ナビゲーションのためのもの`<a>`/`<Link>`ではありません
+- 画像には `alt` が必要です (装飾の場合は `alt=""`)
+- 装飾アイコンには `aria-hidden="true"` が必要です
+- 非同期更新（トースト、検証）には `aria-live="polite"` が必要です
+- ARIA の前にセマンティック HTML (`<button>`, `<a>`, `<label>`, `<table>`) を使用する
+- 見出しは階層構造の `<h1>`–`<h6>` で、メインコンテンツへのスキップリンクを含める
+- 見出しアンカーの `scroll-margin-top`
 
-### Focus States
+### フォーカス状態
 
-- Interactive elements need visible focus: `focus-visible:ring-*` or equivalent
-- Never `outline-none` / `outline: none` without focus replacement
-- Use `:focus-visible` over `:focus` (avoid focus ring on click)
-- Group focus with `:focus-within` for compound controls
+- インタラクティブな要素には可視フォーカスが必要です: `focus-visible:ring-*` または同等のもの
+- フォーカス置換なしで `outline-none` / `outline: none` を使用しないでください
+- `:focus` ではなく `:focus-visible` を使用する (クリック時にフォーカスリングが表示されないようにする)
+- 複合コントロールの `:focus-within` によるグループフォーカス
 
-### Forms
+### フォーム
 
-- Inputs need `autocomplete` and meaningful `name`
-- Use correct `type` (`email`, `tel`, `url`, `number`) and `inputmode`
-- Never block paste (`onPaste` + `preventDefault`)
-- Labels clickable (`htmlFor` or wrapping control)
-- Disable spellcheck on emails, codes, usernames (`spellCheck={false}`)
-- Checkboxes/radios: label + control share single hit target (no dead zones)
-- Submit button stays enabled until request starts; spinner during request
-- Errors inline next to fields; focus first error on submit
-- Placeholders end with `…` and show example pattern
-- `autocomplete="off"` on non-auth fields to avoid password manager triggers
-- Warn before navigation with unsaved changes (`beforeunload` or router guard)
+- 入力には「オートコンプリート」と意味のある「名前」が必要です
+- 正しい `type` (`email`, `tel`, `url`, `number`) と `inputmode` を使用してください
+- 貼り付けをブロックしない (`onPaste` + `preventDefault`)
+- ラベルはクリック可能（`htmlFor` またはラッピングコントロール）
+- メール、コード、ユーザー名のスペルチェックを無効にする (`spellCheck={false}`)
+- チェックボックス/ラジオボタン: ラベル + コントロールで単一のヒット ターゲットを共有 (デッド ゾーンなし)
+- 送信ボタンはリクエストが開始されるまで有効のままです。リクエスト中はスピナーが表示されます。
+- エラーはフィールドの横にインラインで表示され、送信時に最初のエラーにフォーカスが当てられます
+- プレースホルダーは `…` で終わり、サンプルパターンを表示します
+- パスワードマネージャーのトリガーを回避するために、非認証フィールドで `autocomplete="off"` を設定します。
+- 保存されていない変更があるナビゲーションの前に警告する (`beforeunload` またはルーター ガード)
 
-### Animation
+### アニメーション
 
-- Honor `prefers-reduced-motion` (provide reduced variant or disable)
-- Animate `transform`/`opacity` only (compositor-friendly)
-- Never `transition: all`—list properties explicitly
-- Set correct `transform-origin`
-- SVG: transforms on `<g>` wrapper with `transform-box: fill-box; transform-origin: center`
-- Animations interruptible—respond to user input mid-animation
+- `prefers-reduced-motion` を尊重する (縮小版を提供するか無効にする)
+- `transform`/`opacity` のみをアニメーション化する（コンポジターフレンドリー）
+- `transition: all` は使用しないでください。プロパティを明示的にリストします。
+- 正しい `transform-origin` を設定する
+- SVG: `<g>` ラッパーを `transform-box: fill-box; transform-origin: center` で変換します
+- アニメーションは中断可能 - アニメーションの途中でもユーザー入力に応答します
 
-### Typography
+### タイポグラフィ
 
-- `…` not `...`
-- Curly quotes `"` `"` not straight `"`
-- Non-breaking spaces: `10&nbsp;MB`, `⌘&nbsp;K`, brand names
-- Loading states end with `…`: `"Loading…"`, `"Saving…"`
-- `font-variant-numeric: tabular-nums` for number columns/comparisons
-- Use `text-wrap: balance` or `text-pretty` on headings (prevents widows)
+- 「...」ではなく「…」
+- まっすぐな引用符 `"` `"` ではなく、波型の引用符 `"`
+- 改行不可スペース: `10&nbsp;MB`、`⌘&nbsp;K`、ブランド名
+- 読み込み状態は `…` で終わります: `"Loading…"`、`"Saving…"`
+- 数値列/比較のための `font-variant-numeric: tabular-nums`
+- 見出しには `text-wrap: balance` または `text-pretty` を使用します (タイポグラフィにおいて段落の最終行に「1単語」や「1文字」だけが孤立して残る現象を防ぐ)
 
-### Content Handling
+### コンテンツ処理
 
-- Text containers handle long content: `truncate`, `line-clamp-*`, or `break-words`
-- Flex children need `min-w-0` to allow text truncation
-- Handle empty states—don't render broken UI for empty strings/arrays
-- User-generated content: anticipate short, average, and very long inputs
+- テキストコンテナは長いコンテンツを処理します: `truncate`、`line-clamp-*`、または `break-words`
+- Flexの子要素では、テキストの切り捨てを可能にするために `min-w-0` が必要です。
+- 空の状態を処理します。空の文字列/配列に対して壊れた UI をレンダリングしないでください。
+- ユーザー生成コンテンツ: 短い、平均的な、非常に長い入力を予測する
 
-### Images
+### 画像
 
-- `<img>` needs explicit `width` and `height` (prevents CLS)
-- Below-fold images: `loading="lazy"`
-- Above-fold critical images: `priority` or `fetchpriority="high"`
+- `<img>` には明示的な `width` と `height` が必要です (CLS を防止します)
+- 折り返し下の画像: `loading="lazy"`
+- スクロール上部の重要な画像: `priority` または `fetchpriority="high"`
 
-### Performance
+### パフォーマンス
 
-- Large lists (>50 items): virtualize (`virtua`, `content-visibility: auto`)
-- No layout reads in render (`getBoundingClientRect`, `offsetHeight`, `offsetWidth`, `scrollTop`)
-- Batch DOM reads/writes; avoid interleaving
-- Prefer uncontrolled inputs; controlled inputs must be cheap per keystroke
-- Add `<link rel="preconnect">` for CDN/asset domains
-- Critical fonts: `<link rel="preload" as="font">` with `font-display: swap`
+- 大きなリスト（50 項目以上）: virtualize (`virtua`, `content-visibility: auto`)
+- レンダリングでレイアウトが読み込まれません (`getBoundingClientRect`、`offsetHeight`、`offsetWidth`、`scrollTop`)
+- DOMの読み取り/書き込みをバッチ処理し、インターリーブを回避する
+- 制御されていない入力を優先します。制御された入力はキーストロークあたりのコストが安くなければなりません。
+- CDN/アセットドメインに `<link rel="preconnect">` を追加します
+- 重要なフォント: `<link rel="preload" as="font">` と `font-display: swap`
 
-### Navigation & State
+### ナビゲーションと状態
 
-- URL reflects state—filters, tabs, pagination, expanded panels in query params
-- Links use `<a>`/`<Link>` (Cmd/Ctrl+click, middle-click support)
-- Deep-link all stateful UI (if uses `useState`, consider URL sync via nuqs or similar)
-- Destructive actions need confirmation modal or undo window—never immediate
+- URL は状態を反映します (クエリ パラメータのフィルター、タブ、ページ区切り、展開パネルなど)
+- リンクは `<a>`/`<Link>` を使用します (Cmd/Ctrl+クリック、中クリックをサポート)
+- すべてのステートフル UI をディープリンクします (`useState` を使用する場合は、nuqs などによる URL 同期を検討してください)
+- 破壊的なアクションには確認モーダルまたは元に戻すウィンドウが必要であり、即時には実行できない
 
-### Touch & Interaction
+### タッチとインタラクション
 
-- `touch-action: manipulation` (prevents double-tap zoom delay)
-- `-webkit-tap-highlight-color` set intentionally
-- `overscroll-behavior: contain` in modals/drawers/sheets
-- During drag: disable text selection, `inert` on dragged elements
-- `autoFocus` sparingly—desktop only, single primary input; avoid on mobile
+- `touch-action: manipulation` (ダブルタップによるズームの遅延を防ぐ)
+- `-webkit-tap-highlight-color` を意図的に設定
+- モーダル/ドロワー/シート内の`overscroll-behavior: contain`
+- ドラッグ中: テキスト選択を無効にし、ドラッグされた要素に対して `inert` する
+- `autoFocus` は控えめに - デスクトップのみ、単一のプライマリ入力。モバイルでは使用しないでください。
 
-### Safe Areas & Layout
+### 安全エリアとレイアウト
 
-- Full-bleed layouts need `env(safe-area-inset-*)` for notches
-- Avoid unwanted scrollbars: `overflow-x-hidden` on containers, fix content overflow
-- Flex/grid over JS measurement for layout
+- フルブリードレイアウトではノッチに `env(safe-area-inset-*)` が必要です
+- 不要なスクロールバーを回避する: コンテナの `overflow-x-hidden` でコンテンツのオーバーフローを修正
+- レイアウトのための Flex/Grid over JS 測定
 
-### Dark Mode & Theming
+### ダークモードとテーマ
 
-- `color-scheme: dark` on `<html>` for dark themes (fixes scrollbar, inputs)
-- `<meta name="theme-color">` matches page background
-- Native `<select>`: explicit `background-color` and `color` (Windows dark mode)
+- ダークテーマ用の `<html>` の `color-scheme: dark` (スクロールバーと入力を修正)
+- `<meta name="theme-color">` はページの背景に一致します
+- ネイティブ `<select>`: 明示的な `background-color` と `color` (Windows ダーク モード)
 
-### Locale & i18n
+### ローカライズとi18n
 
-- Dates/times: use `Intl.DateTimeFormat` not hardcoded formats
-- Numbers/currency: use `Intl.NumberFormat` not hardcoded formats
-- Detect language via `Accept-Language` / `navigator.languages`, not IP
+- 日付/時刻: ハードコードされた形式ではなく `Intl.DateTimeFormat` を使用します
+- 数値/通貨: ハードコードされた形式ではなく `Intl.NumberFormat` を使用します
+- IPではなく、`Accept-Language` / `navigator.languages`で言語を検出します
 
-### Hydration Safety
+### 安全なハイドレーション（事前に生成された HTML に対してイベントハンドラをアタッチしていく処理）
 
-- Inputs with `value` need `onChange` (or use `defaultValue` for uncontrolled)
-- Date/time rendering: guard against hydration mismatch (server vs client)
-- `suppressHydrationWarning` only where truly needed
+- `value` を含む入力には `onChange` が必要です (または制御されていない場合は `defaultValue` を使用します)
+- 日付/時刻のレンダリング: ハイドレーションの不一致を防ぐ (サーバーとクライアント)
+- 本当に必要な場合にのみ `suppressHydrationWarning` を使用する
 
-### Hover & Interactive States
+### ホバーとインタラクティブな状態
 
-- Buttons/links need `hover:` state (visual feedback)
-- Interactive states increase contrast: hover/active/focus more prominent than rest
+- ボタン/リンクには `hover:` 状態（視覚的なフィードバック）が必要です
+- インタラクティブな状態ではコントラストが増します。ホバー/アクティブ/フォーカスが他の状態よりも目立つようになります。
 
-### Content & Copy
+### コンテンツとコピー
 
-- Active voice: "Install the CLI" not "The CLI will be installed"
-- Title Case for headings/buttons (Chicago style)
-- Numerals for counts: "8 deployments" not "eight"
-- Specific button labels: "Save API Key" not "Continue"
-- Error messages include fix/next step, not just problem
-- Second person; avoid first person
-- `&` over "and" where space-constrained
+- 能動態:「CLI がインストールされます」ではなく「CLI をインストールします」
+- 見出し/ボタンのタイトルケース（シカゴスタイル）
+- カウントの数字：「8」ではなく「8 回の展開」
+- 特定のボタンラベル:「続行」ではなく「API キーを保存」
+- エラーメッセージには問題だけでなく、修正/次の手順も含まれています
+- 二人称。一人称は避ける
+- スペースが制限されている場合は「and」の代わりに「&」を使用する
 
-### Anti-patterns (flag these)
+### アンチパターン（フラグを立てる）
 
-- `user-scalable=no` or `maximum-scale=1` disabling zoom
-- `onPaste` with `preventDefault`
+- `user-scalable=no` または `maximum-scale=1` でズームを無効にする
+- `onPaste` と `preventDefault`
 - `transition: all`
-- `outline-none` without focus-visible replacement
-- Inline `onClick` navigation without `<a>`
-- `<div>` or `<span>` with click handlers (should be `<button>`)
-- Images without dimensions
-- Large arrays `.map()` without virtualization
-- Form inputs without labels
-- Icon buttons without `aria-label`
-- Hardcoded date/number formats (use `Intl.*`)
-- `autoFocus` without clear justification
+- focus-visible 置換のない `outline-none`
+- `<a>` なしのインライン `onClick` ナビゲーション
+- クリック ハンドラー付きの `<div>` または `<span>` (`<button>` にする必要があります)
+- 寸法のない画像
+- 仮想化なしの大きな配列 `.map()`
+- ラベルのないフォーム入力
+- `aria-label` のないアイコンボタン
+- ハードコードされた日付/数値形式（`Intl.*` を使用）
+- 明確な根拠のない`autoFocus`
 
-## Output Format
+## 出力形式
 
-Group by file. Use `file:line` format (VS Code clickable). Terse findings.
+ファイルごとにグループ化します。`file:line` 形式を使用します（VS Code でクリック可能）。簡潔な調査結果です。
 
 ```text
 ## src/Button.tsx
 
-src/Button.tsx:42 - icon button missing aria-label
-src/Button.tsx:18 - input lacks label
-src/Button.tsx:55 - animation missing prefers-reduced-motion
-src/Button.tsx:67 - transition: all → list properties
+src/Button.tsx:42 - アイコンボタンにaria-labelがありません
+src/Button.tsx:18 - 入力にラベルがありません
+src/Button.tsx:55 - アニメーションがありません prefers-reduced-motion
+src/Button.tsx:67 - 遷移: すべて → リストプロパティ
 
 ## src/Modal.tsx
 
-src/Modal.tsx:12 - missing overscroll-behavior: contain
+src/Modal.tsx:12 - overscroll-behavior: contain がない
 src/Modal.tsx:34 - "..." → "…"
 
 ## src/Card.tsx
@@ -176,4 +176,4 @@ src/Modal.tsx:34 - "..." → "…"
 ✓ pass
 ```
 
-State issue + location. Skip explanation unless fix non-obvious. No preamble.
+問題と発生場所を明記してください。解決策が明らかでない限り、説明は省略してください。前置きは不要です。
