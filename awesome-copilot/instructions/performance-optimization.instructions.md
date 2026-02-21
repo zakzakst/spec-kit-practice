@@ -5,24 +5,24 @@ description: "あらゆる言語、フレームワーク、スタックに対応
 
 # パフォーマンス最適化のベストプラクティス
 
-## Introduction
+## 導入
 
-Performance isn't just a buzzword—it's the difference between a product people love and one they abandon. I've seen firsthand how a slow app can frustrate users, rack up cloud bills, and even lose customers. This guide is a living collection of the most effective, real-world performance practices I've used and reviewed, covering frontend, backend, and database layers, as well as advanced topics. Use it as a reference, a checklist, and a source of inspiration for building fast, efficient, and scalable software.
+パフォーマンスは単なる流行語ではありません。人々に愛される製品と、愛されなくなる製品を分けるものです。遅いアプリがユーザーを苛立たせ、クラウド料金を膨らませ、顧客を失うことさえあるのを、私は身をもって経験してきました。このガイドは、私が実践し、レビューしてきた最も効果的で実践的なパフォーマンスプラクティスを、フロントエンド、バックエンド、データベース層に加え、高度なトピックも網羅した、生きたコレクションです。高速で効率的、そしてスケーラブルなソフトウェアを構築するための参考資料、チェックリスト、そしてインスピレーションの源としてご活用ください。
 
 ---
 
-## General Principles
+## 一般原則
 
-- **Measure First, Optimize Second:** Always profile and measure before optimizing. Use benchmarks, profilers, and monitoring tools to identify real bottlenecks. Guessing is the enemy of performance.
-  - _Pro Tip:_ Use tools like Chrome DevTools, Lighthouse, New Relic, Datadog, Py-Spy, or your language's built-in profilers.
-- **Optimize for the Common Case:** Focus on optimizing code paths that are most frequently executed. Don't waste time on rare edge cases unless they're critical.
-- **Avoid Premature Optimization:** Write clear, maintainable code first; optimize only when necessary. Premature optimization can make code harder to read and maintain.
-- **Minimize Resource Usage:** Use memory, CPU, network, and disk resources efficiently. Always ask: "Can this be done with less?"
-- **Prefer Simplicity:** Simple algorithms and data structures are often faster and easier to optimize. Don't over-engineer.
-- **Document Performance Assumptions:** Clearly comment on any code that is performance-critical or has non-obvious optimizations. Future maintainers (including you) will thank you.
-- **Understand the Platform:** Know the performance characteristics of your language, framework, and runtime. What's fast in Python may be slow in JavaScript, and vice versa.
-- **Automate Performance Testing:** Integrate performance tests and benchmarks into your CI/CD pipeline. Catch regressions early.
-- **Set Performance Budgets:** Define acceptable limits for load time, memory usage, API latency, etc. Enforce them with automated checks.
+- **まず測定し、次に最適化する:** 最適化を行う前に、必ずプロファイリングと測定を実施してください。ベンチマーク、プロファイラー、監視ツールなどを活用し、真のボトルネックを特定してください。推測はパフォーマンスの敵です。
+  - _プロのヒント:_ Chrome DevTools、Lighthouse、New Relic、Datadog、Py-Spy、または言語に組み込まれているプロファイラーなどのツールを使用します。
+- **一般的なケースに最適化:** 最も頻繁に実行されるコードパスの最適化に重点を置きましょう。稀なエッジケースについては、それが極めて重要でない限り、時間を無駄にしないでください。
+- **早すぎる最適化を避ける:** まず明確で保守しやすいコードを書き、必要な場合にのみ最適化してください。時期尚早な最適化は、コードの可読性と保守性を低下させる可能性があります。
+- **リソース使用量を最小限に抑える:** メモリ、CPU、ネットワーク、ディスクリソースを効率的に使用してください。常に「より少ないリソースでこれを行うことはできないか？」と自問してください。
+- **シンプルさを好む:** シンプルなアルゴリズムとデータ構造は、多くの場合、より高速で最適化が容易です。過剰なエンジニアリングは避けましょう。
+- **パフォーマンスの想定を文書化する:** パフォーマンスが重要なコードや、分かりにくい最適化が施されているコードには、明確なコメントを付けてください。将来のメンテナー（あなた自身も含む）にとって、きっと感謝されるでしょう。
+- **プラットフォームを理解する:** 言語、フレームワーク、ランタイムのパフォーマンス特性を理解しましょう。Python では高速なものが JavaScript では遅い場合があり、その逆も同様です。
+- **パフォーマンステストの自動化:** パフォーマンステストとベンチマークをCI/CDパイプラインに統合し、リグレッションを早期に発見しましょう。
+- **パフォーマンス予算を設定する:** 読み込み時間、メモリ使用量、API レイテンシなどの許容制限を定義します。自動チェックでそれらを強制します。
 
 ---
 
