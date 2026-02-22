@@ -26,18 +26,18 @@ description: "あらゆる言語、フレームワーク、スタックに対応
 
 ---
 
-## Frontend Performance
+## フロントエンドパフォーマンス
 
-### Rendering and DOM
+### レンダリングとDOM
 
-- **Minimize DOM Manipulations:** Batch updates where possible. Frequent DOM changes are expensive.
-  - _Anti-pattern:_ Updating the DOM in a loop. Instead, build a document fragment and append it once.
-- **Virtual DOM Frameworks:** Use React, Vue, or similar efficiently—avoid unnecessary re-renders.
-  - _React Example:_ Use `React.memo`, `useMemo`, and `useCallback` to prevent unnecessary renders.
-- **Keys in Lists:** Always use stable keys in lists to help virtual DOM diffing. Avoid using array indices as keys unless the list is static.
-- **Avoid Inline Styles:** Inline styles can trigger layout thrashing. Prefer CSS classes.
-- **CSS Animations:** Use CSS transitions/animations over JavaScript for smoother, GPU-accelerated effects.
-- **Defer Non-Critical Rendering:** Use `requestIdleCallback` or similar to defer work until the browser is idle.
+- **DOM操作を最小限に抑える:** 可能な場合はバッチ更新を行ってください。DOM の頻繁な変更はコストがかかります。
+  - _アンチパターン:_ DOM をループで更新する代わりに、ドキュメントフラグメントを構築して一度だけ追加します。
+- **仮想DOMフレームワーク:** React、Vue などを効率的に使用し、不要な再レンダリングを回避します。
+  - _React の例:_ 不要なレンダリングを防ぐには、`React.memo`、`useMemo`、および `useCallback` を使用します。
+- **リスト内のキー:** 仮想DOMの差分を容易にするため、リストでは常に安定したキーを使用してください。リストが静的でない限り、配列のインデックスをキーとして使用しないでください。
+- **インラインスタイルを避ける:** インラインスタイルはレイアウトの乱れを引き起こす可能性があります。CSSクラスの使用を推奨します。
+- **CSSアニメーション:** よりスムーズな GPU アクセラレーション効果を得るには、JavaScript ではなく CSS トランジション/アニメーションを使用します。
+- **重要でないレンダリングを延期する:** ブラウザがアイドル状態になるまで作業を延期するには、`requestIdleCallback` などを使用します。
 
 ### Asset Optimization
 
