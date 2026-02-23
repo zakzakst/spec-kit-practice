@@ -49,3 +49,4 @@
 - アンサンブル推論
 - クォーラム
 - https://developer.mozilla.org/ja/docs/Web/CSS/Reference/Selectors/:focus-within
+- font-display: swap

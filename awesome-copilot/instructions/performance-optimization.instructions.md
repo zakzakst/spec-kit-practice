@@ -39,23 +39,23 @@ description: "あらゆる言語、フレームワーク、スタックに対応
 - **CSSアニメーション:** よりスムーズな GPU アクセラレーション効果を得るには、JavaScript ではなく CSS トランジション/アニメーションを使用します。
 - **重要でないレンダリングを延期する:** ブラウザがアイドル状態になるまで作業を延期するには、`requestIdleCallback` などを使用します。
 
-### Asset Optimization
+### 資産最適化
 
-- **Image Compression:** Use tools like ImageOptim, Squoosh, or TinyPNG. Prefer modern formats (WebP, AVIF) for web delivery.
-- **SVGs for Icons:** SVGs scale well and are often smaller than PNGs for simple graphics.
-- **Minification and Bundling:** Use Webpack, Rollup, or esbuild to bundle and minify JS/CSS. Enable tree-shaking to remove dead code.
-- **Cache Headers:** Set long-lived cache headers for static assets. Use cache busting for updates.
-- **Lazy Loading:** Use `loading="lazy"` for images, and dynamic imports for JS modules/components.
-- **Font Optimization:** Use only the character sets you need. Subset fonts and use `font-display: swap`.
+- **画像圧縮:** ImageOptim、Squoosh、TinyPNGなどのツールを使用してください。Web配信には最新の形式（WebP、AVIF）を推奨します。
+- **アイコン用のSVG:** SVG は拡張性に優れており、単純なグラフィックの場合は PNG よりもサイズが小さくなることがよくあります。
+- **縮小とバンドル:** Webpack、Rollup、esbuild を使って JS/CSS をバンドルし、縮小します。ツリーシェイキングを有効にしてデッドコードを削除します。
+- **キャッシュヘッダー:** 静的アセットには長期キャッシュヘッダーを設定します。更新時にはキャッシュバスティングを使用します。
+- **遅延読み込み:** 画像には `loading="lazy"` を使用し、JS モジュール/コンポーネントには動的インポートを使用します。
+- **フォントの最適化:** 必要な文字セットのみを使用してください。フォントをサブセット化し、`font-display: swap` を使用してください。
 
-### Network Optimization
+### ネットワーク最適化
 
-- **Reduce HTTP Requests:** Combine files, use image sprites, and inline critical CSS.
-- **HTTP/2 and HTTP/3:** Enable these protocols for multiplexing and lower latency.
-- **Client-Side Caching:** Use Service Workers, IndexedDB, and localStorage for offline and repeat visits.
-- **CDNs:** Serve static assets from a CDN close to your users. Use multiple CDNs for redundancy.
-- **Defer/Async Scripts:** Use `defer` or `async` for non-critical JS to avoid blocking rendering.
-- **Preload and Prefetch:** Use `<link rel="preload">` and `<link rel="prefetch">` for critical resources.
+- **HTTPリクエストを減らす:** ファイルを結合し、画像スプライトを使用し、重要な CSS をインライン化します。
+- **HTTP/2 と HTTP/3:** 多重化と低遅延のためにこれらのプロトコルを有効にします。
+- **クライアント側キャッシュ:** オフラインおよび繰り返しの訪問には、Service Workers、IndexedDB、localStorage を使用します。
+- **CDN:** ユーザーに近いCDNから静的アセットを提供します。冗長性を確保するために複数のCDNを使用します。
+- **遅延/非同期スクリプト:** レンダリングのブロックを回避するには、重要でない JS に `defer` または `async` を使用します。
+- **プリロードとプリフェッチ:** 重要なリソースには `<link rel="preload">` と `<link rel="prefetch">` を使用します。
 
 ### JavaScript Performance
 
