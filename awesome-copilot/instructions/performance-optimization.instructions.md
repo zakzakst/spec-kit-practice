@@ -57,14 +57,14 @@ description: "あらゆる言語、フレームワーク、スタックに対応
 - **遅延/非同期スクリプト:** レンダリングのブロックを回避するには、重要でない JS に `defer` または `async` を使用します。
 - **プリロードとプリフェッチ:** 重要なリソースには `<link rel="preload">` と `<link rel="prefetch">` を使用します。
 
-### JavaScript Performance
+### JavaScript パフォーマンス
 
-- **Avoid Blocking the Main Thread:** Offload heavy computation to Web Workers.
-- **Debounce/Throttle Events:** For scroll, resize, and input events, use debounce/throttle to limit handler frequency.
-- **Memory Leaks:** Clean up event listeners, intervals, and DOM references. Use browser dev tools to check for detached nodes.
-- **Efficient Data Structures:** Use Maps/Sets for lookups, TypedArrays for numeric data.
-- **Avoid Global Variables:** Globals can cause memory leaks and unpredictable performance.
-- **Avoid Deep Object Cloning:** Use shallow copies or libraries like lodash's `cloneDeep` only when necessary.
+- **メインスレッドのブロックを避ける:** 負荷の高い計算を Web Workers にオフロードします。
+- **デバウンス/スロットルイベント:** スクロール、サイズ変更、および入力イベントの場合、デバウンス/スロットルを使用してハンドラーの頻度を制限します。
+- **メモリリーク:** イベントリスナー、インターバル、DOM参照をクリーンアップします。ブラウザの開発ツールを使用して、分離されたノードがないか確認してください。
+- **効率的なデータ構造:** ルックアップには Maps/Sets を使用し、数値データには TypedArrays を使用します。
+- **グローバル変数を避ける:** グローバルはメモリ リークや予期しないパフォーマンスを引き起こす可能性があります。
+- **ディープオブジェクトのクローン作成を避ける:** 必要な場合にのみ、浅いコピーまたは lodash の `cloneDeep` のようなライブラリを使用してください。
 
 ### Accessibility and Performance
 
