@@ -66,278 +66,278 @@ description: "あらゆる言語、フレームワーク、スタックに対応
 - **グローバル変数を避ける:** グローバルはメモリ リークや予期しないパフォーマンスを引き起こす可能性があります。
 - **ディープオブジェクトのクローン作成を避ける:** 必要な場合にのみ、浅いコピーまたは lodash の `cloneDeep` のようなライブラリを使用してください。
 
-### Accessibility and Performance
+### アクセシビリティとパフォーマンス
 
-- **Accessible Components:** Ensure ARIA updates are not excessive. Use semantic HTML for both accessibility and performance.
-- **Screen Reader Performance:** Avoid rapid DOM updates that can overwhelm assistive tech.
+- **アクセス可能なコンポーネント:** ARIA の更新が過度にならないようにしてください。アクセシビリティとパフォーマンスの両方のために、セマンティック HTML を使用してください。
+- **スクリーンリーダーのパフォーマンス:** 支援技術に負担をかける可能性のある急速な DOM 更新は避けてください。
 
-### Framework-Specific Tips
+### フレームワーク固有のヒント
 
 #### React
 
-- Use `React.memo`, `useMemo`, and `useCallback` to avoid unnecessary renders.
-- Split large components and use code-splitting (`React.lazy`, `Suspense`).
-- Avoid anonymous functions in render; they create new references on every render.
-- Use `ErrorBoundary` to catch and handle errors gracefully.
-- Profile with React DevTools Profiler.
+- 不要なレンダリングを避けるには、`React.memo`、`useMemo`、`useCallback` を使用します。
+- 大きなコンポーネントを分割し、コード分割を使用します (`React.lazy`、`Suspense`)。
+- レンダリングでは匿名関数の使用を避けてください。匿名関数はレンダリングごとに新しい参照を作成します。
+- エラーを適切にキャッチして処理するには、`ErrorBoundary` を使用します。
+- React DevTools Profiler でプロファイルします。
 
 #### Angular
 
-- Use OnPush change detection for components that don't need frequent updates.
-- Avoid complex expressions in templates; move logic to the component class.
-- Use `trackBy` in `ngFor` for efficient list rendering.
-- Lazy load modules and components with the Angular Router.
-- Profile with Angular DevTools.
+- 頻繁な更新を必要としないコンポーネントには、OnPush による変更検出を使用します。
+- テンプレート内の複雑な式は避け、ロジックをコンポーネントクラスに移動します。
+- 効率的なリストレンダリングのために、`ngFor` で `trackBy` を使用します。
+- Angular Router を使用してモジュールとコンポーネントを遅延読み込みします。
+- Angular DevTools を使用してプロファイルを作成します。
 
 #### Vue
 
-- Use computed properties over methods in templates for caching.
-- Use `v-show` vs `v-if` appropriately (`v-show` is better for toggling visibility frequently).
-- Lazy load components and routes with Vue Router.
-- Profile with Vue Devtools.
+- キャッシュのために、テンプレートではメソッドではなく算出プロパティを使用します。
+- `v-show` と `v-if` を適切に使用します（頻繁に表示/非表示を切り替える場合は `v-show` の方が適しています）。
+- Vue Router を使用してコンポーネントとルートを遅延読み込みします。
+- Vue Devtools を使用してプロファイルを作成します。
 
-### Common Frontend Pitfalls
+### フロントエンドのよくある落とし穴
 
-- Loading large JS bundles on initial page load.
-- Not compressing images or using outdated formats.
-- Failing to clean up event listeners, causing memory leaks.
-- Overusing third-party libraries for simple tasks.
-- Ignoring mobile performance (test on real devices!).
+- 最初のページの読み込み時に大きな JS バンドルを読み込みます。
+- 画像を圧縮したり、古い形式を使用したりしないでください。
+- イベント リスナーのクリーンアップに失敗し、メモリ リークが発生します。
+- 単純なタスクにサードパーティのライブラリを過度に使用する。
+- モバイル パフォーマンスは無視します (実際のデバイスでテストしてください)。
 
-### Frontend Troubleshooting
+### フロントエンドのトラブルシューティング
 
-- Use Chrome DevTools' Performance tab to record and analyze slow frames.
-- Use Lighthouse to audit performance and get actionable suggestions.
-- Use WebPageTest for real-world load testing.
-- Monitor Core Web Vitals (LCP, FID, CLS) for user-centric metrics.
+- Chrome DevTools のパフォーマンス タブを使用して、遅いフレームを記録して分析します。
+- Lighthouse を使用してパフォーマンスを監査し、実用的な提案を取得します。
+- 実際の負荷テストには WebPageTest を使用します。
+- ユーザー中心の指標として Core Web Vitals (LCP、FID、CLS) を監視します。
 
 ---
 
-## Backend Performance
+## バックエンドパフォーマンス
 
-### Algorithm and Data Structure Optimization
+### アルゴリズムとデータ構造の最適化
 
-- **Choose the Right Data Structure:** Arrays for sequential access, hash maps for fast lookups, trees for hierarchical data, etc.
-- **Efficient Algorithms:** Use binary search, quicksort, or hash-based algorithms where appropriate.
-- **Avoid O(n^2) or Worse:** Profile nested loops and recursive calls. Refactor to reduce complexity.
-- **Batch Processing:** Process data in batches to reduce overhead (e.g., bulk database inserts).
-- **Streaming:** Use streaming APIs for large data sets to avoid loading everything into memory.
+- **適切なデータ構造を選択する:** 順次アクセス用の配列、高速検索用のハッシュ マップ、階層データ用のツリーなど。
+- **効率的なアルゴリズム:** 必要に応じて、バイナリ検索、クイックソート、またはハッシュベースのアルゴリズムを使用します。
+- **Avoid O(n^2) or Worse:** ネストされたループと再帰呼び出しをプロファイルします。複雑さを軽減するためにリファクタリングします。
+- **バッチ処理:** オーバーヘッドを削減するためにデータをバッチで処理します (例: 一括データベース挿入)。
+- **ストリーミング:** すべてをメモリにロードすることを回避するには、大規模なデータ セットにストリーミング API を使用します。
 
-### Concurrency and Parallelism
+### 並行性と並列性
 
-- **Asynchronous I/O:** Use async/await, callbacks, or event loops to avoid blocking threads.
-- **Thread/Worker Pools:** Use pools to manage concurrency and avoid resource exhaustion.
-- **Avoid Race Conditions:** Use locks, semaphores, or atomic operations where needed.
-- **Bulk Operations:** Batch network/database calls to reduce round trips.
-- **Backpressure:** Implement backpressure in queues and pipelines to avoid overload.
+- **非同期I/O:** スレッドのブロックを回避するには、async/await、コールバック、またはイベント ループを使用します。
+- **スレッド/ワーカープール:** プールを使用して同時実行を管理し、リソースの枯渇を回避します。
+- **競合状態を避ける:** 必要に応じてロック、セマフォ、またはアトミック操作を使用します。
+- **一括操作:** ネットワーク/データベース呼び出しをバッチ処理して、ラウンドトリップを削減します。
+- **バックプレッシャー:** 過負荷を回避するために、キューとパイプラインにバックプレッシャーを実装します。
 
-### Caching
+### キャッシング
 
-- **Cache Expensive Computations:** Use in-memory caches (Redis, Memcached) for hot data.
-- **Cache Invalidation:** Use time-based (TTL), event-based, or manual invalidation. Stale cache is worse than no cache.
-- **Distributed Caching:** For multi-server setups, use distributed caches and be aware of consistency issues.
-- **Cache Stampede Protection:** Use locks or request coalescing to prevent thundering herd problems.
-- **Don't Cache Everything:** Some data is too volatile or sensitive to cache.
+- **高価な計算をキャッシュする:** ホット データにはメモリ内キャッシュ (Redis、Memcached) を使用します。
+- **キャッシュの無効化:** 時間ベース（TTL）、イベントベース、または手動による無効化を使用してください。古いキャッシュは、キャッシュがないよりも悪いです。
+- **分散キャッシュ:** マルチサーバー設定の場合は、分散キャッシュを使用し、一貫性の問題に注意してください。
+- **キャッシュスタンピード保護:** ロックを使用するか、統合を要求して、大規模な群れの問題を防止します。
+- **すべてをキャッシュしない:** 一部のデータは、キャッシュするには揮発性または機密性が非常に高いです。
 
-### API and Network
+### APIとネットワーク
 
-- **Minimize Payloads:** Use JSON, compress responses (gzip, Brotli), and avoid sending unnecessary data.
-- **Pagination:** Always paginate large result sets. Use cursors for real-time data.
-- **Rate Limiting:** Protect APIs from abuse and overload.
-- **Connection Pooling:** Reuse connections for databases and external services.
-- **Protocol Choice:** Use HTTP/2, gRPC, or WebSockets for high-throughput, low-latency communication.
+- **ペイロードを最小化する:** JSON を使用し、応答を圧縮 (gzip、Brotli) し、不要なデータの送信を避けます。
+- **ページネーション:** 大きな結果セットは常にページ区切りで表示します。リアルタイムデータにはカーソルを使用します。
+- **レート制限:** API を不正使用や過負荷から保護します。
+- **接続プール:** データベースと外部サービスの接続を再利用します。
+- **プロトコルの選択:** 高スループット、低レイテンシの通信には、HTTP/2、gRPC、または WebSocket を使用します。
 
-### Logging and Monitoring
+### ログ記録と監視
 
-- **Minimize Logging in Hot Paths:** Excessive logging can slow down critical code.
-- **Structured Logging:** Use JSON or key-value logs for easier parsing and analysis.
-- **Monitor Everything:** Latency, throughput, error rates, resource usage. Use Prometheus, Grafana, Datadog, or similar.
-- **Alerting:** Set up alerts for performance regressions and resource exhaustion.
+- **ホットパスでのログ記録を最小限に抑える:** ログ記録が多すぎると、重要なコードの速度が低下する可能性があります。
+- **構造化ログ:** 解析と分析を容易にするために、JSON またはキー値ログを使用します。
+- **すべてを監視する:** レイテンシ、スループット、エラー率、リソース使用量。Prometheus、Grafana、Datadog などのツールを使用してください。
+- **アラート:** パフォーマンスの低下やリソースの枯渇に関するアラートを設定します。
 
-### Language/Framework-Specific Tips
+### 言語/フレームワーク固有のヒント
 
 #### Node.js
 
-- Use asynchronous APIs; avoid blocking the event loop (e.g., never use `fs.readFileSync` in production).
-- Use clustering or worker threads for CPU-bound tasks.
-- Limit concurrent open connections to avoid resource exhaustion.
-- Use streams for large file or network data processing.
-- Profile with `clinic.js`, `node --inspect`, or Chrome DevTools.
+- 非同期 API を使用し、イベント ループのブロックを回避します (例: 本番環境では `fs.readFileSync` を使用しないでください)。
+- CPU 依存のタスクにはクラスタリングまたはワーカー スレッドを使用します。
+- リソース枯渇を回避するために、同時に開いている接続を制限します。
+- 大きなファイルやネットワーク データの処理にはストリームを使用します。
+- `clinic.js`、`node --inspect`、または Chrome DevTools を使用してプロファイルを作成します。
 
 #### Python
 
-- Use built-in data structures (`dict`, `set`, `deque`) for speed.
-- Profile with `cProfile`, `line_profiler`, or `Py-Spy`.
-- Use `multiprocessing` or `asyncio` for parallelism.
-- Avoid GIL bottlenecks in CPU-bound code; use C extensions or subprocesses.
-- Use `lru_cache` for memoization.
+- 速度向上のため、組み込みデータ構造（`dict`、`set`、`deque`）を使用します。
+- `cProfile`、`line_profiler`、または `Py-Spy` でプロファイルを実行します。
+- 並列処理には `multiprocessing` または `asyncio` を使用します。
+- CPU バウンドコードにおける GIL ボトルネックを回避するため、C 拡張またはサブプロセスを使用します。
+- メモ化には `lru_cache` を使用します。
 
 #### Java
 
-- Use efficient collections (`ArrayList`, `HashMap`, etc.).
-- Profile with VisualVM, JProfiler, or YourKit.
-- Use thread pools (`Executors`) for concurrency.
-- Tune JVM options for heap and garbage collection (`-Xmx`, `-Xms`, `-XX:+UseG1GC`).
-- Use `CompletableFuture` for async programming.
+- 効率的なコレクション（`ArrayList`、`HashMap` など）を使用します。
+- VisualVM、JProfiler、または YourKit を使用してプロファイルを作成します。
+- 同時実行性を高めるためにスレッドプール（`Executors`）を使用します。
+- ヒープコレクションとガベージコレクションの JVM オプションを調整します（`-Xmx`、`-Xms`、`-XX:+UseG1GC`）。
+- 非同期プログラミングには `CompletableFuture` を使用します。
 
 #### .NET
 
-- Use `async/await` for I/O-bound operations.
-- Use `Span<T>` and `Memory<T>` for efficient memory access.
-- Profile with dotTrace, Visual Studio Profiler, or PerfView.
-- Pool objects and connections where appropriate.
-- Use `IAsyncEnumerable<T>` for streaming data.
+- I/Oバウンドな操作には `async/await` を使用します。
+- 効率的なメモリアクセスには `Span<T>` と `Memory<T>` を使用します。
+- dotTrace、Visual Studio Profiler、または PerfView を使用してプロファイリングします。
+- 必要に応じてオブジェクトと接続をプールします。
+- ストリーミングデータには `IAsyncEnumerable<T>` を使用します。
 
-### Common Backend Pitfalls
+### バックエンドのよくある落とし穴
 
-- Synchronous/blocking I/O in web servers.
-- Not using connection pooling for databases.
-- Over-caching or caching sensitive/volatile data.
-- Ignoring error handling in async code.
-- Not monitoring or alerting on performance regressions.
+- Web サーバーにおける同期/ブロッキング I/O。
+- データベースの接続プールを使用していません。
+- 過剰キャッシュ、または機密データや揮発性データのキャッシュ。
+- 非同期コードでのエラー処理を無視します。
+- パフォーマンスの低下を監視または警告しません。
 
-### Backend Troubleshooting
+### バックエンドのトラブルシューティング
 
-- Use flame graphs to visualize CPU usage.
-- Use distributed tracing (OpenTelemetry, Jaeger, Zipkin) to track request latency across services.
-- Use heap dumps and memory profilers to find leaks.
-- Log slow queries and API calls for analysis.
+- フレーム グラフを使用して CPU 使用率を視覚化します。
+- 分散トレース (OpenTelemetry、Jaeger、Zipkin) を使用して、サービス全体のリクエストの待機時間を追跡します。
+- ヒープ ダンプとメモリ プロファイラーを使用してリークを見つけます。
+- 分析のために遅いクエリと API 呼び出しをログに記録します。
 
 ---
 
-## Database Performance
+## データベースパフォーマンス
 
-### Query Optimization
+### クエリの最適化
 
-- **Indexes:** Use indexes on columns that are frequently queried, filtered, or joined. Monitor index usage and drop unused indexes.
-- **Avoid SELECT \*:** Select only the columns you need. Reduces I/O and memory usage.
-- **Parameterized Queries:** Prevent SQL injection and improve plan caching.
-- **Query Plans:** Analyze and optimize query execution plans. Use `EXPLAIN` in SQL databases.
-- **Avoid N+1 Queries:** Use joins or batch queries to avoid repeated queries in loops.
-- **Limit Result Sets:** Use `LIMIT`/`OFFSET` or cursors for large tables.
+- **Indexes:** 頻繁にクエリ、フィルタリング、または結合される列にはインデックスを使用します。インデックスの使用状況を監視し、使用されていないインデックスを削除します。
+- **Avoid SELECT \*:** 必要な列のみを選択します。I/Oとメモリの使用量を削減します。
+- **Parameterized Queries:** SQL インジェクションを防止し、プランのキャッシュを改善します。
+- **Query Plans:** クエリ実行プランを分析および最適化します。SQLデータベースでは「EXPLAIN」を使用します。
+- **Avoid N+1 Queries:** ループ内でクエリが繰り返されるのを回避するには、結合またはバッチ クエリを使用します。
+- **Limit Result Sets:** 大きなテーブルの場合は、`LIMIT`/`OFFSET` またはカーソルを使用します。
 
-### Schema Design
+### スキーマ設計
 
-- **Normalization:** Normalize to reduce redundancy, but denormalize for read-heavy workloads if needed.
-- **Data Types:** Use the most efficient data types and set appropriate constraints.
-- **Partitioning:** Partition large tables for scalability and manageability.
-- **Archiving:** Regularly archive or purge old data to keep tables small and fast.
-- **Foreign Keys:** Use them for data integrity, but be aware of performance trade-offs in high-write scenarios.
+- **正規化:** 冗長性を減らすために正規化しますが、必要に応じて読み取り負荷の高いワークロードに対して非正規化します。
+- **データ型:** 最も効率的なデータ型を使用し、適切な制約を設定します。
+- **パーティショニング:** スケーラビリティと管理性を高めるために、大規模なテーブルをパーティション分割します。
+- **アーカイブ:** テーブルを小さく高速に保つために、古いデータを定期的にアーカイブまたは消去します。
+- **外部キー:** データの整合性のために使用しますが、書き込み頻度が高いシナリオではパフォーマンスのトレードオフに注意してください。
 
 ### Transactions
 
-- **Short Transactions:** Keep transactions as short as possible to reduce lock contention.
-- **Isolation Levels:** Use the lowest isolation level that meets your consistency needs.
-- **Avoid Long-Running Transactions:** They can block other operations and increase deadlocks.
+- **Short Transactions:** ロックの競合を減らすために、トランザクションを可能な限り短くしてください。
+- **Isolation Levels:** 一貫性のニーズを満たす最も低い分離レベルを使用します。
+- **Avoid Long-Running Transactions:** 他の操作をブロックし、デッドロックを増加させる可能性があります。
 
-### Caching and Replication
+### キャッシュとレプリケーション
 
-- **Read Replicas:** Use for scaling read-heavy workloads. Monitor replication lag.
-- **Cache Query Results:** Use Redis or Memcached for frequently accessed queries.
-- **Write-Through/Write-Behind:** Choose the right strategy for your consistency needs.
-- **Sharding:** Distribute data across multiple servers for scalability.
+- **リードレプリカ:** 読み取り負荷の高いワークロードのスケーリングに使用します。レプリケーションの遅延を監視します。
+- **キャッシュクエリ結果:** 頻繁にアクセスされるクエリには Redis または Memcached を使用します。
+- **Write-Through/Write-Behind:** 一貫性のニーズに合わせて適切な戦略を選択してください。
+- **Sharding:** スケーラビリティを実現するために、複数のサーバーにデータを分散します。
 
-### NoSQL Databases
+### NoSQLデータベース
 
-- **Design for Access Patterns:** Model your data for the queries you need.
-- **Avoid Hot Partitions:** Distribute writes/reads evenly.
-- **Unbounded Growth:** Watch for unbounded arrays or documents.
-- **Sharding and Replication:** Use for scalability and availability.
-- **Consistency Models:** Understand eventual vs strong consistency and choose appropriately.
+- **アクセスパターンの設計:** 必要なクエリに合わせてデータをモデル化します。
+- **ホットパーティションを避ける:** 書き込み/読み取りを均等に分散します。
+- **制限のない成長:** 制限のない配列またはドキュメントに注意してください。
+- **シャーディングとレプリケーション:** スケーラビリティと可用性のために使用します。
+- **一貫性モデル:** 最終的な一貫性と強力な一貫性を理解し、適切に選択します。
 
-### Common Database Pitfalls
+### よくあるデータベースの落とし穴
 
-- Missing or unused indexes.
+- 欠落または未使用のインデックス。
 - SELECT \* in production queries.
-- Not monitoring slow queries.
-- Ignoring replication lag.
-- Not archiving old data.
+- 遅いクエリを監視していない
+- レプリケーションの遅延を無視
+- 古いデータをアーカイブしていない
 
-### Database Troubleshooting
+### データベースのトラブルシューティング
 
-- Use slow query logs to identify bottlenecks.
-- Use `EXPLAIN` to analyze query plans.
-- Monitor cache hit/miss ratios.
-- Use database-specific monitoring tools (pg_stat_statements, MySQL Performance Schema).
-
----
-
-## Code Review Checklist for Performance
-
-- [ ] Are there any obvious algorithmic inefficiencies (O(n^2) or worse)?
-- [ ] Are data structures appropriate for their use?
-- [ ] Are there unnecessary computations or repeated work?
-- [ ] Is caching used where appropriate, and is invalidation handled correctly?
-- [ ] Are database queries optimized, indexed, and free of N+1 issues?
-- [ ] Are large payloads paginated, streamed, or chunked?
-- [ ] Are there any memory leaks or unbounded resource usage?
-- [ ] Are network requests minimized, batched, and retried on failure?
-- [ ] Are assets optimized, compressed, and served efficiently?
-- [ ] Are there any blocking operations in hot paths?
-- [ ] Is logging in hot paths minimized and structured?
-- [ ] Are performance-critical code paths documented and tested?
-- [ ] Are there automated tests or benchmarks for performance-sensitive code?
-- [ ] Are there alerts for performance regressions?
-- [ ] Are there any anti-patterns (e.g., SELECT \*, blocking I/O, global variables)?
+- 遅いクエリ ログを使用してボトルネックを特定します。
+- クエリ プランを分析するには、`EXPLAIN` を使用します。
+- キャッシュヒット/ミス比を監視します。
+- データベース固有の監視ツール (pg_stat_statements、MySQL パフォーマンス スキーマ) を使用します。
 
 ---
 
-## Advanced Topics
+## パフォーマンスのためのコードレビューチェックリスト
 
-### Profiling and Benchmarking
-
-- **Profilers:** Use language-specific profilers (Chrome DevTools, Py-Spy, VisualVM, dotTrace, etc.) to identify bottlenecks.
-- **Microbenchmarks:** Write microbenchmarks for critical code paths. Use `benchmark.js`, `pytest-benchmark`, or JMH for Java.
-- **A/B Testing:** Measure real-world impact of optimizations with A/B or canary releases.
-- **Continuous Performance Testing:** Integrate performance tests into CI/CD. Use tools like k6, Gatling, or Locust.
-
-### Memory Management
-
-- **Resource Cleanup:** Always release resources (files, sockets, DB connections) promptly.
-- **Object Pooling:** Use for frequently created/destroyed objects (e.g., DB connections, threads).
-- **Heap Monitoring:** Monitor heap usage and garbage collection. Tune GC settings for your workload.
-- **Memory Leaks:** Use leak detection tools (Valgrind, LeakCanary, Chrome DevTools).
-
-### Scalability
-
-- **Horizontal Scaling:** Design stateless services, use sharding/partitioning, and load balancers.
-- **Auto-Scaling:** Use cloud auto-scaling groups and set sensible thresholds.
-- **Bottleneck Analysis:** Identify and address single points of failure.
-- **Distributed Systems:** Use idempotent operations, retries, and circuit breakers.
-
-### Security and Performance
-
-- **Efficient Crypto:** Use hardware-accelerated and well-maintained cryptographic libraries.
-- **Validation:** Validate inputs efficiently; avoid regexes in hot paths.
-- **Rate Limiting:** Protect against DoS without harming legitimate users.
-
-### Mobile Performance
-
-- **Startup Time:** Lazy load features, defer heavy work, and minimize initial bundle size.
-- **Image/Asset Optimization:** Use responsive images and compress assets for mobile bandwidth.
-- **Efficient Storage:** Use SQLite, Realm, or platform-optimized storage.
-- **Profiling:** Use Android Profiler, Instruments (iOS), or Firebase Performance Monitoring.
-
-### Cloud and Serverless
-
-- **Cold Starts:** Minimize dependencies and keep functions warm.
-- **Resource Allocation:** Tune memory/CPU for serverless functions.
-- **Managed Services:** Use managed caching, queues, and DBs for scalability.
-- **Cost Optimization:** Monitor and optimize for cloud cost as a performance metric.
+- [ ] 明らかなアルゴリズムの非効率性（O(n^2) 以上）はありますか？
+- [ ] データ構造は使用に適していますか?
+- [ ] 不必要な計算や繰り返しの作業はありませんか?
+- [ ] 適切な場所でキャッシュが使用され、無効化は正しく処理されていますか?
+- [ ] データベースクエリは最適化され、インデックスが作成され、N+1 の問題はありませんか?
+- [ ] 大きなペイロードはページ分割、ストリーミング、またはチャンク化されていますか?
+- [ ] メモリ リークや無制限のリソース使用はありますか?
+- [ ] ネットワーク リクエストは最小化され、バッチ処理され、失敗した場合には再試行されますか?
+- [ ] アセットは最適化、圧縮され、効率的に提供されていますか?
+- [ ] ホット パスにブロッキング操作はありますか?
+- [ ] ホット パスのログ記録は最小限に抑えられ、構造化されていますか?
+- [ ] パフォーマンスが重要なコードパスは文書化され、テストされていますか?
+- [ ] パフォーマンスが重要なコードに対する自動テストやベンチマークはありますか?
+- [ ] パフォーマンスの低下に関するアラートはありますか?
+- [ ] アンチパターン（SELECT \*、ブロッキングI/O、グローバル変数など）はありますか？
 
 ---
 
-## Practical Examples
+## 高度なトピック
 
-### Example 1: Debouncing User Input in JavaScript
+### プロファイリングとベンチマーク
+
+- **プロファイラー:** 言語固有のプロファイラー (Chrome DevTools、Py-Spy、VisualVM、dotTrace など) を使用してボトルネックを特定します。
+- **マイクロベンチマーク:** 重要なコードパスのマイクロベンチマークを作成します。Javaの場合は、`benchmark.js`、`pytest-benchmark`、またはJMHを使用してください。
+- **A/Bテスト:** A/B リリースまたはカナリア リリースを使用して、最適化の実際の影響を測定します。
+- **継続的なパフォーマンステスト:** パフォーマンステストをCI/CDに統合します。k6、Gatling、Locustなどのツールを使用します。
+
+### メモリ管理
+
+- **リソースのクリーンアップ:** 常にリソース (ファイル、ソケット、DB 接続) を速やかに解放します。
+- **常にリソース (ファイル、ソケット、DB 接続) を速やかに解放します。:** 頻繁に作成/破棄されるオブジェクト (DB 接続、スレッドなど) に使用します。
+- **ヒープ監視:** ヒープ使用量とガベージコレクションを監視します。ワークロードに合わせてGC設定を調整します。
+- **メモリリーク:** リーク検出ツール (Valgrind、LeakCanary、Chrome DevTools) を使用します。
+
+### スケーラビリティ
+
+- **水平スケーリング:** ステートレス サービスを設計し、シャーディング/パーティショニング、ロード バランサーを使用します。
+- **自動スケーリング:** クラウド自動スケーリング グループを使用し、適切なしきい値を設定します。
+- **ボトルネック分析:** 単一障害点を特定して対処します。
+- **分散システム:** べき等操作、再試行、サーキットブレーカーを使用します。
+
+### セキュリティとパフォーマンス
+
+- **効率的な暗号:** ハードウェア アクセラレーションと適切にメンテナンスされた暗号化ライブラリを使用します。
+- **検証:** 入力を効率的に検証し、ホットパスでの正規表現の使用を避けます。
+- **レート制限:** 正当なユーザーに害を与えることなく DoS から保護します。
+
+### モバイルパフォーマンス
+
+- **起動時間:** 遅延ロード機能により、負荷の高い作業を延期し、初期バンドル サイズを最小限に抑えます。
+- **画像/アセットの最適化:** レスポンシブな画像を使用し、モバイル帯域幅に合わせてアセットを圧縮します。
+- **効率的なストレージ:** SQLite、Realm、またはプラットフォームに最適化されたストレージを使用します。
+- **プロファイリング:** Android Profiler、Instruments (iOS)、または Firebase Performance Monitoring を使用します。
+
+### クラウドとサーバーレス
+
+- **コールドスタート:** 依存関係を最小限に抑え、関数をウォーム状態に保ちます。
+- **リソースの割り当て:** サーバーレス関数のメモリ/CPU を調整します。
+- **マネージドサービス:** スケーラビリティのために、マネージド キャッシュ、キュー、および DB を使用します。
+- **コスト最適化:** パフォーマンス メトリックとしてクラウド コストを監視および最適化します。
+
+---
+
+## 実例
+
+### 例1: JavaScriptでのユーザー入力のデバウンス
 
 ```javascript
-// BAD: Triggers API call on every keystroke
+// 悪い例: キー入力ごとに API 呼び出しが実行される
 input.addEventListener("input", (e) => {
   fetch(`/search?q=${e.target.value}`);
 });
 
-// GOOD: Debounce API calls
+// 良い例: デバウンスAPI呼び出し
 let timeout;
 input.addEventListener("input", (e) => {
   clearTimeout(timeout);
@@ -347,23 +347,23 @@ input.addEventListener("input", (e) => {
 });
 ```
 
-### Example 2: Efficient SQL Query
+### 例2: 効率的なSQLクエリ
 
 ```sql
--- BAD: Selects all columns and does not use an index
+-- 悪い例: すべての列を選択し、インデックスを使用しない
 SELECT * FROM users WHERE email = 'user@example.com';
 
--- GOOD: Selects only needed columns and uses an index
+-- 良い例: 必要な列のみを選択し、インデックスを使用する
 SELECT id, name FROM users WHERE email = 'user@example.com';
 ```
 
-### Example 3: Caching Expensive Computation in Python
+### 例3: Pythonでの高価な計算のキャッシュ
 
 ```python
-# BAD: Recomputes result every time
+# 悪い点: 毎回結果を再計算する
 result = expensive_function(x)
 
-# GOOD: Cache result
+# 良い例: キャッシュ結果
 from functools import lru_cache
 
 @lru_cache(maxsize=128)
@@ -372,30 +372,30 @@ def expensive_function(x):
 result = expensive_function(x)
 ```
 
-### Example 4: Lazy Loading Images in HTML
+### 例4: HTMLで画像を遅延読み込みする
 
 ```html
-<!-- BAD: Loads all images immediately -->
+<!-- 悪い例: すべての画像をすぐに読み込む -->
 <img src="large-image.jpg" />
 
-<!-- GOOD: Lazy loads images -->
+<!-- 良い例: 画像の遅延読み込み -->
 <img src="large-image.jpg" loading="lazy" />
 ```
 
-### Example 5: Asynchronous I/O in Node.js
+### 例5: Node.jsでの非同期I/O
 
 ```javascript
-// BAD: Blocking file read
+// 悪い例: ファイルの読み取りをブロックしています
 const data = fs.readFileSync("file.txt");
 
-// GOOD: Non-blocking file read
+// 良い例: 非ブロッキングファイル読み取り
 fs.readFile("file.txt", (err, data) => {
   if (err) throw err;
   // process data
 });
 ```
 
-### Example 6: Profiling a Python Function
+### 例6: Python関数のプロファイリング
 
 ```python
 import cProfile
@@ -409,7 +409,7 @@ p = pstats.Stats('profile.stats')
 p.sort_stats('cumulative').print_stats(10)
 ```
 
-### Example 7: Using Redis for Caching in Node.js
+### 例7: Node.jsでキャッシュにRedisを使用する
 
 ```javascript
 const redis = require("redis");
@@ -430,7 +430,7 @@ function getCachedData(key, fetchFunction) {
 
 ---
 
-## References and Further Reading
+## 参考文献と参考文献
 
 - [Google Web Fundamentals: Performance](https://web.dev/performance/)
 - [MDN Web Docs: Performance](https://developer.mozilla.org/en-US/docs/Web/Performance)
@@ -455,10 +455,10 @@ function getCachedData(key, fetchFunction) {
 
 ---
 
-## Conclusion
+## 結論
 
-Performance optimization is an ongoing process. Always measure, profile, and iterate. Use these best practices, checklists, and troubleshooting tips to guide your development and code reviews for high-performance, scalable, and efficient software. If you have new tips or lessons learned, add them here—let's keep this guide growing!
+パフォーマンス最適化は継続的なプロセスです。常に測定、プロファイリング、そして反復的な改善を行ってください。これらのベストプラクティス、チェックリスト、そしてトラブルシューティングのヒントを活用して、開発とコードレビューを成功させ、高パフォーマンス、スケーラビリティ、そして効率的なソフトウェアを実現しましょう。新しいヒントや学んだ教訓があれば、ぜひここに追加してください。このガイドを充実させていきましょう！
 
 ---
 
-<!-- End of Performance Optimization Instructions -->
+<!-- パフォーマンス最適化手順の終了 -->
