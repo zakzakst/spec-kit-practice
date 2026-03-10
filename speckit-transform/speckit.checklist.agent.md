@@ -1,60 +1,60 @@
 ---
-description: Generate a custom checklist for the current feature based on user requirements.
+description: ユーザーの要件に基づいて、現在の機能のカスタム チェックリストを生成します。
 ---
 
-## Checklist Purpose: "Unit Tests for English"
+## チェックリストの目的: 「英語のユニットテスト」
 
-**CRITICAL CONCEPT**: Checklists are **UNIT TESTS FOR REQUIREMENTS WRITING** - they validate the quality, clarity, and completeness of requirements in a given domain.
+**重要な概念**: チェックリストは**要件記述のためのユニットテスト**であり、特定のドメインにおける要件の品質、明確さ、完全性を検証します。
 
-**NOT for verification/testing**:
+**検証/テスト用ではありません**:
 
-- ❌ NOT "Verify the button clicks correctly"
-- ❌ NOT "Test error handling works"
-- ❌ NOT "Confirm the API returns 200"
-- ❌ NOT checking if code/implementation matches the spec
+- ❌ 「ボタンが正しくクリックされることを確認する」ではありません
+- ❌ 「エラー処理が機能するかどうかをテストする」ではない
+- ❌ 「API が 200 を返すことを確認する」ではありません
+- ❌ コード/実装が仕様と一致しているかどうかを確認しない
 
-**FOR requirements quality validation**:
+**要件品質検証**:
 
-- ✅ "Are visual hierarchy requirements defined for all card types?" (completeness)
-- ✅ "Is 'prominent display' quantified with specific sizing/positioning?" (clarity)
-- ✅ "Are hover state requirements consistent across all interactive elements?" (consistency)
-- ✅ "Are accessibility requirements defined for keyboard navigation?" (coverage)
-- ✅ "Does the spec define what happens when logo image fails to load?" (edge cases)
+- ✅ 「すべてのカードタイプに対して視覚的な階層要件が定義されていますか？」（完全性）
+- ✅ 「『目立つ表示』は、具体的なサイズや位置で定量化されていますか？」（明確さ）
+- ✅ 「ホバー状態の要件は、すべてのインタラクティブ要素にわたって一貫していますか？」（一貫性）
+- ✅ 「キーボードナビゲーションのアクセシビリティ要件は定義されていますか?」（カバレッジ）
+- ✅ 「ロゴ画像の読み込みに失敗した場合、何が起こるか仕様で定義されていますか？」（エッジケース）
 
-**Metaphor**: If your spec is code written in English, the checklist is its unit test suite. You're testing whether the requirements are well-written, complete, unambiguous, and ready for implementation - NOT whether the implementation works.
+**比喩**: 仕様書が英語で書かれたコードである場合、チェックリストはそのユニットテストスイートです。テストするのは、要件が適切に記述され、完全で、明確で、実装の準備ができているかどうかであり、実装が機能するかどうかではありません。
 
-## User Input
+## ユーザー入力
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+続行する前に、ユーザー入力を考慮する必要があります (空でない場合)。
 
-## Execution Steps
+## 実行手順
 
-1. **Setup**: Run `.specify/scripts/powershell/check-prerequisites.ps1 -Json` from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS list.
-   - All file paths must be absolute.
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **設定**: リポジトリのルートから `.specify/scripts/powershell/check-prerequisites.ps1 -Json` を実行し、FEATURE_DIR と AVAILABLE_DOCS リストの JSON を解析します。
+   - すべてのファイル パスは絶対パスである必要があります。
+   - "I'm Groot" のような引数内の一重引用符の場合は、エスケープ構文を使用します。例: 'I'\''m Groot' (または可能であれば二重引用符を使用します: "I'm Groot")。
 
-2. **Clarify intent (dynamic)**: Derive up to THREE initial contextual clarifying questions (no pre-baked catalog). They MUST:
-   - Be generated from the user's phrasing + extracted signals from spec/plan/tasks
-   - Only ask about information that materially changes checklist content
-   - Be skipped individually if already unambiguous in `$ARGUMENTS`
-   - Prefer precision over breadth
+2. **意図を明確にする（動的）**: 文脈を明確にするための最初の質問を最大3つ作成する（事前に用意されたカタログは不要）:
+   - ユーザーのフレーズから生成され、仕様/計画/タスクから抽出されたシグナル
+   - チェックリストの内容を大幅に変更する情報についてのみ質問する
+   - `$ARGUMENTS` で既に明確な場合は個別にスキップされます
+   - 広さよりも精度を優先する
 
-   Generation algorithm:
-   1. Extract signals: feature domain keywords (e.g., auth, latency, UX, API), risk indicators ("critical", "must", "compliance"), stakeholder hints ("QA", "review", "security team"), and explicit deliverables ("a11y", "rollback", "contracts").
-   2. Cluster signals into candidate focus areas (max 4) ranked by relevance.
-   3. Identify probable audience & timing (author, reviewer, QA, release) if not explicit.
-   4. Detect missing dimensions: scope breadth, depth/rigor, risk emphasis, exclusion boundaries, measurable acceptance criteria.
-   5. Formulate questions chosen from these archetypes:
-      - Scope refinement (e.g., "Should this include integration touchpoints with X and Y or stay limited to local module correctness?")
-      - Risk prioritization (e.g., "Which of these potential risk areas should receive mandatory gating checks?")
-      - Depth calibration (e.g., "Is this a lightweight pre-commit sanity list or a formal release gate?")
-      - Audience framing (e.g., "Will this be used by the author only or peers during PR review?")
-      - Boundary exclusion (e.g., "Should we explicitly exclude performance tuning items this round?")
-      - Scenario class gap (e.g., "No recovery flows detected—are rollback / partial failure paths in scope?")
+   生成アルゴリズム:
+   1. シグナルを抽出します。特徴ドメインのキーワード (例: 認証、レイテンシ、UX、API)、リスク指標 (「クリティカル」、「必須」、「コンプライアンス」)、利害関係者のヒント (「QA」、「レビュー」、「セキュリティ チーム」)、および明示的な成果物 (「a11y」、「ロールバック」、「契約」) を抽出します。
+   2. 信号を、関連性に基づいてランク付けされた候補の焦点領域 (最大 4 つ) にクラスター化します。
+   3. 明確でない場合は、想定される対象者とタイミング (作成者、レビュー担当者、QA、リリース) を特定します。
+   4. 欠落している次元を検出します: 範囲の広さ、深さ/厳密さ、リスクの強調、除外の境界、測定可能な受け入れ基準。
+   5. これらのアーキタイプから選択した質問を策定する:
+      - スコープの絞り込み (例: 「X および Y との統合タッチポイントを含めるか、ローカル モジュールの正確性に限定するか?」)
+      - リスクの優先順位付け (例: 「これらの潜在的なリスク領域のうち、どの領域に必須のゲーティング チェックを実施する必要がありますか?」)
+      - 深さの調整 (例: 「これは軽量のコミット前健全性リストですか、それとも正式なリリース ゲートですか?」)
+      - 対象者のフレーミング (例: 「これは PR レビュー中に作成者のみが使用するのか、それとも同僚が使用するのか?」)
+      - 境界除外 (例: 「このラウンドではパフォーマンス チューニング項目を明示的に除外する必要がありますか?」)
+      - シナリオ クラスのギャップ (例: 「回復フローが検出されませんでした。ロールバック/部分的な障害パスは範囲内ですか?」)
 
    Question formatting rules:
    - If presenting options, generate a compact table with columns: Option | Candidate | Why It Matters
