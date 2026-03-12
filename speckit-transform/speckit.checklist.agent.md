@@ -73,139 +73,155 @@ $ARGUMENTS
 
 質問を出力します（ラベルはQ1/Q2/Q3）。回答後、2つ以上のシナリオクラス（代替/例外/復旧/非機能領域）が不明瞭なままの場合、最大2つのターゲットフォローアップ（Q4/Q5）を、それぞれ1行の理由（例：「未解決の復旧パスリスク」）とともに尋ねることができます。質問の総数は5つを超えないようにしてください。ユーザーが明示的にそれ以上の質問を拒否した場合は、エスカレーションをスキップしてください。
 
-3. **Understand user request**: Combine `$ARGUMENTS` + clarifying answers:
-   - Derive checklist theme (e.g., security, review, deploy, ux)
-   - Consolidate explicit must-have items mentioned by user
-   - Map focus selections to category scaffolding
-   - Infer any missing context from spec/plan/tasks (do NOT hallucinate)
+3. **ユーザーのリクエストを理解する**: `$ARGUMENTS` + 明確な回答を組み合わせる:
+   - チェックリストのテーマを導き出す（例：セキュリティ、レビュー、デプロイ、UX）
+   - ユーザーが明示的に言及した必須アイテムを統合する
+   - フォーカス選択をカテゴリスキャフォールディングにマッピングする
+   - 仕様/計画/タスクから不足しているコンテキストを推測する（幻覚はしない）
 
-4. **Load feature context**: Read from FEATURE_DIR:
-   - spec.md: Feature requirements and scope
-   - plan.md (if exists): Technical details, dependencies
-   - tasks.md (if exists): Implementation tasks
+4. **フィーチャコンテキストを読み込む**: FEATURE_DIRから読み取る:
+   - spec.md: 機能要件と範囲
+   - plan.md (if exists): 技術的な詳細、依存関係
+   - tasks.md (if exists): 実装タスク
 
-   **Context Loading Strategy**:
-   - Load only necessary portions relevant to active focus areas (avoid full-file dumping)
-   - Prefer summarizing long sections into concise scenario/requirement bullets
-   - Use progressive disclosure: add follow-on retrieval only if gaps detected
-   - If source docs are large, generate interim summary items instead of embedding raw text
+   **コンテキスト読み込み戦略**:
+   - アクティブなフォーカス領域に関連する必要な部分のみをロードする（ファイル全体のダンプを避ける）
+   - 長いセクションを簡潔なシナリオ/要件の箇条書きにまとめることを優先します
+   - 段階的な開示を使用する: ギャップが検出された場合にのみ、後続の検索を追加します
+   - ソースドキュメントが大きい場合は、生のテキストを埋め込む代わりに中間要約項目を生成します。
 
-5. **Generate checklist** - Create "Unit Tests for Requirements":
-   - Create `FEATURE_DIR/checklists/` directory if it doesn't exist
-   - Generate unique checklist filename:
-     - Use short, descriptive name based on domain (e.g., `ux.md`, `api.md`, `security.md`)
-     - Format: `[domain].md`
-     - If file exists, append to existing file
-   - Number items sequentially starting from CHK001
-   - Each `/speckit.checklist` run creates a NEW file (never overwrites existing checklists)
+5. **チェックリストを生成する** - 「要件のユニットテスト」を作成する:
+   - `FEATURE_DIR/checklists/` ディレクトリが存在しない場合は作成します
+   - 一意のチェックリストファイル名を生成する:
+     - ドメインに基づいた短くて説明的な名前を使用します（例：`ux.md`、`api.md`、`security.md`）
+     - フォーマット: `[domain].md`
+     - ファイルが存在する場合は、既存のファイルに追加します
+   - CHK001から順に番号を付けます
+   - `/speckit.checklist` を実行するたびに新しいファイルが作成されます (既存のチェックリストが上書きされることはありません)
 
-   **CORE PRINCIPLE - Test the Requirements, Not the Implementation**:
-   Every checklist item MUST evaluate the REQUIREMENTS THEMSELVES for:
-   - **Completeness**: Are all necessary requirements present?
-   - **Clarity**: Are requirements unambiguous and specific?
-   - **Consistency**: Do requirements align with each other?
-   - **Measurability**: Can requirements be objectively verified?
-   - **Coverage**: Are all scenarios/edge cases addressed?
+**基本原則 - 実装ではなく要件をテストする**:
+すべてのチェックリスト項目は、要件自体を評価する必要があります:
 
-   **Category Structure** - Group items by requirement quality dimensions:
-   - **Requirement Completeness** (Are all necessary requirements documented?)
-   - **Requirement Clarity** (Are requirements specific and unambiguous?)
-   - **Requirement Consistency** (Do requirements align without conflicts?)
-   - **Acceptance Criteria Quality** (Are success criteria measurable?)
-   - **Scenario Coverage** (Are all flows/cases addressed?)
-   - **Edge Case Coverage** (Are boundary conditions defined?)
-   - **Non-Functional Requirements** (Performance, Security, Accessibility, etc. - are they specified?)
-   - **Dependencies & Assumptions** (Are they documented and validated?)
-   - **Ambiguities & Conflicts** (What needs clarification?)
+- **完全**: 必要な要件はすべて揃っていますか?
+- **明瞭さ**: 要件は明確かつ具体的ですか?
+- **一貫性**: 要件は互いに一致していますか?
+- **測定可能性**: 要件は客観的に検証できますか?
+- **カバレッジ**: すべてのシナリオ/エッジケースが対処されていますか?
 
-   **HOW TO WRITE CHECKLIST ITEMS - "Unit Tests for English"**:
+**カテゴリー構造** - 要件品質ディメンション別にアイテムをグループ化:
 
-   ❌ **WRONG** (Testing implementation):
-   - "Verify landing page displays 3 episode cards"
-   - "Test hover states work on desktop"
-   - "Confirm logo click navigates home"
+- **要件の完全性** (必要な要件はすべて文書化されていますか?)
+- **要件の明確化** (要件は具体的かつ明確ですか?)
+- **要件の一貫性** (要件は矛盾なく一致していますか?)
+- **受け入れ基準品質** (成功基準は測定可能ですか?)
+- **シナリオカバレッジ** (すべてのフロー/ケースがカバーされていますか?)
+- **エッジケースカバレッジ** (境界条件は定義されていますか?)
+- **非機能要件** (パフォーマンス、セキュリティ、アクセシビリティなどが指定されていますか?)
+- **依存関係と仮定** (それらは文書化され、検証されていますか?)
+- **曖昧さと対立** (何を明確にする必要があるでしょうか？)
 
-   ✅ **CORRECT** (Testing requirements quality):
-   - "Are the exact number and layout of featured episodes specified?" [Completeness]
-   - "Is 'prominent display' quantified with specific sizing/positioning?" [Clarity]
-   - "Are hover state requirements consistent across all interactive elements?" [Consistency]
-   - "Are keyboard navigation requirements defined for all interactive UI?" [Coverage]
-   - "Is the fallback behavior specified when logo image fails to load?" [Edge Cases]
-   - "Are loading states defined for asynchronous episode data?" [Completeness]
-   - "Does the spec define visual hierarchy for competing UI elements?" [Clarity]
+**チェックリスト項目の書き方 - 「英語のユニットテスト」**:
 
-   **ITEM STRUCTURE**:
-   Each item should follow this pattern:
-   - Question format asking about requirement quality
-   - Focus on what's WRITTEN (or not written) in the spec/plan
-   - Include quality dimension in brackets [Completeness/Clarity/Consistency/etc.]
-   - Reference spec section `[Spec §X.Y]` when checking existing requirements
-   - Use `[Gap]` marker when checking for missing requirements
+❌ **間違っている** （テスト実装）:
 
-   **EXAMPLES BY QUALITY DIMENSION**:
+- 「ランディングページに 3 つのエピソード カードが表示されていることを確認します」
+- 「デスクトップでホバー状態をテストする」
+- 「ロゴをクリックするとホームへ移動します」
 
-   Completeness:
-   - "Are error handling requirements defined for all API failure modes? [Gap]"
-   - "Are accessibility requirements specified for all interactive elements? [Completeness]"
-   - "Are mobile breakpoint requirements defined for responsive layouts? [Gap]"
+✅ **正しい** （テスト要件の品質）:
 
-   Clarity:
-   - "Is 'fast loading' quantified with specific timing thresholds? [Clarity, Spec §NFR-2]"
-   - "Are 'related episodes' selection criteria explicitly defined? [Clarity, Spec §FR-5]"
-   - "Is 'prominent' defined with measurable visual properties? [Ambiguity, Spec §FR-4]"
+- 「特集エピソードの正確な数とレイアウトが指定されていますか？」[完全性]
+- 「『目立つ表示』は、具体的なサイズや位置で定量化されていますか？」[明確さ]
+- 「ホバー状態の要件は、すべてのインタラクティブ要素にわたって一貫していますか？」[一貫性]
+- 「すべてのインタラクティブ UI に対してキーボード ナビゲーションの要件が定義されていますか?」[カバレッジ]
+- 「ロゴ画像の読み込みに失敗した場合のフォールバック動作は指定されていますか？」[エッジケース]
+- 「非同期エピソードデータの読み込み状態は定義されていますか？」[完全性]
+- 「仕様では、競合する UI 要素の視覚的な階層が定義されていますか？」[Clarity]
 
-   Consistency:
-   - "Do navigation requirements align across all pages? [Consistency, Spec §FR-10]"
-   - "Are card component requirements consistent between landing and detail pages? [Consistency]"
+**ITEM STRUCTURE**:
+Each item should follow this pattern:
 
-   Coverage:
-   - "Are requirements defined for zero-state scenarios (no episodes)? [Coverage, Edge Case]"
-   - "Are concurrent user interaction scenarios addressed? [Coverage, Gap]"
-   - "Are requirements specified for partial data loading failures? [Coverage, Exception Flow]"
+- Question format asking about requirement quality
+- Focus on what's WRITTEN (or not written) in the spec/plan
+- Include quality dimension in brackets [Completeness/Clarity/Consistency/etc.]
+- Reference spec section `[Spec §X.Y]` when checking existing requirements
+- Use `[Gap]` marker when checking for missing requirements
 
-   Measurability:
-   - "Are visual hierarchy requirements measurable/testable? [Acceptance Criteria, Spec §FR-1]"
-   - "Can 'balanced visual weight' be objectively verified? [Measurability, Spec §FR-2]"
+**EXAMPLES BY QUALITY DIMENSION**:
 
-   **Scenario Classification & Coverage** (Requirements Quality Focus):
-   - Check if requirements exist for: Primary, Alternate, Exception/Error, Recovery, Non-Functional scenarios
-   - For each scenario class, ask: "Are [scenario type] requirements complete, clear, and consistent?"
-   - If scenario class missing: "Are [scenario type] requirements intentionally excluded or missing? [Gap]"
-   - Include resilience/rollback when state mutation occurs: "Are rollback requirements defined for migration failures? [Gap]"
+Completeness:
 
-   **Traceability Requirements**:
-   - MINIMUM: ≥80% of items MUST include at least one traceability reference
-   - Each item should reference: spec section `[Spec §X.Y]`, or use markers: `[Gap]`, `[Ambiguity]`, `[Conflict]`, `[Assumption]`
-   - If no ID system exists: "Is a requirement & acceptance criteria ID scheme established? [Traceability]"
+- "Are error handling requirements defined for all API failure modes? [Gap]"
+- "Are accessibility requirements specified for all interactive elements? [Completeness]"
+- "Are mobile breakpoint requirements defined for responsive layouts? [Gap]"
 
-   **Surface & Resolve Issues** (Requirements Quality Problems):
-   Ask questions about the requirements themselves:
-   - Ambiguities: "Is the term 'fast' quantified with specific metrics? [Ambiguity, Spec §NFR-1]"
-   - Conflicts: "Do navigation requirements conflict between §FR-10 and §FR-10a? [Conflict]"
-   - Assumptions: "Is the assumption of 'always available podcast API' validated? [Assumption]"
-   - Dependencies: "Are external podcast API requirements documented? [Dependency, Gap]"
-   - Missing definitions: "Is 'visual hierarchy' defined with measurable criteria? [Gap]"
+Clarity:
 
-   **Content Consolidation**:
-   - Soft cap: If raw candidate items > 40, prioritize by risk/impact
-   - Merge near-duplicates checking the same requirement aspect
-   - If >5 low-impact edge cases, create one item: "Are edge cases X, Y, Z addressed in requirements? [Coverage]"
+- "Is 'fast loading' quantified with specific timing thresholds? [Clarity, Spec §NFR-2]"
+- "Are 'related episodes' selection criteria explicitly defined? [Clarity, Spec §FR-5]"
+- "Is 'prominent' defined with measurable visual properties? [Ambiguity, Spec §FR-4]"
 
-   **🚫 ABSOLUTELY PROHIBITED** - These make it an implementation test, not a requirements test:
-   - ❌ Any item starting with "Verify", "Test", "Confirm", "Check" + implementation behavior
-   - ❌ References to code execution, user actions, system behavior
-   - ❌ "Displays correctly", "works properly", "functions as expected"
-   - ❌ "Click", "navigate", "render", "load", "execute"
-   - ❌ Test cases, test plans, QA procedures
-   - ❌ Implementation details (frameworks, APIs, algorithms)
+Consistency:
 
-   **✅ REQUIRED PATTERNS** - These test requirements quality:
-   - ✅ "Are [requirement type] defined/specified/documented for [scenario]?"
-   - ✅ "Is [vague term] quantified/clarified with specific criteria?"
-   - ✅ "Are requirements consistent between [section A] and [section B]?"
-   - ✅ "Can [requirement] be objectively measured/verified?"
-   - ✅ "Are [edge cases/scenarios] addressed in requirements?"
-   - ✅ "Does the spec define [missing aspect]?"
+- "Do navigation requirements align across all pages? [Consistency, Spec §FR-10]"
+- "Are card component requirements consistent between landing and detail pages? [Consistency]"
+
+Coverage:
+
+- "Are requirements defined for zero-state scenarios (no episodes)? [Coverage, Edge Case]"
+- "Are concurrent user interaction scenarios addressed? [Coverage, Gap]"
+- "Are requirements specified for partial data loading failures? [Coverage, Exception Flow]"
+
+Measurability:
+
+- "Are visual hierarchy requirements measurable/testable? [Acceptance Criteria, Spec §FR-1]"
+- "Can 'balanced visual weight' be objectively verified? [Measurability, Spec §FR-2]"
+
+**Scenario Classification & Coverage** (Requirements Quality Focus):
+
+- Check if requirements exist for: Primary, Alternate, Exception/Error, Recovery, Non-Functional scenarios
+- For each scenario class, ask: "Are [scenario type] requirements complete, clear, and consistent?"
+- If scenario class missing: "Are [scenario type] requirements intentionally excluded or missing? [Gap]"
+- Include resilience/rollback when state mutation occurs: "Are rollback requirements defined for migration failures? [Gap]"
+
+**Traceability Requirements**:
+
+- MINIMUM: ≥80% of items MUST include at least one traceability reference
+- Each item should reference: spec section `[Spec §X.Y]`, or use markers: `[Gap]`, `[Ambiguity]`, `[Conflict]`, `[Assumption]`
+- If no ID system exists: "Is a requirement & acceptance criteria ID scheme established? [Traceability]"
+
+**Surface & Resolve Issues** (Requirements Quality Problems):
+Ask questions about the requirements themselves:
+
+- Ambiguities: "Is the term 'fast' quantified with specific metrics? [Ambiguity, Spec §NFR-1]"
+- Conflicts: "Do navigation requirements conflict between §FR-10 and §FR-10a? [Conflict]"
+- Assumptions: "Is the assumption of 'always available podcast API' validated? [Assumption]"
+- Dependencies: "Are external podcast API requirements documented? [Dependency, Gap]"
+- Missing definitions: "Is 'visual hierarchy' defined with measurable criteria? [Gap]"
+
+**Content Consolidation**:
+
+- Soft cap: If raw candidate items > 40, prioritize by risk/impact
+- Merge near-duplicates checking the same requirement aspect
+- If >5 low-impact edge cases, create one item: "Are edge cases X, Y, Z addressed in requirements? [Coverage]"
+
+**🚫 ABSOLUTELY PROHIBITED** - These make it an implementation test, not a requirements test:
+
+- ❌ Any item starting with "Verify", "Test", "Confirm", "Check" + implementation behavior
+- ❌ References to code execution, user actions, system behavior
+- ❌ "Displays correctly", "works properly", "functions as expected"
+- ❌ "Click", "navigate", "render", "load", "execute"
+- ❌ Test cases, test plans, QA procedures
+- ❌ Implementation details (frameworks, APIs, algorithms)
+
+**✅ REQUIRED PATTERNS** - These test requirements quality:
+
+- ✅ "Are [requirement type] defined/specified/documented for [scenario]?"
+- ✅ "Is [vague term] quantified/clarified with specific criteria?"
+- ✅ "Are requirements consistent between [section A] and [section B]?"
+- ✅ "Can [requirement] be objectively measured/verified?"
+- ✅ "Are [edge cases/scenarios] addressed in requirements?"
+- ✅ "Does the spec define [missing aspect]?"
 
 6. **Structure Reference**: Generate the checklist following the canonical template in `.specify/templates/checklist-template.md` for title, meta section, category headings, and ID formatting. If template is unavailable, use: H1 title, purpose/created meta lines, `##` category sections containing `- [ ] CHK### <requirement item>` lines with globally incrementing IDs starting at CHK001.
 
