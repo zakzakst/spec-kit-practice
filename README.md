@@ -1,5 +1,6 @@
 # spec-kit-practice
 
+- https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4
 - https://dev.classmethod.jp/articles/spec-driven-development-with-github-spec-kit/
 - https://zenn.dev/rakuten_tech/articles/try-github-spec-kit
 
