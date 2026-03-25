@@ -138,44 +138,44 @@ $ARGUMENTS
 - 「非同期エピソードデータの読み込み状態は定義されていますか？」[完全性]
 - 「仕様では、競合する UI 要素の視覚的な階層が定義されていますか？」[Clarity]
 
-**ITEM STRUCTURE**:
-Each item should follow this pattern:
+**アイテム構造**:
+各アイテムはこのパターンに従う必要があります:
 
-- Question format asking about requirement quality
-- Focus on what's WRITTEN (or not written) in the spec/plan
-- Include quality dimension in brackets [Completeness/Clarity/Consistency/etc.]
-- Reference spec section `[Spec §X.Y]` when checking existing requirements
-- Use `[Gap]` marker when checking for missing requirements
+- 要件の品質について尋ねる質問形式
+- 仕様書／計画書に書かれていること（または書かれていないこと）に注目してください。
+- 品質に関する評価項目を括弧内に含めてください（完全性／明瞭性／一貫性など）。
+- 既存の要件を確認する際は、仕様書のセクション `[Spec §X.Y]` を参照してください。
+- 不足している要件を確認する際は、`[Gap]`マーカーを使用してください。
 
-**EXAMPLES BY QUALITY DIMENSION**:
+**品質次元別の例**:
 
-Completeness:
+完全性:
 
-- "Are error handling requirements defined for all API failure modes? [Gap]"
-- "Are accessibility requirements specified for all interactive elements? [Completeness]"
-- "Are mobile breakpoint requirements defined for responsive layouts? [Gap]"
+- すべてのAPI障害モードについて、エラー処理要件は定義されていますか？ [Gap]
+- すべてのインタラクティブ要素について、アクセシビリティ要件が明記されていますか？ [Completeness]
+- レスポンシブレイアウトにおけるモバイルブレークポイントの要件は定義されていますか？ [Gap]
 
-Clarity:
+明瞭さ:
 
-- "Is 'fast loading' quantified with specific timing thresholds? [Clarity, Spec §NFR-2]"
-- "Are 'related episodes' selection criteria explicitly defined? [Clarity, Spec §FR-5]"
-- "Is 'prominent' defined with measurable visual properties? [Ambiguity, Spec §FR-4]"
+- 『高速ロード』は、特定のタイミング閾値で定量化されているか？ [Clarity, Spec §NFR-2]
+- 「関連エピソード」の選択基準は明確に定義されていますか？ [Clarity, Spec §FR-5]"
+- 「目立つ」とは、測定可能な視覚的特性によって定義されるものだろうか？ [Ambiguity, Spec §FR-4]
 
-Consistency:
+一貫性:
 
-- "Do navigation requirements align across all pages? [Consistency, Spec §FR-10]"
-- "Are card component requirements consistent between landing and detail pages? [Consistency]"
+- ナビゲーションの要件は、すべてのページで一致していますか？ [Consistency, Spec §FR-10]
+- ランディングページと詳細ページの間で、カード構成要素の要件は一貫していますか？ [Consistency]
 
-Coverage:
+カバレッジ:
 
-- "Are requirements defined for zero-state scenarios (no episodes)? [Coverage, Edge Case]"
-- "Are concurrent user interaction scenarios addressed? [Coverage, Gap]"
-- "Are requirements specified for partial data loading failures? [Coverage, Exception Flow]"
+- ゼロ状態シナリオ（エピソードなし）に対する要件は定義されていますか？ [Coverage, Edge Case]
+- 同時ユーザー操作のシナリオは考慮されていますか？ [Coverage, Gap]
+- 部分的なデータ読み込み失敗に関する要件は規定されていますか？ [Coverage, Exception Flow]
 
-Measurability:
+測定可能性:
 
-- "Are visual hierarchy requirements measurable/testable? [Acceptance Criteria, Spec §FR-1]"
-- "Can 'balanced visual weight' be objectively verified? [Measurability, Spec §FR-2]"
+- 視覚的な階層構造の要件は測定可能／テスト可能か？ [Acceptance Criteria, Spec §FR-1]
+- 「バランスの取れた視覚的重み」は客観的に検証できるのか？ [Measurability, Spec §FR-2]
 
 **Scenario Classification & Coverage** (Requirements Quality Focus):
 
