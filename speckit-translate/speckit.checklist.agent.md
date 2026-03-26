@@ -177,27 +177,27 @@ $ARGUMENTS
 - 視覚的な階層構造の要件は測定可能／テスト可能か？ [Acceptance Criteria, Spec §FR-1]
 - 「バランスの取れた視覚的重み」は客観的に検証できるのか？ [Measurability, Spec §FR-2]
 
-**Scenario Classification & Coverage** (Requirements Quality Focus):
+**シナリオ分類とカバレッジ** （要件の品質重視）:
 
-- Check if requirements exist for: Primary, Alternate, Exception/Error, Recovery, Non-Functional scenarios
-- For each scenario class, ask: "Are [scenario type] requirements complete, clear, and consistent?"
-- If scenario class missing: "Are [scenario type] requirements intentionally excluded or missing? [Gap]"
-- Include resilience/rollback when state mutation occurs: "Are rollback requirements defined for migration failures? [Gap]"
+- 以下の要件が存在するか確認してください：プライマリ、代替、例外/エラー、リカバリ、非機能シナリオ
+- 各シナリオクラスについて、「[シナリオタイプ]の要件は完全で、明確で、一貫性がありますか？」と自問してください。
+- シナリオクラスが欠落している場合：「[シナリオタイプ]の要件は意図的に除外されているか、欠落していますか？[ギャップ]」
+- 状態変化が発生した場合の回復力/ロールバックを含める：「移行失敗時のロールバック要件は定義されていますか？[ギャップ]」
 
-**Traceability Requirements**:
+**トレーサビリティ要件**:
 
-- MINIMUM: ≥80% of items MUST include at least one traceability reference
-- Each item should reference: spec section `[Spec §X.Y]`, or use markers: `[Gap]`, `[Ambiguity]`, `[Conflict]`, `[Assumption]`
-- If no ID system exists: "Is a requirement & acceptance criteria ID scheme established? [Traceability]"
+- 最低条件：80%以上の品目には、少なくとも1つのトレーサビリティ参照情報が含まれている必要があります。
+- 各項目は、仕様書のセクション「[仕様書 §X.Y]」を参照するか、「[ギャップ]」、「[曖昧さ]」、「[矛盾]」、「[前提]」などのマーカーを使用してください。
+- IDシステムが存在しない場合：「要件および受入基準に基づくIDスキームは確立されていますか？[トレーサビリティ]」
 
-**Surface & Resolve Issues** (Requirements Quality Problems):
-Ask questions about the requirements themselves:
+**問題を明らかにして解決する** （要求事項の品質問題）：
+要件そのものについて質問してください。
 
-- Ambiguities: "Is the term 'fast' quantified with specific metrics? [Ambiguity, Spec §NFR-1]"
-- Conflicts: "Do navigation requirements conflict between §FR-10 and §FR-10a? [Conflict]"
-- Assumptions: "Is the assumption of 'always available podcast API' validated? [Assumption]"
-- Dependencies: "Are external podcast API requirements documented? [Dependency, Gap]"
-- Missing definitions: "Is 'visual hierarchy' defined with measurable criteria? [Gap]"
+- 曖昧性：「『速い』という用語は、具体的な指標で定量化されているか？[曖昧性、仕様§NFR-1]」
+- 矛盾：「§FR-10と§FR-10aの間で航行要件に矛盾はありますか？[矛盾]」
+- 前提条件：「『常に利用可能なポッドキャストAPI』という前提条件は検証済みですか？[前提条件]」
+- 依存関係：「外部ポッドキャストAPIの要件は文書化されていますか？[依存関係、ギャップ]」
+- 定義の欠落：「『視覚的階層構造』は測定可能な基準で定義されていますか？[ギャップ]」
 
 **Content Consolidation**:
 
