@@ -199,11 +199,11 @@ $ARGUMENTS
 - 依存関係：「外部ポッドキャストAPIの要件は文書化されていますか？[依存関係、ギャップ]」
 - 定義の欠落：「『視覚的階層構造』は測定可能な基準で定義されていますか？[ギャップ]」
 
-**Content Consolidation**:
+**コンテンツの統合**:
 
-- Soft cap: If raw candidate items > 40, prioritize by risk/impact
-- Merge near-duplicates checking the same requirement aspect
-- If >5 low-impact edge cases, create one item: "Are edge cases X, Y, Z addressed in requirements? [Coverage]"
+- ソフトキャップ：候補アイテム数が40を超える場合は、リスク/影響度に基づいて優先順位を付ける。
+- 同じ要件側面をチェックするほぼ重複した項目をマージする
+- 影響度の低いエッジケースが5つ以上ある場合は、「エッジケースX、Y、Zは要件で対応されていますか？[カバレッジ]」という項目を1つ作成してください。
 
 **🚫 ABSOLUTELY PROHIBITED** - These make it an implementation test, not a requirements test:
 
