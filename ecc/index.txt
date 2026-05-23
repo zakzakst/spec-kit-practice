@@ -1,0 +1,212 @@
+https://github.com/affaan-m/ECC#whats-inside
+
+ECC/
+|-- .claude-plugin/   # Plugin and marketplace manifests
+|   |-- plugin.json         # Plugin metadata and component paths
+|   |-- marketplace.json    # Marketplace catalog for /plugin marketplace add
+|
+|-- agents/           # 委任のための60の専門サブエージェント
+|   |-- planner.md           # 機能実装計画
+|   |-- architect.md         # システム設計上の決定
+|   |-- tdd-guide.md         # テスト駆動開発
+|   |-- code-reviewer.md     # 品質およびセキュリティレビュー
+|   |-- security-reviewer.md # 脆弱性分析
+|   |-- build-error-resolver.md
+|   |-- e2e-runner.md        # Playwrightのエンドツーエンドテスト
+|   |-- refactor-cleaner.md  # デッドコードのクリーンアップ
+|   |-- doc-updater.md       # ドキュメントの同期
+|   |-- docs-lookup.md       # ドキュメント/API検索
+|   |-- chief-of-staff.md    # コミュニケーションの優先順位付けと草稿
+|   |-- loop-operator.md     # 自律ループ実行
+|   |-- harness-optimizer.md # ハーネス構成の調整
+|   |-- cpp-reviewer.md      # C++コードレビュー
+|   |-- cpp-build-resolver.md # C++ビルドエラーの解決
+|   |-- fsharp-reviewer.md   # F# 関数型コードレビュー
+|   |-- go-reviewer.md       # Goコードレビュー
+|   |-- go-build-resolver.md # Goビルドエラーの解決
+|   |-- python-reviewer.md   # Pythonコードレビュー
+|   |-- database-reviewer.md # データベース/Supabaseのレビュー
+|   |-- typescript-reviewer.md # TypeScript/JavaScriptコードレビュー
+|   |-- java-reviewer.md     # Java/Spring Bootコードレビュー
+|   |-- java-build-resolver.md # Java/Maven/Gradleのビルドエラー
+|   |-- kotlin-reviewer.md   # Kotlin/Android/KMPコードレビュー
+|   |-- kotlin-build-resolver.md # Kotlin/Gradle ビルドエラー
+|   |-- harmonyos-app-resolver.md # HarmonyOS/ArkTSアプリ開発
+|   |-- rust-reviewer.md     # Rustコードレビュー
+|   |-- rust-build-resolver.md # Rustのビルドエラーの解決
+|   |-- pytorch-build-resolver.md # PyTorch/CUDA トレーニングエラー
+|   |-- mle-reviewer.md      # 本番環境の機械学習パイプライン、評価、サービス提供、および監視レビュー
+|
+|-- skills/           # ワークフロー定義とドメイン知識
+|   |-- coding-standards/           # 言語のベストプラクティス
+|   |-- clickhouse-io/              # ClickHouseの分析、クエリ、データエンジニアリング
+|   |-- backend-patterns/           # API、データベース、キャッシングパターン
+|   |-- frontend-patterns/          # React, Next.js パターン
+|   |-- frontend-slides/            # HTMLスライドデッキとPPTXからWebプレゼンテーションへのワークフロー
+|   |-- article-writing/            # 一般的なAI音声ではなく、提供された音声による長文の文章
+|   |-- content-engine/             # マルチプラットフォームのソーシャルコンテンツと再利用ワークフロー
+|   |-- market-research/            # 情報源に基づいた市場、競合他社、投資家に関する調査
+|   |-- investor-materials/         # プレゼンテーション資料、概要資料、メモ、財務モデル
+|   |-- investor-outreach/          # 個別の資金調達活動とフォローアップ
+|   |-- continuous-learning/        # レガシーv1ストップフックパターン抽出
+|   |-- continuous-learning-v2/     # 自信度スコアリングによる本能に基づく学習
+|   |-- iterative-retrieval/        # サブエージェントのコンテキストの段階的な洗練
+|   |-- strategic-compact/          # 手動による圧縮に関する提案（詳細ガイド）
+|   |-- tdd-workflow/               # TDD手法
+|   |-- security-review/            # セキュリティチェックリスト
+|   |-- eval-harness/               # 検証ループ評価（詳細ガイド）
+|   |-- verification-loop/          # 継続的検証（詳細ガイド）
+|   |-- videodb/                   # 動画と音声：取り込み、検索、編集、生成、ストリーミング
+|   |-- golang-patterns/            # Go言語の慣用表現とベストプラクティス
+|   |-- golang-testing/             # Go言語のテストパターン、TDD、ベンチマーク
+|   |-- cpp-coding-standards/         # C++ コアガイドラインに基づく C++ コーディング標準
+|   |-- cpp-testing/                # GoogleTest、CMake/CTestを使用したC++テスト
+|   |-- django-patterns/            # Djangoのパターン、モデル、ビュー
+|   |-- django-security/            # Djangoのセキュリティに関するベストプラクティス
+|   |-- django-tdd/                 # Django TDDワークフロー
+|   |-- django-verification/        # Djangoの検証ループ
+|   |-- laravel-patterns/           # Laravelのアーキテクチャパターン
+|   |-- laravel-security/           # Laravelのセキュリティに関するベストプラクティス
+|   |-- laravel-tdd/                # Laravel TDDワークフロー
+|   |-- laravel-verification/       # Laravelの検証ループ
+|   |-- python-patterns/            # Pythonの慣用表現とベストプラクティス
+|   |-- python-testing/             # Pythonのテストにpytestを使用
+|   |-- quarkus-patterns/            # Java Quarkus パターン
+|   |-- quarkus-security/            # Quarkus セキュリティ
+|   |-- quarkus-tdd/                 # Quarkus TDD
+|   |-- quarkus-verification/        # Quarkus 検証
+|   |-- springboot-patterns/        # Java Spring Boot パターン
+|   |-- springboot-security/        # Spring Boot セキュリティ
+|   |-- springboot-tdd/             # Spring Boot TDD
+|   |-- springboot-verification/    # Spring Boot 検証
+|   |-- configure-ecc/              # 対話型インストールウィザード
+|   |-- security-scan/              # AgentShieldセキュリティ監査ツールとの統合
+|   |-- java-coding-standards/     # Javaコーディング標準
+|   |-- jpa-patterns/              # JPA/Hibernateパターン
+|   |-- postgres-patterns/         # PostgreSQLの最適化パターン
+|   |-- nutrient-document-processing/ # Nutrient APIを使用した文書処理
+|   |-- docs/examples/project-guidelines-template.md  # プロジェクト固有のスキルに関するテンプレート
+|   |-- database-migrations/         # 移行パターン（Prisma、Drizzle、Django、Go）
+|   |-- api-design/                  # REST APIの設計、ページネーション、エラー応答
+|   |-- deployment-patterns/         # CI/CD、Docker、ヘルスチェック、ロールバック
+|   |-- docker-patterns/            # Docker Compose、ネットワーク、ボリューム、コンテナセキュリティ
+|   |-- e2e-testing/                 # Playwrightのエンドツーエンドパターンとページオブジェクトモデル
+|   |-- content-hash-cache-pattern/  # ファイル処理のためのSHA-256コンテンツハッシュキャッシュ
+|   |-- cost-aware-llm-pipeline/     # LLMコスト最適化、モデルルーティング、予算追跡
+|   |-- regex-vs-llm-structured-text/ # 意思決定フレームワーク：テキスト解析における正規表現とLLMの比較
+|   |-- swift-actor-persistence/     # アクターを用いたスレッドセーフなSwiftデータ永続化
+|   |-- swift-protocol-di-testing/   # テスト可能なSwiftコードのためのプロトコルベースのDI
+|   |-- search-first/               # コーディング前の調査ワークフロー
+|   |-- skill-stocktake/            # 監査スキルと品質管理に関する指示
+|   |-- liquid-glass-design/         # iOS 26のLiquid Glassデザインシステム
+|   |-- foundation-models-on-device/ # Appleのデバイス内LLM（Foundation Models搭載）
+|   |-- swift-concurrency-6-2/       # Swift 6.2 の親しみやすい並行処理
+|   |-- mle-workflow/               # 本番環境における機械学習データの契約、評価、デプロイ、監視
+|   |-- perl-patterns/             # 最新のPerl 5.36以降の慣用表現とベストプラクティス
+|   |-- perl-security/             # Perlのセキュリティパターン、汚染モード、安全なI/O
+|   |-- perl-testing/              # Perl TDD (Test2::V0、prove、Devel::Cover を使用)
+|   |-- autonomous-loops/           # 自律ループパターン：シーケンシャルパイプライン、PRループ、DAGオーケストレーション
+|   |-- plankton-code-quality/      # Planktonフックによる書き込み時のコード品質強制
+|
+|-- commands/         # スラッシュ入力の互換性を維持。skills/を優先
+|   |-- plan.md             # /plan - 実施計画
+|   |-- code-review.md      # /code-review - 品質レビュー
+|   |-- build-fix.md        # /build-fix - ビルドエラーを修正する
+|   |-- refactor-clean.md   # /refactor-clean - デッドコードの削除
+|   |-- quality-gate.md     # /quality-gate - 検証ゲート
+|   |-- learn.md            # /learn - セッション中にパターンを抽出する（詳細ガイド）
+|   |-- learn-eval.md       # /learn-eval - パターンを抽出、評価、保存する
+|   |-- checkpoint.md       # /checkpoint - 検証状態を保存する（詳細ガイド）
+|   |-- setup-pm.md         # /setup-pm - パッケージマネージャーの設定
+|   |-- go-review.md        # /go-review - Goコードレビュー
+|   |-- go-test.md          # /go-test - Go TDDワークフロー
+|   |-- go-build.md         # /go-build - Goビルドエラーを修正する
+|   |-- skill-create.md     # /skill-create - Git履歴からスキルを生成する
+|   |-- instinct-status.md  # /instinct-status - 学習された本能を見る
+|   |-- instinct-import.md  # /instinct-import - 輸入本能
+|   |-- instinct-export.md  # /instinct-export - 輸出本能
+|   |-- evolve.md           # /evolve - 本能をスキルにまとめる
+|   |-- prune.md            # /prune - 期限切れの保留中の本能を削除する
+|   |-- pm2.md              # /pm2 - PM2サービスライフサイクル管理
+|   |-- multi-plan.md       # /multi-plan - マルチエージェントタスク分解
+|   |-- multi-execute.md    # /multi-execute - オーケストレーションされたマルチエージェントワークフロー
+|   |-- multi-backend.md    # /multi-backend - バックエンドのマルチサービスオーケストレーション
+|   |-- multi-frontend.md   # /multi-frontend - フロントエンドのマルチサービスオーケストレーション
+|   |-- multi-workflow.md   # /multi-workflow - 一般的な複数サービスワークフロー
+|   |-- sessions.md         # /sessions - セッション履歴管理
+|   |-- test-coverage.md    # /test-coverage - テストカバレッジ分析
+|   |-- update-docs.md      # /update-docs - ドキュメントを更新する
+|   |-- update-codemaps.md  # /update-codemaps - コードマップを更新する
+|   |-- python-review.md    # /python-review - Pythonコードレビュー
+|-- legacy-command-shims/   # /tdd や /eval などの廃止されたシムのオプトインアーカイブ
+|   |-- tdd.md              # /tdd - TDDワークフローのスキルを優先する
+|   |-- e2e.md              # /e2e - エンドツーエンドテストのスキルを優先する
+|   |-- eval.md             # /eval - 評価ハーネススキルを優先する
+|   |-- verify.md           # /verify - 検証ループスキルを優先する
+|   |-- orchestrate.md      # /orchestrate - dmux-workflows または multi-workflow を優先します
+|
+|-- rules/            # 必ずガイドラインに従ってください（~/.claude/rules/ecc/ にコピーしてください）
+|   |-- README.md            # 構造概要と設置ガイド
+|   |-- common/              # 言語に依存しない原則
+|   |   |-- coding-style.md    # 不変性、ファイル編成
+|   |   |-- git-workflow.md    # コミット形式、PRプロセス
+|   |   |-- testing.md         # TDD、80%のカバー率要件
+|   |   |-- performance.md     # モデル選択、コンテキスト管理
+|   |   |-- patterns.md        # デザインパターン、スケルトンプロジェクト
+|   |   |-- hooks.md           # フックアーキテクチャ、TodoWrite
+|   |   |-- agents.md          # サブエージェントに委任するタイミング
+|   |   |-- security.md        # 必須のセキュリティチェック
+|   |-- typescript/          # TypeScript/JavaScript に特有の
+|   |-- python/              # Python に特有の
+|   |-- golang/              # Go に特有の
+|   |-- swift/               # Swift に特有の
+|   |-- php/                 # PHP に特有の
+|   |-- arkts/               # HarmonyOS / ArkTS に特有の
+|
+|-- hooks/            # トリガーベースの自動化
+|   |-- README.md                 # フックのドキュメント、レシピ、カスタマイズガイド
+|   |-- hooks.json                # すべてのフック設定（PreToolUse、PostToolUse、Stopなど）
+|   |-- memory-persistence/       # セッションライフサイクルフック（詳細ガイド）
+|   |-- strategic-compact/        # 圧縮に関する提案（詳細ガイド）
+|
+|-- scripts/          # クロスプラットフォーム対応のNode.jsスクリプト
+|   |-- lib/                     # 共用ユーティリティ
+|   |   |-- utils.js             # クロスプラットフォーム対応のファイル/パス/システムユーティリティ
+|   |   |-- package-manager.js   # パッケージマネージャーの検出と選択
+|   |-- hooks/                   # フックの実装
+|   |   |-- session-start.js     # セッション開始時にコンテキストをロードする
+|   |   |-- session-end.js       # セッション終了時に状態を保存する
+|   |   |-- pre-compact.js       # 圧縮前の状態を節約
+|   |   |-- suggest-compact.js   # 戦略的な圧縮に関する提案
+|   |   |-- evaluate-session.js  # セッションからパターンを抽出する
+|   |-- setup-package-manager.js # 対話型PM設定
+|
+|-- tests/            # テストスイート
+|   |-- lib/                     # ライブラリテスト
+|   |-- hooks/                   # フックテスト
+|   |-- run-all.js               # すべてのテストを実行する
+|
+|-- contexts/         # 動的システムプロンプトの挿入コンテキスト（詳細ガイド）
+|   |-- dev.md              # 開発モードのコンテキスト
+|   |-- review.md           # コードレビューモードのコンテキスト
+|   |-- research.md         # 研究・探査モードのコンテキスト
+|
+|-- examples/         # Example configurations and sessions
+|   |-- CLAUDE.md             # Example project-level config
+|   |-- user-CLAUDE.md        # Example user-level config
+|   |-- saas-nextjs-CLAUDE.md   # Real-world SaaS (Next.js + Supabase + Stripe)
+|   |-- go-microservice-CLAUDE.md # Real-world Go microservice (gRPC + PostgreSQL)
+|   |-- django-api-CLAUDE.md      # Real-world Django REST API (DRF + Celery)
+|   |-- laravel-api-CLAUDE.md     # Real-world Laravel API (PostgreSQL + Redis) (NEW)
+|   |-- rust-api-CLAUDE.md        # Real-world Rust API (Axum + SQLx + PostgreSQL) (NEW)
+|
+|-- mcp-configs/      # MCP server configurations
+|   |-- mcp-servers.json    # GitHub, Supabase, Vercel, Railway, etc.
+|
+|-- ecc_dashboard.py  # Desktop GUI dashboard (Tkinter)
+|
+|-- assets/           # Assets for dashboard
+|   |-- images/
+|       |-- ecc-logo.png
+|
+|-- marketplace.json  # Self-hosted marketplace config (for /plugin marketplace add)
