@@ -1,4 +1,10 @@
 https://github.com/affaan-m/ECC#whats-inside
+https://docs.google.com/spreadsheets/d/1bXaRXVDg3yVQ2Lx4rVFc0zMrvhR1N_tKmRjfcZLoSi8/edit?gid=0#gid=0
+
+TODO:
+- ファイル構成をCSVに出力して、マークダウンのフロントマターを解析した情報も一覧にするスクリプト作りたい
+- ファイル操作関連のスクリプトアイデアの引き出し増やしたい
+- TSDoc勉強しなおす
 
 ECC/
 |-- .claude-plugin/   # Plugin and marketplace manifests
