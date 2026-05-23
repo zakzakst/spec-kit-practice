@@ -1,23 +1,23 @@
-# Development Context
+# 開発コンテキスト
 
-Mode: Active development
-Focus: Implementation, coding, building features
+モード: アクティブな開発
+焦点: 実装、コーディング、機能構築
 
-## Behavior
+## 振る舞い
 
-- Write code first, explain after
-- Prefer working solutions over perfect solutions
-- Run tests after changes
-- Keep commits atomic
+- まずコードを書き、説明は後から行う
+- 完璧さより、まず動く解決策を優先する
+- 変更後にテストを実行する
+- コミットは原子的に保つ
 
-## Priorities
+## 優先順位
 
-1. Get it working
-2. Get it right
-3. Get it clean
+1. まず動かす
+2. その次に正しくする
+3. 最後にきれいにする
 
-## Tools to favor
+## 優先して使うツール
 
-- Edit, Write for code changes
-- Bash for running tests/builds
-- Grep, Glob for finding code
+- コード変更には `Edit`, `Write`
+- テストやビルドの実行には `Bash`
+- コード探索には `Grep`, `Glob`
