@@ -1,71 +1,71 @@
 ---
 name: market-research
-description: Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions.
+description: 出典付きで意思決定に結びつく要約を伴う市場調査、競合分析、投資家デューデリジェンス、業界インテリジェンスを行います。市場規模、競合比較、ファンド調査、技術スキャンなど、事業判断に使う調査で使います。
 origin: ECC
 ---
 
-# Market Research
+# 市場調査
 
-Produce research that supports decisions, not research theater.
+調査のための調査ではなく、意思決定を支える調査を行います。
 
-## When to Activate
+## 有効化するタイミング
 
-- researching a market, category, company, investor, or technology trend
-- building TAM/SAM/SOM estimates
-- comparing competitors or adjacent products
-- preparing investor dossiers before outreach
-- pressure-testing a thesis before building, funding, or entering a market
+- 市場、カテゴリ、企業、投資家、技術トレンドを調べるとき
+- TAM / SAM / SOM を見積もるとき
+- 競合や隣接製品を比較するとき
+- 投資家への接触前に dossier を用意するとき
+- 何かを作る、資金調達する、市場参入する前に仮説を圧力テストするとき
 
-## Research Standards
+## 調査基準
 
-1. Every important claim needs a source.
-2. Prefer recent data and call out stale data.
-3. Include contrarian evidence and downside cases.
-4. Translate findings into a decision, not just a summary.
-5. Separate fact, inference, and recommendation clearly.
+1. 重要な主張にはすべて出典が必要。
+2. できるだけ新しいデータを優先し、古いデータは明示する。
+3. 反証や downside case を含める。
+4. 要約だけで終わらず、判断に翻訳する。
+5. 事実、推論、推奨を明確に分ける。
 
-## Common Research Modes
+## よくある調査モード
 
-### Investor / Fund Diligence
+### 投資家 / ファンド調査
 
-Collect:
+集めるもの:
 
-- fund size, stage, and typical check size
-- relevant portfolio companies
-- public thesis and recent activity
-- reasons the fund is or is not a fit
-- any obvious red flags or mismatches
+- ファンドサイズ、ステージ、一般的なチェックサイズ
+- 関連ポートフォリオ企業
+- 公開されている投資仮説と最近の活動
+- そのファンドが適している / いない理由
+- 明らかなレッドフラグやミスマッチ
 
-### Competitive Analysis
+### 競合分析
 
-Collect:
+集めるもの:
 
-- product reality, not marketing copy
-- funding and investor history if public
-- traction metrics if public
-- distribution and pricing clues
-- strengths, weaknesses, and positioning gaps
+- マーケティング文句ではなく実際のプロダクト
+- 公開情報があれば資金調達履歴と投資家履歴
+- 公開されていれば traction 指標
+- 流通経路や価格設定の手がかり
+- 強み、弱み、ポジショニングの隙間
 
-### Market Sizing
+### 市場規模推定
 
-Use:
+使うもの:
 
-- top-down estimates from reports or public datasets
-- bottom-up sanity checks from realistic customer acquisition assumptions
-- explicit assumptions for every leap in logic
+- レポートや公開データセットによるトップダウン推計
+- 現実的な顧客獲得仮定に基づくボトムアップの妥当性確認
+- 論理の飛躍ごとに明示的な仮定
 
-### Technology / Vendor Research
+### 技術 / ベンダー調査
 
-Collect:
+集めるもの:
 
-- how it works
-- trade-offs and adoption signals
-- integration complexity
-- lock-in, security, compliance, and operational risk
+- どう動くか
+- トレードオフと採用シグナル
+- 統合の複雑さ
+- ロックイン、セキュリティ、コンプライアンス、運用リスク
 
-## Output Format
+## 出力形式
 
-Default structure:
+デフォルト構成:
 
 1. executive summary
 2. key findings
@@ -74,12 +74,12 @@ Default structure:
 5. recommendation
 6. sources
 
-## Quality Gate
+## 品質ゲート
 
-Before delivering:
+提出前に確認すること:
 
-- all numbers are sourced or labeled as estimates
-- old data is flagged
-- the recommendation follows from the evidence
-- risks and counterarguments are included
-- the output makes a decision easier
+- すべての数値に出典があるか、推定値としてラベル付けされている
+- 古いデータにフラグが付いている
+- 推奨が証拠から自然に導かれている
+- リスクと反対論点が含まれている
+- この出力によって判断がしやすくなっている

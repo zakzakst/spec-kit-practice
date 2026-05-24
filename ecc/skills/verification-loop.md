@@ -1,34 +1,34 @@
 ---
 name: verification-loop
-description: "A comprehensive verification system for Claude Code sessions."
+description: "Claude Code セッション向けの包括的な検証システム。"
 origin: ECC
 ---
 
-# Verification Loop Skill
+# Verification Loop スキル
 
-A comprehensive verification system for Claude Code sessions.
+Claude Code セッション向けの包括的な検証システムです。
 
-## When to Use
+## 使うタイミング
 
-Invoke this skill:
+このスキルを使うのは次のとき:
 
-- After completing a feature or significant code change
-- Before creating a PR
-- When you want to ensure quality gates pass
-- After refactoring
+- 機能実装や大きなコード変更を終えた後
+- PR を作成する前
+- 品質ゲートを通ることを確認したいとき
+- リファクタリング後
 
-## Verification Phases
+## 検証フェーズ
 
 ### Phase 1: Build Verification
 
 ```bash
-# Check if project builds
+# プロジェクトがビルドできるか確認
 npm run build 2>&1 | tail -20
 # OR
 pnpm build 2>&1 | tail -20
 ```
 
-If build fails, STOP and fix before continuing.
+ビルドに失敗したら、先へ進まず修正する。
 
 ### Phase 2: Type Check
 
@@ -40,7 +40,7 @@ npx tsc --noEmit 2>&1 | head -30
 pyright . 2>&1 | head -30
 ```
 
-Report all type errors. Fix critical ones before continuing.
+型エラーはすべて報告する。重要なものは続行前に修正する。
 
 ### Phase 3: Lint Check
 
@@ -55,14 +55,14 @@ ruff check . 2>&1 | head -30
 ### Phase 4: Test Suite
 
 ```bash
-# Run tests with coverage
+# カバレッジ付きでテスト実行
 npm run test -- --coverage 2>&1 | tail -50
 
-# Check coverage threshold
-# Target: 80% minimum
+# カバレッジ閾値確認
+# 目標: 最低 80%
 ```
 
-Report:
+報告項目:
 
 - Total tests: X
 - Passed: X
@@ -72,33 +72,33 @@ Report:
 ### Phase 5: Security Scan
 
 ```bash
-# Check for secrets
+# シークレット検出
 grep -rn "sk-" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 grep -rn "api_key" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 
-# Check for console.log
+# console.log 検出
 grep -rn "console.log" --include="*.ts" --include="*.tsx" src/ 2>/dev/null | head -10
 ```
 
 ### Phase 6: Diff Review
 
 ```bash
-# Show what changed
+# 何が変わったか確認
 git diff --stat
 git diff HEAD~1 --name-only
 ```
 
-Review each changed file for:
+変更ファイルごとに確認すること:
 
-- Unintended changes
-- Missing error handling
-- Potential edge cases
+- 意図しない変更
+- 不足しているエラーハンドリング
+- 潜在的なエッジケース
 
-## Output Format
+## 出力形式
 
-After running all phases, produce a verification report:
+すべてのフェーズを実行した後、以下のような検証レポートを出す:
 
-```
+```text
 VERIFICATION REPORT
 ==================
 
@@ -118,19 +118,19 @@ Issues to Fix:
 
 ## Continuous Mode
 
-For long sessions, run verification every 15 minutes or after major changes:
+長いセッションでは、15 分ごと、または大きな変更のたびに検証する:
 
 ```markdown
-Set a mental checkpoint:
+頭の中でチェックポイントを置く:
 
-- After completing each function
-- After finishing a component
-- Before moving to next task
+- 各関数を終えた後
+- コンポーネントを終えた後
+- 次のタスクへ移る前
 
 Run: /verify
 ```
 
-## Integration with Hooks
+## Hooks との統合
 
-This skill complements PostToolUse hooks but provides deeper verification.
-Hooks catch issues immediately; this skill provides comprehensive review.
+このスキルは PostToolUse hook を補完するが、それより深い検証を提供する。
+hook は即時検知向きであり、このスキルは包括レビュー向きである。
