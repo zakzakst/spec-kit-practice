@@ -1,34 +1,34 @@
 ---
-description: Run the ECC quality pipeline for a file or project scope and report remediation steps.
+description: ファイルまたはプロジェクト全体を対象に ECC の品質パイプラインを実行し、改善手順を報告します。
 ---
 
-# Quality Gate Command
+# 品質ゲートコマンド
 
-Run the ECC quality pipeline on demand for a file or project scope.
+ECC の品質パイプラインを、ファイル単位またはプロジェクト単位で必要時に実行します。
 
-## Usage
+## 使い方
 
 `/quality-gate [path|.] [--fix] [--strict]`
 
-- default target: current directory (`.`)
-- `--fix`: allow auto-format/fix where configured
-- `--strict`: fail on warnings where supported
+- デフォルト対象: 現在のディレクトリ（`.`）
+- `--fix`: 設定されている範囲で自動整形 / 自動修正を許可する
+- `--strict`: 対応しているツールでは warning も失敗扱いにする
 
-## Pipeline
+## パイプライン
 
-1. Detect language/tooling for target.
-2. Run formatter checks.
-3. Run lint/type checks when available.
-4. Produce a concise remediation list.
+1. 対象の言語 / ツール構成を検出する。
+2. フォーマッタのチェックを実行する。
+3. 利用可能なら lint / type check を実行する。
+4. 簡潔な改善リストを出す。
 
-## Notes
+## メモ
 
-This command mirrors hook behavior but is operator-invoked.
+このコマンドはフックの動作を手動実行できるようにしたものです。
 
-## Arguments
+## 引数
 
 $ARGUMENTS:
 
-- `[path|.]` optional target path
-- `--fix` optional
-- `--strict` optional
+- `[path|.]` 任意の対象パス
+- `--fix` 任意
+- `--strict` 任意

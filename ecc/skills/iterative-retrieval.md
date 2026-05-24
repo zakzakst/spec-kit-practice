@@ -1,58 +1,48 @@
 ---
 name: iterative-retrieval
-description: Pattern for progressively refining context retrieval to solve the subagent context problem
+description: subagent の文脈問題を解くために、コンテキスト取得を段階的に洗練していくパターン
 origin: ECC
 ---
 
-# Iterative Retrieval Pattern
+# 反復的リトリーバルパターン
 
-Solves the "context problem" in multi-agent workflows where subagents don't know what context they need until they start working.
+subagent が「作業を始めるまで、自分に何の文脈が必要か分からない」という multi-agent workflow の context problem を解決します。
 
-## When to Activate
+## 有効化するタイミング
 
-- Spawning subagents that need codebase context they cannot predict upfront
-- Building multi-agent workflows where context is progressively refined
-- Encountering "context too large" or "missing context" failures in agent tasks
-- Designing RAG-like retrieval pipelines for code exploration
-- Optimizing token usage in agent orchestration
+- upfront に必要文脈を予測できない subagent を起動するとき
+- 文脈を段階的に洗練する multi-agent workflow を作るとき
+- agent task で "context too large" や "missing context" にぶつかったとき
+- コード探索向けの RAG 風 retrieval pipeline を設計するとき
+- agent orchestration のトークン消費を最適化したいとき
 
-## The Problem
+## 問題
 
-Subagents are spawned with limited context. They don't know:
+Subagent は限られた文脈で起動されるため、次を知らない:
 
-- Which files contain relevant code
-- What patterns exist in the codebase
-- What terminology the project uses
+- 関連コードがどのファイルにあるか
+- コードベース内にどんなパターンがあるか
+- プロジェクト固有の用語が何か
 
-Standard approaches fail:
+標準的なやり方は失敗しがち:
 
-- **Send everything**: Exceeds context limits
-- **Send nothing**: Agent lacks critical information
-- **Guess what's needed**: Often wrong
+- **全部送る**: 文脈上限を超える
+- **何も送らない**: 致命的情報が足りない
+- **必要そうなものを勘で送る**: 外れやすい
 
-## The Solution: Iterative Retrieval
+## 解決策: Iterative Retrieval
 
-A 4-phase loop that progressively refines context:
+文脈を段階的に絞り込む 4 フェーズループ:
 
-```
-┌─────────────────────────────────────────────┐
-│                                             │
-│   ┌──────────┐      ┌──────────┐            │
-│   │ DISPATCH │─────│ EVALUATE │            │
-│   └──────────┘      └──────────┘            │
-│        ▲                  │                 │
-│        │                  ▼                 │
-│   ┌──────────┐      ┌──────────┐            │
-│   │   LOOP   │─────│  REFINE  │            │
-│   └──────────┘      └──────────┘            │
-│                                             │
-│        Max 3 cycles, then proceed           │
-└─────────────────────────────────────────────┘
+```text
+DISPATCH -> EVALUATE -> REFINE -> LOOP
+
+最大 3 サイクル。十分な文脈が集まったら終了。
 ```
 
 ### Phase 1: DISPATCH
 
-Initial broad query to gather candidate files:
+まずは広めの問い合わせで候補ファイルを集める:
 
 ```javascript
 // Start with high-level intent
@@ -68,7 +58,7 @@ const candidates = await retrieveFiles(initialQuery);
 
 ### Phase 2: EVALUATE
 
-Assess retrieved content for relevance:
+取得した内容の関連度を評価する:
 
 ```javascript
 function evaluateRelevance(files, task) {
@@ -81,16 +71,16 @@ function evaluateRelevance(files, task) {
 }
 ```
 
-Scoring criteria:
+採点基準:
 
-- **High (0.8-1.0)**: Directly implements target functionality
-- **Medium (0.5-0.7)**: Contains related patterns or types
-- **Low (0.2-0.4)**: Tangentially related
-- **None (0-0.2)**: Not relevant, exclude
+- **High (0.8-1.0)**: 目的機能を直接実装している
+- **Medium (0.5-0.7)**: 関連パターンや型を含む
+- **Low (0.2-0.4)**: 周辺的に関係する
+- **None (0-0.2)**: 無関係なので除外
 
 ### Phase 3: REFINE
 
-Update search criteria based on evaluation:
+評価結果にもとづいて検索条件を更新する:
 
 ```javascript
 function refineQuery(evaluation, previousQuery) {
@@ -115,7 +105,7 @@ function refineQuery(evaluation, previousQuery) {
 
 ### Phase 4: LOOP
 
-Repeat with refined criteria (max 3 cycles):
+洗練した条件で繰り返す（最大 3 サイクル）:
 
 ```javascript
 async function iterativeRetrieve(task, maxCycles = 3) {
@@ -141,11 +131,11 @@ async function iterativeRetrieve(task, maxCycles = 3) {
 }
 ```
 
-## Practical Examples
+## 実例
 
 ### Example 1: Bug Fix Context
 
-```
+```text
 Task: "Fix the authentication token expiry bug"
 
 Cycle 1:
@@ -163,7 +153,7 @@ Result: auth.ts, tokens.ts, session-manager.ts, jwt-utils.ts
 
 ### Example 2: Feature Implementation
 
-```
+```text
 Task: "Add rate limiting to API endpoints"
 
 Cycle 1:
@@ -184,9 +174,9 @@ Cycle 3:
 Result: throttle.ts, middleware/index.ts, router-setup.ts
 ```
 
-## Integration with Agents
+## Agent への組み込み
 
-Use in agent prompts:
+agent prompt では次のように使う:
 
 ```markdown
 When retrieving context for this task:
@@ -198,16 +188,16 @@ When retrieving context for this task:
 5. Return files with relevance >= 0.7
 ```
 
-## Best Practices
+## ベストプラクティス
 
-1. **Start broad, narrow progressively** - Don't over-specify initial queries
-2. **Learn codebase terminology** - First cycle often reveals naming conventions
-3. **Track what's missing** - Explicit gap identification drives refinement
-4. **Stop at "good enough"** - 3 high-relevance files beats 10 mediocre ones
-5. **Exclude confidently** - Low-relevance files won't become relevant
+1. **広く始めて徐々に絞る** - 最初から絞り込みすぎない
+2. **コードベースの用語を学ぶ** - 最初の周回で命名規則が見えることが多い
+3. **不足文脈を追跡する** - 明示的な gap 把握が refinement を導く
+4. **十分に良いところで止める** - mediocre な 10 ファイルより high-relevance な 3 ファイル
+5. **自信を持って除外する** - relevance の低いものは後で急に relevant にはなりにくい
 
-## Related
+## 関連
 
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - Subagent orchestration section
-- `continuous-learning` skill - For patterns that improve over time
-- Agent definitions bundled with ECC (manual install path: `agents/`)
+- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - subagent orchestration セクション
+- `continuous-learning` skill - 時間とともに改善するパターン向け
+- ECC に同梱される agent 定義（手動インストール時は `agents/`）

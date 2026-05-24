@@ -1,81 +1,81 @@
 ---
 name: article-writing
-description: Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from supplied examples or brand guidance. Use when the user wants polished written content longer than a paragraph, especially when voice consistency, structure, and credibility matter.
+description: 例文やブランドガイドから導いた固有の声を保ちながら、記事、ガイド、ブログ、チュートリアル、ニュースレターなどの長文コンテンツを書きます。特に、1 段落を超える洗練された文章が必要で、声の一貫性、構成、信頼性が重要なときに使います。
 origin: ECC
 ---
 
-# Article Writing
+# 記事執筆
 
-Write long-form content that sounds like an actual person with a point of view, not an LLM smoothing itself into paste.
+LLM らしい均しすぎた文章ではなく、視点を持った実在の人が書いたように響く長文コンテンツを書きます。
 
-## When to Activate
+## 有効化するタイミング
 
-- drafting blog posts, essays, launch posts, guides, tutorials, or newsletter issues
-- turning notes, transcripts, or research into polished articles
-- matching an existing founder, operator, or brand voice from examples
-- tightening structure, pacing, and evidence in already-written long-form copy
+- ブログ記事、エッセイ、ローンチ投稿、ガイド、チュートリアル、ニュースレターを下書きするとき
+- メモ、書き起こし、調査内容を磨かれた記事へ変換するとき
+- 既存の創業者、オペレーター、ブランドの声を例文から合わせたいとき
+- すでに書かれた長文コピーの構成、テンポ、根拠を引き締めたいとき
 
-## Core Rules
+## 基本ルール
 
-1. Lead with the concrete thing: artifact, example, output, anecdote, number, screenshot, or code.
-2. Explain after the example, not before.
-3. Keep sentences tight unless the source voice is intentionally expansive.
-4. Use proof instead of adjectives.
-5. Never invent facts, credibility, or customer evidence.
+1. 具体物から入る: 成果物、例、出力、逸話、数字、スクリーンショット、コード。
+2. 説明は例の後に置く。前に置かない。
+3. もとの声が意図的にゆったりしていない限り、文は引き締める。
+4. 形容詞より証拠を使う。
+5. 事実、信用、顧客実績を捏造しない。
 
-## Voice Handling
+## 声の扱い
 
-If the user wants a specific voice, run `brand-voice` first and reuse its `VOICE PROFILE`.
-Do not duplicate a second style-analysis pass here unless the user explicitly asks for one.
+特定の voice が必要なら、先に `brand-voice` を実行し、その `VOICE PROFILE` を再利用します。
+ユーザーが明示的に求めない限り、ここで二重にスタイル分析をしません。
 
-If no voice references are given, default to a sharp operator voice: concrete, unsentimental, useful.
+参照となる voice がない場合は、具体的で無駄がなく実用的な sharp operator voice を既定値にします。
 
-## Banned Patterns
+## 禁止パターン
 
-Delete and rewrite any of these:
+以下が出たら削除して書き直します:
 
 - "In today's rapidly evolving landscape"
 - "game-changer", "cutting-edge", "revolutionary"
-- "here's why this matters" as a standalone bridge
-- fake vulnerability arcs
-- a closing question added only to juice engagement
-- biography padding that does not move the argument
-- generic AI throat-clearing that delays the point
+- 単独ブリッジとしての "here's why this matters"
+- 作り物っぽい弱さの物語
+- エンゲージメント稼ぎだけの締めの質問
+- 論旨を前に進めない経歴の水増し
+- 本題を遅らせる generic AI 的な前置き
 
-## Writing Process
+## 執筆プロセス
 
-1. Clarify the audience and purpose.
-2. Build a hard outline with one job per section.
-3. Start sections with proof, artifact, conflict, or example.
-4. Expand only where the next sentence earns space.
-5. Cut anything that sounds templated, overexplained, or self-congratulatory.
+1. 読者と目的を明確にする。
+2. 各セクションに 1 つずつ役割を持たせた固いアウトラインを作る。
+3. 各セクションは証拠、成果物、対立、または具体例で始める。
+4. 次の文が紙幅に値するときだけ展開する。
+5. テンプレ、過剰説明、自己礼賛に聞こえる箇所は削る。
 
-## Structure Guidance
+## 構成ガイド
 
-### Technical Guides
+### 技術ガイド
 
-- open with what the reader gets
-- use code, commands, screenshots, or concrete output in major sections
-- end with actionable takeaways, not a soft recap
+- 読者が何を得られるかで始める
+- 主要セクションではコード、コマンド、スクリーンショット、具体出力を使う
+- 締めは柔らかい総括ではなく、実行可能な持ち帰りにする
 
-### Essays / Opinion
+### エッセイ / 意見文
 
-- start with tension, contradiction, or a specific observation
-- keep one argument thread per section
-- make opinions answer to evidence
+- 緊張、矛盾、または具体的な観察から始める
+- 各セクションでは論点を 1 本に絞る
+- 意見は必ず証拠に答えさせる
 
-### Newsletters
+### ニュースレター
 
-- keep the first screen doing real work
-- do not front-load diary filler
-- use section labels only when they improve scanability
+- 最初の 1 画面で本当に仕事をさせる
+- 日記のような前置きを先頭に積まない
+- セクションラベルは読みやすさが上がるときだけ使う
 
-## Quality Gate
+## 品質ゲート
 
-Before delivering:
+提出前に確認すること:
 
-- factual claims are backed by provided sources
-- generic AI transitions are gone
-- the voice matches the supplied examples or the agreed `VOICE PROFILE`
-- every section adds something new
-- formatting matches the intended medium
+- 事実主張に提供ソースの裏付けがある
+- generic AI 的なつなぎ文が消えている
+- 声が提供例または合意済み `VOICE PROFILE` と一致している
+- すべてのセクションが新しい価値を足している
+- 書式が想定媒体に合っている

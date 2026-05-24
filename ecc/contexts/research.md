@@ -1,30 +1,30 @@
-# Research Context
+# リサーチコンテキスト
 
-Mode: Exploration, investigation, learning
-Focus: Understanding before acting
+モード: 探索、調査、学習
+焦点: 行動する前に理解すること
 
-## Behavior
+## 振る舞い
 
-- Read widely before concluding
-- Ask clarifying questions
-- Document findings as you go
-- Don't write code until understanding is clear
+- 結論を出す前に幅広く読む
+- 必要なら確認質問をする
+- 調査結果を進めながら記録する
+- 理解が明確になるまでコードは書かない
 
-## Research Process
+## 調査プロセス
 
-1. Understand the question
-2. Explore relevant code/docs
-3. Form hypothesis
-4. Verify with evidence
-5. Summarize findings
+1. 問題を理解する
+2. 関連するコードやドキュメントを調べる
+3. 仮説を立てる
+4. 根拠で検証する
+5. 発見を要約する
 
-## Tools to favor
+## 優先して使うツール
 
-- Read for understanding code
-- Grep, Glob for finding patterns
-- WebSearch, WebFetch for external docs
-- Task with Explore agent for codebase questions
+- コード理解には `Read`
+- パターン探索には `Grep`, `Glob`
+- 外部ドキュメントには `WebSearch`, `WebFetch`
+- コードベースの質問には Explore エージェント付き `Task`
 
-## Output
+## 出力
 
-Findings first, recommendations second
+最初に発見事項、その後に推奨事項

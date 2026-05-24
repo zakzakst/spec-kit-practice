@@ -4,7 +4,9 @@ https://docs.google.com/spreadsheets/d/1bXaRXVDg3yVQ2Lx4rVFc0zMrvhR1N_tKmRjfcZLo
 TODO:
 - ファイル構成をCSVに出力して、マークダウンのフロントマターを解析した情報も一覧にするスクリプト作りたい
 - ファイル操作関連のスクリプトアイデアの引き出し増やしたい
+  - ファイルの鮮度調査（ドキュメントとか）
 - TSDoc勉強しなおす
+- githubのCLI勉強する
 
 ECC/
 |-- .claude-plugin/   # Plugin and marketplace manifests

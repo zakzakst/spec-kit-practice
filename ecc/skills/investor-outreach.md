@@ -1,97 +1,97 @@
 ---
 name: investor-outreach
-description: Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging.
+description: 資金調達向けのコールドメール、紹介依頼文、追客、進捗連絡、投資家コミュニケーションを下書きします。エンジェル、VC、戦略投資家、アクセラレータ向けに、短く個別化された投資家向けメッセージが必要なときに使います。
 origin: ECC
 ---
 
-# Investor Outreach
+# 投資家アウトリーチ
 
-Write investor communication that is short, concrete, and easy to act on.
+短く、具体的で、相手が行動しやすい投資家コミュニケーションを書きます。
 
-## When to Activate
+## 有効化するタイミング
 
-- writing a cold email to an investor
-- drafting a warm intro request
-- sending follow-ups after a meeting or no response
-- writing investor updates during a process
-- tailoring outreach based on fund thesis or partner fit
+- 投資家へのコールドメールを書くとき
+- 紹介依頼の文面を作るとき
+- 面談後や無反応後のフォローアップを書くとき
+- プロセス中の投資家アップデートを書くとき
+- ファンド仮説や partner fit に基づいて個別調整するとき
 
-## Core Rules
+## 基本ルール
 
-1. Personalize every outbound message.
-2. Keep the ask low-friction.
-3. Use proof instead of adjectives.
-4. Stay concise.
-5. Never send copy that could go to any investor.
+1. すべての outbound message を個別化する。
+2. ask は friction の低いものにする。
+3. 形容詞ではなく証拠を使う。
+4. 簡潔に保つ。
+5. 誰にでも送れるようなコピーを出さない。
 
-## Voice Handling
+## 声の扱い
 
-If the user's voice matters, run `brand-voice` first and reuse its `VOICE PROFILE`.
-This skill should keep the investor-specific structure and ask discipline, not recreate its own parallel voice system.
+ユーザーの voice が重要なら、先に `brand-voice` を実行し、その `VOICE PROFILE` を再利用する。
+このスキルでは、投資家向けの構造と ask の規律を保つことに集中し、独自の並行 voice system を作らない。
 
-## Hard Bans
+## 強い禁止事項
 
-Delete and rewrite any of these:
+以下が出たら削除して書き直す:
 
 - "I'd love to connect"
 - "excited to share"
-- generic thesis praise without a real tie-in
-- vague founder adjectives
-- begging language
-- soft closing questions when a direct ask is clearer
+- 実質的な接点がない generic thesis praise
+- ぼんやりした founder 形容詞
+- 懇願する言い回し
+- 直接 ask の方が明快なのに、ぼかした締めの質問を置くこと
 
-## Cold Email Structure
+## Cold Email の構成
 
-1. subject line: short and specific
-2. opener: why this investor specifically
-3. pitch: what the company does, why now, and what proof matters
-4. ask: one concrete next step
-5. sign-off: name, role, and one credibility anchor if needed
+1. subject line: 短く具体的に
+2. opener: なぜこの投資家なのか
+3. pitch: 会社が何をしていて、なぜ今で、何が重要な証拠か
+4. ask: 具体的な次の一歩を 1 つ
+5. sign-off: 名前、役職、必要なら信頼の錨を 1 つ
 
-## Personalization Sources
+## 個別化の情報源
 
-Reference one or more of:
+以下の 1 つ以上を参照する:
 
-- relevant portfolio companies
-- a public thesis, talk, post, or article
-- a mutual connection
-- a clear market or product fit with the investor's focus
+- 関連ポートフォリオ企業
+- 公開されている仮説、登壇、投稿、記事
+- 共通の知人
+- 投資家の焦点との明確な市場 / 製品適合
 
-If that context is missing, state that the draft still needs personalization instead of pretending it is finished.
+その文脈がない場合、完成済みを装わず「まだ個別化が必要」と明示する。
 
-## Follow-Up Cadence
+## Follow-Up の標準 cadence
 
-Default:
+既定値:
 
-- day 0: initial outbound
-- day 4 or 5: short follow-up with one new data point
-- day 10 to 12: final follow-up with a clean close
+- day 0: 最初の outbound
+- day 4 または 5: 新しいデータ点を 1 つ添えた短い follow-up
+- day 10 から 12: きれいに閉じる最終 follow-up
 
-Do not keep nudging after that unless the user wants a longer sequence.
+ユーザーが長めのシーケンスを望まない限り、それ以上は追わない。
 
 ## Warm Intro Requests
 
-Make life easy for the connector:
+つなぐ人の負担を下げる:
 
-- explain why the intro is a fit
-- include a forwardable blurb
-- keep the forwardable blurb under 100 words
+- なぜその紹介が fit なのか説明する
+- 転送しやすい短文を含める
+- 転送用 blurb は 100 語未満にする
 
-## Post-Meeting Updates
+## 面談後アップデート
 
-Include:
+含めるもの:
 
-- the specific thing discussed
-- the answer or update promised
-- one new proof point if available
-- the next step
+- 何を話したかという具体点
+- 約束した回答または更新
+- 可能なら新しい proof point を 1 つ
+- 次の一歩
 
-## Quality Gate
+## 品質ゲート
 
-Before delivering:
+提出前に確認すること:
 
-- the message is genuinely personalized
-- the ask is explicit
-- the proof point is concrete
-- filler praise and softener language are gone
-- word count stays tight
+- メッセージが本当に個別化されている
+- ask が明示的である
+- proof point が具体的である
+- filler praise と softener language が消えている
+- 語数が引き締まっている
