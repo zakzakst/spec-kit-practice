@@ -1,44 +1,44 @@
 ---
 name: instinct-status
-description: Show learned instincts (project + global) with confidence
+description: 学習済みの instinct（プロジェクト + グローバル）を信頼度付きで表示する
 command: true
 ---
 
-# Instinct Status Command
+# Instinct Status コマンド
 
-Shows learned instincts for the current project plus global instincts, grouped by domain.
+現在のプロジェクト向け instinct とグローバル instinct を、ドメイン別にまとめて表示します。
 
-## Implementation
+## 実装
 
-Run the instinct CLI using the plugin root path:
+プラグインルートのパスを使って instinct CLI を実行します:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" status
 ```
 
-Or if `CLAUDE_PLUGIN_ROOT` is not set (manual installation), use:
+または `CLAUDE_PLUGIN_ROOT` が設定されていない場合（手動インストール時）は:
 
 ```bash
 python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py status
 ```
 
-## Usage
+## 使い方
 
-```
+```text
 /instinct-status
 ```
 
-## What to Do
+## やること
 
-1. Detect current project context (git remote/path hash)
-2. Read project instincts from `~/.claude/homunculus/projects/<project-id>/instincts/`
-3. Read global instincts from `~/.claude/homunculus/instincts/`
-4. Merge with precedence rules (project overrides global when IDs collide)
-5. Display grouped by domain with confidence bars and observation stats
+1. 現在のプロジェクト文脈（git remote / path hash）を検出する
+2. `~/.claude/homunculus/projects/<project-id>/instincts/` からプロジェクト instinct を読む
+3. `~/.claude/homunculus/instincts/` からグローバル instinct を読む
+4. 優先ルールに従ってマージする（ID 衝突時は project が global を上書き）
+5. ドメインごとに、信頼度バーと観測統計付きで表示する
 
-## Output Format
+## 出力形式
 
-```
+```text
 ============================================================
   INSTINCT STATUS - 12 total
 ============================================================
@@ -49,11 +49,11 @@ python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py status
 
 ## PROJECT-SCOPED (my-app)
   ### WORKFLOW (3)
-    ███████░░░  70%  grep-before-edit [project]
+    ████░  70%  grep-before-edit [project]
               trigger: when modifying code
 
 ## GLOBAL (apply to all projects)
   ### SECURITY (2)
-    █████████░  85%  validate-user-input [global]
+    █████  85%  validate-user-input [global]
               trigger: when handling user input
 ```
