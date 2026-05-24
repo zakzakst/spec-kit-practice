@@ -1,52 +1,51 @@
 ---
 name: regex-vs-llm-structured-text
-description: Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confidence edge cases.
+description: 構造化テキストを解析する際に regex と LLM のどちらを選ぶかの判断フレームワーク。まず regex から始め、低信頼の端ケースだけに LLM を追加します。
 origin: ECC
 ---
 
-# Regex vs LLM for Structured Text Parsing
+# 構造化テキスト解析における Regex vs LLM
 
-A practical decision framework for parsing structured text (quizzes, forms, invoices, documents). The key insight: regex handles 95-98% of cases cheaply and deterministically. Reserve expensive LLM calls for the remaining edge cases.
+クイズ、フォーム、請求書、文書などの構造化テキストを解析するための実践的な判断フレームワークです。核心は、ケースの 95〜98% は regex で安価かつ決定論的に処理できること。高価な LLM 呼び出しは残りの edge case にだけ使います。
 
-## When to Activate
+## 有効化するタイミング
 
-- Parsing structured text with repeating patterns (questions, forms, tables)
-- Deciding between regex and LLM for text extraction
-- Building hybrid pipelines that combine both approaches
-- Optimizing cost/accuracy tradeoffs in text processing
+- 繰り返しパターンを持つ構造化テキストを解析するとき
+- テキスト抽出で regex と LLM のどちらを使うか迷うとき
+- 両者を組み合わせた hybrid pipeline を作るとき
+- コスト / 精度のトレードオフを最適化したいとき
 
-## Decision Framework
+## 判断フレームワーク
 
+```text
+テキスト形式は一貫していて繰り返しか?
+├─ Yes (>90% が同じパターン) -> まず Regex
+│  ├─ Regex で 95%+ 処理できる -> 完了。LLM 不要
+│  └─ Regex で <95% -> edge case にだけ LLM を足す
+└─ No (自由形式で変動が大きい) -> 最初から LLM
 ```
-Is the text format consistent and repeating?
-├── Yes (>90% follows a pattern) → Start with Regex
-│   ├── Regex handles 95%+ → Done, no LLM needed
-│   └── Regex handles <95% → Add LLM for edge cases only
-└── No (free-form, highly variable) → Use LLM directly
-```
 
-## Architecture Pattern
+## アーキテクチャパターン
 
-```
+```text
 Source Text
-    │
-    ▼
-[Regex Parser] ─── Extracts structure (95-98% accuracy)
-    │
-    ▼
-[Text Cleaner] ─── Removes noise (markers, page numbers, artifacts)
-    │
-    ▼
-[Confidence Scorer] ─── Flags low-confidence extractions
-    │
-    ├── High confidence (≥0.95) → Direct output
-    │
-    └── Low confidence (<0.95) → [LLM Validator] → Output
+    |
+    v
+[Regex Parser]          構造を抽出（95-98% 精度）
+    |
+    v
+[Text Cleaner]          ノイズ除去（マーカー、ページ番号、アーティファクト）
+    |
+    v
+[Confidence Scorer]     低信頼の抽出をフラグ
+    |
+    ├─ High confidence (>=0.95) -> そのまま出力
+    └─ Low confidence (<0.95) -> [LLM Validator] -> 出力
 ```
 
-## Implementation
+## 実装
 
-### 1. Regex Parser (Handles the Majority)
+### 1. Regex Parser（大半を処理）
 
 ```python
 import re
@@ -84,7 +83,7 @@ def parse_structured_text(content: str) -> list[ParsedItem]:
 
 ### 2. Confidence Scoring
 
-Flag items that may need LLM review:
+LLM レビューが必要そうな item にフラグを立てる:
 
 ```python
 @dataclass(frozen=True)
@@ -125,7 +124,7 @@ def identify_low_confidence(
     return [f for f in flags if f.score < threshold]
 ```
 
-### 3. LLM Validator (Edge Cases Only)
+### 3. LLM Validator（端ケースだけ）
 
 ```python
 def validate_with_llm(
@@ -182,9 +181,9 @@ def process_document(
     return result
 ```
 
-## Real-World Metrics
+## 実運用メトリクス
 
-From a production quiz parsing pipeline (410 items):
+本番の quiz parsing pipeline（410 items）から:
 
 | Metric                  | Value    |
 | ----------------------- | -------- |
@@ -194,27 +193,27 @@ From a production quiz parsing pipeline (410 items):
 | Cost savings vs all-LLM | ~95%     |
 | Test coverage           | 93%      |
 
-## Best Practices
+## ベストプラクティス
 
-- **Start with regex** — even imperfect regex gives you a baseline to improve
-- **Use confidence scoring** to programmatically identify what needs LLM help
-- **Use the cheapest LLM** for validation (Haiku-class models are sufficient)
-- **Never mutate** parsed items — return new instances from cleaning/validation steps
-- **TDD works well** for parsers — write tests for known patterns first, then edge cases
-- **Log metrics** (regex success rate, LLM call count) to track pipeline health
+- **まず regex で始める** - 不完全でも基礎線ができる
+- **confidence scoring を入れる** - LLM が必要な箇所を機械的に見つける
+- **最も安い LLM を使う** - 検証用途なら Haiku 級で十分
+- **parsed item を mutate しない** - クリーニング / 検証では新しいインスタンスを返す
+- **parser と TDD は相性が良い** - 既知パターンのテストを書いてから edge case を増やす
+- **メトリクスを記録する** - regex 成功率、LLM 呼び出し数を追う
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
-- Sending all text to an LLM when regex handles 95%+ of cases (expensive and slow)
-- Using regex for free-form, highly variable text (LLM is better here)
-- Skipping confidence scoring and hoping regex "just works"
-- Mutating parsed objects during cleaning/validation steps
-- Not testing edge cases (malformed input, missing fields, encoding issues)
+- regex で 95% 以上処理できるのに全文を LLM に送ること
+- 自由形式で変動の大きいテキストに regex を無理に使うこと
+- confidence scoring を省いて「なんとかなる」と期待すること
+- クリーニングや検証中に parsed object を破壊的変更すること
+- edge case（壊れた入力、欠損項目、文字化け）をテストしないこと
 
-## When to Use
+## 向いている用途
 
-- Quiz/exam question parsing
-- Form data extraction
-- Invoice/receipt processing
-- Document structure parsing (headers, sections, tables)
-- Any structured text with repeating patterns where cost matters
+- クイズ / 試験問題の解析
+- フォームデータ抽出
+- 請求書 / レシート処理
+- 文書構造解析（見出し、セクション、表）
+- コストが重要な、繰り返しパターンを持つ構造化テキスト全般

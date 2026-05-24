@@ -1,46 +1,46 @@
 ---
 name: strategic-compact
-description: Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction.
+description: 任意の自動 compaction に頼るのではなく、タスクの論理区切りで手動 compact を提案し、フェーズ間で文脈を保ちやすくします。
 origin: ECC
 ---
 
-# Strategic Compact Skill
+# Strategic Compact スキル
 
-Suggests manual `/compact` at strategic points in your workflow rather than relying on arbitrary auto-compaction.
+任意のタイミングで走る auto-compaction に頼らず、ワークフロー上の戦略的な地点で手動 `/compact` を提案します。
 
-## When to Activate
+## 有効化するタイミング
 
-- Running long sessions that approach context limits (200K+ tokens)
-- Working on multi-phase tasks (research → plan → implement → test)
-- Switching between unrelated tasks within the same session
-- After completing a major milestone and starting new work
-- When responses slow down or become less coherent (context pressure)
+- 文脈上限（200K+ tokens）に近い長時間セッションを回しているとき
+- 複数フェーズのタスクを進めているとき（research -> plan -> implement -> test）
+- 同一セッション内で無関係なタスクを切り替えるとき
+- 大きな節目を終えて新しい作業に入るとき
+- 応答が遅くなったり、まとまりが落ちてきたとき（context pressure）
 
-## Why Strategic Compaction?
+## なぜ Strategic Compaction か
 
-Auto-compaction triggers at arbitrary points:
+Auto-compaction は論理境界を見ない:
 
-- Often mid-task, losing important context
-- No awareness of logical task boundaries
-- Can interrupt complex multi-step operations
+- タスク途中で発火して重要文脈を失いがち
+- 論理的な区切りを理解しない
+- 複雑な多段処理を中断しうる
 
-Strategic compaction at logical boundaries:
+論理的区切りでの strategic compaction は:
 
-- **After exploration, before execution** — Compact research context, keep implementation plan
-- **After completing a milestone** — Fresh start for next phase
-- **Before major context shifts** — Clear exploration context before different task
+- **探索後、実装前** - 研究文脈を畳み、実装計画を残す
+- **マイルストーン達成後** - 次フェーズに向けて新鮮な状態にする
+- **大きな文脈切替前** - 無関係な前段探索を掃除する
 
-## How It Works
+## 仕組み
 
-The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
+`suggest-compact.js` は PreToolUse（Edit / Write）で走り、以下を行う:
 
-1. **Tracks tool calls** — Counts tool invocations in session
-2. **Threshold detection** — Suggests at configurable threshold (default: 50 calls)
-3. **Periodic reminders** — Reminds every 25 calls after threshold
+1. **ツール呼び出し追跡** - セッション内のツール使用回数を数える
+2. **しきい値検知** - 設定値（既定: 50 回）を超えると提案
+3. **定期リマインド** - 以後 25 回ごとに再通知
 
-## Hook Setup
+## Hook 設定
 
-Add to your `~/.claude/settings.json`:
+`~/.claude/settings.json` に次を追加する:
 
 ```json
 {
@@ -69,82 +69,82 @@ Add to your `~/.claude/settings.json`:
 }
 ```
 
-## Configuration
+## 設定
 
-Environment variables:
+環境変数:
 
-- `COMPACT_THRESHOLD` — Tool calls before first suggestion (default: 50)
+- `COMPACT_THRESHOLD` - 最初の提案を出すまでのツール呼び出し回数（既定: 50）
 
-## Compaction Decision Guide
+## Compact 判断ガイド
 
-Use this table to decide when to compact:
+この表で compact すべきか決める:
 
-| Phase Transition          | Compact? | Why                                                             |
-| ------------------------- | -------- | --------------------------------------------------------------- |
-| Research → Planning       | Yes      | Research context is bulky; plan is the distilled output         |
-| Planning → Implementation | Yes      | Plan is in TodoWrite or a file; free up context for code        |
-| Implementation → Testing  | Maybe    | Keep if tests reference recent code; compact if switching focus |
-| Debugging → Next feature  | Yes      | Debug traces pollute context for unrelated work                 |
-| Mid-implementation        | No       | Losing variable names, file paths, and partial state is costly  |
-| After a failed approach   | Yes      | Clear the dead-end reasoning before trying a new approach       |
+| Phase Transition          | Compact? | Why                                                         |
+| ------------------------- | -------- | ----------------------------------------------------------- |
+| Research -> Planning      | Yes      | 調査文脈は重い。plan は蒸留済み成果物                     |
+| Planning -> Implementation | Yes     | plan は TodoWrite やファイルに残る。コード用に文脈を空ける |
+| Implementation -> Testing | Maybe    | 直近コード参照が必要なら保持。焦点切替なら compact        |
+| Debugging -> Next feature | Yes      | debug 由来の文脈は次機能にノイズになる                     |
+| Mid-implementation        | No       | 変数名、パス、途中状態を失うコストが高い                   |
+| After a failed approach   | Yes      | 行き止まりの推論を消して新アプローチへ進む                 |
 
-## What Survives Compaction
+## Compact 後に残るもの
 
-Understanding what persists helps you compact with confidence:
+何が残るかを知ると、安心して compact しやすい:
 
 | Persists                           | Lost                                     |
 | ---------------------------------- | ---------------------------------------- |
-| CLAUDE.md instructions             | Intermediate reasoning and analysis      |
-| TodoWrite task list                | File contents you previously read        |
-| Memory files (`~/.claude/memory/`) | Multi-step conversation context          |
-| Git state (commits, branches)      | Tool call history and counts             |
-| Files on disk                      | Nuanced user preferences stated verbally |
+| `CLAUDE.md` instructions           | 中間推論や分析                           |
+| TodoWrite task list                | 読み込んだファイル内容                   |
+| Memory files (`~/.claude/memory/`) | 多段の会話文脈                           |
+| Git state (commits, branches)      | ツール呼び出し履歴と回数                 |
+| Files on disk                      | 口頭で出ていた細かいユーザー嗜好         |
 
-## Best Practices
+## ベストプラクティス
 
-1. **Compact after planning** — Once plan is finalized in TodoWrite, compact to start fresh
-2. **Compact after debugging** — Clear error-resolution context before continuing
-3. **Don't compact mid-implementation** — Preserve context for related changes
-4. **Read the suggestion** — The hook tells you _when_, you decide _if_
-5. **Write before compacting** — Save important context to files or memory before compacting
-6. **Use `/compact` with a summary** — Add a custom message: `/compact Focus on implementing auth middleware next`
+1. **計画後に compact** - TodoWrite に plan が固まったら一度畳む
+2. **デバッグ後に compact** - 問題解決用の文脈を掃除して先へ進む
+3. **実装途中では compact しない** - 連続変更の文脈を保つ
+4. **提案は読むが、判断は自分でする** - hook は _when_ を示し、_if_ はあなたが決める
+5. **compact 前に書き出す** - 重要文脈はファイルや memory に保存してから畳む
+6. **要約付き `/compact` を使う** - 例: `/compact Focus on implementing auth middleware next`
 
-## Token Optimization Patterns
+## トークン最適化パターン
 
 ### Trigger-Table Lazy Loading
 
-Instead of loading full skill content at session start, use a trigger table that maps keywords to skill paths. Skills load only when triggered, reducing baseline context by 50%+:
+セッション開始時に全 skill を載せる代わりに、キーワードから skill パスへ引く trigger table を使う。必要時だけ読み込めば、基礎コンテキストを 50% 以上減らせる:
 
 | Trigger                   | Skill               | Load When             |
 | ------------------------- | ------------------- | --------------------- |
-| "test", "tdd", "coverage" | tdd-workflow        | User mentions testing |
-| "security", "auth", "xss" | security-review     | Security-related work |
-| "deploy", "ci/cd"         | deployment-patterns | Deployment context    |
+| "test", "tdd", "coverage" | tdd-workflow        | testing が出たとき    |
+| "security", "auth", "xss" | security-review     | security 作業時       |
+| "deploy", "ci/cd"         | deployment-patterns | deployment 文脈時     |
 
 ### Context Composition Awareness
 
-Monitor what's consuming your context window:
+何が context window を食っているか意識する:
 
-- **CLAUDE.md files** — Always loaded, keep lean
-- **Loaded skills** — Each skill adds 1-5K tokens
-- **Conversation history** — Grows with each exchange
-- **Tool results** — File reads, search results add bulk
+- **CLAUDE.md files** - 常時ロードされるので lean に保つ
+- **Loaded skills** - 1 つで 1K〜5K tokens 増える
+- **Conversation history** - やり取りごとに伸びる
+- **Tool results** - ファイル読取や検索結果が嵩む
 
 ### Duplicate Instruction Detection
 
-Common sources of duplicate context:
+重複文脈のよくある発生源:
 
-- Same rules in both `~/.claude/rules/` and project `.claude/rules/`
-- Skills that repeat CLAUDE.md instructions
-- Multiple skills covering overlapping domains
+- `~/.claude/rules/` と project `.claude/rules/` に同じ規則がある
+- CLAUDE.md の指示を skill が繰り返している
+- 複数 skill が重なる領域を扱っている
 
 ### Context Optimization Tools
 
-- `token-optimizer` MCP — Automated 95%+ token reduction via content deduplication
-- `context-mode` — Context virtualization (315KB to 5.4KB demonstrated)
+- `token-optimizer` MCP - コンテンツ重複除去で 95%+ のトークン削減
+- `context-mode` - 文脈仮想化（315KB -> 5.4KB 実績）
 
-## Related
+## 関連
 
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) — Token optimization section
-- Memory persistence hooks — For state that survives compaction
-- `continuous-learning` skill — Extracts patterns before session ends
+- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - token optimization セクション
+- Memory persistence hooks - compact 後にも残したい状態向け
+- `continuous-learning` skill - セッション終了前にパターン抽出

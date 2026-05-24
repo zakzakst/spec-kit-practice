@@ -6,6 +6,7 @@ TODO:
 - ファイル操作関連のスクリプトアイデアの引き出し増やしたい
   - ファイルの鮮度調査（ドキュメントとか）
 - TSDoc勉強しなおす
+- githubのCLI勉強する
 
 ECC/
 |-- .claude-plugin/   # Plugin and marketplace manifests
