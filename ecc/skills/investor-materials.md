@@ -1,49 +1,49 @@
 ---
 name: investor-materials
-description: Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
+description: ピッチデック、1 ページ資料、投資家メモ、アクセラレータ応募、財務モデル、資金調達資料を作成・更新します。投資家向け資料、予測、使途表、マイルストーン計画など、複数の資金調達アセット間で整合性が必要なときに使います。
 origin: ECC
 ---
 
-# Investor Materials
+# 投資家向け資料
 
-Build investor-facing materials that are consistent, credible, and easy to defend.
+一貫していて、信頼でき、突っ込まれても守りやすい投資家向け資料を作ります。
 
-## When to Activate
+## 有効化するタイミング
 
-- creating or revising a pitch deck
-- writing an investor memo or one-pager
-- building a financial model, milestone plan, or use-of-funds table
-- answering accelerator or incubator application questions
-- aligning multiple fundraising docs around one source of truth
+- ピッチデックを作る、または改訂するとき
+- 投資家メモや 1 ページ資料を書くとき
+- 財務モデル、マイルストーン計画、使途表を作るとき
+- アクセラレータやインキュベータの応募質問に答えるとき
+- 複数の資金調達資料を 1 つの source of truth に揃えるとき
 
-## Golden Rule
+## 黄金律
 
-All investor materials must agree with each other.
+投資家向け資料はすべて互いに一致していなければならない。
 
-Create or confirm a single source of truth before writing:
+書き始める前に、単一の source of truth を作るか確認する:
 
-- traction metrics
-- pricing and revenue assumptions
-- raise size and instrument
-- use of funds
-- team bios and titles
-- milestones and timelines
+- traction 指標
+- 価格と売上の前提
+- 調達額と instrument
+- 資金使途
+- チーム経歴と肩書き
+- マイルストーンとタイムライン
 
-If conflicting numbers appear, stop and resolve them before drafting.
+矛盾する数字が見つかったら、下書き前に必ず解消する。
 
-## Core Workflow
+## 基本ワークフロー
 
-1. inventory the canonical facts
-2. identify missing assumptions
-3. choose the asset type
-4. draft the asset with explicit logic
-5. cross-check every number against the source of truth
+1. 正本となる事実を棚卸しする
+2. 足りない前提を特定する
+3. アセット種別を選ぶ
+4. 論理を明示した状態で下書きする
+5. すべての数値を source of truth と突き合わせる
 
-## Asset Guidance
+## アセット別ガイド
 
 ### Pitch Deck
 
-Recommended flow:
+推奨フロー:
 
 1. company + wedge
 2. problem
@@ -58,47 +58,47 @@ Recommended flow:
 11. use of funds / milestones
 12. appendix
 
-If the user wants a web-native deck, pair this skill with `frontend-slides`.
+Web ネイティブな deck が必要なら、このスキルを `frontend-slides` と組み合わせる。
 
 ### One-Pager / Memo
 
-- state what the company does in one clean sentence
-- show why now
-- include traction and proof points early
-- make the ask precise
-- keep claims easy to verify
+- 会社が何をしているかを 1 文で明快に言う
+- なぜ今なのかを示す
+- traction と proof point は早めに入れる
+- ask は具体的にする
+- 主張は検証しやすく保つ
 
 ### Financial Model
 
-Include:
+含めるもの:
 
-- explicit assumptions
-- bear / base / bull cases when useful
-- clean layer-by-layer revenue logic
-- milestone-linked spending
-- sensitivity analysis where the decision hinges on assumptions
+- 明示的な前提
+- 必要なら bear / base / bull case
+- レイヤーごとにきれいな売上ロジック
+- マイルストーンに紐づく支出
+- 判断が前提に依存する場合の感度分析
 
 ### Accelerator Applications
 
-- answer the exact question asked
-- prioritize traction, insight, and team advantage
-- avoid puffery
-- keep internal metrics consistent with the deck and model
+- 聞かれた問いに正確に答える
+- traction、洞察、チーム優位を優先する
+- 大げさにしない
+- 内部指標は deck と model と一致させる
 
-## Red Flags to Avoid
+## 避けるべきレッドフラグ
 
-- unverifiable claims
-- fuzzy market sizing without assumptions
-- inconsistent team roles or titles
-- revenue math that does not sum cleanly
-- inflated certainty where assumptions are fragile
+- 検証不能な主張
+- 前提なき曖昧な市場規模
+- 一貫しないチーム役割や肩書き
+- 合計がきれいに合わない売上計算
+- 前提が脆いのに確実さを盛ること
 
-## Quality Gate
+## 品質ゲート
 
-Before delivering:
+提出前に確認すること:
 
-- every number matches the current source of truth
-- use of funds and revenue layers sum correctly
-- assumptions are visible, not buried
-- the story is clear without hype language
-- the final asset is defensible in a partner meeting
+- すべての数値が現在の source of truth と一致している
+- 資金使途と売上レイヤーの合計が正しい
+- 前提が埋もれず見える形になっている
+- hype language なしで話が明快である
+- 最終成果物が partner meeting で防御可能である
