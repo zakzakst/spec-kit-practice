@@ -1,6 +1,6 @@
 ---
 name: openspec-ff-change
-description: Fast-forward through OpenSpec artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.
+description: OpenSpecの成果物作成を早送りします。実装に必要なすべての成果物を一つずつステップを踏まずに素早く作成したい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,93 +9,93 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Fast-forward through artifact creation - generate everything needed to start implementation in one go.
+成果物作成を早送りします - 実装を開始するために必要なすべてを一度に生成します。
 
-**Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
+**入力**: ユーザーの要求には変更名（ケバブケース）または構築したいものの説明が含まれている必要があります。
 
-**Steps**
+**手順**
 
-1. **If no clear input provided, ask what they want to build**
+1. **明確な入力がない場合は、何を構築したいか尋ねる**
 
-   Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
-   > "What change do you want to work on? Describe what you want to build or fix."
+   **AskUserQuestionツール**（自由回答、プリセットオプションなし）を使用して尋ねます：
+   > "どの変更に取り組みますか？構築したいもの、または修正したいものを説明してください。"
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   その説明から、ケバブケースの名前を導き出します（例: "ユーザー認証を追加する" → `add-user-auth`）。
 
-   **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
+   **重要**: ユーザーが何を構築したいのかを理解しないまま進めないでください。
 
-2. **Create the change directory**
+2. **変更ディレクトリの作成**
    ```bash
-   openspec new change "<name>"
+   openspec new change "<名前>"
    ```
-   This creates a scaffolded change at `openspec/changes/<name>/`.
+   これにより、`openspec/changes/<名前>/` にスキャフォールディングされた変更が作成されます。
 
-3. **Get the artifact build order**
+3. **成果物の構築順序の取得**
    ```bash
-   openspec status --change "<name>" --json
+   openspec status --change "<名前>" --json
    ```
-   Parse the JSON to get:
-   - `applyRequires`: array of artifact IDs needed before implementation (e.g., `["tasks"]`)
-   - `artifacts`: list of all artifacts with their status and dependencies
+   JSONを解析して以下を取得します：
+   - `applyRequires`: 実装前に必要な成果物IDの配列（例: `["tasks"]`）
+   - `artifacts`: すべての成果物とそのステータスおよび依存関係のリスト
 
-4. **Create artifacts in sequence until apply-ready**
+4. **適用準備が整うまで順に成果物を作成する**
 
-   Use the **TodoWrite tool** to track progress through the artifacts.
+   **TodoWriteツール**を使用して、成果物の作成進捗を追跡します。
 
-   Loop through artifacts in dependency order (artifacts with no pending dependencies first):
+   依存関係の順に（保留中の依存関係がない成果物から）成果物をループします：
 
-   a. **For each artifact that is `ready` (dependencies satisfied)**:
-      - Get instructions:
+   a. **`ready`（依存関係が満たされている）各成果物について**:
+      - 指示を取得します：
         ```bash
-        openspec instructions <artifact-id> --change "<name>" --json
+        openspec instructions <artifact-id> --change "<名前>" --json
         ```
-      - The instructions JSON includes:
-        - `context`: Project background (constraints for you - do NOT include in output)
-        - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)
-        - `template`: The structure to use for your output file
-        - `instruction`: Schema-specific guidance for this artifact type
-        - `outputPath`: Where to write the artifact
-        - `dependencies`: Completed artifacts to read for context
-      - Read any completed dependency files for context
-      - Create the artifact file using `template` as the structure
-      - Apply `context` and `rules` as constraints - but do NOT copy them into the file
-      - Show brief progress: "✓ Created <artifact-id>"
+      - instructions の JSON には以下が含まれます：
+        - `context`: プロジェクトの背景（あなたへの制約 - 出力には含めないでください）
+        - `rules`: 成果物固有のルール（あなたへの制約 - 出力には含めないでください）
+        - `template`: 出力ファイルに使用する構造
+        - `instruction`: この成果物タイプに対するスキーマ固有のガイダンス
+        - `outputPath`: 成果物を書き込む場所
+        - `dependencies`: コンテキストとして読み込むための完了済み成果物
+      - コンテキストを理解するために完了済みの依存ファイルを読み込みます
+      - `template` を構造として使用し、成果物ファイルを作成します
+      - `context` と `rules` を制約として適用しますが、それらをファイルにコピー**しないでください**
+      - 簡単な進捗を表示します: "✓ <artifact-id> を作成しました"
 
-   b. **Continue until all `applyRequires` artifacts are complete**
-      - After creating each artifact, re-run `openspec status --change "<name>" --json`
-      - Check if every artifact ID in `applyRequires` has `status: "done"` in the artifacts array
-      - Stop when all `applyRequires` artifacts are done
+   b. **`applyRequires` のすべての成果物が完了するまで続行する**
+      - 各成果物を作成した後、`openspec status --change "<名前>" --json` を再実行します
+      - artifacts 配列で、`applyRequires` 内のすべての成果物IDが `status: "done"` になっているか確認します
+      - すべての `applyRequires` 成果物が完了したら停止します
 
-   c. **If an artifact requires user input** (unclear context):
-      - Use **AskUserQuestion tool** to clarify
-      - Then continue with creation
+   c. **成果物がユーザー入力を必要とする場合**（コンテキストが不明確な場合）:
+      - **AskUserQuestionツール**を使用して明確にします
+      - その後、作成を続行します
 
-5. **Show final status**
+5. **最終ステータスの表示**
    ```bash
-   openspec status --change "<name>"
+   openspec status --change "<名前>"
    ```
 
-**Output**
+**出力**
 
-After completing all artifacts, summarize:
-- Change name and location
-- List of artifacts created with brief descriptions
-- What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run `/opsx:apply` or ask me to implement to start working on the tasks."
+すべての成果物を完了した後、以下を要約します：
+- 変更名と場所
+- 作成された成果物のリストと簡単な説明
+- 何の準備ができたか: "すべての成果物が作成されました！実装の準備が完了しました。"
+- プロンプト: "`/opsx:apply` を実行するか、タスクの作業を開始するための実装を私に指示してください。"
 
-**Artifact Creation Guidelines**
+**成果物作成のガイドライン**
 
-- Follow the `instruction` field from `openspec instructions` for each artifact type
-- The schema defines what each artifact should contain - follow it
-- Read dependency artifacts for context before creating new ones
-- Use `template` as the structure for your output file - fill in its sections
-- **IMPORTANT**: `context` and `rules` are constraints for YOU, not content for the file
-  - Do NOT copy `<context>`, `<rules>`, `<project_context>` blocks into the artifact
-  - These guide what you write, but should never appear in the output
+- 各成果物タイプについて、`openspec instructions` からの `instruction` フィールドに従ってください
+- スキーマは各成果物が何を含むべきかを定義しています - それに従ってください
+- 新しいものを作成する前に、コンテキストとして依存する成果物を読み込んでください
+- `template` を出力ファイルの構造として使用し、そのセクションを埋めてください
+- **重要**: `context` と `rules` はあなたへの制約であり、ファイルの内容ではありません
+  - `<context>`、`<rules>`、`<project_context>` ブロックを成果物にコピーしないでください
+  - これらは何を書くべきかをガイドするものですが、出力には決して表示させないでください
 
-**Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)
-- Always read dependency artifacts before creating a new one
-- If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
-- If a change with that name already exists, suggest continuing that change instead
-- Verify each artifact file exists after writing before proceeding to next
+**ガードレール**
+- 実装に必要なすべての成果物を作成します（スキーマの `apply.requires` で定義されているもの）
+- 新しい成果物を作成する前に、必ず依存する成果物を読み込みます
+- コンテキストが決定的に不明確な場合はユーザーに質問しますが、勢いを維持するために合理的な判断を下すことを優先してください
+- その名前の変更がすでに存在する場合は、代わりにその変更を継続することを提案してください
+- 次に進む前に、書き込み後の各成果物ファイルが存在することを確認してください

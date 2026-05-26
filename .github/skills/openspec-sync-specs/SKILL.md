@@ -1,6 +1,6 @@
 ---
 name: openspec-sync-specs
-description: Sync delta specs from a change to main specs. Use when the user wants to update main specs with changes from a delta spec, without archiving the change.
+description: 変更のデルタ仕様をメイン仕様に同期させます。変更をアーカイブせずに、デルタ仕様の変更でメイン仕様を更新したい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,130 +9,130 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Sync delta specs from a change to main specs.
+変更のデルタ仕様をメイン仕様に同期させます。
 
-This is an **agent-driven** operation - you will read delta specs and directly edit main specs to apply the changes. This allows intelligent merging (e.g., adding a scenario without copying the entire requirement).
+これは**エージェント主導**の操作です - デルタ仕様を読み、メイン仕様を直接編集して変更を適用します。これにより、インテリジェントなマージ（例：要件全体をコピーせずにシナリオを追加する）が可能になります。
 
-**Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**入力**: 必要に応じて変更名を指定します。省略された場合は、会話のコンテキストから推測できるか確認します。曖昧な場合や不明確な場合は、利用可能な変更について必ずプロンプトでユーザーに尋ねる必要があります。
 
-**Steps**
+**手順**
 
-1. **If no change name provided, prompt for selection**
+1. **変更名が提供されていない場合、選択を促す**
 
-   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
+   `openspec list --json` を実行して利用可能な変更を取得します。**AskUserQuestionツール**を使用してユーザーに選択させます。
 
-   Show changes that have delta specs (under `specs/` directory).
+   デルタ仕様（`specs/` ディレクトリの下）を持つ変更を表示します。
 
-   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.
+   **重要**: 変更を推測したり自動選択したりしないでください。常にユーザーに選択させてください。
 
-2. **Find delta specs**
+2. **デルタ仕様を見つける**
 
-   Look for delta spec files in `openspec/changes/<name>/specs/*/spec.md`.
+   `openspec/changes/<名前>/specs/*/spec.md` にあるデルタ仕様ファイルを探します。
 
-   Each delta spec file contains sections like:
-   - `## ADDED Requirements` - New requirements to add
-   - `## MODIFIED Requirements` - Changes to existing requirements
-   - `## REMOVED Requirements` - Requirements to remove
-   - `## RENAMED Requirements` - Requirements to rename (FROM:/TO: format)
+   各デルタ仕様ファイルには以下のようなセクションが含まれています：
+   - `## 追加された要件 (ADDED Requirements)` - 追加する新しい要件
+   - `## 変更された要件 (MODIFIED Requirements)` - 既存の要件への変更
+   - `## 削除された要件 (REMOVED Requirements)` - 削除する要件
+   - `## 名前が変更された要件 (RENAMED Requirements)` - 名前を変更する要件（FROM:/TO: フォーマット）
 
-   If no delta specs found, inform user and stop.
+   デルタ仕様が見つからない場合は、ユーザーに通知して停止します。
 
-3. **For each delta spec, apply changes to main specs**
+3. **各デルタ仕様について、メイン仕様に変更を適用する**
 
-   For each capability with a delta spec at `openspec/changes/<name>/specs/<capability>/spec.md`:
+   `openspec/changes/<名前>/specs/<機能>/spec.md` にデルタ仕様を持つ各機能（capability）について：
 
-   a. **Read the delta spec** to understand the intended changes
+   a. 意図された変更を理解するために**デルタ仕様を読む**
 
-   b. **Read the main spec** at `openspec/specs/<capability>/spec.md` (may not exist yet)
+   b. `openspec/specs/<機能>/spec.md` にある**メイン仕様を読む**（まだ存在しない場合もあります）
 
-   c. **Apply changes intelligently**:
+   c. **変更をインテリジェントに適用する**:
 
-      **ADDED Requirements:**
-      - If requirement doesn't exist in main spec → add it
-      - If requirement already exists → update it to match (treat as implicit MODIFIED)
+      **追加された要件 (ADDED Requirements):**
+      - 要件がメイン仕様に存在しない場合 → 追加します
+      - 要件がすでに存在する場合 → 一致するように更新します（暗黙的なMODIFIEDとして扱います）
 
-      **MODIFIED Requirements:**
-      - Find the requirement in main spec
-      - Apply the changes - this can be:
-        - Adding new scenarios (don't need to copy existing ones)
-        - Modifying existing scenarios
-        - Changing the requirement description
-      - Preserve scenarios/content not mentioned in the delta
+      **変更された要件 (MODIFIED Requirements):**
+      - メイン仕様から要件を見つけます
+      - 変更を適用します。これは以下になります：
+        - 新しいシナリオの追加（既存のものをコピーする必要はありません）
+        - 既存のシナリオの変更
+        - 要件の記述の変更
+      - デルタで言及されていないシナリオ/コンテンツは保持します
 
-      **REMOVED Requirements:**
-      - Remove the entire requirement block from main spec
+      **削除された要件 (REMOVED Requirements):**
+      - メイン仕様から要件ブロック全体を削除します
 
-      **RENAMED Requirements:**
-      - Find the FROM requirement, rename to TO
+      **名前が変更された要件 (RENAMED Requirements):**
+      - FROM の要件を見つけ、TO に名前を変更します
 
-   d. **Create new main spec** if capability doesn't exist yet:
-      - Create `openspec/specs/<capability>/spec.md`
-      - Add Purpose section (can be brief, mark as TBD)
-      - Add Requirements section with the ADDED requirements
+   d. 機能がまだ存在しない場合は、**新しいメイン仕様を作成する**:
+      - `openspec/specs/<機能>/spec.md` を作成します
+      - 目的（Purpose）セクションを追加します（簡潔で構いません、TBDとマークしても良いです）
+      - 追加された要件とともに要件（Requirements）セクションを追加します
 
-4. **Show summary**
+4. **要約の表示**
 
-   After applying all changes, summarize:
-   - Which capabilities were updated
-   - What changes were made (requirements added/modified/removed/renamed)
+   すべての変更を適用した後、要約します：
+   - どの機能が更新されたか
+   - どのような変更が行われたか（追加/変更/削除/名前変更された要件）
 
-**Delta Spec Format Reference**
+**デルタ仕様フォーマットリファレンス**
 
 ```markdown
 ## ADDED Requirements
 
-### Requirement: New Feature
-The system SHALL do something new.
+### Requirement: 新しい機能
+システムは新しい何かを行う必要があります。
 
-#### Scenario: Basic case
-- **WHEN** user does X
-- **THEN** system does Y
+#### Scenario: 基本的なケース
+- **WHEN** ユーザーがXを行う
+- **THEN** システムがYを行う
 
 ## MODIFIED Requirements
 
-### Requirement: Existing Feature
-#### Scenario: New scenario to add
-- **WHEN** user does A
-- **THEN** system does B
+### Requirement: 既存の機能
+#### Scenario: 追加する新しいシナリオ
+- **WHEN** ユーザーがAを行う
+- **THEN** システムがBを行う
 
 ## REMOVED Requirements
 
-### Requirement: Deprecated Feature
+### Requirement: 非推奨の機能
 
 ## RENAMED Requirements
 
-- FROM: `### Requirement: Old Name`
-- TO: `### Requirement: New Name`
+- FROM: `### Requirement: 古い名前`
+- TO: `### Requirement: 新しい名前`
 ```
 
-**Key Principle: Intelligent Merging**
+**重要な原則: インテリジェントなマージ**
 
-Unlike programmatic merging, you can apply **partial updates**:
-- To add a scenario, just include that scenario under MODIFIED - don't copy existing scenarios
-- The delta represents *intent*, not a wholesale replacement
-- Use your judgment to merge changes sensibly
+プログラムによるマージとは異なり、**部分的な更新**を適用できます：
+- シナリオを追加するには、そのシナリオを MODIFIED の下に含めるだけです - 既存のシナリオをコピーしないでください
+- デルタは全体的な置き換えではなく、*意図*を表します
+- あなたの判断を使用して、変更を合理的にマージしてください
 
-**Output On Success**
+**成功時の出力**
 
 ```
-## Specs Synced: <change-name>
+## 仕様同期完了: <変更名>
 
-Updated main specs:
+メイン仕様を更新しました:
 
-**<capability-1>**:
-- Added requirement: "New Feature"
-- Modified requirement: "Existing Feature" (added 1 scenario)
+**<機能-1>**:
+- 要件の追加: "新しい機能"
+- 要件の変更: "既存の機能" (1つのシナリオを追加)
 
-**<capability-2>**:
-- Created new spec file
-- Added requirement: "Another Feature"
+**<機能-2>**:
+- 新しい仕様ファイルを作成
+- 要件の追加: "別の機能"
 
-Main specs are now updated. The change remains active - archive when implementation is complete.
+メイン仕様が更新されました。変更はアクティブなままです - 実装が完了したらアーカイブしてください。
 ```
 
-**Guardrails**
-- Read both delta and main specs before making changes
-- Preserve existing content not mentioned in delta
-- If something is unclear, ask for clarification
-- Show what you're changing as you go
-- The operation should be idempotent - running twice should give same result
+**ガードレール**
+- 変更を加える前に、必ずデルタ仕様とメイン仕様の両方を読みます
+- デルタで言及されていない既存のコンテンツは保持します
+- 不明確な点がある場合は、明確化を求めます
+- 作業を進めながら、何を変更しているかを表示します
+- 操作は冪等であるべきです - 2回実行しても同じ結果になるはずです

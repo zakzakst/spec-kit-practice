@@ -1,6 +1,6 @@
 ---
 name: openspec-apply-change
-description: Implement tasks from an OpenSpec change. Use when the user wants to start implementing, continue implementation, or work through tasks.
+description: OpenSpecの変更からタスクを実装します。ユーザーが実装の開始、継続、またはタスクを進めたい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,148 +9,148 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Implement tasks from an OpenSpec change.
+OpenSpecの変更からタスクを実装します。
 
-**Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**入力**: 必要に応じて変更名（change name）を指定します。省略された場合は、会話のコンテキストから推測できるか確認します。曖昧な場合や不明確な場合は、利用可能な変更について必ずプロンプトでユーザーに尋ねる必要があります。
 
-**Steps**
+**手順**
 
-1. **Select the change**
+1. **変更の選択**
 
-   If a name is provided, use it. Otherwise:
-   - Infer from conversation context if the user mentioned a change
-   - Auto-select if only one active change exists
-   - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select
+   名前が提供されている場合はそれを使用します。それ以外の場合：
+   - ユーザーが変更に言及した場合は会話のコンテキストから推測します
+   - アクティブな変更が1つしか存在しない場合は自動選択します
+   - 曖昧な場合は、`openspec list --json` を実行して利用可能な変更を取得し、**AskUserQuestionツール**を使用してユーザーに選択させます
 
-   Always announce: "Using change: <name>" and how to override (e.g., `/opsx:apply <other>`).
+   常に「使用する変更: <名前>」というメッセージと、それを上書きする方法（例: `/opsx:apply <他の名前>`）をアナウンスします。
 
-2. **Check status to understand the schema**
+2. **スキーマを理解するためのステータス確認**
    ```bash
-   openspec status --change "<name>" --json
+   openspec status --change "<名前>" --json
    ```
-   Parse the JSON to understand:
-   - `schemaName`: The workflow being used (e.g., "spec-driven")
-   - Which artifact contains the tasks (typically "tasks" for spec-driven, check status for others)
+   JSONを解析して以下を理解します：
+   - `schemaName`: 使用されているワークフロー（例: "spec-driven"）
+   - タスクを含む成果物（通常、spec-drivenの場合は "tasks"、他の場合はステータスを確認）
 
-3. **Get apply instructions**
+3. **適用手順の取得**
 
    ```bash
-   openspec instructions apply --change "<name>" --json
+   openspec instructions apply --change "<名前>" --json
    ```
 
-   This returns:
-   - Context file paths (varies by schema - could be proposal/specs/design/tasks or spec/tests/implementation/docs)
-   - Progress (total, complete, remaining)
-   - Task list with status
-   - Dynamic instruction based on current state
+   これにより以下が返されます：
+   - コンテキストファイルのパス（スキーマによって異なります - proposal/specs/design/tasks または spec/tests/implementation/docs など）
+   - 進捗状況（合計、完了、残り）
+   - ステータス付きのタスクリスト
+   - 現在のステータスに基づいた動的な指示
 
-   **Handle states:**
-   - If `state: "blocked"` (missing artifacts): show message, suggest using openspec-continue-change
-   - If `state: "all_done"`: congratulate, suggest archive
-   - Otherwise: proceed to implementation
+   **状態の処理:**
+   - `state: "blocked"`（成果物不足）の場合: メッセージを表示し、openspec-continue-change の使用を提案します
+   - `state: "all_done"`の場合: 祝福し、アーカイブ（archive）を提案します
+   - それ以外の場合: 実装に進みます
 
-4. **Read context files**
+4. **コンテキストファイルの読み込み**
 
-   Read the files listed in `contextFiles` from the apply instructions output.
-   The files depend on the schema being used:
+   適用手順の出力にある `contextFiles` にリストされているファイルを読み込みます。
+   ファイルは使用されているスキーマに依存します：
    - **spec-driven**: proposal, specs, design, tasks
-   - Other schemas: follow the contextFiles from CLI output
+   - 他のスキーマ: CLI出力の contextFiles に従います
 
-5. **Show current progress**
+5. **現在の進捗状況の表示**
 
-   Display:
-   - Schema being used
-   - Progress: "N/M tasks complete"
-   - Remaining tasks overview
-   - Dynamic instruction from CLI
+   以下を表示します：
+   - 使用中のスキーマ
+   - 進捗状況: "N/M タスク完了"
+   - 残りのタスクの概要
+   - CLIからの動的な指示
 
-6. **Implement tasks (loop until done or blocked)**
+6. **タスクの実装（完了またはブロックされるまでループ）**
 
-   For each pending task:
-   - Show which task is being worked on
-   - Make the code changes required
-   - Keep changes minimal and focused
-   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
-   - Continue to next task
+   保留中の各タスクについて：
+   - どのタスクに取り組んでいるかを表示します
+   - 必要なコード変更を行います
+   - 変更は最小限に抑え、焦点を絞ります
+   - tasksファイルでタスクを完了としてマークします: `- [ ]` → `- [x]`
+   - 次のタスクに進みます
 
-   **Pause if:**
-   - Task is unclear → ask for clarification
-   - Implementation reveals a design issue → suggest updating artifacts
-   - Error or blocker encountered → report and wait for guidance
-   - User interrupts
+   **以下の場合に一時停止します:**
+   - タスクが不明確な場合 → 確認を求めます
+   - 実装により設計上の問題が明らかになった場合 → 成果物の更新を提案します
+   - エラーまたはブロッカーに遭遇した場合 → 報告して指示を待ちます
+   - ユーザーが中断した場合
 
-7. **On completion or pause, show status**
+7. **完了時または一時停止時のステータス表示**
 
-   Display:
-   - Tasks completed this session
-   - Overall progress: "N/M tasks complete"
-   - If all done: suggest archive
-   - If paused: explain why and wait for guidance
+   以下を表示します：
+   - このセッションで完了したタスク
+   - 全体の進捗状況: "N/M タスク完了"
+   - すべて完了した場合: アーカイブを提案します
+   - 一時停止した場合: 理由を説明し、指示を待ちます
 
-**Output During Implementation**
-
-```
-## Implementing: <change-name> (schema: <schema-name>)
-
-Working on task 3/7: <task description>
-[...implementation happening...]
-✓ Task complete
-
-Working on task 4/7: <task description>
-[...implementation happening...]
-✓ Task complete
-```
-
-**Output On Completion**
+**実装中の出力**
 
 ```
-## Implementation Complete
+## 実装中: <変更名> (スキーマ: <スキーマ名>)
 
-**Change:** <change-name>
-**Schema:** <schema-name>
-**Progress:** 7/7 tasks complete ✓
+タスク 3/7 に取り組んでいます: <タスクの説明>
+[...実装の進行...]
+✓ タスク完了
 
-### Completed This Session
-- [x] Task 1
-- [x] Task 2
+タスク 4/7 に取り組んでいます: <タスクの説明>
+[...実装の進行...]
+✓ タスク完了
+```
+
+**完了時の出力**
+
+```
+## 実装完了
+
+**変更:** <変更名>
+**スキーマ:** <スキーマ名>
+**進捗:** 7/7 タスク完了 ✓
+
+### このセッションで完了したもの
+- [x] タスク 1
+- [x] タスク 2
 ...
 
-All tasks complete! Ready to archive this change.
+すべてのタスクが完了しました！この変更をアーカイブする準備ができています。
 ```
 
-**Output On Pause (Issue Encountered)**
+**一時停止時の出力（問題発生時）**
 
 ```
-## Implementation Paused
+## 実装一時停止
 
-**Change:** <change-name>
-**Schema:** <schema-name>
-**Progress:** 4/7 tasks complete
+**変更:** <変更名>
+**スキーマ:** <スキーマ名>
+**進捗:** 4/7 タスク完了
 
-### Issue Encountered
-<description of the issue>
+### 発生した問題
+<問題の説明>
 
-**Options:**
-1. <option 1>
-2. <option 2>
-3. Other approach
+**オプション:**
+1. <オプション 1>
+2. <オプション 2>
+3. その他のアプローチ
 
-What would you like to do?
+どうしたいですか？
 ```
 
-**Guardrails**
-- Keep going through tasks until done or blocked
-- Always read context files before starting (from the apply instructions output)
-- If task is ambiguous, pause and ask before implementing
-- If implementation reveals issues, pause and suggest artifact updates
-- Keep code changes minimal and scoped to each task
-- Update task checkbox immediately after completing each task
-- Pause on errors, blockers, or unclear requirements - don't guess
-- Use contextFiles from CLI output, don't assume specific file names
+**ガードレール**
+- 完了するかブロックされるまでタスクを進め続けます
+- 開始する前に必ずコンテキストファイルを読み込みます（適用手順の出力から）
+- タスクが曖昧な場合は、実装前に一時停止して質問します
+- 実装により問題が明らかになった場合は、一時停止して成果物の更新を提案します
+- コードの変更は最小限に抑え、各タスクの範囲内に限定します
+- 各タスクの完了後、すぐにタスクのチェックボックスを更新します
+- エラー、ブロッカー、または要件が不明確な場合は一時停止します - 推測しないでください
+- CLI出力の contextFiles を使用し、特定のファイル名を想定しないでください
 
-**Fluid Workflow Integration**
+**流動的なワークフローの統合**
 
-This skill supports the "actions on a change" model:
+このスキルは「変更に対するアクション」モデルをサポートしています：
 
-- **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions
-- **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly
+- **いつでも呼び出し可能**: すべての成果物が完了する前（タスクが存在する場合）、部分的な実装の後、他のアクションとの間など
+- **成果物の更新を許可**: 実装により設計上の問題が明らかになった場合は、成果物の更新を提案します - フェーズに固定されず、流動的に作業します

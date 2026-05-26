@@ -1,6 +1,6 @@
 ---
 name: openspec-bulk-archive-change
-description: Archive multiple completed changes at once. Use when archiving several parallel changes.
+description: 複数の完了した変更を一度にアーカイブします。複数の変更を並行してアーカイブする場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,238 +9,238 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Archive multiple completed changes in a single operation.
+複数の完了した変更を単一の操作でアーカイブします。
 
-This skill allows you to batch-archive changes, handling spec conflicts intelligently by checking the codebase to determine what's actually implemented.
+このスキルを使用すると、変更を一括アーカイブでき、コードベースをチェックして実際に実装されているものを判断することで、仕様の競合をインテリジェントに処理できます。
 
-**Input**: None required (prompts for selection)
+**入力**: なし（プロンプトで選択）
 
-**Steps**
+**手順**
 
-1. **Get active changes**
+1. **アクティブな変更の取得**
 
-   Run `openspec list --json` to get all active changes.
+   `openspec list --json` を実行して、すべてのアクティブな変更を取得します。
 
-   If no active changes exist, inform user and stop.
+   アクティブな変更が存在しない場合は、ユーザーに通知して停止します。
 
-2. **Prompt for change selection**
+2. **変更選択のプロンプト**
 
-   Use **AskUserQuestion tool** with multi-select to let user choose changes:
-   - Show each change with its schema
-   - Include an option for "All changes"
-   - Allow any number of selections (1+ works, 2+ is the typical use case)
+   複数選択が可能な**AskUserQuestionツール**を使用して、ユーザーに変更を選択させます：
+   - 各変更をそのスキーマとともに表示します
+   - "すべての変更" のオプションを含めます
+   - 任意の数の選択を許可します（1つ以上で動作し、2つ以上が一般的なユースケースです）
 
-   **IMPORTANT**: Do NOT auto-select. Always let the user choose.
+   **重要**: 自動選択しないでください。常にユーザーに選択させてください。
 
-3. **Batch validation - gather status for all selected changes**
+3. **バッチ検証 - 選択したすべての変更のステータス収集**
 
-   For each selected change, collect:
+   選択した各変更について、以下を収集します：
 
-   a. **Artifact status** - Run `openspec status --change "<name>" --json`
-      - Parse `schemaName` and `artifacts` list
-      - Note which artifacts are `done` vs other states
+   a. **成果物のステータス** - `openspec status --change "<名前>" --json` を実行します
+      - `schemaName` と `artifacts` リストを解析します
+      - どの成果物が `done` で、どれがその他の状態かを確認します
 
-   b. **Task completion** - Read `openspec/changes/<name>/tasks.md`
-      - Count `- [ ]` (incomplete) vs `- [x]` (complete)
-      - If no tasks file exists, note as "No tasks"
+   b. **タスクの完了** - `openspec/changes/<名前>/tasks.md` を読み込みます
+      - `- [ ]`（未完了）と `- [x]`（完了）の数を数えます
+      - tasksファイルが存在しない場合は "タスクなし" と記録します
 
-   c. **Delta specs** - Check `openspec/changes/<name>/specs/` directory
-      - List which capability specs exist
-      - For each, extract requirement names (lines matching `### Requirement: <name>`)
+   c. **デルタ仕様** - `openspec/changes/<名前>/specs/` ディレクトリを確認します
+      - どの機能（capability）仕様が存在するかをリストします
+      - それぞれについて、要件名（`### Requirement: <名前>` に一致する行）を抽出します
 
-4. **Detect spec conflicts**
+4. **仕様の競合の検出**
 
-   Build a map of `capability -> [changes that touch it]`:
-
-   ```
-   auth -> [change-a, change-b]  <- CONFLICT (2+ changes)
-   api  -> [change-c]            <- OK (only 1 change)
-   ```
-
-   A conflict exists when 2+ selected changes have delta specs for the same capability.
-
-5. **Resolve conflicts agentically**
-
-   **For each conflict**, investigate the codebase:
-
-   a. **Read the delta specs** from each conflicting change to understand what each claims to add/modify
-
-   b. **Search the codebase** for implementation evidence:
-      - Look for code implementing requirements from each delta spec
-      - Check for related files, functions, or tests
-
-   c. **Determine resolution**:
-      - If only one change is actually implemented -> sync that one's specs
-      - If both implemented -> apply in chronological order (older first, newer overwrites)
-      - If neither implemented -> skip spec sync, warn user
-
-   d. **Record resolution** for each conflict:
-      - Which change's specs to apply
-      - In what order (if both)
-      - Rationale (what was found in codebase)
-
-6. **Show consolidated status table**
-
-   Display a table summarizing all changes:
+   `capability -> [それに触れる変更]` のマップを作成します：
 
    ```
-   | Change               | Artifacts | Tasks | Specs   | Conflicts | Status |
+   auth -> [change-a, change-b]  <- 競合（2つ以上の変更）
+   api  -> [change-c]            <- OK（1つの変更のみ）
+   ```
+
+   選択された2つ以上の変更が同じ機能のデルタ仕様を持つ場合、競合が存在します。
+
+5. **エージェントによる競合の解決**
+
+   **各競合について**、コードベースを調査します：
+
+   a. **デルタ仕様を読む**: 競合する各変更から、それぞれが何を追加/変更すると主張しているかを理解します
+
+   b. **コードベースを検索**: 実装の証拠を探します
+      - 各デルタ仕様の要件を実装しているコードを探します
+      - 関連するファイル、関数、またはテストを確認します
+
+   c. **解決策の決定**:
+      - 1つの変更のみが実際に実装されている場合 -> その仕様のみを同期します
+      - 両方が実装されている場合 -> 時系列順に適用します（古いものを先に、新しいものが上書きします）
+      - どちらも実装されていない場合 -> 仕様の同期をスキップし、ユーザーに警告します
+
+   d. **解決策の記録**: 各競合について以下を記録します
+      - どの変更の仕様を適用するか
+      - どのような順序で（両方の場合）
+      - 根拠（コードベースで何が見つかったか）
+
+6. **統合ステータス表の表示**
+
+   すべての変更を要約した表を表示します：
+
+   ```
+   | 変更                 | 成果物    | タスク | 仕様    | 競合      | ステータス |
    |---------------------|-----------|-------|---------|-----------|--------|
-   | schema-management   | Done      | 5/5   | 2 delta | None      | Ready  |
-   | project-config      | Done      | 3/3   | 1 delta | None      | Ready  |
-   | add-oauth           | Done      | 4/4   | 1 delta | auth (!)  | Ready* |
-   | add-verify-skill    | 1 left    | 2/5   | None    | None      | Warn   |
+   | schema-management   | Done      | 5/5   | 2 デルタ | なし      | 準備完了 |
+   | project-config      | Done      | 3/3   | 1 デルタ | なし      | 準備完了 |
+   | add-oauth           | Done      | 4/4   | 1 デルタ | auth (!)  | 準備完了* |
+   | add-verify-skill    | 残り1     | 2/5   | なし    | なし      | 警告   |
    ```
 
-   For conflicts, show the resolution:
+   競合がある場合は解決策を示します：
    ```
-   * Conflict resolution:
-     - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
-   ```
-
-   For incomplete changes, show warnings:
-   ```
-   Warnings:
-   - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
+   * 競合の解決：
+     - auth spec: add-oauth を適用し、その後 add-jwt を適用（両方実装済み、時系列順）
    ```
 
-7. **Confirm batch operation**
+   未完了の変更がある場合は警告を示します：
+   ```
+   警告:
+   - add-verify-skill: 未完了の成果物が1つ、未完了のタスクが3つ
+   ```
 
-   Use **AskUserQuestion tool** with a single confirmation:
+7. **バッチ操作の確認**
 
-   - "Archive N changes?" with options based on status
-   - Options might include:
-     - "Archive all N changes"
-     - "Archive only N ready changes (skip incomplete)"
-     - "Cancel"
+   1回の確認で**AskUserQuestionツール**を使用します：
 
-   If there are incomplete changes, make clear they'll be archived with warnings.
+   - "N個の変更をアーカイブしますか？" とステータスに基づいたオプションを提示します
+   - オプションには以下が含まれる場合があります：
+     - "すべてのN個の変更をアーカイブする"
+     - "準備が完了しているN個の変更のみをアーカイブする（未完了をスキップ）"
+     - "キャンセル"
 
-8. **Execute archive for each confirmed change**
+   未完了の変更がある場合は、それらが警告付きでアーカイブされることを明確にします。
 
-   Process changes in the determined order (respecting conflict resolution):
+8. **確認された各変更に対するアーカイブの実行**
 
-   a. **Sync specs** if delta specs exist:
-      - Use the openspec-sync-specs approach (agent-driven intelligent merge)
-      - For conflicts, apply in resolved order
-      - Track if sync was done
+   決定された順序（競合解決を尊重）で変更を処理します：
 
-   b. **Perform the archive**:
+   a. **仕様の同期**（デルタ仕様が存在する場合）:
+      - openspec-sync-specs アプローチ（エージェント主導のインテリジェントなマージ）を使用します
+      - 競合がある場合は解決された順序で適用します
+      - 同期が実行されたかどうかを追跡します
+
+   b. **アーカイブの実行**:
       ```bash
       mkdir -p openspec/changes/archive
-      mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
+      mv openspec/changes/<名前> openspec/changes/archive/YYYY-MM-DD-<名前>
       ```
 
-   c. **Track outcome** for each change:
-      - Success: archived successfully
-      - Failed: error during archive (record error)
-      - Skipped: user chose not to archive (if applicable)
+   c. **各変更の結果を追跡**:
+      - 成功: 正常にアーカイブされました
+      - 失敗: アーカイブ中にエラーが発生しました（エラーを記録します）
+      - スキップ: ユーザーがアーカイブしないことを選択しました（該当する場合）
 
-9. **Display summary**
+9. **要約の表示**
 
-   Show final results:
+   最終結果を表示します：
 
    ```
-   ## Bulk Archive Complete
+   ## 一括アーカイブ完了
 
-   Archived 3 changes:
+   3個の変更をアーカイブしました:
    - schema-management-cli -> archive/2026-01-19-schema-management-cli/
    - project-config -> archive/2026-01-19-project-config/
    - add-oauth -> archive/2026-01-19-add-oauth/
 
-   Skipped 1 change:
-   - add-verify-skill (user chose not to archive incomplete)
+   1個の変更をスキップしました:
+   - add-verify-skill (未完了のためアーカイブしないことを選択)
 
-   Spec sync summary:
-   - 4 delta specs synced to main specs
-   - 1 conflict resolved (auth: applied both in chronological order)
+   仕様同期の要約:
+   - 4つのデルタ仕様をメイン仕様に同期しました
+   - 1つの競合を解決しました (auth: 時系列順に両方を適用)
    ```
 
-   If any failures:
+   失敗があった場合：
    ```
-   Failed 1 change:
-   - some-change: Archive directory already exists
+   1個の変更で失敗しました:
+   - some-change: アーカイブディレクトリがすでに存在します
    ```
 
-**Conflict Resolution Examples**
+**競合解決の例**
 
-Example 1: Only one implemented
+例1: 1つだけ実装されている場合
 ```
-Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
+競合: specs/auth/spec.md が [add-oauth, add-jwt] によって変更されています
 
-Checking add-oauth:
-- Delta adds "OAuth Provider Integration" requirement
-- Searching codebase... found src/auth/oauth.ts implementing OAuth flow
+add-oauth を確認中:
+- デルタにより "OAuth Provider Integration" 要件が追加されます
+- コードベースを検索中... OAuthフローを実装している src/auth/oauth.ts が見つかりました
 
-Checking add-jwt:
-- Delta adds "JWT Token Handling" requirement
-- Searching codebase... no JWT implementation found
+add-jwt を確認中:
+- デルタにより "JWT Token Handling" 要件が追加されます
+- コードベースを検索中... JWTの実装は見つかりませんでした
 
-Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
-```
-
-Example 2: Both implemented
-```
-Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
-
-Checking add-rest-api (created 2026-01-10):
-- Delta adds "REST Endpoints" requirement
-- Searching codebase... found src/api/rest.ts
-
-Checking add-graphql (created 2026-01-15):
-- Delta adds "GraphQL Schema" requirement
-- Searching codebase... found src/api/graphql.ts
-
-Resolution: Both implemented. Will apply add-rest-api specs first,
-then add-graphql specs (chronological order, newer takes precedence).
+解決策: add-oauth のみが実装されています。add-oauth の仕様のみを同期します。
 ```
 
-**Output On Success**
+例2: 両方が実装されている場合
+```
+競合: specs/api/spec.md が [add-rest-api, add-graphql] によって変更されています
+
+add-rest-api (作成日 2026-01-10) を確認中:
+- デルタにより "REST Endpoints" 要件が追加されます
+- コードベースを検索中... src/api/rest.ts が見つかりました
+
+add-graphql (作成日 2026-01-15) を確認中:
+- デルタにより "GraphQL Schema" 要件が追加されます
+- コードベースを検索中... src/api/graphql.ts が見つかりました
+
+解決策: 両方が実装されています。まず add-rest-api の仕様を適用し、
+次に add-graphql の仕様を適用します（時系列順、新しいものが優先）。
+```
+
+**成功時の出力**
 
 ```
-## Bulk Archive Complete
+## 一括アーカイブ完了
 
-Archived N changes:
+N個の変更をアーカイブしました:
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 - <change-2> -> archive/YYYY-MM-DD-<change-2>/
 
-Spec sync summary:
-- N delta specs synced to main specs
-- No conflicts (or: M conflicts resolved)
+仕様同期の要約:
+- N個のデルタ仕様をメイン仕様に同期しました
+- 競合なし（または: M個の競合を解決しました）
 ```
 
-**Output On Partial Success**
+**部分的な成功時の出力**
 
 ```
-## Bulk Archive Complete (partial)
+## 一括アーカイブ完了 (部分的)
 
-Archived N changes:
+N個の変更をアーカイブしました:
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 
-Skipped M changes:
-- <change-2> (user chose not to archive incomplete)
+M個の変更をスキップしました:
+- <change-2> (未完了のためアーカイブしないことを選択)
 
-Failed K changes:
-- <change-3>: Archive directory already exists
+K個の変更で失敗しました:
+- <change-3>: アーカイブディレクトリがすでに存在します
 ```
 
-**Output When No Changes**
+**変更がない場合の出力**
 
 ```
-## No Changes to Archive
+## アーカイブする変更はありません
 
-No active changes found. Use `/opsx:new` to create a new change.
+アクティブな変更が見つかりませんでした。`/opsx:new` を使用して新しい変更を作成してください。
 ```
 
-**Guardrails**
-- Allow any number of changes (1+ is fine, 2+ is the typical use case)
-- Always prompt for selection, never auto-select
-- Detect spec conflicts early and resolve by checking codebase
-- When both changes are implemented, apply specs in chronological order
-- Skip spec sync only when implementation is missing (warn user)
-- Show clear per-change status before confirming
-- Use single confirmation for entire batch
-- Track and report all outcomes (success/skip/fail)
-- Preserve .openspec.yaml when moving to archive
-- Archive directory target uses current date: YYYY-MM-DD-<name>
-- If archive target exists, fail that change but continue with others
+**ガードレール**
+- 任意の数の変更を許可します（1つ以上でも可能ですが、2つ以上が一般的なユースケースです）
+- 常に選択を促し、自動選択は絶対に行わないでください
+- 仕様の競合を早期に検出し、コードベースを確認して解決します
+- 両方の変更が実装されている場合は、仕様を時系列順に適用します
+- 仕様の同期をスキップするのは実装が欠落している場合のみです（ユーザーに警告します）
+- 確認する前に、各変更の明確なステータスを表示します
+- バッチ全体に対して1回の確認を使用します
+- すべての結果（成功/スキップ/失敗）を追跡し報告します
+- アーカイブに移動する際、.openspec.yaml を保持します
+- アーカイブディレクトリのターゲットには現在の日付を使用します: YYYY-MM-DD-<名前>
+- アーカイブターゲットが存在する場合、その変更は失敗としますが、他の変更は続行します

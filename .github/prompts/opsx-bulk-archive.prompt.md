@@ -1,139 +1,136 @@
 ---
-description: Archive multiple completed changes at once
+description: 複数の完了済み change をまとめて archive する
 ---
 
-Archive multiple completed changes in a single operation.
+複数の完了済み change を 1 回で archive する。
 
-This skill allows you to batch-archive changes, handling spec conflicts intelligently by checking the codebase to determine what's actually implemented.
+このプロンプトは、コードベースを確認して実際にどこまで実装済みかを判断しつつ、spec conflict も考慮して賢く一括 archive するためのもの。
 
-**Input**: None required (prompts for selection)
+**Input**: 不要（選択式）
 
 **Steps**
 
-1. **Get active changes**
+1. **アクティブな change を取得する**
 
-   Run `openspec list --json` to get all active changes.
+   `openspec list --json` を実行して全 active changes を取得する。
+   1 件もなければその旨を伝えて終了する。
 
-   If no active changes exist, inform user and stop.
+2. **archive 対象を選択させる**
 
-2. **Prompt for change selection**
+   **AskUserQuestion tool** の multi-select で選ばせる。
+   - 各 change の schema を表示
+   - `All changes` オプションを含める
+   - 1 件以上選択可能
 
-   Use **AskUserQuestion tool** with multi-select to let user choose changes:
-   - Show each change with its schema
-   - Include an option for "All changes"
-   - Allow any number of selections (1+ works, 2+ is the typical use case)
+   **IMPORTANT**: 自動選択しない。必ずユーザーに選ばせる。
 
-   **IMPORTANT**: Do NOT auto-select. Always let the user choose.
+3. **各 change の状態をまとめて検証する**
 
-3. **Batch validation - gather status for all selected changes**
+   change ごとに次を集める:
 
-   For each selected change, collect:
+   a. **Artifact status**
+   - `openspec status --change "<name>" --json`
+   - `schemaName` と `artifacts`
 
-   a. **Artifact status** - Run `openspec status --change "<name>" --json`
-      - Parse `schemaName` and `artifacts` list
-      - Note which artifacts are `done` vs other states
+   b. **Task completion**
+   - `openspec/changes/<name>/tasks.md`
+   - `- [ ]` と `- [x]` の件数
+   - なければ `No tasks`
 
-   b. **Task completion** - Read `openspec/changes/<name>/tasks.md`
-      - Count `- [ ]` (incomplete) vs `- [x]` (complete)
-      - If no tasks file exists, note as "No tasks"
+   c. **Delta specs**
+   - `openspec/changes/<name>/specs/`
+   - 各 capability spec の有無
+   - `### Requirement: <name>` 行から要件名を抽出
 
-   c. **Delta specs** - Check `openspec/changes/<name>/specs/` directory
-      - List which capability specs exist
-      - For each, extract requirement names (lines matching `### Requirement: <name>`)
+4. **spec conflict を検出する**
 
-4. **Detect spec conflicts**
+   `capability -> [changes that touch it]` の対応を作る。
 
-   Build a map of `capability -> [changes that touch it]`:
-
-   ```
-   auth -> [change-a, change-b]  <- CONFLICT (2+ changes)
-   api  -> [change-c]            <- OK (only 1 change)
-   ```
-
-   A conflict exists when 2+ selected changes have delta specs for the same capability.
-
-5. **Resolve conflicts agentically**
-
-   **For each conflict**, investigate the codebase:
-
-   a. **Read the delta specs** from each conflicting change to understand what each claims to add/modify
-
-   b. **Search the codebase** for implementation evidence:
-      - Look for code implementing requirements from each delta spec
-      - Check for related files, functions, or tests
-
-   c. **Determine resolution**:
-      - If only one change is actually implemented -> sync that one's specs
-      - If both implemented -> apply in chronological order (older first, newer overwrites)
-      - If neither implemented -> skip spec sync, warn user
-
-   d. **Record resolution** for each conflict:
-      - Which change's specs to apply
-      - In what order (if both)
-      - Rationale (what was found in codebase)
-
-6. **Show consolidated status table**
-
-   Display a table summarizing all changes:
-
-   ```
-   | Change               | Artifacts | Tasks | Specs   | Conflicts | Status |
-   |---------------------|-----------|-------|---------|-----------|--------|
-   | schema-management   | Done      | 5/5   | 2 delta | None      | Ready  |
-   | project-config      | Done      | 3/3   | 1 delta | None      | Ready  |
-   | add-oauth           | Done      | 4/4   | 1 delta | auth (!)  | Ready* |
-   | add-verify-skill    | 1 left    | 2/5   | None    | None      | Warn   |
+   ```text
+   auth -> [change-a, change-b]  <- CONFLICT
+   api  -> [change-c]            <- OK
    ```
 
-   For conflicts, show the resolution:
+   同一 capability に対して 2 件以上の delta spec があれば conflict とみなす。
+
+5. **agent 的に conflict を解消する**
+
+   各 conflict についてコードベースを調べる:
+
+   a. 各 conflicting change の delta spec を読み、何を追加 / 変更しようとしているか理解する
+
+   b. コードベースを検索して実装証拠を探す
+   - 要件に対応しそうなコード
+   - 関連ファイル、関数、テスト
+
+   c. 解決方針を決める
+   - 片方だけ実装済み -> その change の spec だけ sync
+   - 両方実装済み -> 作成日時順に適用（古い方から、新しい方が上書き）
+   - どちらも未実装 -> spec sync をスキップし、警告
+
+   d. 解決結果を記録する
+   - どの change の spec を適用するか
+   - 順番
+   - 根拠
+
+6. **統合ステータス表を表示する**
+
+   ```text
+   | Change | Artifacts | Tasks | Specs | Conflicts | Status |
+   |--------|-----------|-------|-------|-----------|--------|
+   | schema-management | Done | 5/5 | 2 delta | None | Ready |
+   | project-config | Done | 3/3 | 1 delta | None | Ready |
+   | add-oauth | Done | 4/4 | 1 delta | auth (!) | Ready* |
+   | add-verify-skill | 1 left | 2/5 | None | None | Warn |
    ```
+
+   conflict がある場合は解決方針も表示する:
+
+   ```text
    * Conflict resolution:
      - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
    ```
 
-   For incomplete changes, show warnings:
-   ```
+   未完了 change があれば警告も出す:
+
+   ```text
    Warnings:
    - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
    ```
 
-7. **Confirm batch operation**
+7. **一括操作の確認を取る**
 
-   Use **AskUserQuestion tool** with a single confirmation:
+   **AskUserQuestion tool** で単一確認を行う。
 
-   - "Archive N changes?" with options based on status
-   - Options might include:
-     - "Archive all N changes"
-     - "Archive only N ready changes (skip incomplete)"
-     - "Cancel"
+   例:
+   - `Archive all N changes`
+   - `Archive only N ready changes (skip incomplete)`
+   - `Cancel`
 
-   If there are incomplete changes, make clear they'll be archived with warnings.
+   未完了 change が含まれる場合は、警告付きで archive されることを明確に伝える。
 
-8. **Execute archive for each confirmed change**
+8. **確定した change を順に archive する**
 
-   Process changes in the determined order (respecting conflict resolution):
+   conflict 解決順を尊重して処理する。
 
-   a. **Sync specs** if delta specs exist:
-      - Use the openspec-sync-specs approach (agent-driven intelligent merge)
-      - For conflicts, apply in resolved order
-      - Track if sync was done
+   a. **spec sync**
+   - delta specs があれば `openspec-sync-specs` 相当で同期する
+   - conflict があれば解決済み順序で適用する
 
-   b. **Perform the archive**:
-      ```bash
-      mkdir -p openspec/changes/archive
-      mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
-      ```
-
-   c. **Track outcome** for each change:
-      - Success: archived successfully
-      - Failed: error during archive (record error)
-      - Skipped: user chose not to archive (if applicable)
-
-9. **Display summary**
-
-   Show final results:
-
+   b. **archive 実行**
+   ```bash
+   mkdir -p openspec/changes/archive
+   mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
    ```
+
+   c. **結果を記録**
+   - Success
+   - Failed
+   - Skipped
+
+9. **最終サマリを表示する**
+
+   ```text
    ## Bulk Archive Complete
 
    Archived 3 changes:
@@ -149,16 +146,18 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
    - 1 conflict resolved (auth: applied both in chronological order)
    ```
 
-   If any failures:
-   ```
+   失敗があれば:
+
+   ```text
    Failed 1 change:
    - some-change: Archive directory already exists
    ```
 
 **Conflict Resolution Examples**
 
-Example 1: Only one implemented
-```
+Example 1: 片方だけ実装済み
+
+```text
 Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
 
 Checking add-oauth:
@@ -172,8 +171,9 @@ Checking add-jwt:
 Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
 ```
 
-Example 2: Both implemented
-```
+Example 2: 両方実装済み
+
+```text
 Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
 
 Checking add-rest-api (created 2026-01-10):
@@ -190,7 +190,7 @@ then add-graphql specs (chronological order, newer takes precedence).
 
 **Output On Success**
 
-```
+```text
 ## Bulk Archive Complete
 
 Archived N changes:
@@ -204,7 +204,7 @@ Spec sync summary:
 
 **Output On Partial Success**
 
-```
+```text
 ## Bulk Archive Complete (partial)
 
 Archived N changes:
@@ -219,21 +219,21 @@ Failed K changes:
 
 **Output When No Changes**
 
-```
+```text
 ## No Changes to Archive
 
 No active changes found. Use `/opsx:new` to create a new change.
 ```
 
 **Guardrails**
-- Allow any number of changes (1+ is fine, 2+ is the typical use case)
-- Always prompt for selection, never auto-select
-- Detect spec conflicts early and resolve by checking codebase
-- When both changes are implemented, apply specs in chronological order
-- Skip spec sync only when implementation is missing (warn user)
-- Show clear per-change status before confirming
-- Use single confirmation for entire batch
-- Track and report all outcomes (success/skip/fail)
-- Preserve .openspec.yaml when moving to archive
-- Archive directory target uses current date: YYYY-MM-DD-<name>
-- If archive target exists, fail that change but continue with others
+- 任意件数を許可する
+- 必ず選択を促し、自動選択しない
+- spec conflict は早期検出し、コードベースを見て解消する
+- 両方実装済みなら時系列順に適用する
+- 実装がない場合のみ sync をスキップし、警告する
+- 確定前に per-change status を明確に見せる
+- 確認は一括で 1 回にまとめる
+- success / skip / fail をすべて追跡して報告する
+- `.openspec.yaml` は archive 時に保持される
+- archive 先は `YYYY-MM-DD-<name>`
+- archive 先が既存ならその change だけ失敗として他は続行する
