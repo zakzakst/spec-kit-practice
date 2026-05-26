@@ -1,6 +1,6 @@
 ---
 name: openspec-new-change
-description: Start a new OpenSpec change using the experimental artifact workflow. Use when the user wants to create a new feature, fix, or modification with a structured step-by-step approach.
+description: 実験的な成果物ワークフローを使用して、新しいOpenSpec変更を開始します。構造化されたステップバイステップのアプローチで、新しい機能、修正、または変更を作成したい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,66 +9,66 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Start a new change using the experimental artifact-driven approach.
+実験的な成果物主導のアプローチを使用して新しい変更を開始します。
 
-**Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
+**入力**: ユーザーの要求には変更名（ケバブケース）または構築したいものの説明が含まれている必要があります。
 
-**Steps**
+**手順**
 
-1. **If no clear input provided, ask what they want to build**
+1. **明確な入力がない場合は、何を構築したいか尋ねる**
 
-   Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
-   > "What change do you want to work on? Describe what you want to build or fix."
+   **AskUserQuestionツール**（自由回答、プリセットオプションなし）を使用して尋ねます：
+   > "どの変更に取り組みますか？構築したいもの、または修正したいものを説明してください。"
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   その説明から、ケバブケースの名前を導き出します（例: "ユーザー認証を追加する" → `add-user-auth`）。
 
-   **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
+   **重要**: ユーザーが何を構築したいのかを理解しないまま進めないでください。
 
-2. **Determine the workflow schema**
+2. **ワークフロースキーマの決定**
 
-   Use the default schema (omit `--schema`) unless the user explicitly requests a different workflow.
+   ユーザーが明示的に異なるワークフローを要求しない限り、デフォルトスキーマを使用します（`--schema` を省略します）。
 
-   **Use a different schema only if the user mentions:**
-   - A specific schema name → use `--schema <name>`
-   - "show workflows" or "what workflows" → run `openspec schemas --json` and let them choose
+   **ユーザーが以下に言及した場合のみ、異なるスキーマを使用します:**
+   - 特定のスキーマ名 → `--schema <名前>` を使用します
+   - "ワークフローを表示" または "どんなワークフローがあるか" → `openspec schemas --json` を実行し、ユーザーに選択させます
 
-   **Otherwise**: Omit `--schema` to use the default.
+   **それ以外の場合**: デフォルトを使用するために `--schema` を省略します。
 
-3. **Create the change directory**
+3. **変更ディレクトリの作成**
    ```bash
-   openspec new change "<name>"
+   openspec new change "<名前>"
    ```
-   Add `--schema <name>` only if the user requested a specific workflow.
-   This creates a scaffolded change at `openspec/changes/<name>/` with the selected schema.
+   ユーザーが特定のワークフローを要求した場合のみ `--schema <名前>` を追加します。
+   これにより、選択したスキーマで `openspec/changes/<名前>/` にスキャフォールディングされた変更が作成されます。
 
-4. **Show the artifact status**
+4. **成果物ステータスの表示**
    ```bash
-   openspec status --change "<name>"
+   openspec status --change "<名前>"
    ```
-   This shows which artifacts need to be created and which are ready (dependencies satisfied).
+   これにより、作成する必要がある成果物と、準備ができている（依存関係が満たされている）成果物が表示されます。
 
-5. **Get instructions for the first artifact**
-   The first artifact depends on the schema (e.g., `proposal` for spec-driven).
-   Check the status output to find the first artifact with status "ready".
+5. **最初の成果物の指示の取得**
+   最初の成果物はスキーマに依存します（例: spec-driven の場合は `proposal`）。
+   ステータス出力を確認して、ステータスが "ready" の最初の成果物を見つけます。
    ```bash
-   openspec instructions <first-artifact-id> --change "<name>"
+   openspec instructions <first-artifact-id> --change "<名前>"
    ```
-   This outputs the template and context for creating the first artifact.
+   これにより、最初の成果物を作成するためのテンプレートとコンテキストが出力されます。
 
-6. **STOP and wait for user direction**
+6. **停止してユーザーの指示を待つ**
 
-**Output**
+**出力**
 
-After completing the steps, summarize:
-- Change name and location
-- Schema/workflow being used and its artifact sequence
-- Current status (0/N artifacts complete)
-- The template for the first artifact
-- Prompt: "Ready to create the first artifact? Just describe what this change is about and I'll draft it, or ask me to continue."
+手順を完了した後、以下を要約します：
+- 変更名と場所
+- 使用されているスキーマ/ワークフローとその成果物シーケンス
+- 現在のステータス（0/N 成果物完了）
+- 最初の成果物のテンプレート
+- プロンプト: "最初の成果物を作成する準備はできましたか？この変更が何についてのものかを説明していただければドラフトを作成します。または、継続するように指示してください。"
 
-**Guardrails**
-- Do NOT create any artifacts yet - just show the instructions
-- Do NOT advance beyond showing the first artifact template
-- If the name is invalid (not kebab-case), ask for a valid name
-- If a change with that name already exists, suggest continuing that change instead
-- Pass --schema if using a non-default workflow
+**ガードレール**
+- まだ成果物を作成**しないでください** - 指示を表示するだけです
+- 最初の成果物のテンプレートを表示した後は進まないでください
+- 名前が無効（ケバブケースではない）な場合は、有効な名前を求めてください
+- その名前の変更がすでに存在する場合は、代わりにその変更を継続することを提案してください
+- デフォルト以外のワークフローを使用する場合は --schema を渡してください

@@ -1,6 +1,6 @@
 ---
 name: openspec-continue-change
-description: Continue working on an OpenSpec change by creating the next artifact. Use when the user wants to progress their change, create the next artifact, or continue their workflow.
+description: 次の成果物を作成することで、OpenSpecの変更作業を継続します。ユーザーが変更を進行させたり、次の成果物を作成したり、ワークフローを継続したりしたい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,110 +9,110 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Continue working on a change by creating the next artifact.
+次の成果物を作成することで、変更の作業を継続します。
 
-**Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**入力**: 必要に応じて変更名を指定します。省略された場合は、会話のコンテキストから推測できるか確認します。曖昧な場合や不明確な場合は、利用可能な変更について必ずプロンプトでユーザーに尋ねる必要があります。
 
-**Steps**
+**手順**
 
-1. **If no change name provided, prompt for selection**
+1. **変更名が提供されていない場合、選択を促す**
 
-   Run `openspec list --json` to get available changes sorted by most recently modified. Then use the **AskUserQuestion tool** to let the user select which change to work on.
+   `openspec list --json` を実行して、最近変更された順に利用可能な変更を取得します。その後、**AskUserQuestionツール**を使用して、どの変更を作業するかユーザーに選択させます。
 
-   Present the top 3-4 most recently modified changes as options, showing:
-   - Change name
-   - Schema (from `schema` field if present, otherwise "spec-driven")
-   - Status (e.g., "0/5 tasks", "complete", "no tasks")
-   - How recently it was modified (from `lastModified` field)
+   最近変更された上位3～4個の変更をオプションとして提示し、以下を表示します：
+   - 変更名
+   - スキーマ（`schema` フィールドが存在する場合はそこから、そうでない場合は "spec-driven"）
+   - ステータス（例: "0/5 tasks", "complete", "no tasks"）
+   - どれくらい最近変更されたか（`lastModified` フィールドから）
 
-   Mark the most recently modified change as "(Recommended)" since it's likely what the user wants to continue.
+   最も最近変更されたものを、ユーザーが継続したい可能性が高いため "(推奨)" としてマークします。
 
-   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.
+   **重要**: 変更を推測したり自動選択したりしないでください。常にユーザーに選択させてください。
 
-2. **Check current status**
+2. **現在のステータスを確認する**
    ```bash
-   openspec status --change "<name>" --json
+   openspec status --change "<名前>" --json
    ```
-   Parse the JSON to understand current state. The response includes:
-   - `schemaName`: The workflow schema being used (e.g., "spec-driven")
-   - `artifacts`: Array of artifacts with their status ("done", "ready", "blocked")
-   - `isComplete`: Boolean indicating if all artifacts are complete
+   JSONを解析して現在の状態を理解します。レスポンスには以下が含まれます：
+   - `schemaName`: 使用されているワークフローのスキーマ（例: "spec-driven"）
+   - `artifacts`: そのステータス（"done", "ready", "blocked"）を持つ成果物の配列
+   - `isComplete`: すべての成果物が完了しているかを示すブール値
 
-3. **Act based on status**:
-
-   ---
-
-   **If all artifacts are complete (`isComplete: true`)**:
-   - Congratulate the user
-   - Show final status including the schema used
-   - Suggest: "All artifacts created! You can now implement this change or archive it."
-   - STOP
+3. **ステータスに基づいたアクション**:
 
    ---
 
-   **If artifacts are ready to create** (status shows artifacts with `status: "ready"`):
-   - Pick the FIRST artifact with `status: "ready"` from the status output
-   - Get its instructions:
+   **すべての成果物が完了している場合 (`isComplete: true`)**:
+   - ユーザーを祝福します
+   - 使用されたスキーマを含む最終ステータスを表示します
+   - 提案: "すべての成果物が作成されました！これでこの変更を実装するか、アーカイブすることができます。"
+   - 停止（STOP）します
+
+   ---
+
+   **成果物が作成可能な場合** (ステータスが `status: "ready"` の成果物を示す場合):
+   - ステータス出力から `status: "ready"` となっている**最初**の成果物を選択します
+   - その指示を取得します：
      ```bash
-     openspec instructions <artifact-id> --change "<name>" --json
+     openspec instructions <artifact-id> --change "<名前>" --json
      ```
-   - Parse the JSON. The key fields are:
-     - `context`: Project background (constraints for you - do NOT include in output)
-     - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)
-     - `template`: The structure to use for your output file
-     - `instruction`: Schema-specific guidance
-     - `outputPath`: Where to write the artifact
-     - `dependencies`: Completed artifacts to read for context
-   - **Create the artifact file**:
-     - Read any completed dependency files for context
-     - Use `template` as the structure - fill in its sections
-     - Apply `context` and `rules` as constraints when writing - but do NOT copy them into the file
-     - Write to the output path specified in instructions
-   - Show what was created and what's now unlocked
-   - STOP after creating ONE artifact
+   - JSONを解析します。重要なフィールドは以下の通りです：
+     - `context`: プロジェクトの背景（あなたへの制約 - 出力には含めないでください）
+     - `rules`: 成果物固有のルール（あなたへの制約 - 出力には含めないでください）
+     - `template`: 出力ファイルに使用する構造
+     - `instruction`: スキーマ固有のガイダンス
+     - `outputPath`: 成果物を書き込む場所
+     - `dependencies`: コンテキストとして読み込むための完了済み成果物
+   - **成果物ファイルの作成**:
+     - コンテキストを理解するために完了済みの依存ファイルを読み込みます
+     - `template` を構造として使用し、そのセクションを埋めます
+     - 書き込む際に `context` と `rules` を制約として適用しますが、それらをファイルにコピー**しないでください**
+     - instructions で指定された outputPath に書き込みます
+   - 何が作成され、何がアンロックされたかを表示します
+   - 1つの成果物を作成した後、停止（STOP）します
 
    ---
 
-   **If no artifacts are ready (all blocked)**:
-   - This shouldn't happen with a valid schema
-   - Show status and suggest checking for issues
+   **作成可能な成果物がない場合（すべてブロックされている）**:
+   - 有効なスキーマではこれは起こるべきではありません
+   - ステータスを表示し、問題がないか確認することを提案します
 
-4. **After creating an artifact, show progress**
+4. **成果物を作成した後、進捗状況を表示する**
    ```bash
-   openspec status --change "<name>"
+   openspec status --change "<名前>"
    ```
 
-**Output**
+**出力**
 
-After each invocation, show:
-- Which artifact was created
-- Schema workflow being used
-- Current progress (N/M complete)
-- What artifacts are now unlocked
-- Prompt: "Want to continue? Just ask me to continue or tell me what to do next."
+毎回の呼び出しの後に、以下を表示します：
+- どの成果物が作成されたか
+- 使用されているスキーマワークフロー
+- 現在の進捗状況（N/M 完了）
+- アンロックされた成果物はどれか
+- プロンプト: "続行しますか？単に「続行」と伝えるか、次に何をすべきか指示してください。"
 
-**Artifact Creation Guidelines**
+**成果物作成のガイドライン**
 
-The artifact types and their purpose depend on the schema. Use the `instruction` field from the instructions output to understand what to create.
+成果物の種類とその目的はスキーマに依存します。CLI出力の `instruction` フィールドを使用して、何を作成すべきかを理解してください。
 
-Common artifact patterns:
+一般的な成果物のパターン:
 
-**spec-driven schema** (proposal → specs → design → tasks):
-- **proposal.md**: Ask user about the change if not clear. Fill in Why, What Changes, Capabilities, Impact.
-  - The Capabilities section is critical - each capability listed will need a spec file.
-- **specs/<capability>/spec.md**: Create one spec per capability listed in the proposal's Capabilities section (use the capability name, not the change name).
-- **design.md**: Document technical decisions, architecture, and implementation approach.
-- **tasks.md**: Break down implementation into checkboxed tasks.
+**spec-driven スキーマ** (proposal → specs → design → tasks):
+- **proposal.md**: 明確でない場合は変更についてユーザーに質問します。Why（理由）、What Changes（変更内容）、Capabilities（機能）、Impact（影響）を埋めます。
+  - Capabilitiesセクションは重要です - リストされた各機能について仕様ファイルが必要になります。
+- **specs/<capability>/spec.md**: proposalのCapabilitiesセクションにリストされた機能ごとに1つの仕様を作成します（変更名ではなく機能名を使用します）。
+- **design.md**: 技術的な決定、アーキテクチャ、および実装アプローチを文書化します。
+- **tasks.md**: 実装をチェックボックス付きのタスクに分解します。
 
-For other schemas, follow the `instruction` field from the CLI output.
+他のスキーマについては、CLI出力の `instruction` フィールドに従います。
 
-**Guardrails**
-- Create ONE artifact per invocation
-- Always read dependency artifacts before creating a new one
-- Never skip artifacts or create out of order
-- If context is unclear, ask the user before creating
-- Verify the artifact file exists after writing before marking progress
-- Use the schema's artifact sequence, don't assume specific artifact names
-- **IMPORTANT**: `context` and `rules` are constraints for YOU, not content for the file
-  - Do NOT copy `<context>`, `<rules>`, `<project_context>` blocks into the artifact
-  - These guide what you write, but should never appear in the output
+**ガードレール**
+- 1回の呼び出しにつき作成する成果物は**1つ**です
+- 新しい成果物を作成する前に、必ず依存する成果物を読み込みます
+- 成果物をスキップしたり、順番を飛ばして作成したりしないでください
+- コンテキストが不明確な場合は、作成する前にユーザーに質問します
+- 進捗をマークする前に、書き込み後の成果物ファイルが存在することを確認します
+- スキーマの成果物シーケンスを使用し、特定の成果物名を想定しないでください
+- **重要**: `context` と `rules` はあなたへの制約であり、ファイルの内容ではありません
+  - `<context>`、`<rules>`、`<project_context>` ブロックを成果物にコピーしないでください
+  - これらは何を書くべきかをガイドするものですが、出力には決して表示させないでください

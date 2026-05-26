@@ -1,6 +1,6 @@
 ---
 name: openspec-archive-change
-description: Archive a completed change in the experimental workflow. Use when the user wants to finalize and archive a change after implementation is complete.
+description: 実験的ワークフローにおいて完了した変更をアーカイブします。実装完了後に変更を確定し、アーカイブしたい場合に使用します。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -9,106 +9,106 @@ metadata:
   generatedBy: "1.1.1"
 ---
 
-Archive a completed change in the experimental workflow.
+実験的ワークフローにおいて完了した変更をアーカイブします。
 
-**Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**入力**: 必要に応じて変更名を指定します。省略された場合は、会話のコンテキストから推測できるか確認します。曖昧な場合や不明確な場合は、利用可能な変更について必ずプロンプトでユーザーに尋ねる必要があります。
 
-**Steps**
+**手順**
 
-1. **If no change name provided, prompt for selection**
+1. **変更名が提供されていない場合、選択を促す**
 
-   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
+   `openspec list --json` を実行して利用可能な変更を取得します。**AskUserQuestionツール**を使用してユーザーに選択させます。
 
-   Show only active changes (not already archived).
-   Include the schema used for each change if available.
+   アクティブな変更（まだアーカイブされていないもの）のみを表示します。
+   可能な場合は、各変更に使用されたスキーマを含めます。
 
-   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.
+   **重要**: 変更を推測したり自動選択したりしないでください。常にユーザーに選択させてください。
 
-2. **Check artifact completion status**
+2. **成果物の完了ステータスを確認する**
 
-   Run `openspec status --change "<name>" --json` to check artifact completion.
+   `openspec status --change "<名前>" --json` を実行して成果物の完了状況を確認します。
 
-   Parse the JSON to understand:
-   - `schemaName`: The workflow being used
-   - `artifacts`: List of artifacts with their status (`done` or other)
+   JSONを解析して以下を理解します：
+   - `schemaName`: 使用されているワークフロー
+   - `artifacts`: ステータス（`done` またはそれ以外）を持つ成果物のリスト
 
-   **If any artifacts are not `done`:**
-   - Display warning listing incomplete artifacts
-   - Use **AskUserQuestion tool** to confirm user wants to proceed
-   - Proceed if user confirms
+   **`done` ではない成果物がある場合:**
+   - 未完了の成果物をリストした警告を表示します
+   - **AskUserQuestionツール**を使用して、ユーザーに続行するかどうかを確認します
+   - ユーザーが確認した場合は続行します
 
-3. **Check task completion status**
+3. **タスクの完了ステータスを確認する**
 
-   Read the tasks file (typically `tasks.md`) to check for incomplete tasks.
+   tasksファイル（通常は `tasks.md`）を読み込んで、未完了のタスクがないか確認します。
 
-   Count tasks marked with `- [ ]` (incomplete) vs `- [x]` (complete).
+   `- [ ]`（未完了）と `- [x]`（完了）でマークされたタスクの数を数えます。
 
-   **If incomplete tasks found:**
-   - Display warning showing count of incomplete tasks
-   - Use **AskUserQuestion tool** to confirm user wants to proceed
-   - Proceed if user confirms
+   **未完了のタスクが見つかった場合:**
+   - 未完了のタスク数を示す警告を表示します
+   - **AskUserQuestionツール**を使用して、ユーザーに続行するかどうかを確認します
+   - ユーザーが確認した場合は続行します
 
-   **If no tasks file exists:** Proceed without task-related warning.
+   **tasksファイルが存在しない場合:** タスク関連の警告なしで続行します。
 
-4. **Assess delta spec sync state**
+4. **デルタ仕様の同期状態を評価する**
 
-   Check for delta specs at `openspec/changes/<name>/specs/`. If none exist, proceed without sync prompt.
+   `openspec/changes/<名前>/specs/` にデルタ仕様（delta specs）があるか確認します。存在しない場合は、同期のプロンプトなしで続行します。
 
-   **If delta specs exist:**
-   - Compare each delta spec with its corresponding main spec at `openspec/specs/<capability>/spec.md`
-   - Determine what changes would be applied (adds, modifications, removals, renames)
-   - Show a combined summary before prompting
+   **デルタ仕様が存在する場合:**
+   - 各デルタ仕様を `openspec/specs/<capability>/spec.md` にある対応するメイン仕様と比較します
+   - どのような変更（追加、変更、削除、名前変更）が適用されるかを判断します
+   - プロンプトを表示する前に、統合された要約を表示します
 
-   **Prompt options:**
-   - If changes needed: "Sync now (recommended)", "Archive without syncing"
-   - If already synced: "Archive now", "Sync anyway", "Cancel"
+   **プロンプトのオプション:**
+   - 変更が必要な場合: "今すぐ同期する（推奨）"、"同期せずにアーカイブする"
+   - すでに同期されている場合: "今すぐアーカイブする"、"とにかく同期する"、"キャンセル"
 
-   If user chooses sync, execute /opsx:sync logic (use the openspec-sync-specs skill). Proceed to archive regardless of choice.
+   ユーザーが同期を選択した場合、/opsx:sync ロジックを実行します（openspec-sync-specs スキルを使用します）。選択に関係なく、アーカイブに進みます。
 
-5. **Perform the archive**
+5. **アーカイブを実行する**
 
-   Create the archive directory if it doesn't exist:
+   アーカイブディレクトリが存在しない場合は作成します：
    ```bash
    mkdir -p openspec/changes/archive
    ```
 
-   Generate target name using current date: `YYYY-MM-DD-<change-name>`
+   現在の日付を使用してターゲット名を生成します： `YYYY-MM-DD-<変更名>`
 
-   **Check if target already exists:**
-   - If yes: Fail with error, suggest renaming existing archive or using different date
-   - If no: Move the change directory to archive
+   **ターゲットがすでに存在するか確認する:**
+   - 存在する場合: エラーで失敗し、既存のアーカイブの名前変更や別の日付の使用を提案します
+   - 存在しない場合: 変更ディレクトリをアーカイブに移動します
 
    ```bash
-   mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
+   mv openspec/changes/<名前> openspec/changes/archive/YYYY-MM-DD-<名前>
    ```
 
-6. **Display summary**
+6. **要約を表示する**
 
-   Show archive completion summary including:
-   - Change name
-   - Schema that was used
-   - Archive location
-   - Whether specs were synced (if applicable)
-   - Note about any warnings (incomplete artifacts/tasks)
+   以下を含むアーカイブ完了の要約を表示します：
+   - 変更名
+   - 使用されたスキーマ
+   - アーカイブの場所
+   - 仕様が同期されたかどうか（該当する場合）
+   - 警告（未完了の成果物/タスク）に関するメモ
 
-**Output On Success**
+**成功時の出力**
 
 ```
-## Archive Complete
+## アーカイブ完了
 
-**Change:** <change-name>
-**Schema:** <schema-name>
-**Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
-**Specs:** ✓ Synced to main specs (or "No delta specs" or "Sync skipped")
+**変更:** <変更名>
+**スキーマ:** <スキーマ名>
+**アーカイブ先:** openspec/changes/archive/YYYY-MM-DD-<名前>/
+**仕様:** ✓ メイン仕様に同期済み（または "デルタ仕様なし"、"同期スキップ"）
 
-All artifacts complete. All tasks complete.
+すべての成果物が完了しました。すべてのタスクが完了しました。
 ```
 
-**Guardrails**
-- Always prompt for change selection if not provided
-- Use artifact graph (openspec status --json) for completion checking
-- Don't block archive on warnings - just inform and confirm
-- Preserve .openspec.yaml when moving to archive (it moves with the directory)
-- Show clear summary of what happened
-- If sync is requested, use openspec-sync-specs approach (agent-driven)
-- If delta specs exist, always run the sync assessment and show the combined summary before prompting
+**ガードレール**
+- 提供されていない場合は、必ず変更の選択をユーザーに促します
+- 完了の確認には成果物グラフ（openspec status --json）を使用します
+- 警告があるからといってアーカイブをブロックしないでください - 単に通知し、確認を取ります
+- アーカイブに移動する際、.openspec.yaml を保持します（ディレクトリと一緒に移動します）
+- 何が起こったかについての明確な要約を表示します
+- 同期が要求された場合は、openspec-sync-specs のアプローチ（エージェント主導）を使用します
+- デルタ仕様が存在する場合は、常に同期評価を実行し、プロンプトを出す前に統合された要約を表示します
