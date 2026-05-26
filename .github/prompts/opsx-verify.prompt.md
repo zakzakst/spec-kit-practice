@@ -1,109 +1,95 @@
 ---
-description: Verify implementation matches change artifacts before archiving
+description: archive 前に、実装が change artifacts と一致しているか検証する
 ---
 
-Verify that an implementation matches the change artifacts (specs, tasks, design).
+実装が change artifacts（specs, tasks, design）と一致しているかを検証する。
 
-**Input**: Optionally specify a change name after `/opsx:verify` (e.g., `/opsx:verify add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: `/opsx:verify` の後に変更名を省略可能（例: `/opsx:verify add-auth`）。省略時は文脈から推定してよいが、曖昧なら必ず選択を求める。
 
 **Steps**
 
-1. **If no change name provided, prompt for selection**
+1. **変更名がなければ選択させる**
 
-   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
+   `openspec list --json` を実行し、**AskUserQuestion tool** で change を選ばせる。
+   実装タスクを持つ change（tasks artifact があるもの）を表示し、可能なら schema も見せる。未完了タスクがある change には `(In Progress)` を付ける。
 
-   Show changes that have implementation tasks (tasks artifact exists).
-   Include the schema used for each change if available.
-   Mark changes with incomplete tasks as "(In Progress)".
+   **IMPORTANT**: 推測や自動選択はしない。
 
-   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.
-
-2. **Check status to understand the schema**
+2. **status を確認して schema を把握する**
    ```bash
    openspec status --change "<name>" --json
    ```
-   Parse the JSON to understand:
-   - `schemaName`: The workflow being used (e.g., "spec-driven")
-   - Which artifacts exist for this change
+   ここから `schemaName` と存在する artifacts を把握する。
 
-3. **Get the change directory and load artifacts**
+3. **change directory と artifacts を読み込む**
 
    ```bash
    openspec instructions apply --change "<name>" --json
    ```
 
-   This returns the change directory and context files. Read all available artifacts from `contextFiles`.
+   change directory と `contextFiles` が返るので、そこにある artifacts を読む。
 
-4. **Initialize verification report structure**
+4. **verification report の枠組みを初期化する**
 
-   Create a report structure with three dimensions:
-   - **Completeness**: Track tasks and spec coverage
-   - **Correctness**: Track requirement implementation and scenario coverage
-   - **Coherence**: Track design adherence and pattern consistency
+   次の 3 軸でレポートを作る:
+   - **Completeness**
+   - **Correctness**
+   - **Coherence**
 
-   Each dimension can have CRITICAL, WARNING, or SUGGESTION issues.
+   各軸には `CRITICAL`, `WARNING`, `SUGGESTION` を付けられるようにする。
 
 5. **Verify Completeness**
 
-   **Task Completion**:
-   - If tasks.md exists in contextFiles, read it
-   - Parse checkboxes: `- [ ]` (incomplete) vs `- [x]` (complete)
-   - Count complete vs total tasks
-   - If incomplete tasks exist:
-     - Add CRITICAL issue for each incomplete task
-     - Recommendation: "Complete task: <description>" or "Mark as done if already implemented"
+   **Task Completion**
+   - `tasks.md` があれば読む
+   - `- [ ]` と `- [x]` を解析
+   - 未完了タスクがあれば:
+     - 各タスクについて CRITICAL issue を追加
+     - 推奨: `Complete task: <description>` もしくは `Mark as done if already implemented`
 
-   **Spec Coverage**:
-   - If delta specs exist in `openspec/changes/<name>/specs/`:
-     - Extract all requirements (marked with "### Requirement:")
-     - For each requirement:
-       - Search codebase for keywords related to the requirement
-       - Assess if implementation likely exists
-     - If requirements appear unimplemented:
-       - Add CRITICAL issue: "Requirement not found: <requirement name>"
-       - Recommendation: "Implement requirement X: <description>"
+   **Spec Coverage**
+   - `openspec/changes/<name>/specs/` に delta specs があれば:
+     - `### Requirement:` をすべて抽出
+     - 各 requirement についてコードベースを検索
+     - 未実装と思われる場合:
+       - `Requirement not found: <requirement name>` を CRITICAL にする
+       - `Implement requirement X: <description>` を推奨する
 
 6. **Verify Correctness**
 
-   **Requirement Implementation Mapping**:
-   - For each requirement from delta specs:
-     - Search codebase for implementation evidence
-     - If found, note file paths and line ranges
-     - Assess if implementation matches requirement intent
-     - If divergence detected:
-       - Add WARNING: "Implementation may diverge from spec: <details>"
-       - Recommendation: "Review <file>:<lines> against requirement X"
+   **Requirement Implementation Mapping**
+   - 各 requirement について実装証拠を探す
+   - 見つかったら file paths と line ranges を記録する
+   - 意図と実装がずれていそうなら:
+     - `Implementation may diverge from spec: <details>` を WARNING
+     - `Review <file>:<lines> against requirement X` を推奨
 
-   **Scenario Coverage**:
-   - For each scenario in delta specs (marked with "#### Scenario:"):
-     - Check if conditions are handled in code
-     - Check if tests exist covering the scenario
-     - If scenario appears uncovered:
-       - Add WARNING: "Scenario not covered: <scenario name>"
-       - Recommendation: "Add test or implementation for scenario: <description>"
+   **Scenario Coverage**
+   - `#### Scenario:` ごとに
+     - 条件がコードで扱われているか
+     - テストがあるか
+   - カバー不足なら:
+     - `Scenario not covered: <scenario name>` を WARNING
+     - `Add test or implementation for scenario: <description>` を推奨
 
 7. **Verify Coherence**
 
-   **Design Adherence**:
-   - If design.md exists in contextFiles:
-     - Extract key decisions (look for sections like "Decision:", "Approach:", "Architecture:")
-     - Verify implementation follows those decisions
-     - If contradiction detected:
-       - Add WARNING: "Design decision not followed: <decision>"
-       - Recommendation: "Update implementation or revise design.md to match reality"
-   - If no design.md: Skip design adherence check, note "No design.md to verify against"
+   **Design Adherence**
+   - `design.md` があれば:
+     - `Decision:`, `Approach:`, `Architecture:` などから設計判断を抽出
+     - 実装が従っているか確認
+     - 逆行があれば WARNING とし、実装更新または design.md 改訂を勧める
+   - `design.md` がなければ、その旨を記録してスキップ
 
-   **Code Pattern Consistency**:
-   - Review new code for consistency with project patterns
-   - Check file naming, directory structure, coding style
-   - If significant deviations found:
-     - Add SUGGESTION: "Code pattern deviation: <details>"
-     - Recommendation: "Consider following project pattern: <example>"
+   **Code Pattern Consistency**
+   - 新規コードがプロジェクトのパターンと整合しているかを見る
+   - file naming、directory structure、coding style を確認
+   - 大きなズレがあれば SUGGESTION とする
 
 8. **Generate Verification Report**
 
-   **Summary Scorecard**:
-   ```
+   **Summary Scorecard**
+   ```text
    ## Verification Report: <change-name>
 
    ### Summary
@@ -114,48 +100,43 @@ Verify that an implementation matches the change artifacts (specs, tasks, design
    | Coherence    | Followed/Issues  |
    ```
 
-   **Issues by Priority**:
+   **Issues by Priority**
 
-   1. **CRITICAL** (Must fix before archive):
-      - Incomplete tasks
-      - Missing requirement implementations
-      - Each with specific, actionable recommendation
+   1. **CRITICAL**
+      - 未完了タスク
+      - 未実装 requirement
 
-   2. **WARNING** (Should fix):
-      - Spec/design divergences
-      - Missing scenario coverage
-      - Each with specific recommendation
+   2. **WARNING**
+      - spec / design と実装のズレ
+      - 未カバー scenario
 
-   3. **SUGGESTION** (Nice to fix):
-      - Pattern inconsistencies
-      - Minor improvements
-      - Each with specific recommendation
+   3. **SUGGESTION**
+      - パターン不一致
+      - 軽微改善
 
-   **Final Assessment**:
-   - If CRITICAL issues: "X critical issue(s) found. Fix before archiving."
-   - If only warnings: "No critical issues. Y warning(s) to consider. Ready for archive (with noted improvements)."
-   - If all clear: "All checks passed. Ready for archive."
+   **Final Assessment**
+   - CRITICAL がある: `X critical issue(s) found. Fix before archiving.`
+   - WARNING のみ: `No critical issues. Y warning(s) to consider. Ready for archive.`
+   - 問題なし: `All checks passed. Ready for archive.`
 
 **Verification Heuristics**
 
-- **Completeness**: Focus on objective checklist items (checkboxes, requirements list)
-- **Correctness**: Use keyword search, file path analysis, reasonable inference - don't require perfect certainty
-- **Coherence**: Look for glaring inconsistencies, don't nitpick style
-- **False Positives**: When uncertain, prefer SUGGESTION over WARNING, WARNING over CRITICAL
-- **Actionability**: Every issue must have a specific recommendation with file/line references where applicable
+- **Completeness**: checkbox や requirements list のような客観要素を重視
+- **Correctness**: キーワード検索、パス分析、合理的推論を使う
+- **Coherence**: 重大な不整合を拾う。細かすぎる指摘は避ける
+- **False Positives**: 自信が低い場合は重さを下げる
+- **Actionability**: すべての issue に具体的な推奨を付ける
 
 **Graceful Degradation**
 
-- If only tasks.md exists: verify task completion only, skip spec/design checks
-- If tasks + specs exist: verify completeness and correctness, skip design
-- If full artifacts: verify all three dimensions
-- Always note which checks were skipped and why
+- tasks.md しかなければ task completion のみ検証
+- tasks + specs なら completeness と correctness
+- full artifacts があれば 3 軸すべて
+- スキップした検証は理由付きで明示する
 
 **Output Format**
 
-Use clear markdown with:
-- Table for summary scorecard
-- Grouped lists for issues (CRITICAL/WARNING/SUGGESTION)
-- Code references in format: `file.ts:123`
-- Specific, actionable recommendations
-- No vague suggestions like "consider reviewing"
+- scorecard は表
+- issue は `CRITICAL / WARNING / SUGGESTION` ごとに整理
+- コード参照は `file.ts:123`
+- 曖昧な提案は避け、具体策を書く

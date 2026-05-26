@@ -1,91 +1,85 @@
 ---
-description: Create a change and generate all artifacts needed for implementation in one go
+description: change を作成し、実装に必要な全成果物を一気に生成する
 ---
 
-Fast-forward through artifact creation - generate everything needed to start implementation.
+成果物作成を一気に進め、実装開始に必要なものをすべて生成する。
 
-**Input**: The argument after `/opsx:ff` is the change name (kebab-case), OR a description of what the user wants to build.
+**Input**: `/opsx:ff` の後には、変更名（kebab-case）または作りたいものの説明が来る。
 
 **Steps**
 
-1. **If no input provided, ask what they want to build**
+1. **入力がなければ、何を作りたいか聞く**
 
-   Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
+   **AskUserQuestion tool** を使い、自由記述で次を聞く:
    > "What change do you want to work on? Describe what you want to build or fix."
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   その説明から kebab-case 名を導く（例: `add-user-auth`）。
 
-   **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
+   **IMPORTANT**: ユーザーが何を作りたいか理解できるまで進まないこと。
 
-2. **Create the change directory**
+2. **change ディレクトリを作成する**
    ```bash
    openspec new change "<name>"
    ```
-   This creates a scaffolded change at `openspec/changes/<name>/`.
+   これで `openspec/changes/<name>/` が作られる。
 
-3. **Get the artifact build order**
+3. **artifact の作成順を取得する**
    ```bash
    openspec status --change "<name>" --json
    ```
-   Parse the JSON to get:
-   - `applyRequires`: array of artifact IDs needed before implementation (e.g., `["tasks"]`)
-   - `artifacts`: list of all artifacts with their status and dependencies
+   JSON から次を読む:
+   - `applyRequires`
+   - `artifacts`
 
-4. **Create artifacts in sequence until apply-ready**
+4. **apply-ready になるまで artifact を順番に作る**
 
-   Use the **TodoWrite tool** to track progress through the artifacts.
+   **TodoWrite tool** で進捗を追う。
 
-   Loop through artifacts in dependency order (artifacts with no pending dependencies first):
+   依存順にループする。
 
-   a. **For each artifact that is `ready` (dependencies satisfied)**:
-      - Get instructions:
-        ```bash
-        openspec instructions <artifact-id> --change "<name>" --json
-        ```
-      - The instructions JSON includes:
-        - `context`: Project background (constraints for you - do NOT include in output)
-        - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)
-        - `template`: The structure to use for your output file
-        - `instruction`: Schema-specific guidance for this artifact type
-        - `outputPath`: Where to write the artifact
-        - `dependencies`: Completed artifacts to read for context
-      - Read any completed dependency files for context
-      - Create the artifact file using `template` as the structure
-      - Apply `context` and `rules` as constraints - but do NOT copy them into the file
-      - Show brief progress: "✓ Created <artifact-id>"
+   a. **`ready` な artifact ごとに**
+   - instructions を取得
+     ```bash
+     openspec instructions <artifact-id> --change "<name>" --json
+     ```
+   - JSON から `context`, `rules`, `template`, `instruction`, `outputPath`, `dependencies` を読む
+   - 完了済み dependency files を読む
+   - `template` を構造に使って artifact を作る
+   - `context` と `rules` は制約として使い、本文にコピーしない
+   - 進捗を短く示す: `Created <artifact-id>`
 
-   b. **Continue until all `applyRequires` artifacts are complete**
-      - After creating each artifact, re-run `openspec status --change "<name>" --json`
-      - Check if every artifact ID in `applyRequires` has `status: "done"` in the artifacts array
-      - Stop when all `applyRequires` artifacts are done
+   b. **すべての `applyRequires` が完了するまで続ける**
+   - artifact ごとに `openspec status --change "<name>" --json` を再実行
+   - `applyRequires` に含まれる各 artifact が `done` か確認
+   - 全部 `done` なら停止
 
-   c. **If an artifact requires user input** (unclear context):
-      - Use **AskUserQuestion tool** to clarify
-      - Then continue with creation
+   c. **ユーザー入力が必要な artifact**
+   - **AskUserQuestion tool** で明確化
+   - その後に作成を続行
 
-5. **Show final status**
+5. **最後に状態を表示する**
    ```bash
    openspec status --change "<name>"
    ```
 
 **Output**
 
-After completing all artifacts, summarize:
-- Change name and location
-- List of artifacts created with brief descriptions
-- What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run `/opsx:apply` to start implementing."
+完了後に次を要約する:
+- Change name と location
+- 作成した artifacts の一覧と短い説明
+- `All artifacts created! Ready for implementation.`
+- `Run /opsx:apply to start implementing.`
 
 **Artifact Creation Guidelines**
 
-- Follow the `instruction` field from `openspec instructions` for each artifact type
-- The schema defines what each artifact should contain - follow it
-- Read dependency artifacts for context before creating new ones
-- Use the `template` as a starting point, filling in based on context
+- 各 artifact は `openspec instructions` の `instruction` に従う
+- schema が各 artifact の内容を定義する
+- 新しい artifact 作成前に dependency artifacts を読む
+- `template` を土台にして文脈で埋める
 
 **Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)
-- Always read dependency artifacts before creating a new one
-- If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
-- If a change with that name already exists, ask if user wants to continue it or create a new one
-- Verify each artifact file exists after writing before proceeding to next
+- 実装に必要なすべての artifacts（schema の `apply.requires`）を作る
+- 新規作成前に dependency artifacts を必ず読む
+- 致命的に文脈不足なら質問するが、勢いを止めない範囲では合理的に判断する
+- 同名 change が既にある場合は、続けるか新規にするかを確認する
+- 次へ進む前に artifact ファイルが存在することを確認する

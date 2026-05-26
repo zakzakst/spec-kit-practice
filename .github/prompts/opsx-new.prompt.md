@@ -1,66 +1,65 @@
 ---
-description: Start a new change using the experimental artifact workflow (OPSX)
+description: 実験的な artifact 駆動ワークフロー（OPSX）で新しい change を開始する
 ---
 
-Start a new change using the experimental artifact-driven approach.
+実験的な artifact 駆動アプローチで新しい change を開始する。
 
-**Input**: The argument after `/opsx:new` is the change name (kebab-case), OR a description of what the user wants to build.
+**Input**: `/opsx:new` の後には、変更名（kebab-case）または作りたいものの説明が来る。
 
 **Steps**
 
-1. **If no input provided, ask what they want to build**
+1. **入力がなければ、何を作りたいか聞く**
 
-   Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
+   **AskUserQuestion tool** を使って次を聞く:
    > "What change do you want to work on? Describe what you want to build or fix."
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   その説明から kebab-case 名を導く（例: `add-user-auth`）。
 
-   **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
+   **IMPORTANT**: ユーザーの意図が分かるまで進まないこと。
 
-2. **Determine the workflow schema**
+2. **workflow schema を決める**
 
-   Use the default schema (omit `--schema`) unless the user explicitly requests a different workflow.
+   ユーザーが別 schema を明示しない限り、デフォルト schema を使う（`--schema` は付けない）。
 
-   **Use a different schema only if the user mentions:**
-   - A specific schema name → use `--schema <name>`
-   - "show workflows" or "what workflows" → run `openspec schemas --json` and let them choose
+   **別 schema を使うのは次の場合だけ**
+   - schema 名が明示された -> `--schema <name>`
+   - `show workflows` / `what workflows` と言われた -> `openspec schemas --json` を実行して選ばせる
 
-   **Otherwise**: Omit `--schema` to use the default.
+   **それ以外**: `--schema` は省略する。
 
-3. **Create the change directory**
+3. **change ディレクトリを作成する**
    ```bash
    openspec new change "<name>"
    ```
-   Add `--schema <name>` only if the user requested a specific workflow.
-   This creates a scaffolded change at `openspec/changes/<name>/` with the selected schema.
+   別 schema を指定された場合だけ `--schema <name>` を追加する。
 
-4. **Show the artifact status**
+4. **artifact の状態を表示する**
    ```bash
    openspec status --change "<name>"
    ```
-   This shows which artifacts need to be created and which are ready (dependencies satisfied).
+   何を作る必要があり、何が ready かを確認する。
 
-5. **Get instructions for the first artifact**
-   The first artifact depends on the schema. Check the status output to find the first artifact with status "ready".
+5. **最初の artifact の instructions を取得する**
+   status 出力から、最初に `ready` になっている artifact を見つける。
    ```bash
    openspec instructions <first-artifact-id> --change "<name>"
    ```
-   This outputs the template and context for creating the first artifact.
+   これにより、最初の artifact を作るための template と context が出る。
 
-6. **STOP and wait for user direction**
+6. **ここで止まり、ユーザーの指示を待つ**
 
 **Output**
 
-After completing the steps, summarize:
-- Change name and location
-- Schema/workflow being used and its artifact sequence
-- Current status (0/N artifacts complete)
-- The template for the first artifact
-- Prompt: "Ready to create the first artifact? Run `/opsx:continue` or just describe what this change is about and I'll draft it."
+完了後に次を要約する:
+- Change name と location
+- 使用 schema / workflow と artifact sequence
+- Current status（0/N artifacts complete）
+- 最初の artifact の template
+- `Ready to create the first artifact? Run /opsx:continue or just describe what this change is about and I'll draft it.`
 
 **Guardrails**
-- Do NOT create any artifacts yet - just show the instructions
-- Do NOT advance beyond showing the first artifact template
-- If the name is invalid (not kebab-case), ask for a valid name
-- If a change with that name already exists, suggest using `/opsx:continue` instead
-- Pass --schema if using a non-default workflow
+- まだ artifact を作らない
+- 最初の artifact template を見せたところで止まる
+- 名前が kebab-case で不正なら修正を求める
+- 同名 change が既にある場合は `/opsx:continue` を勧める
+- 非デフォルト workflow の場合のみ `--schema` を付ける

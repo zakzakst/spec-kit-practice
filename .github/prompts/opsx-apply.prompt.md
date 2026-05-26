@@ -1,108 +1,107 @@
 ---
-description: Implement tasks from an OpenSpec change (Experimental)
+description: OpenSpec の変更に含まれるタスクを実装する（Experimental）
 ---
 
-Implement tasks from an OpenSpec change.
+OpenSpec の変更に含まれるタスクを実装する。
 
-**Input**: Optionally specify a change name (e.g., `/opsx:apply add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: 変更名を省略可能（例: `/opsx:apply add-auth`）。省略時は会話文脈から推定してよいが、曖昧な場合は利用可能な変更を必ず確認させること。
 
 **Steps**
 
-1. **Select the change**
+1. **変更を選ぶ**
 
-   If a name is provided, use it. Otherwise:
-   - Infer from conversation context if the user mentioned a change
-   - Auto-select if only one active change exists
-   - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select
+   名前が指定されていればそれを使う。そうでなければ:
+   - 会話内で変更名に言及があるか推定する
+   - アクティブな変更が 1 件だけなら自動選択する
+   - 曖昧なら `openspec list --json` を実行し、**AskUserQuestion tool** で選ばせる
 
-   Always announce: "Using change: <name>" and how to override (e.g., `/opsx:apply <other>`).
+   常に `Using change: <name>` を案内し、上書き方法（例: `/opsx:apply <other>`）も示すこと。
 
-2. **Check status to understand the schema**
+2. **ステータスを確認してスキーマを把握する**
    ```bash
    openspec status --change "<name>" --json
    ```
-   Parse the JSON to understand:
-   - `schemaName`: The workflow being used (e.g., "spec-driven")
-   - Which artifact contains the tasks (typically "tasks" for spec-driven, check status for others)
+   JSON を解析して次を把握する:
+   - `schemaName`: 使用中のワークフロー（例: `spec-driven`）
+   - どの成果物がタスクを保持しているか
 
-3. **Get apply instructions**
+3. **apply 用 instructions を取得する**
 
    ```bash
    openspec instructions apply --change "<name>" --json
    ```
 
-   This returns:
-   - Context file paths (varies by schema)
-   - Progress (total, complete, remaining)
+   ここから取得できるもの:
+   - Context file paths
+   - Progress（total, complete, remaining）
    - Task list with status
-   - Dynamic instruction based on current state
+   - 現在状態に応じた動的 instruction
 
-   **Handle states:**
-   - If `state: "blocked"` (missing artifacts): show message, suggest using `/opsx:continue`
-   - If `state: "all_done"`: congratulate, suggest archive
-   - Otherwise: proceed to implementation
+   **状態別の扱い**
+   - `state: "blocked"`: 不足成果物があるのでメッセージを出し、`/opsx:continue` を勧める
+   - `state: "all_done"`: 完了を祝福し、archive を勧める
+   - それ以外: 実装へ進む
 
-4. **Read context files**
+4. **context files を読む**
 
-   Read the files listed in `contextFiles` from the apply instructions output.
-   The files depend on the schema being used:
+   instructions 出力の `contextFiles` に列挙されたファイルを読む。
+   スキーマにより内容は異なる:
    - **spec-driven**: proposal, specs, design, tasks
-   - Other schemas: follow the contextFiles from CLI output
+   - その他: CLI 出力の `contextFiles` をそのまま信頼する
 
-5. **Show current progress**
+5. **現在の進捗を表示する**
 
-   Display:
-   - Schema being used
-   - Progress: "N/M tasks complete"
-   - Remaining tasks overview
-   - Dynamic instruction from CLI
+   表示内容:
+   - 使用中 schema
+   - Progress: `N/M tasks complete`
+   - Remaining tasks の概要
+   - CLI からの動的 instruction
 
-6. **Implement tasks (loop until done or blocked)**
+6. **タスクを実装する（完了またはブロックされるまでループ）**
 
-   For each pending task:
-   - Show which task is being worked on
-   - Make the code changes required
-   - Keep changes minimal and focused
-   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
-   - Continue to next task
+   各 pending task について:
+   - 取り組むタスクを表示
+   - 必要なコード変更を行う
+   - 変更は最小限かつ焦点を絞る
+   - tasks ファイルで `- [ ]` を `- [x]` に更新する
+   - 次のタスクへ進む
 
-   **Pause if:**
-   - Task is unclear → ask for clarification
-   - Implementation reveals a design issue → suggest updating artifacts
-   - Error or blocker encountered → report and wait for guidance
-   - User interrupts
+   **次の場合は一時停止**
+   - タスク内容が不明瞭 -> clarification を求める
+   - 実装中に設計上の問題が見つかる -> 成果物更新を提案する
+   - エラーや blocker が出る -> 報告して案内を待つ
+   - ユーザーが中断する
 
-7. **On completion or pause, show status**
+7. **完了時または一時停止時に状態を表示する**
 
-   Display:
-   - Tasks completed this session
-   - Overall progress: "N/M tasks complete"
-   - If all done: suggest archive
-   - If paused: explain why and wait for guidance
+   表示内容:
+   - 今回セッションで完了したタスク
+   - Overall progress: `N/M tasks complete`
+   - 全完了なら archive を勧める
+   - 一時停止なら理由を説明して案内を待つ
 
 **Output During Implementation**
 
-```
+```text
 ## Implementing: <change-name> (schema: <schema-name>)
 
 Working on task 3/7: <task description>
 [...implementation happening...]
-✓ Task complete
+Task complete
 
 Working on task 4/7: <task description>
 [...implementation happening...]
-✓ Task complete
+Task complete
 ```
 
 **Output On Completion**
 
-```
+```text
 ## Implementation Complete
 
 **Change:** <change-name>
 **Schema:** <schema-name>
-**Progress:** 7/7 tasks complete ✓
-
+**Progress:** 7/7 tasks complete
 ### Completed This Session
 - [x] Task 1
 - [x] Task 2
@@ -113,7 +112,7 @@ All tasks complete! You can archive this change with `/opsx:archive`.
 
 **Output On Pause (Issue Encountered)**
 
-```
+```text
 ## Implementation Paused
 
 **Change:** <change-name>
@@ -132,18 +131,18 @@ What would you like to do?
 ```
 
 **Guardrails**
-- Keep going through tasks until done or blocked
-- Always read context files before starting (from the apply instructions output)
-- If task is ambiguous, pause and ask before implementing
-- If implementation reveals issues, pause and suggest artifact updates
-- Keep code changes minimal and scoped to each task
-- Update task checkbox immediately after completing each task
-- Pause on errors, blockers, or unclear requirements - don't guess
-- Use contextFiles from CLI output, don't assume specific file names
+- 完了またはブロックまでタスクを進め続ける
+- 開始前に必ず context files を読む
+- 曖昧なタスクは実装前に確認する
+- 実装で問題が見えたら成果物更新を提案して止まる
+- コード変更は各タスクに最小限で絞る
+- タスク完了直後にチェックを更新する
+- エラー、blocker、要件不明時は推測で進めない
+- 固定のファイル名を仮定せず、CLI の `contextFiles` を使う
 
 **Fluid Workflow Integration**
 
-This skill supports the "actions on a change" model:
+このプロンプトは「change に対して随時 action する」モデルを支える:
 
-- **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions
-- **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly
+- **いつでも呼べる**: 全成果物完成前でも、実装途中でもよい
+- **成果物更新も許容**: 実装で設計課題が見つかったら、phase 固定にせず柔軟に更新を提案する

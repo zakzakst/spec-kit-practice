@@ -1,73 +1,69 @@
 ---
-description: Sync delta specs from a change to main specs
+description: change 側の delta specs を main specs へ同期する
 ---
 
-Sync delta specs from a change to main specs.
+change の delta specs を main specs へ同期する。
 
-This is an **agent-driven** operation - you will read delta specs and directly edit main specs to apply the changes. This allows intelligent merging (e.g., adding a scenario without copying the entire requirement).
+これは **agent-driven** な操作であり、delta specs を読んで main specs を直接編集する。単純コピーではなく、シナリオ追加のような部分更新を賢く反映できるようにする。
 
-**Input**: Optionally specify a change name after `/opsx:sync` (e.g., `/opsx:sync add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input**: `/opsx:sync` の後に変更名を省略可能（例: `/opsx:sync add-auth`）。省略時は文脈から推定してよいが、曖昧なら必ず選択を求める。
 
 **Steps**
 
-1. **If no change name provided, prompt for selection**
+1. **変更名がなければ選択させる**
 
-   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.
+   `openspec list --json` を実行し、**AskUserQuestion tool** で change を選ばせる。
+   `specs/` 配下に delta specs を持つ change のみ表示する。
 
-   Show changes that have delta specs (under `specs/` directory).
+   **IMPORTANT**: 推測や自動選択はしない。
 
-   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.
+2. **delta specs を見つける**
 
-2. **Find delta specs**
+   `openspec/changes/<name>/specs/*/spec.md` を探す。
 
-   Look for delta spec files in `openspec/changes/<name>/specs/*/spec.md`.
+   各 delta spec には次のようなセクションが含まれる:
+   - `## ADDED Requirements`
+   - `## MODIFIED Requirements`
+   - `## REMOVED Requirements`
+   - `## RENAMED Requirements`
 
-   Each delta spec file contains sections like:
-   - `## ADDED Requirements` - New requirements to add
-   - `## MODIFIED Requirements` - Changes to existing requirements
-   - `## REMOVED Requirements` - Requirements to remove
-   - `## RENAMED Requirements` - Requirements to rename (FROM:/TO: format)
+   見つからなければユーザーへ伝えて停止する。
 
-   If no delta specs found, inform user and stop.
+3. **delta spec ごとに main spec へ適用する**
 
-3. **For each delta spec, apply changes to main specs**
+   capability ごとに:
 
-   For each capability with a delta spec at `openspec/changes/<name>/specs/<capability>/spec.md`:
+   a. `openspec/changes/<name>/specs/<capability>/spec.md` を読む
 
-   a. **Read the delta spec** to understand the intended changes
+   b. `openspec/specs/<capability>/spec.md` を読む（存在しない場合あり）
 
-   b. **Read the main spec** at `openspec/specs/<capability>/spec.md` (may not exist yet)
+   c. **賢く適用する**
 
-   c. **Apply changes intelligently**:
+   **ADDED Requirements**
+   - main spec に存在しなければ追加
+   - 既に存在するなら実質 MODIFIED として更新
 
-      **ADDED Requirements:**
-      - If requirement doesn't exist in main spec → add it
-      - If requirement already exists → update it to match (treat as implicit MODIFIED)
+   **MODIFIED Requirements**
+   - 対応する requirement を探す
+   - delta に書かれた変更だけを反映する
+   - 触れられていない既存シナリオ / 内容は保持する
 
-      **MODIFIED Requirements:**
-      - Find the requirement in main spec
-      - Apply the changes - this can be:
-        - Adding new scenarios (don't need to copy existing ones)
-        - Modifying existing scenarios
-        - Changing the requirement description
-      - Preserve scenarios/content not mentioned in the delta
+   **REMOVED Requirements**
+   - requirement block ごと削除
 
-      **REMOVED Requirements:**
-      - Remove the entire requirement block from main spec
+   **RENAMED Requirements**
+   - FROM を見つけ TO へ改名
 
-      **RENAMED Requirements:**
-      - Find the FROM requirement, rename to TO
+   d. capability の main spec がまだない場合:
+   - `openspec/specs/<capability>/spec.md` を新規作成
+   - 簡単な Purpose セクション（必要なら TBD）を入れる
+   - ADDED requirements を追加する
 
-   d. **Create new main spec** if capability doesn't exist yet:
-      - Create `openspec/specs/<capability>/spec.md`
-      - Add Purpose section (can be brief, mark as TBD)
-      - Add Requirements section with the ADDED requirements
+4. **要約を表示する**
 
-4. **Show summary**
-
-   After applying all changes, summarize:
-   - Which capabilities were updated
-   - What changes were made (requirements added/modified/removed/renamed)
+   次をまとめる:
+   - 更新した capabilities
+   - 追加 / 変更 / 削除 / 改名した requirements
 
 **Delta Spec Format Reference**
 
@@ -100,14 +96,14 @@ The system SHALL do something new.
 
 **Key Principle: Intelligent Merging**
 
-Unlike programmatic merging, you can apply **partial updates**:
-- To add a scenario, just include that scenario under MODIFIED - don't copy existing scenarios
-- The delta represents *intent*, not a wholesale replacement
-- Use your judgment to merge changes sensibly
+プログラム的な単純マージではなく、**部分更新** を扱う:
+- シナリオ追加だけなら MODIFIED のそのシナリオだけでよい
+- delta は全文置換ではなく **意図** を表す
+- 常識的な判断で自然にマージする
 
 **Output On Success**
 
-```
+```text
 ## Specs Synced: <change-name>
 
 Updated main specs:
@@ -124,8 +120,8 @@ Main specs are now updated. The change remains active - archive when implementat
 ```
 
 **Guardrails**
-- Read both delta and main specs before making changes
-- Preserve existing content not mentioned in delta
-- If something is unclear, ask for clarification
-- Show what you're changing as you go
-- The operation should be idempotent - running twice should give same result
+- 変更前に delta と main の両方を読む
+- delta に触れていない既存内容は保持する
+- 不明点は確認する
+- 何を変えているかを作業中に示す
+- 2 回実行しても結果が安定する idempotent な操作にする
