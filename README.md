@@ -1,4 +1,14 @@
-# spec-kit-practice
+## TODO
+
+- 下記の順番でエージェントファイルを作成するのを試してみる
+  1. 作業を分解する
+  2. 各作業で利用するプロンプトを作成する
+  3. 作成したプロンプトをつなげるようにファイルを作成・修正する
+- そのためにまず勉強すること
+  - プロンプトをつなげるのに、どのような方法・パターンがあるのか
+  - AI関連のファイルを分割する理由を改めて整理（確かコンテキストを絞ったほうが適切な返答が得られるからだったと思うが、改めてきちんと調べる）
+
+## spec-kit-practice
 
 - https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4
 - https://dev.classmethod.jp/articles/spec-driven-development-with-github-spec-kit/
