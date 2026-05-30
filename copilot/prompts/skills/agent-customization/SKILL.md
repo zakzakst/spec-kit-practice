@@ -1,83 +1,83 @@
 ---
 name: agent-customization
-user-invocable: false # don't show as slash command, we have sepcialized create-agent, create-instructions, create-hook prompts for that
-description: '**WORKFLOW SKILL** — Create, update, review, fix, or debug VS Code agent customization files (.instructions.md, .prompt.md, .agent.md, SKILL.md, copilot-instructions.md, AGENTS.md). USE FOR: saving coding preferences; troubleshooting why instructions/skills/agents are ignored or not invoked; configuring applyTo patterns; defining tool restrictions; creating custom agent modes or specialized workflows; packaging domain knowledge; fixing YAML frontmatter syntax. DO NOT USE FOR: general coding questions (use default agent); runtime debugging or error diagnosis; MCP server configuration (use MCP docs directly); VS Code extension development. INVOKES: file system tools (read/write customization files), ask-questions tool (interview user for requirements), subagents for codebase exploration. FOR SINGLE OPERATIONS: For quick YAML frontmatter fixes or creating a single file from a known pattern, edit the file directly — no skill needed.'
+user-invocable: false # スラッシュコマンドとしては表示しません。これには create-agent、create-instructions、create-hook という専用のプロンプトがあります
+description: '**WORKFLOW SKILL** — VS Code エージェントのカスタマイズファイル (.instructions.md、.prompt.md、.agent.md、SKILL.md、copilot-instructions.md、AGENTS.md) の作成、更新、レビュー、修正、またはデバッグを行います。使用場面: コーディングの好みを保存する。指示、スキル、エージェントが無視されたり呼び出されなかったりする理由をトラブルシューティングする。applyTo パターンを構成する。ツールの制限を定義する。カスタムエージェントモードや専用のワークフローを作成する。ドメイン知識をパッケージ化する。YAML frontmatter の構文を修正する。使用しない場面: 一般的なコーディングの質問（デフォルトのエージェントを使用してください）、実行時のデバッグやエラーの診断、MCPサーバーの設定（MCPドキュメントを直接使用してください）、VS Code拡張機能の開発。呼び出し: ファイルシステムツール（カスタマイズファイルの読み書き）、質問ツール（要件をユーザーにインタビューする）、コードベース探索用のサブエージェント。単一の操作の場合: 簡単なYAML frontmatterの修正や既知のパターンからの単一ファイルの作成の場合は、ファイルを直接編集します（スキルは不要です）。'
 ---
 
-# Agent Customization
+# エージェントのカスタマイズ
 
-## Decision Flow
+## 決定フロー
 
-| Primitive | When to Use |
+| プリミティブ | 使用するタイミング |
 |-----------|-------------|
-| agent instructions | Always-on, applies everywhere in the project |
-| File Instructions | Explicit via `applyTo` patterns, or on-demand via `description` |
-| MCP | Integrates external systems, APIs, or data |
-| Hooks | Deterministic shell commands at agent lifecycle points (block tools, auto-format, inject context) |
-| Custom Agents | Subagents for context isolation, or multi-stage workflows with tool restrictions |
-| Prompts | Single focused task with parameterized inputs |
-| Skills | On-demand workflow with bundled assets (scripts/templates) |
+| agent instructions | 常にオンで、プロジェクトのどこにでも適用されます |
+| File Instructions | `applyTo` パターンによる明示的な適用、または `description` によるオンデマンド |
+| MCP | 外部システム、API、またはデータを統合します |
+| Hooks | エージェントのライフサイクルポイントにおける決定論的なシェルコマンド（ツールのブロック、自動フォーマット、コンテキストの注入） |
+| Custom Agents | コンテキスト分離用のサブエージェント、またはツール制限のある複数段階のワークフロー |
+| Prompts | パラメータ化された入力を持つ単一の焦点を絞ったタスク |
+| Skills | バンドルされたアセット（スクリプト/テンプレート）を持つオンデマンドのワークフロー |
 
-## Quick Reference
+## クイックリファレンス
 
-Consult the reference docs for templates, domain examples, advanced frontmatter options, asset organization, anti-patterns, and creation checklists. If the references are not enough, load the official documentation links for each primitive.
+テンプレート、ドメインの例、高度な frontmatter のオプション、アセットの構成、アンチパターン、作成チェックリストについては、リファレンスドキュメントを参照してください。リファレンスで不十分な場合は、各プリミティブの公式ドキュメントのリンクを読み込んでください。
 
-| Type | File | Location | Reference |
+| タイプ | ファイル | 場所 | リファレンス |
 |------|------|----------|-----------|
-| agent instructions | `copilot-instructions.md`, `AGENTS.md` | `.github/` or root | [Link](./references/agent-instructions.md) |
-| File Instructions | `*.instructions.md` | `.github/instructions/` | [Link](./references/instructions.md) |
-| Prompts | `*.prompt.md` | `.github/prompts/` | [Link](./references/prompts.md) |
-| Hooks | `*.json` | `.github/hooks/` | [Link](./references/hooks.md) |
-| Custom Agents | `*.agent.md` | `.github/agents/` | [Link](./references/agents.md) |
-| Skills | `SKILL.md` | `.github/skills/<name>/`, `.agents/skills/<name>/`, `.claude/skills/<name>/` | [Link](./references/skills.md) |
+| agent instructions | `copilot-instructions.md`, `AGENTS.md` | `.github/` またはルート | [リンク](./references/agent-instructions.md) |
+| File Instructions | `*.instructions.md` | `.github/instructions/` | [リンク](./references/instructions.md) |
+| Prompts | `*.prompt.md` | `.github/prompts/` | [リンク](./references/prompts.md) |
+| Hooks | `*.json` | `.github/hooks/` | [リンク](./references/hooks.md) |
+| Custom Agents | `*.agent.md` | `.github/agents/` | [リンク](./references/agents.md) |
+| Skills | `SKILL.md` | `.github/skills/<name>/`, `.agents/skills/<name>/`, `.claude/skills/<name>/` | [リンク](./references/skills.md) |
 
-**User-level**: `{{VSCODE_USER_PROMPTS_FOLDER}}/` (*.prompt.md, *.instructions.md, *.agent.md; not skills)
-Customizations roam with user's settings sync
+**ユーザーレベル**: `{{VSCODE_USER_PROMPTS_FOLDER}}/` (*.prompt.md, *.instructions.md, *.agent.md; スキルは不可)
+カスタマイズはユーザーの設定同期とともにローミングされます
 
-## Creation Process
+## 作成プロセス
 
-If you need to explore or validate patterns in the codebase, use a read-only subagent. If the ask-questions tool is available, use it to interview the user and clarify requirements.
+コードベース内のパターンを調査または検証する必要がある場合は、読み取り専用のサブエージェントを使用してください。質問ツールが利用可能な場合は、それを使用してユーザーにインタビューし、要件を明確にしてください。
 
-Follow these steps when creating any customization file.
+カスタマイズファイルを作成する際は、以下の手順に従ってください。
 
-### 1. Determine Scope
+### 1. スコープの決定
 
-Ask the user where they want the customization:
-- **Workspace**: For project-specific, team-shared customizations → `.github/` folder
-- **User profile**: For personal, cross-workspace customizations → `{{VSCODE_USER_PROMPTS_FOLDER}}/`
+カスタマイズをどこに置きたいかをユーザーに尋ねます:
+- **ワークスペース**: プロジェクト固有、チーム共有のカスタマイズ用 → `.github/` フォルダ
+- **ユーザープロファイル**: 個人用、ワークスペースをまたぐカスタマイズ用 → `{{VSCODE_USER_PROMPTS_FOLDER}}/`
 
-### 2. Choose the Right Primitive
+### 2. 適切なプリミティブの選択
 
-Use the Decision Flow above to select the appropriate file type based on the user's need.
+ユーザーのニーズに基づいて適切なファイルタイプを選択するには、上記の決定フローを使用します。
 
-### 3. Create the File
+### 3. ファイルの作成
 
-Create the file directly at the appropriate path:
-- Use the location tables in each reference file
-- Include required frontmatter as needed
-- Add the body content following the templates
+適切なパスに直接ファイルを作成します:
+- 各リファレンスファイルにある場所の表を使用します
+- 必要に応じて必須の frontmatter を含めます
+- テンプレートに従って本文のコンテンツを追加します
 
-### 4. Validate
+### 4. 検証
 
-After creating:
-- Confirm the file is in the correct location
-- Verify frontmatter syntax (YAML between `---` markers)
-- Check that `description` is present and meaningful
+作成後:
+- ファイルが正しい場所にあることを確認します
+- frontmatter の構文（`---` マーカー間の YAML）を検証します
+- `description` が存在し、意味のある内容であることを確認します
 
-## Edge Cases
+## エッジケース
 
-**Instructions vs Skill?** Does this apply to *most* work, or *specific* tasks? Most → Instructions. Specific → Skill.
+**Instructions vs Skill?** これは*ほとんどの*作業に適用されますか、それとも*特定の*タスクですか？ ほとんど → Instructions。特定 → Skill。
 
-**Skill vs Prompt?** Both appear as slash commands in chat (type `/`). Multi-step workflow with bundled assets → Skill. Single focused task with inputs → Prompt.
+**Skill vs Prompt?** どちらもチャットでスラッシュコマンドとして表示されます（`/` を入力）。バンドルされたアセットを持つ複数段階のワークフロー → Skill。入力を持つ単一の焦点を絞ったタスク → Prompt。
 
-**Skill vs Custom Agent?** Same capabilities for all steps → Skill. Need context isolation (subagent returns single output) or different tool restrictions per stage → Custom Agent.
+**Skill vs Custom Agent?** すべてのステップで同じ機能 → Skill。コンテキストの分離（サブエージェントが単一の出力を返す）またはステージごとの異なるツール制限が必要 → Custom Agent。
 
-**Hooks vs Instructions?** Instructions *guide* agent behavior (non-deterministic). Hooks *enforce* behavior via shell commands at lifecycle events like `PreToolUse` or `PostToolUse` — they can block operations, require approval, or run formatters deterministically. Hooks can be defined in standalone `.json` files (see [hooks reference](./references/hooks.md)) or inline in custom agent frontmatter via the `hooks` attribute (see [agents reference](./references/agents.md)).
+**Hooks vs Instructions?** Instructionsはエージェントの動作を*導きます*（非決定論的）。Hooksは `PreToolUse` や `PostToolUse` などのライフサイクルイベントでのシェルコマンドを介して動作を*強制します* — 操作をブロックしたり、承認を要求したり、フォーマッターを決定論的に実行したりできます。Hooksはスタンドアロンの `.json` ファイル（[hooks リファレンス](./references/hooks.md)を参照）、またはカスタムエージェントの frontmatter 内に `hooks` 属性を介してインラインで定義できます（[agents リファレンス](./references/agents.md)を参照）。
 
-## Common Pitfalls
+## よくある落とし穴
 
-**Description is the discovery surface.** The `description` field is how the agent decides whether to load a skill, instruction, or agent. If trigger phrases aren't IN the description, the agent won't find it. Use the "Use when..." pattern with specific keywords.
+**Description は発見の入り口です。** `description` フィールドは、エージェントがスキル、インストラクション、またはエージェントをロードするかどうかを決定する方法です。トリガーフレーズが説明に*含まれていない*場合、エージェントはそれを見つけることができません。特定のキーワードを含む「Use when... (使用するタイミング...)」のパターンを使用してください。
 
-**YAML frontmatter silent failures.** Unescaped colons in values, tabs instead of spaces, `name` that doesn't match folder name — all cause silent failures with no error message. Always quote descriptions that contain colons: `description: "Use when: doing X"`.
+**YAML frontmatter の沈黙の失敗。** 値内のエスケープされていないコロン、スペースの代わりのタブ、フォルダ名と一致しない `name` — これらはすべて、エラーメッセージなしの沈黙の失敗を引き起こします。コロンを含む説明は常に引用符で囲んでください: `description: "Use when: doing X"`。
 
-**`applyTo: "**"` burns context.** This means "always included for every file request" — it loads the instruction into the context window on every interaction, even when irrelevant. Use specific globs (`**/*.py`, `src/api/**`) unless the instruction truly applies to all files.
+**`applyTo: "**"` はコンテキストを無駄に消費します。** これは「すべてのファイルリクエストに対して常に含める」ことを意味し、関連がない場合でも、すべてのインタラクションでインストラクションをコンテキストウィンドウにロードします。インストラクションが本当にすべてのファイルに適用される場合を除き、特定の glob（`**/*.py`、`src/api/**`）を使用してください。

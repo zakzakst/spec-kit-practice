@@ -1,30 +1,30 @@
 ---
 name: create-instructions
-description: 'Create an instructions file (.instructions.md) for a project rule or convention.'
-argument-hint: What rule or convention to enforce?
+description: 'プロジェクトのルールや規則のためのインストラクションファイル (.instructions.md) を作成します。'
+argument-hint: どのルールまたは規則を適用しますか？
 disable-model-invocation: true
 ---
-Related skill: `agent-customization`. Load and follow **instructions.md** for template and principles.
+関連スキル: `agent-customization`。テンプレートと原則については **instructions.md** を読み込んで従ってください。
 
-Guide the user to create an instructions file.
+ユーザーをガイドしてインストラクションファイルを作成します。
 
-## Extract from Conversation
-First, review the conversation history. If the user has been correcting the agent's output or asking for specific patterns (e.g., "always use X", "never do Y", "follow this style"), generalize that into a persistent instruction. Extract:
-- Corrections or preferences mentioned during the conversation
-- Coding patterns the user enforced or requested
-- Project-specific conventions referenced
+## 会話から抽出する
+最初に、会話の履歴を確認してください。ユーザーがエージェントの出力を修正していたり、特定のパターン（例：「常にXを使用する」「Yは決して行わない」「このスタイルに従う」）を求めている場合、それを永続的なインストラクションとして一般化します。以下を抽出してください：
+- 会話中に言及された修正や好み
+- ユーザーが適用または要求したコーディングパターン
+- 参照されているプロジェクト固有の規則
 
-## Clarify if Needed
-If no clear rule emerges from the conversation, clarify:
-- Should this apply everywhere or only to specific files?
-- Which technologies or file types are affected?
-- Is this a hard rule or a preference?
+## 必要に応じて明確にする
+会話から明確なルールが浮かび上がらない場合は、以下を明確にしてください：
+- これは全体に適用するべきですか、それとも特定のファイルのみですか？
+- どのテクノロジーやファイルタイプが影響を受けますか？
+- これは絶対的なルールですか、それとも好みですか？
 
-Explore the codebase using subagents if you need more context.
+より多くのコンテキストが必要な場合は、サブエージェントを使用してコードベースを探索してください。
 
-## Iterate
-1. Draft the instruction and save it.
-2. Identify the most ambiguous or weak parts and ask about those.
-3. Once finalized, summarize what the instruction enforces, suggest example prompts to see it in action, and propose related customizations to create next.
+## イテレーション
+1. インストラクションのドラフトを作成して保存します。
+2. 最も曖昧または弱い部分を特定し、それについて質問します。
+3. 最終決定したら、インストラクションが何を強制するかを要約し、動作を確認するためのサンプルのプロンプトを提案し、次に作成する関連カスタマイズを提案します。
 
-Remember to follow the `agent-customization` guidelines to create highly effective instructions.
+効果的なインストラクションを作成するために、`agent-customization` ガイドラインに従うことを忘れないでください。

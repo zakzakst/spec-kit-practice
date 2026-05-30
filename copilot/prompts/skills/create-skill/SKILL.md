@@ -1,28 +1,28 @@
 ---
 name: create-skill
-description: 'Create a reusable skill (SKILL.md) that packages a workflow.'
-argument-hint: What should this skill produce?
+description: 'ワークフローをパッケージ化する再利用可能なスキル (SKILL.md) を作成します。'
+argument-hint: このスキルは何を出力するべきですか？
 disable-model-invocation: true
 ---
-Related skill: `agent-customization`. Load and follow **skills.md** for template and principles.
+関連スキル: `agent-customization`。テンプレートと原則については **skills.md** を読み込んで従ってください。
 
-Guide the user to create a `SKILL.md`.
+ユーザーをガイドして `SKILL.md` を作成します。
 
-## Extract from Conversation
-First, review the conversation history. If the user has been following a multi-step workflow or methodology (e.g., debugging approach, review checklist, implementation pattern), generalize that into a reusable skill. Extract:
-- The step-by-step process being followed
-- Decision points and branching logic
-- Quality criteria or completion checks
+## 会話から抽出する
+最初に、会話の履歴を確認してください。ユーザーが複数ステップのワークフローや方法論（例：デバッグアプローチ、レビューチェックリスト、実装パターン）に従っている場合、それを再利用可能なスキルとして一般化します。以下を抽出してください：
+- 従っているステップバイステップのプロセス
+- 決定ポイントと分岐ロジック
+- 品質基準や完了チェック
 
-## Clarify if Needed
-If no clear workflow emerges from the conversation, clarify:
-- What outcome should this skill produce?
-- Workspace-scoped or personal?
-- Quick checklist or full multi-step workflow?
+## 必要に応じて明確にする
+会話から明確なワークフローが浮かび上がらない場合は、以下を明確にしてください：
+- このスキルはどのような結果を生み出すべきですか？
+- ワークスペーススコープですか、それとも個人用ですか？
+- 簡単なチェックリストですか、それとも完全な複数ステップのワークフローですか？
 
-## Iterate
-1. Draft the skill and save it.
-2. Identify the most ambiguous or weak parts and ask about those.
-3. Once finalized, summarize what the skill produces, suggest example prompts to try it, and propose related customizations to create next.
+## イテレーション
+1. スキルのドラフトを作成して保存します。
+2. 最も曖昧または弱い部分を特定し、それについて質問します。
+3. 最終決定したら、スキルが何を出力するかを要約し、試すためのサンプルのプロンプトを提案し、次に作成する関連カスタマイズを提案します。
 
-Remember to follow the `agent-customization` guidelines to create highly effective skills.
+効果的なスキルを作成するために、`agent-customization` ガイドラインに従うことを忘れないでください。

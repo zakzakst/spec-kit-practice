@@ -1,14 +1,14 @@
 ---
 name: install-vscode-extension
-description: 'How to install a VS Code extension from an extension ID. Useful when the user wants to add new capabilities to their VS Code environment by installing extensions.'
+description: '拡張機能IDを使用してVS Code拡張機能をインストールする方法。ユーザーが拡張機能をインストールしてVS Code環境に新しい機能を追加したい場合に便利です。'
 ---
 
-# Installing VS Code extensions
+# VS Code 拡張機能のインストール
 
-1. VS Code extensions are identified by their unique extension ID, which typically follows the format `publisher.extensionName`. For example, the Python extension by Microsoft has the ID `ms-python.python`.
-2. To install a VS Code extension, you need to use the VS Code command `workbench.extensions.installExtension` and pass in the extension ID. The args are of the format:
+1. VS Code 拡張機能は通常、`publisher.extensionName` の形式に従う一意の拡張機能 ID によって識別されます。たとえば、Microsoft の Python 拡張機能の ID は `ms-python.python` です。
+2. VS Code 拡張機能をインストールするには、VS Code コマンド `workbench.extensions.installExtension` を使用し、拡張機能 ID を渡す必要があります。引数の形式は次のとおりです。
 ```
 [extensionId, { enable: true, installPreReleaseVersion: boolean }]
 ```
-> NOTE: install the pre-release version of the extension if the user explicitly mentions it or if the current environment is VS Code Insiders. Otherwise, install the stable version.
-3. Run that command via the `copilot_runVscodeCommand` tool. Make sure to pass the `skipCheck` argument as true to avoid checking if the command exists, as we know it does.
+> メモ: ユーザーが明示的に言及した場合、または現在の環境が VS Code Insiders である場合は、プレリリース版の拡張機能をインストールします。それ以外の場合は、安定版をインストールします。
+3. そのコマンドを `copilot_runVscodeCommand` ツール経由で実行します。コマンドが存在することはわかっているため、存在チェックを回避するために必ず `skipCheck` 引数を true に設定してください。

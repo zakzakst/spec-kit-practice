@@ -1,5 +1,5 @@
 ---
 name: chronicle:cost-tips
-description: Get personalized tips to reduce token usage and Copilot cost
+description: トークン使用量とCopilotのコストを削減するためのパーソナライズされたヒントを取得します
 ---
-Analyze my recent chat session history and give me personalized, data-grounded tips to reduce token usage and Copilot cost. Use the **chronicle** skill — it documents the `copilot_sessionStoreSql` tool, the session-store schema, and the Cost Tips workflow for finding expensive sessions, token-heavy patterns, and concrete habit changes.
+私の最近のチャットセッション履歴を分析し、トークン使用量とCopilotのコストを削減するためのデータに基づいたパーソナライズされたヒントを提供してください。**chronicle** スキルを使用してください。ここには `copilot_sessionStoreSql` ツール、セッションストアのスキーマ、そしてコストのかかるセッションやトークンを大量に消費するパターン、具体的な習慣の改善点を見つけるためのコストヒントのワークフローが文書化されています。

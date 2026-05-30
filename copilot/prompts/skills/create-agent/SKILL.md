@@ -1,28 +1,28 @@
 ---
 name: create-agent
-description: 'Create a custom agent (.agent.md) for a specific job.'
-argument-hint: What job should this agent do and how?
+description: '特定のジョブ用カスタムエージェント (.agent.md) を作成します。'
+argument-hint: このエージェントはどのようなジョブをどのように実行するべきですか？
 disable-model-invocation: true
 ---
-Related skill: `agent-customization`. Load and follow **agents.md** for template and principles.
+関連スキル: `agent-customization`。テンプレートと原則については **agents.md** を読み込んで従ってください。
 
-Guide the user to create an `.agent.md`.
+ユーザーをガイドして `.agent.md` を作成します。
 
-## Extract from Conversation
-First, review the conversation history. If the user has been using the agent in a specialized way (e.g., restricting tools, following a specific persona, focusing on certain file types), generalize that into a custom agent. Extract:
-- The specialized role or persona being assumed
-- Tool preferences (which to use, which to avoid)
-- The domain or job scope
+## 会話から抽出する
+最初に、会話の履歴を確認してください。ユーザーがエージェントを特殊な方法（例：ツールの制限、特定のペルソナに従う、特定のファイルタイプに焦点を当てる）で使用している場合、それをカスタムエージェントとして一般化します。以下を抽出してください：
+- 想定されている専門的な役割やペルソナ
+- ツールの好み（どれを使用し、どれを避けるべきか）
+- ドメインまたはジョブの範囲
 
-## Clarify if Needed
-If no clear specialization emerges from the conversation, clarify:
-- What job should this agent do?
-- When should it be picked over the default agent?
-- Which tools should it use (or avoid)?
+## 必要に応じて明確にする
+会話から明確な専門性が浮かび上がらない場合は、以下を明確にしてください：
+- このエージェントはどのようなジョブを実行するべきですか？
+- デフォルトのエージェントではなく、どのようなときにこのエージェントを選択するべきですか？
+- どのツールを使用（または回避）するべきですか？
 
-## Iterate
-1. Draft the agent file and save it.
-2. Identify the most ambiguous or weak parts and ask about those.
-3. Once finalized, summarize what the agent does, suggest example prompts to try it, and propose related customizations to create next.
+## イテレーション
+1. エージェントファイルのドラフトを作成して保存します。
+2. 最も曖昧または弱い部分を特定し、それについて質問します。
+3. 最終決定したら、エージェントが何を行うかを要約し、試すためのサンプルのプロンプトを提案し、次に作成する関連カスタマイズを提案します。
 
-Remember to follow the `agent-customization` guidelines to create highly effective agents.
+効果的なエージェントを作成するために、`agent-customization` ガイドラインに従うことを忘れないでください。

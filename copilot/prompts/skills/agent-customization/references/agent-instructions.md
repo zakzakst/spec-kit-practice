@@ -1,54 +1,54 @@
-# [agent instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
+# [agent instructions (エージェントインストラクション)](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
 
-Guidelines that automatically apply to all chat requests across your entire workspace.
+ワークスペース全体のすべてのチャットリクエストに自動的に適用されるガイドライン。
 
-## File Types (Choose One)
+## ファイルタイプ (1つ選択)
 
-| File | Location | Purpose |
+| ファイル | 場所 | 目的 |
 |------|----------|---------|
-| `copilot-instructions.md` | `.github/` | Project-wide standards (recommended, cross-editor) |
-| `AGENTS.md` | Root or subfolders | Open standard, monorepo hierarchy support |
+| `copilot-instructions.md` | `.github/` | プロジェクト全体の標準 (推奨、エディタ間共通) |
+| `AGENTS.md` | ルートまたはサブフォルダ | オープン標準、モノレポ階層をサポート |
 
-Use **only one**—not both.
+**1つだけ** を使用してください（両方は不可）。
 
-## Template
+## テンプレート
 
-Only include sections the workspace benefits from:
+ワークスペースに役立つセクションのみを含めてください。
 
 ```markdown
-# Project Guidelines
+# プロジェクトガイドライン
 
-## Code Style
-{Language and formatting preferences—reference key files that exemplify patterns}
+## コードスタイル
+{言語とフォーマットの好み—パターンを例示する重要なファイルを参照する}
 
-## Architecture
-{Major components, service boundaries, the "why" behind structural decisions}
+## アーキテクチャ
+{主要なコンポーネント、サービス境界、構造的決定の背景にある理由}
 
-## Build and Test
-{Commands to install, build, test—agents will attempt to run these}
+## ビルドとテスト
+{インストール、ビルド、テストのコマンド—エージェントはこれらの実行を試みます}
 
-## Conventions
-{Patterns that differ from common practices—include specific examples}
+## 規則
+{一般的な慣行とは異なるパターン—具体的な例を含めてください}
 ```
 
-For large repos, link to detailed docs instead of embedding: `See docs/TESTING.md for test conventions.`
+大規模なリポジトリの場合は、埋め込むのではなく詳細なドキュメントにリンクします: `テストの規則については docs/TESTING.md を参照してください。`
 
-## When to Use
+## 使用するタイミング
 
-- General coding standards that apply everywhere
-- Team preferences shared through version control
-- Project-wide requirements (testing, documentation)
+- どこにでも適用される一般的なコーディング標準
+- バージョン管理を通じて共有されるチームの好み
+- プロジェクト全体の要件 (テスト、ドキュメント)
 
-## Core Principles
+## 基本原則
 
-1. **Minimal by default**: Only what's relevant to *every* task
-2. **Concise and actionable**: Every line should guide behavior
-3. **Link, don't embed**: Reference docs instead of copying content. Search for existing docs (`docs/**/*.md`, `CONTRIBUTING.md`, etc.) and catalog what they cover—only inline agent-critical gotchas not documented elsewhere
-4. **Keep current**: Update when practices change
+1. **デフォルトで最小限**: *すべての*タスクに関連するもののみ
+2. **簡潔で実行可能**: すべての行が行動の指針となる必要があります
+3. **埋め込むのではなくリンクする**: コンテンツをコピーするのではなく、ドキュメントを参照します。既存のドキュメント (`docs/**/*.md`、`CONTRIBUTING.md` など) を検索して、それらがカバーする内容をカタログ化します—他で文書化されていない、エージェントにとって重要な注意事項のみをインライン化します
+4. **最新の状態に保つ**: 慣行が変更された場合は更新します
 
-## Anti-patterns
+## アンチパターン
 
-- **Using both file types**: Having both `copilot-instructions.md` and `AGENTS.md`
-- **Kitchen sink**: Everything instead of what matters most
-- **Duplicating docs**: Copying README instead of linking
-- **Obvious instructions**: Conventions already enforced by linters
+- **両方のファイルタイプを使用する**: `copilot-instructions.md` と `AGENTS.md` の両方を持つ
+- **詰め込みすぎ (Kitchen sink)**: 最も重要なことではなく、すべてを含める
+- **ドキュメントの複製**: リンクする代わりに README をコピーする
+- **明白な指示**: リンターによってすでに強制されている規則

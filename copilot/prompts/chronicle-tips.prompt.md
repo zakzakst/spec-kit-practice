@@ -1,5 +1,5 @@
 ---
 name: chronicle:tips
-description: Get personalized tips based on your chat session usage patterns
+description: チャットセッションの使用パターンに基づいたパーソナライズされたヒントを取得します
 ---
-Analyze my recent chat session history and give me personalized tips to improve my workflow. Use the **chronicle** skill — it documents the `copilot_sessionStoreSql` tool, the session-store schema, and the Tips workflow for investigating usage patterns from `sessions`, `turns`, `session_files`, and `session_refs`.
+私の最近のチャットセッション履歴を分析し、ワークフローを改善するためのパーソナライズされたヒントを提供してください。**chronicle** スキルを使用してください。ここには、`copilot_sessionStoreSql` ツール、セッションストアのスキーマ、および `sessions`、`turns`、`session_files`、`session_refs` から使用パターンを調査するための Tips ワークフローが文書化されています。

@@ -1,5 +1,5 @@
 ---
 name: chronicle:reindex
-description: Rebuild the local session index and sync to cloud
+description: ローカルのセッションインデックスを再構築し、クラウドと同期します
 ---
-Reindex my session store to pick up any missing sessions. Add 'force' to re-process already indexed sessions.
+セッションストアのインデックスを再構築し、不足しているセッションを取得してください。すでにインデックスされているセッションを再処理するには 'force' を追加してください。

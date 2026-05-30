@@ -1,100 +1,100 @@
 # [Agent Skills (SKILL.md)](https://code.visualstudio.com/docs/copilot/customization/agent-skills)
 
-Folders of instructions, scripts, and resources that agents load on-demand for specialized tasks.
+専門的なタスクのためにエージェントがオンデマンドで読み込む、インストラクション、スクリプト、リソースを含むフォルダ。
 
-## Structure
+## 構造
 
 ```
 .github/skills/<skill-name>/
-├── SKILL.md           # Required (name must match folder)
-├── scripts/           # Executable code
-├── references/        # Docs loaded as needed
-└── assets/            # Templates, boilerplate
+├── SKILL.md           # 必須（名前はフォルダと一致する必要があります）
+├── scripts/           # 実行可能なコード
+├── references/        # 必要に応じて読み込まれるドキュメント
+└── assets/            # テンプレート、ボイラープレート
 ```
 
-## Locations
+## ロケーション
 
-| Path | Scope |
+| パス | スコープ |
 |------|-------|
-| `.github/skills/<name>/` | Project |
-| `.agents/skills/<name>/` | Project |
-| `.claude/skills/<name>/` | Project |
-| `~/.copilot/skills/<name>/` | Personal |
-| `~/.agents/skills/<name>/` | Personal |
-| `~/.claude/skills/<name>/` | Personal |
+| `.github/skills/<name>/` | プロジェクト |
+| `.agents/skills/<name>/` | プロジェクト |
+| `.claude/skills/<name>/` | プロジェクト |
+| `~/.copilot/skills/<name>/` | 個人 |
+| `~/.agents/skills/<name>/` | 個人 |
+| `~/.claude/skills/<name>/` | 個人 |
 
-## SKILL.md Format
+## SKILL.md フォーマット
 
 ```yaml
 ---
-name: skill-name              # Required: 1-64 chars, lowercase alphanumeric + hyphens, must match folder
-description: 'What and when to use. Max 1024 chars.'
-argument-hint: 'Optional hint shown for slash invocation'
-user-invocable: true          # Optional: show as slash command (default: true)
-disable-model-invocation: false # Optional: disable automatic model-triggered loading
+name: skill-name              # 必須: 1〜64文字の英数字とハイフン、フォルダと一致する必要があります
+description: '目的と使用するタイミング。最大1024文字。'
+argument-hint: 'スラッシュ呼び出し時に表示されるオプションのヒント'
+user-invocable: true          # 任意: スラッシュコマンドとして表示（デフォルト: true）
+disable-model-invocation: false # 任意: モデルトリガーによる自動ロードを無効化
 ---
 ```
 
-### Body
+### 本文
 
-- What the skill accomplishes
-- When to use (triggers and use cases)
-- Step-by-step procedures
-- References to resources: `[script](./scripts/test.js)`
+- スキルが達成すること
+- 使用するタイミング（トリガーとユースケース）
+- 段階的な手順
+- リソースへの参照: `[script](./scripts/test.js)`
 
-## Template
+## テンプレート
 
 ```markdown
 ---
 name: webapp-testing
-description: 'Test web applications using Playwright. Use for verifying frontend, debugging UI, capturing screenshots.'
+description: 'Playwrightを使用してWebアプリケーションをテストします。フロントエンドの検証、UIのデバッグ、スクリーンショットのキャプチャに使用します。'
 ---
 
-# Web Application Testing
+# Web アプリケーション テスト
 
-## When to Use
-- Verify frontend functionality
-- Debug UI behavior
+## 使用するタイミング
+- フロントエンド機能の検証
+- UI 動作のデバッグ
 
-## Procedure
-1. Start the web server
-2. Run [test script](./scripts/test.js)
-3. Review screenshots in `./screenshots/`
+## 手順
+1. Webサーバーを起動します
+2. [テストスクリプト](./scripts/test.js) を実行します
+3. `./screenshots/` にあるスクリーンショットを確認します
 ```
 
-## Progressive Loading
+## プログレッシブローディング
 
-1. **Discovery** (~100 tokens): Agent reads `name` and `description`
-2. **Instructions** (<5000 tokens): Loads `SKILL.md` body when relevant
-3. **Resources**: Additional files load only when referenced
+1. **発見** (~100 トークン): エージェントが `name` と `description` を読み取ります
+2. **インストラクション** (<5000 トークン): 関連する場合に `SKILL.md` の本文を読み込みます
+3. **リソース**: 参照された場合にのみ追加のファイルが読み込まれます
 
-Keep file references one level deep from `SKILL.md`.
+ファイル参照は `SKILL.md` から 1 階層の深さに保ってください。
 
-## Slash Command Behavior
+## スラッシュコマンドの動作
 
-Skills and prompt files both appear after typing `/` in chat.
+スキルとプロンプトファイルはどちらも、チャットで `/` を入力した後に表示されます。
 
-| Configuration | Slash command | Auto-loaded |
+| 設定 | スラッシュコマンド | 自動ロード |
 |---|---|---|
-| Default (both omitted) | Yes | Yes |
-| `user-invocable: false` | No | Yes |
-| `disable-model-invocation: true` | Yes | No |
-| Both set | No | No |
+| デフォルト (両方省略) | はい | はい |
+| `user-invocable: false` | いいえ | はい |
+| `disable-model-invocation: true` | はい | いいえ |
+| 両方設定 | いいえ | いいえ |
 
-## When to Use
+## 使用するタイミング
 
-Repeatable, on-demand workflows with bundled assets (scripts, templates, reference docs).
+バンドルされたアセット (スクリプト、テンプレート、リファレンスドキュメント) を含む、繰り返し可能でオンデマンドのワークフロー。
 
-## Core Principles
+## 基本原則
 
-1. **Keyword-rich descriptions**: Include trigger words for discovery
-2. **Progressive loading**: Keep SKILL.md under 500 lines; use reference files
-3. **Relative paths**: Always use `./` for skill resources
-4. **Self-contained**: Include all procedural knowledge to complete the task
+1. **キーワードが豊富な説明**: 発見のためのトリガーワードを含めます
+2. **プログレッシブローディング**: SKILL.md を 500 行未満に保ちます。リファレンスファイルを使用します
+3. **相対パス**: スキルリソースには常に `./` を使用します
+4. **自己完結**: タスクを完了するためのすべての手順知識を含めます
 
-## Anti-patterns
+## アンチパターン
 
-- **Vague descriptions**: "A helpful skill" doesn't enable discovery
-- **Monolithic SKILL.md**: Everything in one file instead of references
-- **Name mismatch**: Folder name doesn't match `name` field
-- **Missing procedures**: Descriptions without step-by-step guidance
+- **曖昧な説明**: 「役立つスキル」では発見しにくくなります
+- **モノリシックな SKILL.md**: 参照を使わずにすべてを1つのファイルにまとめる
+- **名前の不一致**: フォルダ名が `name` フィールドと一致しない
+- **手順の欠落**: 段階的なガイダンスのない説明

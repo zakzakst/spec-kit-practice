@@ -1,28 +1,28 @@
 ---
 name: create-prompt
-description: 'Create a reusable prompt file (.prompt.md) for a common task.'
-argument-hint: What task should this prompt help with?
+description: '一般的なタスク用の再利用可能なプロンプトファイル (.prompt.md) を作成します。'
+argument-hint: このプロンプトはどのタスクに役立つべきですか？
 disable-model-invocation: true
 ---
-Related skill: `agent-customization`. Load and follow **prompts.md** for template and principles.
+関連スキル: `agent-customization`。テンプレートと原則については **prompts.md** を読み込んで従ってください。
 
-Guide the user to create a `.prompt.md`.
+ユーザーをガイドして `.prompt.md` を作成します。
 
-## Extract from Conversation
-First, review the conversation history. If the user has been working on a repeatable task pattern (e.g., explaining code, generating tests, refactoring), generalize that into a reusable prompt. Extract:
-- The core task being performed repeatedly
-- Any implicit inputs (selected code, file type, context)
-- The desired output format or style
+## 会話から抽出する
+最初に、会話の履歴を確認してください。ユーザーが反復可能なタスクパターン（例：コードの解説、テストの生成、リファクタリング）に取り組んでいる場合、それを再利用可能なプロンプトとして一般化します。以下を抽出してください：
+- 繰り返し実行されているコアタスク
+- 暗黙の入力（選択されたコード、ファイルタイプ、コンテキスト）
+- 希望する出力形式やスタイル
 
-## Clarify if Needed
-If no clear pattern emerges from the conversation, clarify:
-- What task should this prompt help with?
-- Should it take arguments or use fixed context?
-- Workspace-scoped or personal?
+## 必要に応じて明確にする
+会話から明確なパターンが浮かび上がらない場合は、以下を明確にしてください：
+- このプロンプトはどのタスクに役立つべきですか？
+- 引数を取るべきですか、それとも固定のコンテキストを使用するべきですか？
+- ワークスペーススコープですか、それとも個人用ですか？
 
-## Iterate
-1. Draft the prompt and save it.
-2. Identify the most ambiguous or weak parts and ask about those.
-3. Once finalized, summarize what the prompt does, suggest example invocations, and propose related customizations to create next.
+## イテレーション
+1. プロンプトのドラフトを作成して保存します。
+2. 最も曖昧または弱い部分を特定し、それについて質問します。
+3. 最終決定したら、プロンプトが何を行うかを要約し、サンプルの呼び出しを提案し、次に作成する関連カスタマイズを提案します。
 
-Remember to follow the `agent-customization` guidelines to create highly effective prompts.
+効果的なプロンプトを作成するために、`agent-customization` ガイドラインに従うことを忘れないでください。

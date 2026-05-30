@@ -1,80 +1,80 @@
 # [Prompts (.prompt.md)](https://code.visualstudio.com/docs/copilot/customization/prompt-files)
 
-Reusable task templates triggered on-demand in chat. Single focused task with parameterized inputs.
+チャットでオンデマンドでトリガーされる、再利用可能なタスクテンプレート。パラメータ化された入力を持つ、単一の的を絞ったタスク。
 
-## Locations
+## ロケーション
 
-| Path | Scope |
+| パス | スコープ |
 |------|-------|
-| `.github/prompts/*.prompt.md` | Workspace |
-| `<profile>/prompts/*.prompt.md` | User profile |
+| `.github/prompts/*.prompt.md` | ワークスペース |
+| `<profile>/prompts/*.prompt.md` | ユーザープロファイル |
 
 ## Frontmatter
 
 ```yaml
 ---
-description: "<recommended>" # Optional, but improves discoverability
-name: "Prompt Name"          # Optional, defaults to filename
-argument-hint: "Task..."     # Optional: hint shown in chat input
-agent: "agent"               # Optional: ask, agent, plan, or custom agent
-model: "GPT-5 (copilot)"     # Optional: selected model, or fallback array
-tools: [search, web]    # Optional: built-in, tool sets, MCP (<server>/*), extension
+description: "<推奨>"       # 任意ですが、発見しやすさが向上します
+name: "Prompt Name"          # 任意、デフォルトはファイル名
+argument-hint: "タスク..."     # 任意: チャット入力欄に表示されるヒント
+agent: "agent"               # 任意: ask、agent、plan、またはカスタムエージェント
+model: "GPT-5 (copilot)"     # 任意: 選択されたモデル、またはフォールバック配列
+tools: [search, web]         # 任意: 組み込み、ツールセット、MCP (<server>/*)、拡張機能
 ---
 ```
 
-Model fallback is supported:
+モデルのフォールバックがサポートされています:
 
 ```yaml
 model: ['GPT-5 (copilot)', 'Claude Sonnet 4.5 (copilot)']
 ```
 
-## Template
+## テンプレート
 
 ```markdown
 ---
-description: "Generate test cases for selected code"
+description: "選択したコードのテストケースを生成します"
 agent: "agent"
 ---
-Generate comprehensive test cases for the provided code:
-- Include edge cases and error scenarios
-- Follow existing test patterns in the codebase
-- Use descriptive test names
+提供されたコードの包括的なテストケースを生成してください:
+- エッジケースとエラーシナリオを含める
+- コードベース内の既存のテストパターンに従う
+- わかりやすいテスト名を使用する
 ```
 
-**Context references**: Use Markdown links for files (`[config](./config.json)`) and `#tool:<name>` for tools.
+**コンテキストの参照**: ファイルには Markdown リンク (`[config](./config.json)`)、ツールには `#tool:<name>` を使用します。
 
-## Invocation
+## 呼び出し方法
 
-- **Chat**: Type `/` → select from prompts and skills
-- **Command**: `Chat: Run Prompt...`
-- **Editor**: Open prompt file → play button
+- **チャット**: `/` を入力してプロンプトやスキルから選択します
+- **コマンド**: `Chat: Run Prompt...`
+- **エディタ**: プロンプトファイルを開く → 再生ボタン
 
-> Both prompts and skills appear as slash commands in chat. Skills provide multi-step workflows with bundled assets; prompts are single focused tasks.
+> プロンプトとスキルの両方がチャットでスラッシュコマンドとして表示されます。スキルはアセットがバンドルされたマルチステップのワークフローを提供し、プロンプトは単一の的を絞ったタスクを提供します。
 
-**Tip**: Use `chat.promptFilesRecommendations` to show prompts as actions when starting a new chat.
+**ヒント**: 新しいチャットを開始する際のアクションとしてプロンプトを表示するには、`chat.promptFilesRecommendations` を使用します。
 
-## Tool Priority
+## ツールの優先順位
 
-When both prompt and custom agent define tools:
-1. Tools from prompt file
-2. Tools from referenced custom agent
-3. Default tools for selected agent
+プロンプトとカスタムエージェントの両方でツールが定義されている場合:
+1. プロンプトファイルからのツール
+2. 参照されたカスタムエージェントからのツール
+3. 選択されたエージェントのデフォルトツール
 
-## When to Use
+## 使用するタイミング
 
-- Generate test cases for specific code
-- Create READMEs from specs
-- Summarize metrics with custom parameters
-- One-off generation tasks
+- 特定のコードのテストケースの生成
+- 仕様から README を作成する
+- カスタムパラメータを使用してメトリクスを要約する
+- 1回限りの生成タスク
 
-## Core Principles
+## 基本原則
 
-1. **Single task focus**: One prompt = one well-defined task
-2. **Output examples**: Show expected format when quality depends on structure
-3. **Reuse over duplication**: Reference instruction files instead of copying
+1. **単一のタスクへのフォーカス**: 1つのプロンプト = 1つの明確に定義されたタスク
+2. **出力の例**: 品質が構造に依存する場合に期待されるフォーマットを表示します
+3. **複製よりも再利用**: コピーする代わりにインストラクションファイルを参照します
 
-## Anti-patterns
+## アンチパターン
 
-- **Multi-task prompts**: "create and test and deploy" in one prompt
-- **Vague descriptions**: Descriptions that don't help users understand when to use
-- **Over-tooling**: Many tools when the task only needs search or file access
+- **マルチタスクのプロンプト**: 1つのプロンプトで「作成してテストしてデプロイする」
+- **曖昧な説明**: いつ使用するべきかユーザーが理解するのに役立たない説明
+- **過剰なツール**: タスクには検索やファイルアクセスのみが必要な場合に多くのツールを指定する

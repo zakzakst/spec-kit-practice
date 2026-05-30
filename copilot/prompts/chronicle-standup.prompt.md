@@ -1,5 +1,5 @@
 ---
 name: chronicle:standup
-description: Generate a standup report from recent chat sessions
+description: 最近のチャットセッションからスタンドアップレポートを生成します
 ---
-Generate a standup report from my recent coding sessions. Use the **chronicle** skill — it documents the `copilot_sessionStoreSql` tool and the Standup workflow (call with `action: "standup"` to pre-fetch the last 24h of sessions, turns, files, and refs).
+私の最近のコーディングセッションからスタンドアップレポートを生成してください。**chronicle** スキルを使用してください。ここには `copilot_sessionStoreSql` ツールとスタンドアップのワークフロー（直近24時間のセッション、ターン、ファイル、参照を事前取得するために `action: "standup"` で呼び出す）が文書化されています。

@@ -1,11 +1,11 @@
 ---
 name: project-setup-info-context7
-description: "Comprehensive setup steps to help the user create complete project structures in a VS Code workspace. This tool is designed for full project initialization and scaffolding, not for creating individual files. When to use this tool: when the user wants to create a new complete project from scratch; when setting up entire project frameworks (TypeScript projects, React apps, Node.js servers, etc.); when initializing Model Context Protocol (MCP) servers with full structure; when creating VS Code extensions with proper scaffolding; when setting up Next.js, Vite, or other framework-based projects; when the user asks for \"new project\", \"create a workspace\", or \"set up a [framework] project\"; when you need to establish a complete development environment with dependencies, config files, and folder structure. When NOT to use this tool: when creating single files or small code snippets; when adding individual files to existing projects; when making modifications to existing codebases; when the user asks to \"create a file\" or \"add a component\"; for simple code examples or demonstrations; for debugging or fixing existing code. This tool provides complete project setup including folder structure creation, package.json and dependency management, configuration files (tsconfig, eslint, etc.), initial boilerplate code, development environment setup, and build and run instructions. Use other file creation tools for individual files within existing projects."
+description: "ユーザーが VS Code ワークスペースに完全なプロジェクト構造を作成するのに役立つ包括的なセットアップ手順。このツールは、個々のファイルを作成するためではなく、プロジェクト全体の初期化とスキャフォールディングを目的として設計されています。このツールを使用するタイミング: ユーザーがゼロから新しい完全なプロジェクトを作成したい場合。プロジェクトフレームワーク全体 (TypeScript プロジェクト、React アプリ、Node.js サーバーなど) をセットアップする場合。完全な構造を持つ Model Context Protocol (MCP) サーバーを初期化する場合。適切なスキャフォールディングを持つ VS Code 拡張機能を作成する場合。Next.js、Vite、またはその他のフレームワークベースのプロジェクトをセットアップする場合。ユーザーが「新しいプロジェクト」、「ワークスペースの作成」、または「[フレームワーク]プロジェクトのセットアップ」を求めている場合。依存関係、構成ファイル、フォルダー構造を備えた完全な開発環境を確立する必要がある場合。このツールを使用しないタイミング: 単一のファイルまたは小さなコード スニペットを作成する場合。既存のプロジェクトに個々のファイルを追加する場合。既存のコードベースを変更する場合。ユーザーが「ファイルの作成」または「コンポーネントの追加」を求めている場合。単純なコード例やデモンストレーションの場合。既存のコードのデバッグや修正の場合。このツールは、フォルダー構造の作成、package.json と依存関係の管理、構成ファイル (tsconfig、eslint など)、初期のボイラープレート コード、開発環境のセットアップ、ビルドおよび実行手順を含む、完全なプロジェクトセットアップを提供します。既存のプロジェクト内の個々のファイルには、他のファイル作成ツールを使用してください。"
 ---
 
-# How to setup a project using context7 tools
+# context7 ツールを使用してプロジェクトをセットアップする方法
 
-Use context7 tools to find the latest libraries, APIs, and documentation to help the user create and customize their project. Only setup a project if the folder is empty or if you've just called the tool first calling the tool to create a workspace.
+context7 ツールを使用して、最新のライブラリ、API、ドキュメントを検索し、ユーザーがプロジェクトを作成してカスタマイズできるようにします。フォルダーが空の場合、またはワークスペースを作成するために最初にツールを呼び出した直後の場合にのみ、プロジェクトをセットアップしてください。
 
-1. Call the `mcp_context7_resolve-library-id` tool with your project requirements.
-2. Call the `mcp_context7_get-library-docs` tool to get scaffolding instructions.
+1. プロジェクトの要件を基に `mcp_context7_resolve-library-id` ツールを呼び出します。
+2. `mcp_context7_get-library-docs` ツールを呼び出して、スキャフォールディングの指示を取得します。

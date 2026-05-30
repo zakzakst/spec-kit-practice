@@ -1,71 +1,61 @@
-# [File-Specific Instructions (.instructions.md)](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
+# [Instructions (.instructions.md)](https://code.visualstudio.com/docs/copilot/customization/custom-instructions#instructions-files)
 
-Guidelines loaded on-demand when relevant to the current task, or explicitly when files match a pattern.
+特定のファイルセットまたはディレクトリに自動的に適用される的を絞ったルール。
 
-## Locations
+## ロケーション
 
-| Path | Scope |
+| パス | スコープ |
 |------|-------|
-| `.github/instructions/*.instructions.md` | Workspace |
-| `<profile>/instructions/*.instructions.md` | User profile |
+| `.github/instructions/*.instructions.md` | ワークスペース |
+| `<profile>/instructions/*.instructions.md` | ユーザープロファイル |
+| `.agents/instructions/*.instructions.md` | 代替のワークスペースパス |
 
 ## Frontmatter
 
 ```yaml
 ---
-description: "<required>"    # For on-demand discovery—keyword-rich
-name: "Instruction Name"     # Optional, defaults to filename
-applyTo: "**/*.ts"           # Optional, auto-attach for matching files
+description: "Reactコンポーネント用" # 任意: 人間が読むための説明
+applyTo: # 必須: Globパターンの配列
+  - "src/components/**/*.tsx"
+  - "src/hooks/**/*.ts"
 ---
 ```
 
-## Discovery Modes
-
-| Mode | Trigger | Use Case |
-|------|---------|----------|
-| **On-demand** (`description`) | Agent detects task relevance | Task-based: migrations, refactoring, API work |
-| **Explicit** (`applyTo`) | Files matching glob in context | File-based: language standards, framework rules |
-| **Manual** | `Add Context` → `Instructions` | Ad-hoc attachment |
-
-## Template
+## テンプレート
 
 ```markdown
 ---
-description: "Use when writing database migrations, schema changes, or data transformations. Covers safety checks and rollback patterns."
+description: "Reactのベストプラクティス"
+applyTo:
+  - "src/components/**/*.tsx"
 ---
-# Migration Guidelines
 
-- Always create reversible migrations
-- Test rollback before merging
-- Never drop columns in the same release as code removal
+## 状態管理
+- クラスコンポーネントではなく、Hooks（`useState`、`useEffect`）を使用します
+- コンポーネントツリーの奥深くにある状態には `useContext` を使用します
+
+## スタイリング
+- インラインスタイルではなく、CSSモジュールを使用します
+- 共有変数については `styles/theme.css` を参照してください
 ```
 
-Note the "Use when..." pattern in the description—this helps on-demand discovery.
+## 使用するタイミング
 
-## Explicit File Matching (optional)
+- 特定のテクノロジーに関するガイドライン（例: React、TypeScript、Go）
+- テストフレームワークのルール（例: Cypress、Jest）
+- 特定のディレクトリでのディレクトリ固有の規約（例: `api/` 対 `ui/`）
+- API統合パターン
 
-Use `applyTo` when the instruction applies to specific file types or folders:
+## 基本原則
 
-```yaml
-applyTo: "**"                           # ALWAYS included, no matter the file or description (use with caution)
-applyTo: "**/*.py"                      # All Python files
-applyTo: ["src/**", "lib/**"]           # Multiple patterns (OR)
-applyTo: src/**, lib/**                 # Multiple patterns without array syntax (OR)
-applyTo: "src/api/**/*.ts"              # Specific folder + extension
-```
+1. **的を絞る**: `applyTo` を使用して関連するファイルに限定します。`**/*.ts`（すべて）のような指定は避け、`src/api/**/*.ts`（特定のもの）のようにします
+2. **具体的**: 漠然とした原則ではなく、正確なパターンと例を提供します
+3. **直交性**: それぞれの `.instructions.md` ファイルが重なり合うことなく、個別の懸念事項（テスト、スタイリング、APIなど）をカバーするようにします
+4. **見せる、語らない**: 長い説明よりも簡潔なコード例を提供します
 
-Applied when creating or modifying matching files, not for read-only operations.
+## アンチパターン
 
-## Core Principles
-
-1. **Keyword-rich descriptions**: Include trigger words for on-demand discovery
-2. **One concern per file**: Separate files for testing, styling, documentation
-3. **Concise and actionable**: Share context window—keep focused
-4. **Show, don't tell**: Brief code examples over lengthy explanations
-
-## Anti-patterns
-
-- **Vague descriptions**: "Helpful coding tips" doesn't enable discovery
-- **Overly broad applyTo**: `"**"` with content only relevant to specific files
-- **Duplicating docs**: Copy README instead of linking
-- **Mixing concerns**: Testing + API design + styling in one file
+- **曖昧な説明**: 「役立つコーディングのヒント」では発見しにくくなります
+- **広すぎる適用**: 適用先を `"**"` にしつつ、特定のファイルにしか関連しないコンテンツを含める
+- **ドキュメントの複製**: リンクする代わりに README をコピーする
+- **関心事の混在**: テスト + API設計 + スタイリングを1つのファイルにまとめる

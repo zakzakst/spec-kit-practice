@@ -1,48 +1,48 @@
 ---
 name: init
-description: Generate or update chat customization files for AI coding agents
-argument-hint: Optionally specify a focus area or pattern to document for agents
+description: AIコーディングエージェント用のチャットカスタマイズファイルを生成または更新します
+argument-hint: エージェント向けに文書化する重点領域またはパターンをオプションで指定します
 disable-model-invocation: true
 ---
 
-The purpose of this command is to create or update chat customization files
-- the agent instructions file (`.github/copilot-instructions.md` or `AGENTS.md`) to help AI coding agents understand the codebase and be immediately productive
-- skills and custom agents to automate common tasks or enforce conventions in the codebase
+このコマンドの目的は、チャットカスタマイズファイルを作成または更新することです。
+- エージェントインストラクションファイル (`.github/copilot-instructions.md` または `AGENTS.md`) : AI コーディングエージェントがコードベースを理解し、すぐに生産性を発揮できるようにします。
+- スキルとカスタムエージェント : コードベース内の一般的なタスクを自動化したり、規則を適用したりします。
 
-The user can optionally call this command with an argument. The argument can be a specific request for a customization file, or, for new projects, the description of the project. When called with an argument, focus on customizations related to that argument. Only create or modify chat customization files. Never start working on a task in the argument.
+ユーザーは、オプションで引数を指定してこのコマンドを呼び出すことができます。引数には、特定のカスタマイズファイルのリクエスト、または新しいプロジェクトの場合はプロジェクトの説明を指定できます。引数が指定されて呼び出された場合は、その引数に関連するカスタマイズに焦点を当てます。チャットカスタマイズファイルの作成または変更のみを行います。引数のタスクの作業を絶対に開始しないでください。
 
-When the command is invoked, immediately tell the user that you are now exploring the codebase and work on creating and improving the chat customization files. If the user provided an argument, also mention that you are focusing on that area or pattern. Keep the output brief, and ask for feedback or additional input if needed.
+コマンドが呼び出されたらすぐに、コードベースを探索し、チャットカスタマイズファイルの作成と改善に取り組んでいることをユーザーに伝えてください。ユーザーが引数を提供した場合は、その領域またはパターンに焦点を当てていることも伝えます。出力を簡潔に保ち、必要に応じてフィードバックや追加の入力を求めてください。
 
-Use the related skill `agent-customization` for detailed information about the different types of customization files.
-Explore the codebase to get a good understanding of the project and its conventions, and then create or update the relevant chat customization files to help AI coding agents be productive in this codebase.
+さまざまな種類のカスタマイズファイルに関する詳細情報については、関連スキル `agent-customization` を使用してください。
+コードベースを探索してプロジェクトとその規則をよく理解し、AI コーディングエージェントがこのコードベースで生産的になるのを支援する関連チャットカスタマイズファイルを作成または更新します。
 
-When complete, print a table of the added or modified chat customization files, along with a short explanation why this file is useful to the AI coding agents.
+完了したら、追加または変更されたチャットカスタマイズファイルの表と、このファイルが AI コーディングエージェントにとってなぜ有用であるかの短い説明を出力します。
 
-## Workflow
+## ワークフロー
 
-1. **Discover existing conventions**
-   Search: `**/{.github/copilot-instructions.md,AGENT.md,AGENTS.md,CLAUDE.md,.cursorrules,.windsurfrules,.clinerules,.cursor/rules/**,.windsurf/rules/**,.clinerules/**,README.md}`
+1. **既存の規則の発見**
+   検索: `**/{.github/copilot-instructions.md,AGENT.md,AGENTS.md,CLAUDE.md,.cursorrules,.windsurfrules,.clinerules,.cursor/rules/**,.windsurf/rules/**,.clinerules/**,README.md}`
 
-2. **Explore the codebase** via subagent, 1-3 in parallel if needed
-   Find essential knowledge that helps an AI agent be immediately productive:
-   - Build/test commands (agents run these automatically)
-   - Architecture decisions and component boundaries
-   - Project-specific conventions that differ from common practices
-   - Potential pitfalls or common development environment issues
-   - Key files/directories that exemplify patterns
+2. **コードベースの探索** (必要に応じてサブエージェントを1〜3個並行で利用)
+   AIエージェントがすぐに生産性を発揮するのに役立つ必須知識を見つけます。
+   - ビルド/テストコマンド (エージェントはこれらを自動的に実行します)
+   - アーキテクチャの決定とコンポーネントの境界
+   - 一般的な慣行とは異なるプロジェクト固有の規則
+   - 潜在的な落とし穴や一般的な開発環境の問題
+   - パターンを例示する主要なファイル/ディレクトリ
 
-   Also inventory existing documentation (`docs/**/*.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, etc.) to identify topics that should be linked, not duplicated.
+   また、既存のドキュメント (`docs/**/*.md`、`CONTRIBUTING.md`、`ARCHITECTURE.md` など) のインベントリを作成して、複製するのではなくリンクすべきトピックを特定します。
 
-3. **Generate or merge**
-   - New file: Prefer AGENTS.md over `.github/copilot-instructions.md`. If the user already has one of these files, update it instead of creating a new one.
-   - Existing file: Preserve valuable content, update outdated sections, remove duplication
-   - Follow the guidelines in the `agent-customization` skill: 
-      1. **Link, don't embed** principle. Do not copy existing documentation that exists in the workspace, link to them with a Markdown link instead.
-      2. **Minimal by default**: Only what's relevant and can not be easely discovered by an agent should be included. Link to other documentation for details.
-      3. **Concise and actionable**: Every line should guide behavior
+3. **生成またはマージ**
+   - 新規ファイル: `.github/copilot-instructions.md` よりも `AGENTS.md` を優先します。ユーザーがすでにこれらのファイルのいずれかを持っている場合は、新しいファイルを作成するのではなくそれを更新します。
+   - 既存のファイル: 価値のあるコンテンツを保持し、古いセクションを更新し、重複を削除します。
+   - `agent-customization` スキルのガイドラインに従ってください:
+      1. **埋め込むのではなくリンクする** 原則。ワークスペースに存在する既存のドキュメントをコピーするのではなく、代わりに Markdown リンクでリンクしてください。
+      2. **デフォルトで最小限**: エージェントが簡単に見つけることができない関連事項のみを含める必要があります。詳細については他のドキュメントにリンクしてください。
+      3. **簡潔で実行可能**: すべての行が行動の指針となる必要があります。
 
-4. **Iterate**
-   - Ask for feedback on unclear or incomplete sections
-   - If the workspace is complex, suggest creating separate instructions files or skills for specific areas (e.g., frontend, backend, tests)
+4. **イテレーション**
+   - 不明確なセクションや不完全なセクションについてフィードバックを求めます。
+   - ワークスペースが複雑な場合は、特定の領域 (フロントエンド、バックエンド、テストなど) に対して個別のインストラクションファイルやスキルを作成することを提案します。
 
-Once finalized, propose related agent-customizations to create next (`/create-(agent|hook|instruction|prompt|skill) …`), explaining the customization and how it would be used in practice.
+最終決定したら、次に作成する関連エージェントカスタマイズ (`/create-(agent|hook|instruction|prompt|skill) …`) を提案し、カスタマイズとその実際の使用方法を説明します。

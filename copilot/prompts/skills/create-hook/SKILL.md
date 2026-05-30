@@ -1,28 +1,28 @@
 ---
 name: create-hook
-description: 'Create a hook (.json) to enforce policy or automate agent lifecycle events.'
-argument-hint: What should be enforced or automated?
+description: 'ポリシーを適用したり、エージェントのライフサイクルイベントを自動化したりするためのフック (.json) を作成します。'
+argument-hint: 何を適用または自動化するべきですか？
 disable-model-invocation: true
 ---
-Related skill: `agent-customization`. Load and follow **hooks.md** for template and principles.
+関連スキル: `agent-customization`。テンプレートと原則については **hooks.md** を読み込んで従ってください。
 
-Guide the user to create a hook in `.github/hooks/`.
+ユーザーをガイドして `.github/hooks/` にフックを作成します。
 
-## Extract from Conversation
-First, review the conversation history. If the user has been expressing concerns about agent behavior (e.g., "don't run this command", "always check before doing X", "inject this context"), generalize that into a hook. Extract:
-- Actions that should be blocked or gated
-- Context that should be injected at certain points
-- Automation needs at session start/end or tool use
+## 会話から抽出する
+最初に、会話の履歴を確認してください。ユーザーがエージェントの動作について懸念（例：「このコマンドを実行しない」「Xを行う前に必ず確認する」「このコンテキストを注入する」）を表明している場合、それをフックとして一般化します。以下を抽出してください：
+- ブロックまたは制限するべきアクション
+- 特定のポイントで注入されるべきコンテキスト
+- セッションの開始/終了時またはツールの使用時の自動化のニーズ
 
-## Clarify if Needed
-If no clear policy need emerges from the conversation, clarify:
-- What event should trigger this hook? (e.g. PreToolUse, SessionStart, Stop)
-- Should it block, warn, or inject context?
-- Does it need a companion script?
+## 必要に応じて明確にする
+会話から明確なポリシーの必要性が浮かび上がらない場合は、以下を明確にしてください：
+- どのイベントがこのフックをトリガーするべきですか？（例：PreToolUse、SessionStart、Stop）
+- ブロック、警告、またはコンテキストの注入のどれを行うべきですか？
+- コンパニオンスクリプトが必要ですか？
 
-## Iterate
-1. Draft the hook JSON (and any scripts) and save them.
-2. Identify the most ambiguous or weak parts and ask about those.
-3. Once finalized, summarize what the hook enforces, suggest ways to test it, and propose related customizations to create next.
+## イテレーション
+1. フックのJSON（および任意のスクリプト）のドラフトを作成して保存します。
+2. 最も曖昧または弱い部分を特定し、それについて質問します。
+3. 最終決定したら、フックが何を強制するかを要約し、それをテストする方法を提案し、次に作成する関連カスタマイズを提案します。
 
-Remember to follow the `agent-customization` guidelines to create highly effective hooks.
+効果的なフックを作成するために、`agent-customization` ガイドラインに従うことを忘れないでください。

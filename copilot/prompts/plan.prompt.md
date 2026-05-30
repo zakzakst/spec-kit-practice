@@ -1,7 +1,7 @@
 ---
 name: plan
-description: Research and plan with the Plan agent
+description: Plan エージェントを使用して調査および計画を行います
 agent: Plan
-argument-hint: Describe what you want to plan or research
+argument-hint: 計画または調査したい内容を記述してください
 ---
-Plan my task.
+タスクの計画を立ててください。

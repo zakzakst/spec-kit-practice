@@ -1,96 +1,64 @@
 # [Hooks (.json)](https://code.visualstudio.com/docs/copilot/customization/hooks)
 
-Deterministic lifecycle automation for agent sessions. Use hooks to enforce policy, automate validation, and inject runtime context.
+エージェントのライフサイクルイベントに対する検証、コンテキストの注入、または自動化。
 
-## Locations
+## イベントとロケーション
 
-| Path | Scope |
-|------|-------|
-| `.github/hooks/*.json` | Workspace (team-shared) |
-| `.claude/settings.local.json` | Workspace local (not committed) |
-| `.claude/settings.json` | Workspace |
-| `~/.claude/settings.json` | User profile |
+| フック | トリガー | 主な用途 | ロケーション |
+|------|---------|-------------|----------|
+| `PreToolUse` | ツール実行の直前 | ポリシー検証、ゲートキーピング | `.github/hooks/` |
+| `PostToolUse` | ツール実行の直後 | ロギング、後処理 | `.github/hooks/` |
+| `PreChatResponse` | モデルからの応答直前 | PII（個人識別情報）のスクラブ、フォーマット | `.github/hooks/` |
 
-Hooks from all configured locations are collected and executed; workspace and user hooks do not override each other.
-
-## Hook Events
-
-| Event | Trigger |
-|------|-------|
-| `SessionStart` | First prompt of a new agent session |
-| `UserPromptSubmit` | User submits a prompt |
-| `PreToolUse` | Before tool invocation |
-| `PostToolUse` | After successful tool invocation |
-| `PreCompact` | Before context compaction |
-| `SubagentStart` | Subagent starts |
-| `SubagentStop` | Subagent ends |
-| `Stop` | Agent session ends |
-
-## Configuration Format
+## JSON 形式 (例)
 
 ```json
 {
-  "hooks": {
-    "PreToolUse": [
-      {
-        "type": "command",
-        "command": "./scripts/validate-tool.sh",
-        "timeout": 15
-      }
-    ]
+  "name": "prevent-force-push",
+  "description": "git push --force をブロックする",
+  "event": "PreToolUse",
+  "tools": ["run_command"],
+  "handler": {
+    "type": "command",
+    "command": "node .github/scripts/check-push.js"
   }
 }
 ```
 
-Each hook command supports:
-- `type` (must be `command`)
-- `command` (default)
-- `windows`, `linux`, `osx` (platform overrides)
-- `cwd`, `env`, `timeout`
+## コンパニオンスクリプト
 
-## Input / Output Contract
+フックは処理をスクリプト（JS、Python、Bash など）に委任します。スクリプトは標準入力（stdin）から JSON を受け取り、JSON を標準出力（stdout）に出力する必要があります。
 
-Hooks receive JSON on stdin and can return JSON on stdout.
+```javascript
+// check-push.js の例
+const input = JSON.parse(fs.readFileSync(0, 'utf8'));
 
-- Common output: `continue`, `stopReason`, `systemMessage`
-- `PreToolUse` permissions are read from `hookSpecificOutput.permissionDecision` (`allow` | `ask` | `deny`)
-- `PostToolUse` output can block further processing with `decision: block`
-
-`PreToolUse` example output:
-
-```json
-{
-  "hookSpecificOutput": {
-    "hookEventName": "PreToolUse",
-    "permissionDecision": "ask",
-    "permissionDecisionReason": "Needs user confirmation"
-  }
+if (input.tool.arguments.CommandLine.includes('git push --force')) {
+  console.log(JSON.stringify({
+    action: "Block",
+    reason: "Force push is prohibited by policy."
+  }));
+} else {
+  console.log(JSON.stringify({ action: "Continue" }));
 }
 ```
 
-Exit codes:
-- `0` success
-- `2` blocking error
-- Other values produce non-blocking warnings
+## 使用するタイミング
 
-## Hooks vs Other Customizations
+- 破壊的なアクションやポリシー違反のブロック
+- 機密情報のフィルタリング
+- 特定のツールの使用時におけるリソースからの自動コンテキスト注入
+- チーム全体でのワークフローの自動化
 
-| Primitive | Behavior |
-|------|-------|
-| Instructions / Prompts / Skills / Agents | Guidance (non-deterministic) |
-| Hooks | Runtime enforcement and deterministic automation |
+## 基本原則
 
-Use hooks when behavior must be guaranteed (for example: block dangerous commands, force validation, auto-inject context).
+1. **スコープを絞る**: 複数のツールではなく、特定のツール名にターゲットを絞ります
+2. **高速に保つ**: フックは同期処理されるため、時間のかかる操作をブロックします。高速に終了するようにします
+3. **明確な理由**: ブロックする際は、常に有用なガイダンス付きの明確な理由を提供します
+4. **フェイルセーフ**: ハンドラースクリプトが安全に失敗し、実行をブロックしないようにします
 
-## Core Principles
+## アンチパターン
 
-1. Keep hooks small and auditable
-2. Validate and sanitize hook inputs
-3. Avoid hardcoded secrets in scripts
-4. Prefer workspace hooks for team policy, user hooks for personal automation
-
-## Anti-patterns
-
-- Running long hooks that block normal flow
-- Using hooks where plain instructions are sufficient
-- Letting agents edit hook scripts without approval controls
+- **時間のかかるフック**: フック内で時間のかかるネットワークリクエストやビルドを行う
+- **広範な適用**: ツール名を指定せずにすべてにマッチさせ、オーバーヘッドを増加させる
+- **沈黙の失敗**: エラー時にログを残さずにクラッシュするコンパニオンスクリプト

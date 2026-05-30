@@ -1,296 +1,238 @@
 ---
 name: chronicle
-description: Analyze Copilot session history for standup reports, usage tips, session search, and session reindexing. Use when the user asks for a standup, daily summary, usage tips, workflow recommendations, wants to search or find past sessions by keyword/file/PR, wants to reindex their session store, or asks about deleting session data.
+description: Copilot のセッション履歴を分析し、スタンドアップレポート、使用ヒント、セッション検索、セッションの再インデックスを行います。ユーザーがスタンドアップや日次サマリーを求めるとき、使用ヒントやワークフローの推奨、キーワード・ファイル・PRによる過去セッションの検索・再インデックス、またはセッションデータの削除について尋ねるときに使用します。
 ---
 
 # Chronicle
 
-Analyze the user's Copilot session history using the `copilot_sessionStoreSql` tool. This skill handles standup reports, usage analysis, session search, and session store maintenance.
+`copilot_sessionStoreSql` ツールを使用して、ユーザーの Copilot セッション履歴を分析します。このスキルは、スタンドアップレポート、使用状況の分析、セッション検索、セッションストアのメンテナンスを担います。
 
-Sessions may be stored locally (SQLite) and optionally synced to the cloud for cross-device access. Cloud sync is controlled by the `chat.sessionSync.enabled` setting.
+セッションはローカル（SQLite）に保存され、クロスデバイスアクセスのためにオプションでクラウドに同期されます。クラウド同期は `chat.sessionSync.enabled` 設定で制御されます。
 
-**Prerequisite:** Chronicle requires the `github.copilot.chat.localIndex.enabled` setting to be `true`. If the `copilot_sessionStoreSql` tool is not available, tell the user to enable this setting in VS Code Settings.
+**前提条件:** Chronicle を使用するには、`github.copilot.chat.localIndex.enabled` 設定が `true` である必要があります。`copilot_sessionStoreSql` ツールが利用できない場合は、VS Code の設定でこの設定を有効にするよう案内してください。
 
-## Available Tool Actions
+---
 
-The `copilot_sessionStoreSql` tool supports three actions:
+## 利用可能なツールアクション
 
-| Action | Purpose | `query` param |
-|--------|---------|---------------|
-| `standup` | Pre-fetch last 24h sessions, turns, files, refs | Not needed |
-| `query` | Execute a read-only SQL query | Required |
-| `reindex` | Rebuild local session index + cloud sync | Not needed |
+`copilot_sessionStoreSql` ツールは以下の3つのアクションをサポートします：
 
-## Workflows
+| アクション | 目的                                                     | `query` パラメータ |
+| ---------- | -------------------------------------------------------- | ------------------ |
+| `standup`  | 過去24時間のセッション・ターン・ファイル・参照を事前取得 | 不要               |
+| `query`    | 読み取り専用のSQLクエリを実行                            | 必須               |
+| `reindex`  | ローカルセッションインデックスの再構築＋クラウド同期     | 不要               |
 
-### Standup
+---
 
-When the user asks for a standup, daily summary, or "what did I do":
+## ワークフロー
 
-1. Call `copilot_sessionStoreSql` with `action: "standup"` and `description: "Generate standup"`.
-2. The tool returns pre-fetched session data (sessions, turns, files, refs from the last 24 hours).
-3. If the result is empty, tell the user no sessions were found in the last 24h, suggest `/chronicle:reindex`, and stop — do not fabricate a standup.
-4. For any PR references in the data, check their current status (open, merged, draft) if possible.
-5. Format the returned data as a standup report grouped by work stream (branch/feature):
+### スタンドアップ
+
+ユーザーがスタンドアップ、日次サマリー、または「今日何をしたか」を求めるとき：
+
+1. `action: "standup"`、`description: "Generate standup"` で `copilot_sessionStoreSql` を呼び出す。
+2. ツールは事前取得済みのセッションデータ（過去24時間のセッション・ターン・ファイル・参照）を返す。
+3. 結果が空の場合は、過去24時間にセッションが見つからなかったことをユーザーに伝え、`/chronicle:reindex` を提案して停止する（スタンドアップを捏造しない）。
+4. データ内のPR参照については、可能であれば現在のステータス（open・merged・draft）を確認する。
+5. 返されたデータを、作業ストリーム（ブランチ/フィーチャー）ごとにグループ化したスタンドアップレポートとして整形する。
 
 ```
-Standup for <date>:
+<日付>のスタンドアップ:
 
-**✅ Done**
+**✅ 完了**
 
-**Feature name** (`branch-name` branch, `repo-name`)
-  - 3-7 words describing the status
-  - Key files: 2-3 most important files changed
-  - Merged: [#123](link)
-  - Session: `session-id`
+**フィーチャー名** (`ブランチ名` ブランチ, `リポジトリ名`)
+  - ステータスを3〜7語で説明
+  - 主なファイル: 変更した重要なファイル2〜3件
+  - マージ済み: [#123](リンク)
+  - セッション: `session-id`
 
-**🚧 In Progress**
+**🚧 進行中**
 
-**Feature name** (`branch-name` branch, `repo-name`)
-  - 3-7 words describing the current state of work
-  - Key files: 2-3 most important files being worked on
-  - Draft: [#789](link)
-  - Session: `session-id`
+**フィーチャー名** (`ブランチ名` ブランチ, `リポジトリ名`)
+  - 現在の作業状態を3〜7語で説明
+  - 主なファイル: 作業中の重要なファイル2〜3件
+  - ドラフト: [#789](リンク)
+  - セッション: `session-id`
 ```
 
-Rules:
-- Keep it concise and succinct — the user can always ask follow-up questions
-- Use turn data (user messages AND assistant responses) to understand WHAT was done
-- Use file paths to identify which components/areas were affected
-- Group related sessions on the same branch into one entry
-- For sessions, only show the most recent session per feature/branch
-- Link PRs and issues using markdown link syntax
-- Classify as Done if work appears complete, In Progress otherwise
+**ルール:**
 
-### Tips
+- 簡潔にまとめる（詳細はフォローアップで対応可能）
+- ターンデータ（ユーザーメッセージおよびアシスタントの応答）を使って「何をしたか」を把握する
+- ファイルパスを使ってどのコンポーネント/領域が影響を受けたかを特定する
+- 同じブランチ上の関連セッションは1つのエントリにまとめる
+- セッションは、フィーチャー/ブランチごとに最新のセッションのみ表示する
+- PRやIssueはMarkdownリンク形式で表示する
+- 作業が完了しているように見える場合は「完了」、そうでない場合は「進行中」に分類する
 
-When the user asks for tips, workflow recommendations, or how to improve:
+---
 
-**Step 1: Investigate how the user works**
+### ヒント
 
-Use `copilot_sessionStoreSql` with `action: "query"` to explore their recent sessions. The goal is to understand their patterns — how they prompt, what tools they use, and where they spend time.
+ユーザーがヒント、ワークフローの推奨、または改善方法を求めるとき：
 
-Queries to run (do not explain what you will do first — start querying immediately):
-- Sessions from the last 7 days: counts, durations, repositories
-- Turn data: read actual user messages to understand prompting patterns
-- session_files: which files and tools are used most frequently
-- session_refs: PR/issue/commit activity patterns
+**ステップ1: ユーザーの作業方法を調査する**
 
-**Step 2: Consider available features**
+`copilot_sessionStoreSql` の `action: "query"` を使用して、最近のセッションを調べます。目的は、プロンプトの仕方・使用ツール・時間の使い方などのパターンを把握することです。
 
-If the current workspace has a `.github/` folder, check for `.github/copilot-instructions.md`, `.github/skills/`, and `.github/agents/` to see what custom configuration exists. Do NOT look outside the workspace. Look for gaps between what's available and what the user actually uses.
+実行するクエリ（最初に何をするか説明せず、すぐにクエリを開始する）：
 
-**Step 3: Provide tips**
+- 過去7日間のセッション：件数・期間・リポジトリ
+- ターンデータ：実際のユーザーメッセージを読んでプロンプトのパターンを把握
+- session_files：最も頻繁に使用されるファイルとツール
+- session_refs：PR/Issue/コミットのアクティビティパターン
 
-Based on what you learned, provide 3-5 specific, actionable tips. Each tip should:
-- Be grounded in actual usage data — reference specific patterns you observed
-- Be non-obvious — skip basic features that any regular user would already know
-- Focus on gaps where a feature, workflow change, or different approach would meaningfully improve their experience
+**ステップ2: 利用可能な機能を確認する**
 
-Analysis dimensions to explore:
-- **Prompting patterns**: Are user messages vague or specific? Do they provide context? Do they correct or redirect the agent frequently?
-- **Tool usage**: Which tools are used most? Are there underutilized tools that could help?
-- **Session patterns**: How long are sessions? Are there many short abandoned sessions?
-- **File patterns**: Which areas of the codebase get the most attention? Any repeated edits to the same files?
-- **Workflow**: Is the user leveraging agent mode, custom instructions, prompt files, skills?
+現在のワークスペースに `.github/` フォルダがある場合は、`.github/copilot-instructions.md`・`.github/skills/`・`.github/agents/` を確認し、どのようなカスタム設定があるかを調べます。ワークスペースの外は見ないこと。利用可能なものとユーザーが実際に使っているものとのギャップを探す。
 
-If the session store has little data, acknowledge that and suggest features to try based on what configuration you found in the workspace.
+**ステップ3: ヒントを提供する**
 
-### Cost Tips
+調査結果に基づき、具体的で実践的なヒントを3〜5件提供する。各ヒントは以下の条件を満たすこと：
 
-When the user asks for cost tips, ways to reduce token usage, or how to lower Copilot spend (e.g. `/chronicle:cost-tips`):
+- 実際の使用データに基づいていること（観察した具体的なパターンを参照する）
+- 非自明であること（普段使いのユーザーなら誰でも知っているような基本機能は省く）
+- 機能・ワークフローの変更・別のアプローチによって体験を大きく改善できるギャップに焦点を当てる
 
-The goal is **personalized, data-grounded recommendations** for reducing token usage — not a generic checklist. Every tip must point to a specific pattern you observed in their data.
+分析する観点：
 
-**Cost-relevant schema (in addition to the Database Schema section below)**
+- **プロンプトのパターン**: ユーザーのメッセージは曖昧か具体的か？コンテキストを提供しているか？エージェントを頻繁に修正・リダイレクトしているか？
+- **ツールの使用状況**: 最もよく使われるツールはどれか？活用されていないツールで役立つものはあるか？
+- **セッションのパターン**: セッションの長さは？短くて中断されたセッションが多くないか？
+- **ファイルのパターン**: コードベースのどの領域が最も注目されているか？同じファイルへの繰り返し編集はないか？
+- **ワークフロー**: エージェントモード・カスタムインストラクション・プロンプトファイル・スキルを活用しているか？
 
-- **Cloud DuckDB only** — the local SQLite store does **not** record per-event token usage and has no `events` table. If the active backend is local, gate all token queries and tell the user that real token-level analysis requires enabling cloud sync (`chat.sessionSync.enabled`).
-- **events** (cloud): per-event billing — rows where `type = 'assistant.usage'` carry `usage_input_tokens`, `usage_output_tokens`, `usage_model`. To break spend down by agent type, JOIN `events e` to `sessions s ON s.id = e.session_id` and group by `s.agent_name`.
-- **sessions.agent_name** / **agent_description** (both backends): values like `VS Code agent` (VS Code chat), `Copilot CLI`, `Copilot Coding Agent`, `Copilot Code Review`, or custom agents/subagents. Use to break spend down by agent type.
-- Use `LENGTH(user_message)` on `turns` (or `LENGTH(user_content)` on `events` where `type = 'user.message'`) to find oversized pastes.
+セッションストアのデータが少ない場合はその旨を伝え、ワークスペースで見つけた設定に基づいて試すべき機能を提案する。
 
-**Step 1: Investigate cost and token patterns**
+---
 
-Use `copilot_sessionStoreSql` with `action: "query"`. What to investigate depends on the active backend.
+### コスト削減ヒント
 
-*Cloud (DuckDB) — start with agent-type awareness:*
+ユーザーがコスト削減のヒント、トークン使用量の削減方法、またはCopilotの費用を下げる方法を求めるとき（例：`/chronicle:cost-tips`）：
 
-The session store mixes session types via `sessions.agent_name` (join events to sessions on `session_id` to get the agent for any per-event analysis). Your advice is only useful if you know which agents the user actually runs, so this is the **first** thing to learn.
+目標は**パーソナライズされた、データに基づく推奨**です。汎用的なチェックリストではなく、各ヒントはデータで観察した具体的なパターンを指摘するものであること。
 
-- **Enumerate every agent in use.** Run e.g. `SELECT agent_name, agent_description, COUNT(*) AS n FROM sessions WHERE updated_at > now() - INTERVAL '30 days' GROUP BY 1, 2 ORDER BY n DESC` so you see the full inventory — official agents and any custom agents/subagents in `agent_description`. Do not assume.
-- **Decide which to advise on.** Include any agent type the user can make cheaper: `VS Code agent` (VS Code chat — usually the dominant agent), `Copilot CLI` (interactive terminal), `Copilot Coding Agent` (autonomous cloud tasks), custom agents and subagents. **Always exclude** `agent_name = 'Copilot Code Review'` and any other agent the user does not drive interactively.
-- **Tailor advice per agent.** VS Code agent tips (compaction, model picker, fresh chats, `.github/copilot-instructions.md`, custom skills/agents) look different from CLI tips (compaction, model switching, subagent delegation), Coding Agent tips (prompt scoping, smaller task framing), and custom-agent tips (slimming tool lists, narrowing prompts).
+**コスト関連のスキーマ**
 
-Then drill into cost patterns (filter `events` rows by `type = 'assistant.usage'` for billable rows):
+- **クラウドDuckDBのみ** — ローカルSQLiteにはイベントごとのトークン使用量が記録されず、`events` テーブルもありません。アクティブなバックエンドがローカルの場合は、すべてのトークンクエリをブロックし、実際のトークンレベル分析にはクラウド同期の有効化（`chat.sessionSync.enabled`）が必要であることをユーザーに伝えます。
+- **events**（クラウド）: イベントごとの課金 — `type = 'assistant.usage'` の行には `usage_input_tokens`・`usage_output_tokens`・`usage_model` が含まれます。
+- **sessions.agent_name** / **agent_description**: `VS Code agent`・`Copilot CLI`・`Copilot Coding Agent`・`Copilot Code Review`、またはカスタムエージェントなどの値。
+- `turns` の `LENGTH(user_message)` を使用して、過大なペーストを検出します。
 
-- **Token-heavy sessions and turns** — sum `usage_input_tokens` and `usage_output_tokens` per session and per model from `events` where `type = 'assistant.usage'`. Which sessions burned the most tokens? Which models?
-- **Input-to-output ratios** — when input tokens dwarf output tokens, the user is paying to re-send a bloated context every turn. Strongest signal that compaction, smaller working sets, or fresh sessions would help.
-- **Model mix** — break down spend by `usage_model`. Are premium models being used for routine work (renames, simple edits, status checks) that a cheaper model could handle?
-- **Per-turn growth** — within long sessions, does `usage_input_tokens` keep climbing turn-over-turn? Strong signal that compaction wasn't used.
-- **Oversized pastes** — `LENGTH(user_content)` on `events` where `type = 'user.message'` to find user messages that should have been file references (also visible in `session_files` as repeated reads of the same path within one session).
-- **Group cost breakdowns by `agent_name`** (and `agent_description` where useful) in at least one query so the user sees where their spend actually goes — and so you spot if a single custom agent dominates.
+**ステップ1: コスト・トークンのパターンを調査する**
 
-*Local (SQLite) — no token data; use proxies:*
+使用中のエージェントをすべて列挙し、コストパターンを分析します：
 
-- **Long sessions without compaction** — sessions with many turns and no rows in `checkpoints` (each `checkpoints` row is a successful compaction). `LEFT JOIN checkpoints c ON c.session_id = s.id WHERE c.session_id IS NULL` + a turn-count threshold gives prime candidates.
-- **Late compaction** — for sessions that *do* have checkpoints, compare `checkpoints.checkpoint_number` and `created_at` against the session's turn count. A first compaction at turn 60 of an 80-turn session is far less helpful than one at turn 25.
-- **Repeated large file reads** — in `session_files`, look for the same file read many times within one session, or across sessions.
-- **Tool-call thrash** — sessions with many turns and repeated tool calls often indicate the agent rediscovered the same context multiple times.
-- **Oversized pastes** — use `LENGTH(user_message)` on `turns` to find very long user messages that should have been file references.
+- トークンの多いセッションとターン
+- インプット対アウトプットの比率
+- モデルの使用状況
+- ターンごとのトークン増加
+- 大きすぎるペースト
 
-*Both backends:*
+**ステップ2: 機能と習慣にマッピングする**
 
-- **Long-running sessions** — sessions with many turns or that span many hours drag a growing context window across every turn.
-- **Repeated work** — the same file/topic showing up in many sessions, or the same agent stumbling block recurring (suggesting a custom skill, agent, or `copilot-instructions.md` entry would let the model do the work in one shot).
-- **Subagent usage** — are heavyweight investigations being run in the main session (paying for their tokens to live in main context) when they could be delegated to a subagent that returns only a summary?
+コスト削減に関連する機能：
 
-Drill into a few of the most expensive sessions and read the actual conversation turns to understand *why* they were expensive. Don't just report aggregates — explain the cause.
+- セッション途中のコンパクション（例：`/compact`）
+- モデルピッカー — 定型作業には安価なモデルへの切り替え
+- 肥大化したセッションの代わりに新しいチャットを開始する
+- サブエージェントへの委譲
+- カスタムスキル・カスタムエージェント・`.github/copilot-instructions.md` の活用
 
-**Step 2: Map findings to features and habits**
+**ステップ3: ヒントを提供する**
 
-If the current workspace has a `.github/` folder, check `.github/copilot-instructions.md`, `.github/skills/`, and `.github/agents/` to see what custom configuration already exists. Do NOT look outside the workspace. Cost-relevant capabilities to keep in mind:
+具体的で実践的なヒントを3〜5件提供する（観察したパターンに基づき、数値を使って定量化すること）。
 
-- Mid-session compaction (e.g. `/compact`) to shrink the context window; for users who never compact, this is often the single biggest win.
-- Model picker — switch to a cheaper model for routine work; check whether premium models are being used for simple tasks.
-- Starting a fresh chat instead of continuing a bloated session.
-- Subagents/delegation for offloading heavy research into a sub-context whose tokens don't accrete into the main session.
-- Custom skills (`.github/skills/`) and custom agents (`.github/agents/`) so repeated workflows don't re-derive context each time.
-- `.github/copilot-instructions.md` to encode project conventions the model otherwise has to be told every session.
-- For cloud-enabled users, the Copilot usage view to inspect current premium-request spend.
+---
 
-**Step 3: Provide tips**
+### セッション検索
 
-Give the user 3-5 specific, actionable tips. Each tip should:
+ユーザーが過去のセッションをキーワードやファイル名・PR番号などで検索したいとき：
 
-- **Be grounded in their data** — reference a specific session, file, model, or pattern you observed (with rough numbers when you have them: turn counts, token totals, file-read counts, etc.).
-- **Be non-obvious** — skip basics any returning user already knows. Assume they know compaction and fresh chats exist; help them notice they're not *using* them where it would matter.
-- **Quantify the win when possible** — "compacting around turn 30 of that 80-turn session would have shaved ~X input tokens off every subsequent turn" is far better than "consider compacting".
-- **Be concrete** — name the workflow change, command, or config file edit. If the suggestion is a custom skill or agent, sketch what it would cover.
-- **Match the agent type** — if a finding is specific to one `agent_name`, say so. Don't propose CLI-only fixes for findings from Coding Agent sessions, and vice versa.
+1. 検索対象を特定する（何を探しているか）
+2. 各マッチセッションのメタデータを収集する：`s.id`・`s.repository`・`s.branch`・`s.summary`・`s.updated_at`
+3. 最も最近更新されたものを先頭に、リポジトリ別にグループ化して結果を表示する
 
-If the session store has little data (e.g., cloud store is empty, or only a handful of local sessions), say so plainly and offer 2-3 non-obvious cost-saving habits anchored in available features rather than fabricating findings. If the user is on local-only storage, end by noting that enabling `chat.sessionSync.enabled` unlocks per-event token analysis for sharper future tips.
+**SQLの注意点:**
 
-### Search
+- ローカルSQLite: `search_index` テーブルで `MATCH` を使用
+- クラウドDuckDB: `ILIKE '%<query>%'` を使用
+- クラウドのデフォルトは90日間ウィンドウ。`LIMIT 50` を維持する
 
-When the user asks to search, find, or look up past sessions by keyword (e.g. `/chronicle:search <query>`):
-
-**Search strategy**
-
-1. Search across session summaries, conversation turns (user messages AND assistant responses), and any other indexed content (checkpoints, file paths, refs like PR/issue/commit). The user's query may match a topic, a file path, or a PR/issue number — cover all three.
-2. For each matching session, gather enough metadata to label it: `s.id`, `s.repository`, `s.branch`, `s.summary`, `s.updated_at`, plus a short snippet that shows *why* it matched (e.g. `substr(user_message, 1, 160)` on cloud, or the matched `file_path` / `ref_value`).
-3. Present results grouped by repository, ordered by most recently updated.
-
-**Writing the query**
-
-Call `copilot_sessionStoreSql` with `action: "query"` and `description: "Search sessions for <query>"`. Follow the SQL dialect shown in the tool description (SQLite vs DuckDB).
-
-Schema essentials (full schema is in the **Database Schema** section below — re-read it before writing the query):
-
-- The `sessions` table primary key is `id` (NOT `session_id`). Every other table uses `session_id` as the FK back to `sessions.id`. Always project `s.id` from `sessions`.
-- Don't invent names: there is no `started_at` (use `created_at`/`updated_at`), no `workspace` (use `cwd` locally; cloud has none), no `title` (use `summary`), no `content`/`messages` (use `turns.user_message`/`turns.assistant_response`, or on cloud `events.user_content`/`events.assistant_content`).
-- **Local SQLite**: prefer the FTS5 `search_index` table (`WHERE search_index MATCH '<query>'`) for body content — `search_index` already has a `session_id` column, so select it directly (`SELECT session_id, content FROM search_index WHERE search_index MATCH ...`). Do **not** join `search_index.rowid` to `turns.rowid`; they are unrelated and you will pull in unrelated sessions. File paths and refs aren't in the FTS index — combine with `LIKE` on `session_files.file_path` and `session_refs.ref_value`.
-- **Cloud DuckDB**: no FTS5 — use `ILIKE '%<query>%'` across the text columns of `sessions`, `turns`, `checkpoints`, `session_files`, `session_refs`.
-
-Escape single quotes in the user's query by doubling them (`it's` → `it''s`). For multi-word FTS5 queries, quote the whole phrase: `MATCH '"apply patch"'`.
-
-**Performance — avoid cloud timeouts**
-
-`ILIKE '%X%'` on `turns` is a full table scan. Cloud queries that run too long return `context deadline exceeded`. To stay under the budget:
-
-- Collect matching session IDs into a single CTE (`WITH hits AS (...)`) and then **`JOIN`** back to `sessions` once. Don't use correlated subqueries in the SELECT list — they re-scan the CTE per row.
-- Aggregate match info per session with `GROUP BY session_id` and `any_value()` / `MIN()` / `array_agg()` rather than scalar subqueries.
-- On cloud, default to a **90-day window** on the heavy tables (`WHERE timestamp >= now() - INTERVAL '90 days'` on `turns`, same on `checkpoints` via `created_at`). Mention the window in your summary line so the user knows it's bounded; widen it if the user asks for "all time" or no results come back.
-- Keep `LIMIT 50` on the final SELECT.
-- If a query times out, retry with a tighter window (30 days) or drop the heaviest table (usually `turns`) and tell the user what you trimmed.
-
-**Output format**
-
-For each session, build a one-line label from `summary` if present, else from the returned `snippet` (truncate to ~80 chars). Never emit `(no summary)`, `(no metadata)`, or bare session-id lists.
-
-If you applied a time window (e.g. the cloud 90-day default), include it in the header so the user knows the scope; otherwise omit the scope phrase or say "all time". Example:
+**出力フォーマット:**
 
 ```
-**Search results for "<query>"** (<n> sessions, <scope: e.g. "last 90 days" / "all time">)
+**"<クエリ>"の検索結果** (<件数> セッション, <範囲>)
 
 _owner/repo_
-- `session-id` — **<summary or snippet>**
-  `branch` · updated <relative time> · matched in <match_kind>
-- `session-id` — **<summary or snippet>**
-  `branch` · updated <relative time> · matched in <match_kind>
-
-_other-owner/other-repo_
-- ...
+- `session-id` — **<サマリーまたはスニペット>**
+  `branch` · <相対時刻>に更新 · <一致箇所>でマッチ
 ```
 
-Rules:
-- Always render one session per line — never join multiple session ids with commas.
-- The label is `summary` if non-null; otherwise the snippet; otherwise a usable fallback like the matched file path. If even those are empty, skip the session rather than show "no summary".
-- Include `· matched in <match_kind>` (turn / file / ref / checkpoint / meta) when you can — helps the user see why each session matched.
-- Group by repository. Sessions whose `repository` is NULL go under an _Other_ heading, formatted the same way (one per line, with a usable label).
-- Cap visible results per repository at ~10; if there are more, append `…and N more (refine your query)`.
+---
 
-**No results**
+### 再インデックス
 
-If no rows are returned, tell the user and suggest:
-- Trying different keywords or a broader search term (single word, or a substring instead of a phrase)
-- Widening the time window ("search all time", "include older sessions")
-- Running `/chronicle:reindex` if they haven't indexed their sessions yet
-- Running `/chronicle:standup` to see recent activity
+ユーザーがセッションストアの再インデックス・再構築・更新を求めるとき：
 
-### Reindex
+1. `action: "reindex"`、`description: "Reindex sessions"` で `copilot_sessionStoreSql` を呼び出す。
+2. ツールはデバッグログからローカルセッションストアを再構築し、クラウド同期が有効な場合は新しいセッションをクラウドにアップロードします。
+3. 再インデックス前後の統計とクラウド同期結果をユーザーに提示します。
 
-When the user asks to reindex, rebuild, or refresh their session store:
+「強制再インデックス」の場合は `force: true` を追加します。
 
-1. Call `copilot_sessionStoreSql` with `action: "reindex"` and `description: "Reindex sessions"`.
-2. The tool rebuilds the local session store from debug logs and, if cloud sync is enabled, uploads new sessions to the cloud.
-3. Present the before/after stats and cloud sync results to the user.
+---
 
-If the user says "force reindex" or wants to re-process already-indexed sessions, add `force: true` to the call. By default, already-indexed sessions are skipped for speed.
+### セッションの削除
 
-### Delete Sessions
+ユーザーがセッションデータの削除または履歴のクリアを求めるとき：
 
-When the user asks to delete session data or clear their history:
+- コマンドパレットから **Delete Session Sync Data** コマンド（`github.copilot.sessionSync.deleteSessions`）を実行するよう案内する。
+- ツール自体は削除をサポートしていません（誤ったデータ損失防止のための仕様）。
 
-- Guide them to run the **Delete Session Sync Data** command from the Command Palette (`github.copilot.sessionSync.deleteSessions`).
-- This command lets them choose which sessions to delete from both local storage and the cloud.
-- The tool itself does NOT support deletion — this is intentional to prevent accidental data loss.
+---
 
-## Query Guidelines
+## クエリガイドライン
 
-When using `action: "query"`:
-- Only one query per call — do not combine multiple statements with semicolons
-- Only `SELECT` and `WITH` (CTE) are allowed. `DESCRIBE`, `SHOW`, `PRAGMA`, and any mutating statements are blocked — re-read the **Database Schema** section below instead of trying to introspect
-- Always use LIMIT (max 100) and prefer aggregations (COUNT, GROUP BY) over raw row dumps
-- Query the **turns** table for conversation content — it gives the richest insight into what happened
-- Query **session_files** for file paths and tool usage patterns
-- Query **session_refs** for PR/issue/commit links
-- Join tables using session_id for complete analysis
-- Always filter on **updated_at** (not created_at) for time ranges
-- Always JOIN sessions with turns to get session content — do not rely on sessions.summary alone
+`action: "query"` 使用時のルール：
 
-### Query routing
+- 1回の呼び出しにつきクエリは1つのみ
+- `SELECT` と `WITH`（CTE）のみ許可
+- 常に `LIMIT`（最大100）を使用し、集計（COUNT、GROUP BY）を優先
+- **turns** テーブルで会話内容を照会する
+- **session_files** でファイルパスとツール使用パターンを照会する
+- **session_refs** でPR/Issue/コミットリンクを照会する
+- 時間範囲には **updated_at** でフィルタリングする
+- セッションとターンを常にJOINする
 
-The tool automatically routes queries based on the user's cloud sync settings:
-- **Cloud enabled**: Queries go to the cloud DuckDB backend which contains ALL sessions across devices and agents (VS Code, CLI, Copilot Coding Agent, PR reviews). The tool description will show DuckDB SQL syntax — follow it.
-- **Cloud disabled**: Queries go to local SQLite which only contains sessions from this device. The tool description will show SQLite syntax.
+### クエリルーティング
 
-The tool's description dynamically changes based on the active backend. **Always follow the SQL syntax shown in the tool description** — it matches the active backend.
+- **クラウド有効時**: クラウドDuckDBバックエンドにルーティング（全デバイス・全エージェントのセッション）
+- **クラウド無効時**: ローカルSQLiteにルーティング（このデバイスのセッションのみ）
 
-## Database Schema
+ツールの説明に示されたSQLダイアレクトに従うこと。
 
-### Tables (both local and cloud unless noted)
+---
 
-- **sessions**: id, cwd (workspace folder path — always NULL in cloud), repository, branch, host_type, summary, agent_name, agent_description, created_at, updated_at
-- **turns**: session_id, turn_index, user_message, assistant_response (first ~1000 chars, may be truncated), timestamp
-- **checkpoints**: session_id, checkpoint_number, title, overview, history, work_done, technical_details, important_files, next_steps, created_at — compaction checkpoints storing summarized state. Note: cloud has fewer columns (no history/work_done/technical_details).
+## データベーススキーマ
+
+### テーブル（ローカルとクラウド共通）
+
+- **sessions**: id, cwd, repository, branch, host_type, summary, agent_name, agent_description, created_at, updated_at
+- **turns**: session_id, turn_index, user_message, assistant_response（最初の約1000文字）, timestamp
+- **checkpoints**: session_id, checkpoint_number, title, overview, history, work_done, technical_details, important_files, next_steps, created_at
 - **session_files**: session_id, file_path, tool_name, turn_index, first_seen_at
-- **session_refs**: session_id, ref_type (commit/pr/issue), ref_value, turn_index, created_at
-- **search_index**: FTS5 virtual table (local only). Columns: `content`, `session_id`, `source_type` (`turn`/`assistant`/`checkpoint`/etc.), `source_id`. Use `WHERE search_index MATCH 'query'` for full-text search and project `session_id` directly — **do NOT** join `search_index.rowid` to `turns.rowid` (the rowids are independent and the join will match the wrong rows). Use `snippet(search_index, 0, '[', ']', '…', 12)` or `substr(content, 1, 160)` for a snippet.
+- **session_refs**: session_id, ref_type（commit/pr/issue）, ref_value, turn_index, created_at
+- **search_index**: FTS5仮想テーブル（ローカルのみ）。カラム：`content`・`session_id`・`source_type`・`source_id`
 
-### Cloud-only tables
+### クラウド専用テーブル
 
-- **events**: Raw event table (~90 columns). Key columns: session_id, timestamp, type, user_content, assistant_content, tool_start_name, tool_complete_success, tool_complete_result_content, usage_model, usage_input_tokens, usage_output_tokens
+- **events**: session_id, timestamp, type, user_content, assistant_content, tool_start_name, tool_complete_success, tool_complete_result_content, usage_model, usage_input_tokens, usage_output_tokens
 - **tool_requests**: session_id, tool_call_id, name, arguments_json
 
-Date math (SQLite): `datetime('now', '-1 day')`, `datetime('now', '-7 days')`
-Date math (Cloud/DuckDB): `now() - INTERVAL '1 day'`, `now() - INTERVAL '7 days'`. Use `ILIKE` for text search (no FTS5/MATCH), `date_diff('minute', start, end)` for durations.
+**日付演算:**
+
+- SQLite: `datetime('now', '-1 day')`、`datetime('now', '-7 days')`
+- クラウド/DuckDB: `now() - INTERVAL '1 day'`、`now() - INTERVAL '7 days'`。テキスト検索には `ILIKE`、期間には `date_diff('minute', start, end)` を使用。
