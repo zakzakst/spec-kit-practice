@@ -18,16 +18,16 @@ $ARGUMENTS
 
 空でない場合、処理前にユーザー入力を**必ず**考慮すること。
 
-## Outline
+## 概要 (Outline)
 
 トリガーメッセージの `/speckit.specify` の後にユーザーが入力したテキストが、そのまま機能説明である。たとえ下に `$ARGUMENTS` が文字通り表示されていても、この会話内には説明がある前提で扱うこと。空コマンドでない限り、同じ説明を言い直させてはならない。
 
 この機能説明を基に、次を行う。
 
-1. **Generate a concise short name**（2〜4 語）
+1. **簡潔なショートネームの生成 (Generate a concise short name)**（2〜4 語）
    - 機能説明から意味の強いキーワードを抽出する
-   - 本質を捉えた 2〜4 語の short name を作る
-   - 可能なら action-noun 形式にする
+   - 本質を捉えた 2〜4 語のショートネーム (short name) を作る
+   - 可能なら action-noun（動詞-名詞）形式にする
    - OAuth2、API、JWT などの技術語や略語は保持する
    - 短くても一目で分かる名前にする
    - 例:
@@ -70,12 +70,12 @@ $ARGUMENTS
 
 3. `.specify/templates/spec-template.md` を読み、必須セクションを把握する。
 
-4. 次のフローで仕様を作る。
+4. 次のフローで仕様を作成する。
 
    1. Input からユーザー説明を解析する
       - 空なら `ERROR "No feature description provided"`
    2. 主要概念を抽出する
-      - actors, actions, data, constraints
+      - アクター (actors)、アクション (actions)、データ (data)、制約 (constraints)
    3. 不明点への対応
       - 文脈と一般的慣行から妥当な仮定を置く
       - `[NEEDS CLARIFICATION: ...]` を付けてよいのは次の場合だけ
@@ -83,68 +83,68 @@ $ARGUMENTS
         - 妥当な解釈が複数あり、含意が異なる
         - 妥当なデフォルトがない
       - **上限は 3 件**
-      - 優先度は `scope > security/privacy > user experience > technical details`
-   4. User Scenarios & Testing を埋める
+      - 優先度は `スコープ (scope) > セキュリティ/プライバシー (security/privacy) > ユーザー体験 (user experience) > 技術的詳細 (technical details)`
+   4. ユーザーシナリオ & テスト (User Scenarios & Testing) を埋める
       - 明確な user flow が導けない場合は `ERROR`
-   5. Functional Requirements を作る
+   5. 機能要件 (Functional Requirements) を作る
       - すべて検証可能であること
-      - 未指定部分は合理的デフォルトを使い、Assumptions へ記録する
-   6. Success Criteria を定義する
+      - 未指定部分は合理的デフォルトを使い、前提条件 (Assumptions) へ記録する
+   6. 成功基準 (Success Criteria) を定義する
       - 測定可能で技術非依存の成果にする
       - 定量 / 定性の両面を含める
       - 実装詳細抜きで検証可能であること
-   7. データが関わるなら Key Entities を特定する
+   7. データが関わるなら主要エンティティ (Key Entities) を特定する
    8. `SUCCESS (spec ready for planning)` を返す
 
 5. テンプレート構造に従って仕様を `SPEC_FILE` へ書き込み、プレースホルダーを具体内容へ置き換える。セクション順と見出しは保つこと。
 
-6. **Specification Quality Validation**
+6. **仕様品質の検証 (Specification Quality Validation)**
 
-   a. `FEATURE_DIR/checklists/requirements.md` に Spec Quality Checklist を作成する。構造はチェックリストテンプレートに従い、少なくとも次の検証項目を含める:
+   a. `FEATURE_DIR/checklists/requirements.md` に 仕様品質チェックリスト (Spec Quality Checklist) を作成する。構造はチェックリストテンプレートに従い、少なくとも次の検証項目を含める:
 
    ```markdown
-   # Specification Quality Checklist: [FEATURE NAME]
+   # 仕様品質チェックリスト (Specification Quality Checklist): [FEATURE NAME]
 
-   **Purpose**: Validate specification completeness and quality before proceeding to planning
-   **Created**: [DATE]
-   **Feature**: [Link to spec.md]
+   **目的 (Purpose)**: 設計に進む前に仕様の完全性と品質を検証する
+   **作成日 (Created)**: [DATE]
+   **対象機能 (Feature)**: [Link to spec.md]
 
-   ## Content Quality
+   ## コンテンツの品質 (Content Quality)
 
-   - [ ] No implementation details (languages, frameworks, APIs)
-   - [ ] Focused on user value and business needs
-   - [ ] Written for non-technical stakeholders
-   - [ ] All mandatory sections completed
+   - [ ] 実装の詳細（言語、フレームワーク、API）が含まれていないこと
+   - [ ] ユーザー価値とビジネスニーズに焦点を当てていること
+   - [ ] 非技術的な関係者向けに書かれていること
+   - [ ] すべての必須セクションが入力されていること
 
-   ## Requirement Completeness
+   ## 要件の完全性 (Requirement Completeness)
 
-   - [ ] No [NEEDS CLARIFICATION] markers remain
-   - [ ] Requirements are testable and unambiguous
-   - [ ] Success criteria are measurable
-   - [ ] Success criteria are technology-agnostic
-   - [ ] All acceptance scenarios are defined
-   - [ ] Edge cases are identified
-   - [ ] Scope is clearly bounded
-   - [ ] Dependencies and assumptions identified
+   - [ ] [NEEDS CLARIFICATION] マーカーが残っていないこと
+   - [ ] 要件がテスト可能で曖昧さがないこと
+   - [ ] 成功基準が測定可能であること
+   - [ ] 成功基準が技術に依存していないこと
+   - [ ] すべての受け入れシナリオが定義されていること
+   - [ ] エッジケースが特定されていること
+   - [ ] スコープの境界が明確であること
+   - [ ] 依存関係と前提条件が特定されていること
 
-   ## Feature Readiness
+   ## 機能の準備状態 (Feature Readiness)
 
-   - [ ] All functional requirements have clear acceptance criteria
-   - [ ] User scenarios cover primary flows
-   - [ ] Feature meets measurable outcomes defined in Success Criteria
-   - [ ] No implementation details leak into specification
+   - [ ] すべての機能要件に明確な受け入れ基準があること
+   - [ ] ユーザーシナリオが主要なフローをカバーしていること
+   - [ ] 成功基準で定義された測定可能な成果を機能が満たしていること
+   - [ ] 仕様書に実装の詳細が漏れ出ていないこと
 
-   ## Notes
+   ## メモ (Notes)
 
-   - Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`
+   - 未完了としてマークされた項目は、`/speckit.clarify` または `/speckit.plan` に進む前に仕様書の更新が必要です。
    ```
 
    b. チェックリストの各項目で spec をレビューし、pass / fail を判定する。問題があれば該当箇所を引用して記録する。
 
-   c. **Handle Validation Results**
+   c. **検証結果のハンドリング (Handle Validation Results)**
    - すべて pass ならチェック完了として次へ進む
    - `[NEEDS CLARIFICATION]` 以外で fail があるなら:
-     1. failing items と具体問題を列挙
+     1. 失敗した項目 (failing items) と具体的な問題を列挙
      2. spec を更新
      3. 最大 3 回まで再検証
      4. それでも fail が残る場合は checklist notes に残し、ユーザーへ警告
@@ -165,60 +165,60 @@ $ARGUMENTS
 
 **NOTE:** スクリプトは branch 作成、checkout、spec ファイル初期化まで行う。書き込み内容はその後に上書きすること。
 
-## General Guidelines
+## 一般的なガイドライン (General Guidelines)
 
-## Quick Guidelines
+## クイックガイドライン (Quick Guidelines)
 
 - ユーザーが**何を必要とし、なぜ必要なのか**に集中する
 - 実装方法（技術スタック、API、コード構造）は書かない
 - 読み手はビジネスステークホルダーであり、開発者ではない
 - spec 内に埋め込みチェックリストを作らない
 
-### Section Requirements
+### セクション要件 (Section Requirements)
 
-- **Mandatory sections**: すべての機能で必須
-- **Optional sections**: 関連する場合のみ含める
+- **必須セクション (Mandatory sections)**: すべての機能で必須
+- **オプションセクション (Optional sections)**: 関連する場合のみ含める
 - 不要なセクションは `N/A` を残さず削除する
 
-### For AI Generation
+### AIによる生成について (For AI Generation)
 
 1. 文脈、業界標準、共通パターンから合理的に補完する
-2. 仮定は Assumptions セクションへ明記する
-3. clarification は最大 3 件までとし、本当に重要な論点に限る
-4. 優先度は `scope > security/privacy > user experience > technical details`
-5. テスターの視点で考え、曖昧な要件は失格とみなす
+2. 仮定は 前提条件 (Assumptions) セクションへ明記する
+3. clarification（明確化質問）は最大 3 件までとし、本当に重要な論点に限る
+4. 優先度は `スコープ (scope) > セキュリティ/プライバシー (security/privacy) > ユーザー体験 (user experience) > 技術的詳細 (technical details)`
+5. テスターの視点で考え、曖昧な要件は不合格とみなす
 6. 典型的に確認が必要なのは:
-   - feature scope / boundaries
-   - user types / permissions
-   - security / compliance
+   - 機能スコープ / 境界 (feature scope / boundaries)
+   - ユーザータイプ / 権限 (user types / permissions)
+   - セキュリティ / コンプライアンス (security / compliance)
 
-**合理的デフォルトの例**（通常は聞かない）
+**合理的デフォルトの例**（通常は質問しない）
 
-- Data retention: そのドメインの標準慣行
-- Performance targets: 一般的な Web / mobile app 水準
-- Error handling: 分かりやすいメッセージと適切なフォールバック
-- Authentication method: 標準的な session-based または OAuth2
-- Integration patterns: 指定がなければ RESTful APIs
+- データ保持期間 (Data retention): そのドメインの標準慣行
+- パフォーマンス目標 (Performance targets): 一般的な Web / モバイルアプリ水準
+- エラーハンドリング (Error handling): 分かりやすいメッセージと適切なフォールバック
+- 認証方法 (Authentication method): 標準的な session-based または OAuth2
+- 統合パターン (Integration patterns): 指定がなければ RESTful APIs
 
-### Success Criteria Guidelines
+### 成功基準のガイドライン (Success Criteria Guidelines)
 
-Success criteria は次を満たすこと。
+成功基準 (Success criteria) は次を満たすこと。
 
-1. **Measurable**: 時間、割合、件数、レートなどの具体指標を含む
-2. **Technology-agnostic**: フレームワーク、言語、DB、ツール名を出さない
-3. **User-focused**: システム内部ではなくユーザー / ビジネス成果で書く
-4. **Verifiable**: 実装詳細を知らなくても検証できる
+1. **測定可能であること (Measurable)**: 時間、割合、件数、レートなどの具体指標を含む
+2. **技術に依存しないこと (Technology-agnostic)**: フレームワーク、言語、DB、ツール名を出さない
+3. **ユーザー中心であること (User-focused)**: システム内部ではなくユーザー / ビジネス成果で書く
+4. **検証可能であること (Verifiable)**: 実装詳細を知らなくても検証できる
 
-**Good examples**
+**良い例 (Good examples)**
 
-- `Users can complete checkout in under 3 minutes`
-- `System supports 10,000 concurrent users`
-- `95% of searches return results in under 1 second`
-- `Task completion rate improves by 40%`
+- `Users can complete checkout in under 3 minutes`（ユーザーは3分以内にチェックアウトを完了できる）
+- `System supports 10,000 concurrent users`（システムは10,000人の同時接続ユーザーをサポートする）
+- `95% of searches return results in under 1 second`（検索の95%が1秒以内に結果を返す）
+- `Task completion rate improves by 40%`（タスク完了率が40%向上する）
 
-**Bad examples**
+**悪い例 (Bad examples)**
 
-- `API response time is under 200ms`
-- `Database can handle 1000 TPS`
-- `React components render efficiently`
-- `Redis cache hit rate above 80%`
+- `API response time is under 200ms`（APIのレスポンスタイムが200ms未満であること）
+- `Database can handle 1000 TPS`（データベースが1000 TPSを処理できること）
+- `React components render efficiently`（Reactコンポーネントが効率的にレンダリングされること）
+- `Redis cache hit rate above 80%`（Redisのキャッシュヒット率が80%以上であること）
