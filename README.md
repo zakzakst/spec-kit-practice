@@ -10,6 +10,12 @@
 
 - コードや文章生成とは異なるが、ドキュメントとかで内容を調査をAIで行ったとき、適切な画像とか図と紐づける書き方とかファイル管理の方法があるか調べる
 
+- 生成した成果物をレビューするための、指示・記述についても、いいものあればメモしておく
+
+## vercel agent skills
+
+- https://github.com/vercel-labs/agent-skills
+
 ## spec-kit-practice
 
 - https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4

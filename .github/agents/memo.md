@@ -36,8 +36,42 @@ $ARGUMENTS
 <!-- .github\agents\speckit.clarify.agent.md -->
 
 ```md
-
+注記: この明確化フローは `/speckit.plan` の前に実行し、完了していることが期待される。ユーザーが明示的に明確化を省略する（例: exploratory spike）場合は進めてよいが、後工程の手戻りリスクが上がることを警告すること。
 ```
+
+```md
+現在の spec ファイルを読み、次の分類で曖昧さ / カバレッジを評価する。各カテゴリの状態は `Clear / Partial / Missing` とする。優先順位付けに使う内部カバレッジマップを作るが、質問がなければその場合のみ出力してよい。
+```
+
+```md
+順次質問ループ
+```
+
+```md
+読み込んだ spec とその生内容をインメモリ (in-memory) で保持する
+```
+
+```md
+完了レポート
+```
+
+```md
+Outstanding / Deferred があれば、`/speckit.plan` に進むべきか、後で `/speckit.clarify` を再実行すべきか推奨する
+```
+
+```md
+動作ルール (Behavior rules):
+
+- 重要な曖昧さが見つからなければ `No critical ambiguities detected worth formal clarification. (正式な確認が必要な重大な曖昧さは検出されませんでした。)` と返し、次へ進むことを勧める
+- spec がなければ `/speckit.specify` を先に実行するよう案内する
+- 新規質問は 5 問を超えない
+- 機能的明確さを妨げない限り、技術スタックの推測質問は避ける
+- `stop`、`done`、`proceed` などの早期終了意思を尊重する
+- 質問不要ならコンパクトな全 Clear サマリを出して先へ促す
+- 上限到達時に高影響未解決が残れば、理由付きで 保留 (Deferred) へ明示する
+```
+
+<!-- .github\agents\speckit.constitution.agent.md -->
 
 ```md
 
