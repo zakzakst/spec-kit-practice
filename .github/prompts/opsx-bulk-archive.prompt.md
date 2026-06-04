@@ -87,15 +87,15 @@ description: 複数の完了済み change をまとめて archive する
    conflict がある場合は解決方針も表示する:
 
    ```text
-   * Conflict resolution:
-     - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
+   * conflict の解消方針:
+     - auth spec: add-oauth を先に、次に add-jwt を適用する（どちらも実装済みのため、時系列順）
    ```
 
    未完了 change があれば警告も出す:
 
    ```text
-   Warnings:
-   - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
+   警告:
+   - add-verify-skill: 未完了の成果物 1 件、未完了のタスク 3 件
    ```
 
 7. **一括操作の確認を取る**
@@ -131,26 +131,26 @@ description: 複数の完了済み change をまとめて archive する
 9. **最終サマリを表示する**
 
    ```text
-   ## Bulk Archive Complete
+   ## 一括 Archive 完了
 
-   Archived 3 changes:
+   3 件の change を archive しました:
    - schema-management-cli -> archive/2026-01-19-schema-management-cli/
    - project-config -> archive/2026-01-19-project-config/
    - add-oauth -> archive/2026-01-19-add-oauth/
 
-   Skipped 1 change:
-   - add-verify-skill (user chose not to archive incomplete)
+   1 件の change をスキップしました:
+   - add-verify-skill（未完了のためユーザーが archive を選択しなかった）
 
-   Spec sync summary:
-   - 4 delta specs synced to main specs
-   - 1 conflict resolved (auth: applied both in chronological order)
+   spec 同期の要約:
+   - 4 件の delta spec を main specs に同期
+   - 1 件の conflict を解消（auth: 両方を時系列順に適用）
    ```
 
    失敗があれば:
 
    ```text
-   Failed 1 change:
-   - some-change: Archive directory already exists
+   1 件の change が失敗しました:
+   - some-change: archive ディレクトリが既に存在します
    ```
 
 **Conflict Resolution Examples**
@@ -158,71 +158,71 @@ description: 複数の完了済み change をまとめて archive する
 Example 1: 片方だけ実装済み
 
 ```text
-Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
+conflict: specs/auth/spec.md が [add-oauth, add-jwt] により更新対象
 
 Checking add-oauth:
-- Delta adds "OAuth Provider Integration" requirement
-- Searching codebase... found src/auth/oauth.ts implementing OAuth flow
+- delta で "OAuth Provider Integration" 要件を追加
+- コードベースを検索... src/auth/oauth.ts に OAuth フローの実装を確認
 
 Checking add-jwt:
-- Delta adds "JWT Token Handling" requirement
-- Searching codebase... no JWT implementation found
+- delta で "JWT Token Handling" 要件を追加
+- コードベースを検索... JWT の実装は見つからず
 
-Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
+解消方針: add-oauth のみ実装済み。add-oauth の spec だけを同期する。
 ```
 
 Example 2: 両方実装済み
 
 ```text
-Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
+conflict: specs/api/spec.md が [add-rest-api, add-graphql] により更新対象
 
 Checking add-rest-api (created 2026-01-10):
-- Delta adds "REST Endpoints" requirement
-- Searching codebase... found src/api/rest.ts
+- delta で "REST Endpoints" 要件を追加
+- コードベースを検索... src/api/rest.ts を確認
 
 Checking add-graphql (created 2026-01-15):
-- Delta adds "GraphQL Schema" requirement
-- Searching codebase... found src/api/graphql.ts
+- delta で "GraphQL Schema" 要件を追加
+- コードベースを検索... src/api/graphql.ts を確認
 
-Resolution: Both implemented. Will apply add-rest-api specs first,
-then add-graphql specs (chronological order, newer takes precedence).
+解消方針: 両方実装済み。まず add-rest-api の spec を適用し、
+その後 add-graphql の spec を適用する（時系列順。新しい方を優先）。
 ```
 
 **Output On Success**
 
 ```text
-## Bulk Archive Complete
+## 一括 Archive 完了
 
-Archived N changes:
+N 件の change を archive しました:
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 - <change-2> -> archive/YYYY-MM-DD-<change-2>/
 
-Spec sync summary:
-- N delta specs synced to main specs
-- No conflicts (or: M conflicts resolved)
+spec 同期の要約:
+- N 件の delta spec を main specs に同期
+- conflict なし（または M 件の conflict を解消）
 ```
 
 **Output On Partial Success**
 
 ```text
-## Bulk Archive Complete (partial)
+## 一括 Archive 完了（部分成功）
 
-Archived N changes:
+N 件の change を archive しました:
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 
-Skipped M changes:
-- <change-2> (user chose not to archive incomplete)
+M 件の change をスキップしました:
+- <change-2>（未完了のためユーザーが archive を選択しなかった）
 
-Failed K changes:
-- <change-3>: Archive directory already exists
+K 件の change が失敗しました:
+- <change-3>: archive ディレクトリが既に存在します
 ```
 
 **Output When No Changes**
 
 ```text
-## No Changes to Archive
+## archive する change はありません
 
-No active changes found. Use `/opsx:new` to create a new change.
+アクティブな change は見つかりませんでした。新しい change を作るには `/opsx:new` を使ってください。
 ```
 
 **Guardrails**

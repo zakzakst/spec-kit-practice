@@ -11,7 +11,7 @@ description: change を作成し、実装に必要な全成果物を一気に生
 1. **入力がなければ、何を作りたいか聞く**
 
    **AskUserQuestion tool** を使い、自由記述で次を聞く:
-   > "What change do you want to work on? Describe what you want to build or fix."
+   > 「どの change に取り組みたいですか？ 作りたいもの、または直したいものを説明してください。」
 
    その説明から kebab-case 名を導く（例: `add-user-auth`）。
 
@@ -62,13 +62,13 @@ description: change を作成し、実装に必要な全成果物を一気に生
    openspec status --change "<name>"
    ```
 
-**Output**
+**出力**
 
 完了後に次を要約する:
-- Change name と location
+- 変更名と保存場所
 - 作成した artifacts の一覧と短い説明
-- `All artifacts created! Ready for implementation.`
-- `Run /opsx:apply to start implementing.`
+- `すべての artifacts を作成しました。実装の準備ができています。`
+- `実装を開始するには /opsx:apply を実行してください。`
 
 **Artifact Creation Guidelines**
 

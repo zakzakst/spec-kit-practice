@@ -65,7 +65,7 @@ change の delta specs を main specs へ同期する。
    - 更新した capabilities
    - 追加 / 変更 / 削除 / 改名した requirements
 
-**Delta Spec Format Reference**
+**delta spec の形式参照**
 
 ```markdown
 ## ADDED Requirements
@@ -94,29 +94,29 @@ The system SHALL do something new.
 - TO: `### Requirement: New Name`
 ```
 
-**Key Principle: Intelligent Merging**
+**重要原則: 賢いマージ**
 
 プログラム的な単純マージではなく、**部分更新** を扱う:
 - シナリオ追加だけなら MODIFIED のそのシナリオだけでよい
 - delta は全文置換ではなく **意図** を表す
 - 常識的な判断で自然にマージする
 
-**Output On Success**
+**成功時の出力**
 
 ```text
-## Specs Synced: <change-name>
+## Specs 同期完了: <change-name>
 
-Updated main specs:
+更新された main specs:
 
 **<capability-1>**:
-- Added requirement: "New Feature"
-- Modified requirement: "Existing Feature" (added 1 scenario)
+- 追加した requirement: "New Feature"
+- 変更した requirement: "Existing Feature"（scenario を 1 件追加）
 
 **<capability-2>**:
-- Created new spec file
-- Added requirement: "Another Feature"
+- 新しい spec ファイルを作成
+- 追加した requirement: "Another Feature"
 
-Main specs are now updated. The change remains active - archive when implementation is complete.
+main specs の更新が完了しました。change はまだ active のままです。実装が完了したら archive してください。
 ```
 
 **Guardrails**

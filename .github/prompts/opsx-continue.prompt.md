@@ -13,7 +13,7 @@ change の作業を続け、次に作るべき成果物を 1 つ生成する。
    `openspec list --json` を実行し、最近更新された change 順に取得する。そのうえで **AskUserQuestion tool** を使い、続きから作業する change を選ばせる。
 
    選択肢には上位 3〜4 件の最近更新された change を表示し、次を見せる:
-   - Change name
+   - 変更名
    - Schema（`schema` がなければ `spec-driven`）
    - Status（例: `0/5 tasks`, `complete`, `no tasks`）
    - `lastModified` に基づく更新の新しさ
@@ -36,7 +36,7 @@ change の作業を続け、次に作るべき成果物を 1 つ生成する。
    **全成果物が完了している場合 (`isComplete: true`)**
    - 完了を祝う
    - 使用 schema を含めて最終状態を示す
-   - `All artifacts created! You can now implement this change with /opsx:apply or archive it with /opsx:archive.` と案内して停止
+   - `すべての成果物が作成されました。/opsx:apply でこの change を実装するか、/opsx:archive で archive できます。` と案内して停止
 
    **作成可能な artifact がある場合**
    - `status: "ready"` の最初の artifact を選ぶ
@@ -67,20 +67,20 @@ change の作業を続け、次に作るべき成果物を 1 つ生成する。
    openspec status --change "<name>"
    ```
 
-**Output**
+**出力**
 
 各実行後に次を表示する:
 - 作成した artifact
 - 使用中の schema workflow
-- Current progress（N/M complete）
+- 現在の進捗（N/M complete）
 - 新たにアンロックされた artifact
-- `Run /opsx:continue to create the next artifact`
+- `次の artifact を作るには /opsx:continue を実行してください`
 
-**Artifact Creation Guidelines**
+**artifact 作成ガイド**
 
 artifact の種類と役割は schema に依存する。何を作るべきかは `instruction` フィールドに従うこと。
 
-Common artifact patterns:
+代表的な artifact パターン:
 
 **spec-driven schema** (`proposal -> specs -> design -> tasks`)
 - `proposal.md`: 変更内容が不明瞭ならユーザーに確認しつつ、Why / What Changes / Capabilities / Impact を埋める

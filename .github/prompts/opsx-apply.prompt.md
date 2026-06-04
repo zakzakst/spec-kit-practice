@@ -80,54 +80,54 @@ OpenSpec の変更に含まれるタスクを実装する。
    - 全完了なら archive を勧める
    - 一時停止なら理由を説明して案内を待つ
 
-**Output During Implementation**
+**実装中の出力**
 
 ```text
-## Implementing: <change-name> (schema: <schema-name>)
+## 実装中: <change-name>（schema: <schema-name>）
 
-Working on task 3/7: <task description>
+タスク 3/7 に取り組み中: <task description>
 [...implementation happening...]
-Task complete
+タスク完了
 
-Working on task 4/7: <task description>
+タスク 4/7 に取り組み中: <task description>
 [...implementation happening...]
-Task complete
+タスク完了
 ```
 
-**Output On Completion**
+**完了時の出力**
 
 ```text
-## Implementation Complete
+## 実装完了
 
 **Change:** <change-name>
 **Schema:** <schema-name>
-**Progress:** 7/7 tasks complete
-### Completed This Session
-- [x] Task 1
-- [x] Task 2
+**進捗:** 7/7 tasks complete
+### 今回完了したタスク
+- [x] タスク 1
+- [x] タスク 2
 ...
 
-All tasks complete! You can archive this change with `/opsx:archive`.
+すべてのタスクが完了しました。`/opsx:archive` でこの change を archive できます。
 ```
 
-**Output On Pause (Issue Encountered)**
+**一時停止時の出力（問題発生）**
 
 ```text
-## Implementation Paused
+## 実装を一時停止
 
 **Change:** <change-name>
 **Schema:** <schema-name>
-**Progress:** 4/7 tasks complete
+**進捗:** 4/7 tasks complete
 
-### Issue Encountered
+### 発生した問題
 <description of the issue>
 
-**Options:**
+**選択肢:**
 1. <option 1>
 2. <option 2>
-3. Other approach
+3. 別の進め方
 
-What would you like to do?
+どう進めますか？
 ```
 
 **Guardrails**
@@ -140,7 +140,7 @@ What would you like to do?
 - エラー、blocker、要件不明時は推測で進めない
 - 固定のファイル名を仮定せず、CLI の `contextFiles` を使う
 
-**Fluid Workflow Integration**
+**柔軟なワークフロー統合**
 
 このプロンプトは「change に対して随時 action する」モデルを支える:
 

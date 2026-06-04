@@ -26,21 +26,21 @@ openspec status --json 2>&1 || echo "NOT_INITIALIZED"
 次を表示する:
 
 ```text
-## Welcome to OpenSpec!
+## OpenSpec へようこそ！
 
-I'll walk you through a complete change cycle, from idea to implementation, using a real task in your codebase. Along the way, you'll learn the workflow by doing it.
+ここでは、コードベース内の実際のタスクを使って、アイデアから実装までの change サイクルを一通り案内します。実際に手を動かしながら、ワークフローを体験的に学べます。
 
-**What we'll do:**
-1. Pick a small, real task in your codebase
-2. Explore the problem briefly
-3. Create a change (the container for our work)
-4. Build the artifacts: proposal -> specs -> design -> tasks
-5. Implement the tasks
-6. Archive the completed change
+**やること:**
+1. コードベースの中から小さな実タスクを 1 つ選ぶ
+2. 問題を軽く探索する
+3. change を作る（作業の入れ物）
+4. 成果物を作る: proposal -> specs -> design -> tasks
+5. タスクを実装する
+6. 完了した change を archive する
 
-**Time:** ~15-20 minutes
+**所要時間:** 約 15〜20 分
 
-Let's start by finding something to work on.
+まずは取り組む対象を見つけましょう。
 ```
 
 ---
@@ -68,49 +68,49 @@ git log --oneline -10 2>/dev/null || echo "No git history"
 分析結果から 3〜4 件の具体候補を提示する:
 
 ```text
-## Task Suggestions
+## タスク候補
 
-Based on scanning your codebase, here are some good starter tasks:
+コードベースを確認した結果、始めやすいタスク候補をいくつか挙げます。
 
-**1. [Most promising task]**
-   Location: `src/path/to/file.ts:42`
-   Scope: ~1-2 files, ~20-30 lines
-   Why it's good: [brief reason]
+**1. [最有力のタスク]**
+   場所: `src/path/to/file.ts:42`
+   規模: 1〜2 ファイル、約 20〜30 行
+   おすすめ理由: [簡潔な理由]
 
-**2. [Second task]**
-   Location: `src/another/file.ts`
-   Scope: ~1 file, ~15 lines
-   Why it's good: [brief reason]
+**2. [2つ目のタスク]**
+   場所: `src/another/file.ts`
+   規模: 1 ファイル、約 15 行
+   おすすめ理由: [簡潔な理由]
 
-**3. [Third task]**
-   Location: [location]
-   Scope: [estimate]
-   Why it's good: [brief reason]
+**3. [3つ目のタスク]**
+   場所: [場所]
+   規模: [見積もり]
+   おすすめ理由: [簡潔な理由]
 
-**4. Something else?**
-   Tell me what you'd like to work on.
+**4. 別案**
+   取り組みたい内容を自由に教えてください。
 
-Which task interests you? (Pick a number or describe your own)
+どのタスクに興味がありますか？（番号で選ぶか、自分の案を説明してください）
 ```
 
 **見つからない場合**
-> I didn't find obvious quick wins in your codebase. What's something small you've been meaning to add or fix?
+> コードベースには、すぐに着手できる明確な改善点は見つかりませんでした。ずっと追加したい、または直したいと思っていた小さなものはありますか？
 
 ### Scope Guardrail
 
 ユーザーが大きすぎるタスクを選んだ場合:
 
 ```text
-That's a valuable task, but it's probably larger than ideal for your first OpenSpec run-through.
+それは価値のあるタスクですが、OpenSpec の最初の流れとしては少し大きすぎるかもしれません。
 
-For learning the workflow, smaller is better. It lets you see the full cycle without getting stuck in implementation details.
+ワークフローを学ぶには、小さい方が向いています。実装の細部で詰まりにくく、サイクル全体を見やすくなります。
 
-**Options:**
-1. **Slice it smaller** - What's the smallest useful piece of [their task]? Maybe just [specific slice]?
-2. **Pick something else** - One of the other suggestions, or a different small task?
-3. **Do it anyway** - If you really want to tackle this, we can. Just know it'll take longer.
+**選択肢:**
+1. **もっと小さく切る** - [そのタスク] の中で、最も小さくて意味のある部分はどこでしょう？ たとえば [具体的な切り出し] だけに絞れますか？
+2. **別のものを選ぶ** - ほかの候補、または別の小さなタスクにしますか？
+3. **そのまま進める** - 本当にこれに取り組みたいなら、そのまま進めることもできます。ただし少し時間がかかります。
 
-What would you prefer?
+どれにしますか？
 ```
 
 強制はしない。やわらかいガードレールとして扱う。
@@ -122,7 +122,7 @@ What would you prefer?
 タスクが決まったら、explore mode を短く実演する:
 
 ```text
-Before we create a change, let me quickly show you **explore mode**. It's how you think through problems before committing to a direction.
+change を作る前に、まず **explore モード** を短くお見せします。これは、進む方向を決める前に問題を考え抜くためのモードです。
 ```
 
 1〜2 分程度で関連コードを調べる:
@@ -131,15 +131,15 @@ Before we create a change, let me quickly show you **explore mode**. It's how yo
 - 気づいた点をまとめる
 
 ```text
-## Quick Exploration
+## クイック探索
 
-[Your brief analysis - what you found, any considerations]
+[ここに簡単な分析 - 見つかったこと、考慮点]
 
-[Optional: ASCII diagram if helpful]
+[必要なら ASCII 図を追加]
 
-Explore mode (`/opsx:explore`) is for this kind of thinking: investigating before implementing. You can use it anytime you need to think through a problem.
+explore モード（`/opsx:explore`）は、実装前に調べたり考えたりするためのものです。問題を整理したいときはいつでも使えます。
 
-Now let's create a change to hold our work.
+それでは、作業を入れておくための change を作成しましょう。
 ```
 
 **PAUSE** - ユーザーの応答を待つ。
@@ -151,11 +151,11 @@ Now let's create a change to hold our work.
 **EXPLAIN**
 
 ```text
-## Creating a Change
+## change を作成する
 
-A "change" in OpenSpec is a container for all the thinking and planning around a piece of work. It lives in `openspec/changes/<name>/` and holds your artifacts: proposal, specs, design, tasks.
+OpenSpec における "change" は、ある作業に関する思考や計画をまとめて入れておく入れ物です。`openspec/changes/<name>/` に置かれ、proposal、specs、design、tasks などの成果物をまとめます。
 
-Let me create one for our task.
+今回のタスク用に 1 つ作成しましょう。
 ```
 
 **DO**
@@ -166,16 +166,16 @@ openspec new change "<derived-name>"
 **SHOW**
 
 ```text
-Created: `openspec/changes/<name>/`
+作成しました: `openspec/changes/<name>/`
 
-The folder structure:
+フォルダ構成:
 openspec/changes/<name>/
 ├─ proposal.md
 ├─ design.md
 ├─ specs/
 └─ tasks.md
 
-Now let's fill in the first artifact: the proposal.
+では、最初の成果物である proposal を埋めていきます。
 ```
 
 ---
@@ -185,11 +185,11 @@ Now let's fill in the first artifact: the proposal.
 **EXPLAIN**
 
 ```text
-## The Proposal
+## proposal
 
-The proposal captures **why** we're making this change and **what** it involves at a high level. It's the elevator pitch for the work.
+proposal では、この change をなぜ行うのか、そして大まかに何を含むのかをまとめます。作業内容を短く伝えるための要約です。
 
-I'll draft one based on our task.
+タスクに基づいて草案を作成します。
 ```
 
 **DO**
@@ -197,34 +197,34 @@ I'll draft one based on our task.
 提案文をまず保存せずに草案として見せる:
 
 ```text
-Here's a draft proposal:
+proposal の草案です:
 
 ---
 
 ## Why
 
-[1-2 sentences explaining the problem/opportunity]
+[問題や機会を 1〜2 文で説明]
 
 ## What Changes
 
-[Bullet points of what will be different]
+[何が変わるかを箇条書きで記載]
 
 ## Capabilities
 
-### New Capabilities
-- `<capability-name>`: [brief description]
+### 新しい Capabilities
+- `<capability-name>`: [簡単な説明]
 
-### Modified Capabilities
-<!-- If modifying existing behavior -->
+### 変更される Capabilities
+<!-- 既存の挙動を変更する場合 -->
 
 ## Impact
 
-- `src/path/to/file.ts`: [what changes]
-- [other files if applicable]
+- `src/path/to/file.ts`: [変更内容]
+- [必要なら他のファイル]
 
 ---
 
-Does this capture the intent? I can adjust before we save it.
+意図はこれで合っていますか？ 保存する前に調整できます。
 ```
 
 **PAUSE** - 承認や修正依頼を待つ。
@@ -248,11 +248,11 @@ Next up: specs.
 **EXPLAIN**
 
 ```text
-## Specs
+## specs
 
-Specs define **what** we're building in precise, testable terms. They use a requirement/scenario format that makes expected behavior crystal clear.
+specs では、**何を作るのか** を、正確でテスト可能な形で定義します。requirement / scenario 形式を使うことで、期待される挙動を明確にできます。
 
-For a small task like this, we might only need one spec file.
+このくらいの小さなタスクなら、1 つの spec ファイルだけで十分かもしれません。
 ```
 
 **DO**
@@ -263,7 +263,7 @@ mkdir -p openspec/changes/<name>/specs/<capability-name>
 草案:
 
 ```text
-Here's the spec:
+spec の草案です:
 
 ---
 
@@ -271,17 +271,17 @@ Here's the spec:
 
 ### Requirement: <Name>
 
-<Description of what the system should do>
+<システムが何をすべきかの説明>
 
 #### Scenario: <Scenario name>
 
-- **WHEN** <trigger condition>
-- **THEN** <expected outcome>
-- **AND** <additional outcome if needed>
+- **WHEN** <きっかけとなる条件>
+- **THEN** <期待される結果>
+- **AND** <必要なら追加の結果>
 
 ---
 
-This WHEN / THEN / AND format makes requirements testable.
+この WHEN / THEN / AND 形式で、requirements をテスト可能にできます。
 ```
 
 `openspec/changes/<name>/specs/<capability>/spec.md` に保存する。
@@ -293,37 +293,37 @@ This WHEN / THEN / AND format makes requirements testable.
 **EXPLAIN**
 
 ```text
-## Design
+## design
 
-The design captures **how** we'll build it: technical decisions, tradeoffs, and approach.
+design では、どうやって作るか、つまり技術的な判断、トレードオフ、進め方をまとめます。
 
-For small changes, this can be brief. That's fine.
+小さな change なら簡潔で構いません。
 ```
 
 **DO**
 
 ```text
-Here's the design:
+design の草案です:
 
 ---
 
 ## Context
 
-[Brief context about the current state]
+[現在の状態に関する簡単な文脈]
 
 ## Goals / Non-Goals
 
 **Goals:**
-- [What we're trying to achieve]
+- [達成したいこと]
 
 **Non-Goals:**
-- [What's explicitly out of scope]
+- [明確に対象外とすること]
 
 ## Decisions
 
-### Decision 1: [Key decision]
+### Decision 1: [重要な判断]
 
-[Explanation of approach and rationale]
+[進め方と理由の説明]
 
 ---
 ```
@@ -337,32 +337,32 @@ Here's the design:
 **EXPLAIN**
 
 ```text
-## Tasks
+## tasks
 
-Finally, we break the work into implementation tasks: checkboxes that drive the apply phase.
+最後に、作業を実装タスクへ分解します。これは apply フェーズを進めるためのチェックボックスです。
 
-These should be small, clear, and in logical order.
+小さく、明確で、論理的な順序にしましょう。
 ```
 
 **DO**
 
 ```text
-Here are the implementation tasks:
+実装タスクは以下です:
 
 ---
 
-## 1. [Category or file]
+## 1. [カテゴリまたはファイル]
 
-- [ ] 1.1 [Specific task]
-- [ ] 1.2 [Specific task]
+- [ ] 1.1 [具体的なタスク]
+- [ ] 1.2 [具体的なタスク]
 
-## 2. Verify
+## 2. 検証
 
-- [ ] 2.1 [Verification step]
+- [ ] 2.1 [確認手順]
 
 ---
 
-Each checkbox becomes a unit of work in the apply phase. Ready to implement?
+各チェックボックスが apply フェーズでの作業単位になります。実装を始めますか？
 ```
 
 **PAUSE** - 実装へ進む確認を待つ。
@@ -376,33 +376,33 @@ Each checkbox becomes a unit of work in the apply phase. Ready to implement?
 **EXPLAIN**
 
 ```text
-## Implementation
+## 実装
 
-Now we implement each task, checking them off as we go. I'll announce each one and occasionally note how the specs/design informed the approach.
+ここからは各タスクを実装し、進めながらチェックを付けていきます。各タスクの開始を知らせ、必要に応じて specs / design がどう役立つかも補足します。
 ```
 
 **DO**
 
 各タスクごとに:
-1. `Working on task N: [description]` と知らせる
+1. `タスク N に取り組みます: [description]` と知らせる
 2. コードを実装する
 3. 必要に応じて specs / design を自然に参照する
 4. tasks.md の `- [ ]` を `- [x]` にする
-5. `Task N complete` と短く知らせる
+5. `タスク N 完了` と短く知らせる
 
 説明は軽く保ち、講義調にしない。
 
 完了後:
 
 ```text
-## Implementation Complete
+## 実装完了
 
-All tasks done:
+すべてのタスクが完了しました:
 - [x] Task 1
 - [x] Task 2
 - [x] ...
 
-The change is implemented! One more step: let's archive it.
+change の実装が完了しました。最後に archive しましょう。
 ```
 
 ---
@@ -412,11 +412,11 @@ The change is implemented! One more step: let's archive it.
 **EXPLAIN**
 
 ```text
-## Archiving
+## archive
 
-When a change is complete, we archive it. This moves it from `openspec/changes/` to `openspec/changes/archive/YYYY-MM-DD-<name>/`.
+change が完了したら archive します。これにより `openspec/changes/` から `openspec/changes/archive/YYYY-MM-DD-<name>/` へ移動します。
 
-Archived changes become your project's decision history.
+archive された change は、プロジェクトの意思決定の履歴になります。
 ```
 
 **DO**
@@ -427,9 +427,9 @@ openspec archive "<name>"
 **SHOW**
 
 ```text
-Archived to: `openspec/changes/archive/YYYY-MM-DD-<name>/`
+移動先: `openspec/changes/archive/YYYY-MM-DD-<name>/`
 
-The change is now part of your project's history. The code is in your codebase, and the decision record is preserved.
+この change はプロジェクトの履歴の一部になりました。コードはコードベースにあり、意思決定の記録も残っています。
 ```
 
 ---
@@ -437,36 +437,36 @@ The change is now part of your project's history. The code is in your codebase, 
 ## Phase 11: Recap & Next Steps
 
 ```text
-## Congratulations!
+## おめでとうございます！
 
-You just completed a full OpenSpec cycle:
+OpenSpec の一連の流れを最後まで体験できました:
 
-1. **Explore** - Thought through the problem
-2. **New** - Created a change container
-3. **Proposal** - Captured WHY
-4. **Specs** - Defined WHAT
-5. **Design** - Decided HOW
-6. **Tasks** - Broke it into steps
-7. **Apply** - Implemented the work
-8. **Archive** - Preserved the record
+1. **Explore** - 問題を考えた
+2. **New** - change の入れ物を作った
+3. **Proposal** - WHY を記録した
+4. **Specs** - WHAT を定義した
+5. **Design** - HOW を決めた
+6. **Tasks** - 手順に分解した
+7. **Apply** - 作業を実装した
+8. **Archive** - 記録を残した
 
-This same rhythm works for changes of any size.
+この流れは、どんな大きさの change にもそのまま使えます。
 
 ## Command Reference
 
-| Command | What it does |
+| Command | 役割 |
 |---------|--------------|
-| `/opsx:explore` | Think through problems before/during work |
-| `/opsx:new` | Start a new change, step through artifacts |
-| `/opsx:ff` | Fast-forward: create all artifacts at once |
-| `/opsx:continue` | Continue working on an existing change |
-| `/opsx:apply` | Implement tasks from a change |
-| `/opsx:verify` | Verify implementation matches artifacts |
-| `/opsx:archive` | Archive a completed change |
+| `/opsx:explore` | 作業前/作業中に問題を考える |
+| `/opsx:new` | 新しい change を開始し、成果物を順に作る |
+| `/opsx:ff` | 一気に進める: すべての成果物をまとめて作る |
+| `/opsx:continue` | 既存の change の作業を続ける |
+| `/opsx:apply` | change のタスクを実装する |
+| `/opsx:verify` | 実装が成果物と一致しているか確認する |
+| `/opsx:archive` | 完了した change を archive する |
 
-## What's Next?
+## 次は何をする？
 
-Try `/opsx:new` or `/opsx:ff` on something you actually want to build.
+実際に作りたいものを題材に、`/opsx:new` か `/opsx:ff` を試してみてください。
 ```
 
 ---
@@ -478,13 +478,13 @@ Try `/opsx:new` or `/opsx:ff` on something you actually want to build.
 途中で止めたい場合:
 
 ```text
-No problem! Your change is saved at `openspec/changes/<name>/`.
+問題ありません。change は `openspec/changes/<name>/` に保存されています。
 
-To pick up where we left off later:
-- `/opsx:continue <name>` - Resume artifact creation
-- `/opsx:apply <name>` - Jump to implementation (if tasks exist)
+あとで続けるには:
+- `/opsx:continue <name>` - 成果物作成を再開する
+- `/opsx:apply <name>` - 実装に進む（tasks がある場合）
 
-The work won't be lost. Come back whenever you're ready.
+作業は失われません。準備ができたらまた戻ってきてください。
 ```
 
 ### User just wants command reference
@@ -492,17 +492,17 @@ The work won't be lost. Come back whenever you're ready.
 チュートリアルを飛ばしてコマンド一覧だけ欲しい場合:
 
 ```text
-## OpenSpec Quick Reference
+## OpenSpec クイックリファレンス
 
-| Command | What it does |
+| Command | 役割 |
 |---------|--------------|
-| `/opsx:explore` | Think through problems (no code changes) |
-| `/opsx:new <name>` | Start a new change, step by step |
-| `/opsx:ff <name>` | Fast-forward: all artifacts at once |
-| `/opsx:continue <name>` | Continue an existing change |
-| `/opsx:apply <name>` | Implement tasks |
-| `/opsx:verify <name>` | Verify implementation |
-| `/opsx:archive <name>` | Archive when done |
+| `/opsx:explore` | 問題を考える（コード変更なし） |
+| `/opsx:new <name>` | 新しい change を段階的に開始する |
+| `/opsx:ff <name>` | 一気に進める: すべての成果物をまとめて作る |
+| `/opsx:continue <name>` | 既存の change を続ける |
+| `/opsx:apply <name>` | タスクを実装する |
+| `/opsx:verify <name>` | 実装を検証する |
+| `/opsx:archive <name>` | 完了したら archive する |
 ```
 
 ---
