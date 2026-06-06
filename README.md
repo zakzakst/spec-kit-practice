@@ -19,6 +19,8 @@
   - https://zenn.dev/rehabforjapan/articles/requirements-engineering
   - ⇒これのとおりに分けるのがベストかというと、そうは思わないが、情報を決めるたり整理したりする際の、各フェーズの粒度は自分の中でクリアにしておきたい
 
+- AIにプロンプトファイルの構成と具体的なサンプルファイル作成してもらう？
+
 ## vercel agent skills
 
 - https://github.com/vercel-labs/agent-skills
