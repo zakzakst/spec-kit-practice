@@ -12,6 +12,13 @@
 
 - 生成した成果物をレビューするための、指示・記述についても、いいものあればメモしておく
 
+- https://zenn.dev/tokium_dev/articles/843968b5474998
+  - スキルファーストで業務スキルを作り、自己進化スキル(評価・振り返り・改善)でループを回す。
+
+- 定義する情報の区切り方考える
+  - https://zenn.dev/rehabforjapan/articles/requirements-engineering
+  - ⇒これのとおりに分けるのがベストかというと、そうは思わないが、情報を決めるたり整理したりする際の、各フェーズの粒度は自分の中でクリアにしておきたい
+
 ## vercel agent skills
 
 - https://github.com/vercel-labs/agent-skills
