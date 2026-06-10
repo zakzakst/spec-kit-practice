@@ -1,38 +1,38 @@
 ---
-title: Defer Non-Critical Work with requestIdleCallback
+title: requestIdleCallback で非重要処理を遅延する
 impact: MEDIUM
-impactDescription: keeps UI responsive during background tasks
+impactDescription: バックグラウンド処理中も UI の応答性を保つ
 tags: javascript, performance, idle, scheduling, analytics
 ---
 
-## Defer Non-Critical Work with requestIdleCallback
+## requestIdleCallback で非重要処理を遅延する
 
-**Impact: MEDIUM (keeps UI responsive during background tasks)**
+**影響: MEDIUM（バックグラウンド処理中も UI の応答性を保つ）**
 
-Use `requestIdleCallback()` to schedule non-critical work during browser idle periods. This keeps the main thread free for user interactions and animations, reducing jank and improving perceived performance.
+ブラウザがアイドル状態のときに非重要な処理をスケジュールするには、`requestIdleCallback()` を使ってください。これによりメインスレッドをユーザー操作やアニメーションのために空けておけるので、カクつきが減り、体感性能が向上します。
 
-**Incorrect (blocks main thread during user interaction):**
+**誤り（ユーザー操作中にメインスレッドを塞ぐ）:**
 
 ```typescript
 function handleSearch(query: string) {
   const results = searchItems(query)
   setResults(results)
 
-  // These block the main thread immediately
+  // これらはすぐにメインスレッドを塞ぐ
   analytics.track('search', { query })
   saveToRecentSearches(query)
   prefetchTopResults(results.slice(0, 3))
 }
 ```
 
-**Correct (defers non-critical work to idle time):**
+**正しい例（非重要処理をアイドル時間に遅らせる）:**
 
 ```typescript
 function handleSearch(query: string) {
   const results = searchItems(query)
   setResults(results)
 
-  // Defer non-critical work to idle periods
+  // 非重要処理はアイドル時間に回す
   requestIdleCallback(() => {
     analytics.track('search', { query })
   })
@@ -47,30 +47,30 @@ function handleSearch(query: string) {
 }
 ```
 
-**With timeout for required work:**
+**必須処理にタイムアウトを付ける例:**
 
 ```typescript
-// Ensure analytics fires within 2 seconds even if browser stays busy
+// ブラウザが忙しい状態でも 2 秒以内に analytics を送る
 requestIdleCallback(
   () => analytics.track('page_view', { path: location.pathname }),
   { timeout: 2000 }
 )
 ```
 
-**Chunking large tasks:**
+**大きな処理を分割する:**
 
 ```typescript
 function processLargeDataset(items: Item[]) {
   let index = 0
 
   function processChunk(deadline: IdleDeadline) {
-    // Process items while we have idle time (aim for <50ms chunks)
+    // アイドル時間がある間だけ処理する（50ms 未満のチャンクを目標にする）
     while (index < items.length && deadline.timeRemaining() > 0) {
       processItem(items[index])
       index++
     }
 
-    // Schedule next chunk if more items remain
+    // まだ項目が残っていれば次のチャンクを予約する
     if (index < items.length) {
       requestIdleCallback(processChunk)
     }
@@ -80,26 +80,26 @@ function processLargeDataset(items: Item[]) {
 }
 ```
 
-**With fallback for unsupported browsers:**
+**未対応ブラウザ向けのフォールバック付き:**
 
 ```typescript
 const scheduleIdleWork = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1))
 
 scheduleIdleWork(() => {
-  // Non-critical work
+  // 非重要処理
 })
 ```
 
-**When to use:**
+**使いどころ:**
 
-- Analytics and telemetry
-- Saving state to localStorage/IndexedDB
-- Prefetching resources for likely next actions
-- Processing non-urgent data transformations
-- Lazy initialization of non-critical features
+- Analytics とテレメトリ
+- localStorage / IndexedDB への状態保存
+- 次の操作で使いそうなリソースの先読み
+- 緊急でないデータ変換の処理
+- 非重要機能の遅延初期化
 
-**When NOT to use:**
+**使わないほうがよい場面:**
 
-- User-initiated actions that need immediate feedback
-- Rendering updates the user is waiting for
-- Time-sensitive operations
+- すぐに反応が必要なユーザー操作
+- ユーザーが待っている描画更新
+- 時間に敏感な処理

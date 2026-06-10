@@ -1,23 +1,23 @@
 ---
-title: Don't Define Components Inside Components
+title: コンポーネントをコンポーネント内で定義しない
 impact: HIGH
-impactDescription: prevents remount on every render
+impactDescription: 毎回のレンダーでの再マウントを防ぐ
 tags: rerender, components, remount, performance
 ---
 
-## Don't Define Components Inside Components
+## コンポーネントをコンポーネント内で定義しない
 
-**Impact: HIGH (prevents remount on every render)**
+**影響: 高（毎回のレンダーで再マウントを防ぐ）**
 
-Defining a component inside another component creates a new component type on every render. React sees a different component each time and fully remounts it, destroying all state and DOM.
+別のコンポーネントの中でコンポーネントを定義すると、レンダーのたびに新しいコンポーネント型が作られます。React は毎回別物として扱い、完全に再マウントするため、すべての state と DOM が失われます。
 
-A common reason developers do this is to access parent variables without passing props. Always pass props instead.
+親の変数を props なしで使いたいことが、この書き方を選ぶよくある理由です。代わりに、必ず props を渡してください。
 
-**Incorrect (remounts on every render):**
+**誤り（毎回のレンダーで再マウントされる）:**
 
 ```tsx
 function UserProfile({ user, theme }) {
-  // Defined inside to access `theme` - BAD
+  // `theme` を使うために内側で定義している - NG
   const Avatar = () => (
     <img
       src={user.avatarUrl}
@@ -25,7 +25,7 @@ function UserProfile({ user, theme }) {
     />
   )
 
-  // Defined inside to access `user` - BAD
+  // `user` を使うために内側で定義している - NG
   const Stats = () => (
     <div>
       <span>{user.followers} followers</span>
@@ -42,9 +42,9 @@ function UserProfile({ user, theme }) {
 }
 ```
 
-Every time `UserProfile` renders, `Avatar` and `Stats` are new component types. React unmounts the old instances and mounts new ones, losing any internal state, running effects again, and recreating DOM nodes.
+`UserProfile` がレンダーされるたびに、`Avatar` と `Stats` は新しいコンポーネント型になります。React は古いインスタンスを unmount して新しいものを mount するため、内部 state は失われ、effect は再実行され、DOM ノードも作り直されます。
 
-**Correct (pass props instead):**
+**正しい例（代わりに props を渡す）:**
 
 ```tsx
 function Avatar({ src, theme }: { src: string; theme: string }) {
@@ -75,8 +75,8 @@ function UserProfile({ user, theme }) {
 }
 ```
 
-**Symptoms of this bug:**
-- Input fields lose focus on every keystroke
-- Animations restart unexpectedly
-- `useEffect` cleanup/setup runs on every parent render
-- Scroll position resets inside the component
+**このバグの症状:**
+- 入力欄が文字入力のたびにフォーカスを失う
+- アニメーションが予期せず最初から再生される
+- 親のレンダーのたびに `useEffect` の cleanup / setup が走る
+- コンポーネント内のスクロール位置がリセットされる

@@ -1,17 +1,17 @@
 ---
-title: Use flatMap to Map and Filter in One Pass
+title: flatMap で map と filter を 1 回で行う
 impact: LOW-MEDIUM
-impactDescription: eliminates intermediate array
+impactDescription: 中間配列をなくす
 tags: javascript, arrays, flatMap, filter, performance
 ---
 
-## Use flatMap to Map and Filter in One Pass
+## flatMap で map と filter を 1 回で行う
 
-**Impact: LOW-MEDIUM (eliminates intermediate array)**
+**影響: LOW-MEDIUM（中間配列をなくす）**
 
-Chaining `.map().filter(Boolean)` creates an intermediate array and iterates twice. Use `.flatMap()` to transform and filter in a single pass.
+`.map().filter(Boolean)` をつなげると中間配列が作られ、2 回走査されます。`.flatMap()` を使って、変換とフィルタリングを 1 回で行ってください。
 
-**Incorrect (2 iterations, intermediate array):**
+**誤り（2 回の反復、中間配列あり）:**
 
 ```typescript
 const userNames = users
@@ -19,7 +19,7 @@ const userNames = users
   .filter(Boolean)
 ```
 
-**Correct (1 iteration, no intermediate array):**
+**正しい例（1 回の反復、中間配列なし）:**
 
 ```typescript
 const userNames = users.flatMap(user =>
@@ -27,10 +27,10 @@ const userNames = users.flatMap(user =>
 )
 ```
 
-**More examples:**
+**追加例:**
 
 ```typescript
-// Extract valid emails from responses
+// レスポンスから有効な email を抽出する
 // Before
 const emails = responses
   .map(r => r.success ? r.data.email : null)
@@ -41,7 +41,7 @@ const emails = responses.flatMap(r =>
   r.success ? [r.data.email] : []
 )
 
-// Parse and filter valid numbers
+// 有効な数値を解析して抽出する
 // Before
 const numbers = strings
   .map(s => parseInt(s, 10))
@@ -54,7 +54,7 @@ const numbers = strings.flatMap(s => {
 })
 ```
 
-**When to use:**
-- Transforming items while filtering some out
-- Conditional mapping where some inputs produce no output
-- Parsing/validating where invalid inputs should be skipped
+**使いどころ:**
+- アイテムを変換しつつ、一部を除外したいとき
+- 条件付きで map し、入力によっては出力が 0 件のとき
+- 無効な入力をスキップしたい解析・検証処理

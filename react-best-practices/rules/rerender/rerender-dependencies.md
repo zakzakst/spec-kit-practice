@@ -1,15 +1,15 @@
 ---
-title: Narrow Effect Dependencies
+title: Effect の依存関係を絞る
 impact: LOW
-impactDescription: minimizes effect re-runs
+impactDescription: effect の再実行を最小化する
 tags: rerender, useEffect, dependencies, optimization
 ---
 
-## Narrow Effect Dependencies
+## Effect の依存関係を絞る
 
-Specify primitive dependencies instead of objects to minimize effect re-runs.
+オブジェクトではなくプリミティブな依存値を指定して、effect の再実行を最小限にしてください。
 
-**Incorrect (re-runs on any user field change):**
+**誤り（user のどのフィールドが変わっても再実行される）:**
 
 ```tsx
 useEffect(() => {
@@ -17,7 +17,7 @@ useEffect(() => {
 }, [user])
 ```
 
-**Correct (re-runs only when id changes):**
+**正しい例（id が変わったときだけ再実行される）:**
 
 ```tsx
 useEffect(() => {
@@ -25,17 +25,17 @@ useEffect(() => {
 }, [user.id])
 ```
 
-**For derived state, compute outside effect:**
+**派生状態は effect の外で計算する:**
 
 ```tsx
-// Incorrect: runs on width=767, 766, 765...
+// 誤り: width=767, 766, 765... で毎回走る
 useEffect(() => {
   if (width < 768) {
     enableMobileMode()
   }
 }, [width])
 
-// Correct: runs only on boolean transition
+// 正しい例: ブール値の切り替わり時だけ走る
 const isMobile = width < 768
 useEffect(() => {
   if (isMobile) {

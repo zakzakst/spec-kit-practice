@@ -1,15 +1,15 @@
 ---
-title: Combine Multiple Array Iterations
+title: 複数の配列走査をまとめる
 impact: LOW-MEDIUM
-impactDescription: reduces iterations
+impactDescription: 反復回数を減らす
 tags: javascript, arrays, loops, performance
 ---
 
-## Combine Multiple Array Iterations
+## 複数の配列走査をまとめる
 
-Multiple `.filter()` or `.map()` calls iterate the array multiple times. Combine into one loop.
+複数の `.filter()` や `.map()` は、配列を何度も走査します。1 回のループにまとめてください。
 
-**Incorrect (3 iterations):**
+**誤り（3 回の反復）:**
 
 ```typescript
 const admins = users.filter(u => u.isAdmin)
@@ -17,7 +17,7 @@ const testers = users.filter(u => u.isTester)
 const inactive = users.filter(u => !u.isActive)
 ```
 
-**Correct (1 iteration):**
+**正しい例（1 回の反復）:**
 
 ```typescript
 const admins: User[] = []

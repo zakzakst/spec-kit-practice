@@ -1,30 +1,28 @@
 ---
-
-title: Extract Default Non-primitive Parameter Value from Memoized Component to Constant
+title: メモ化コンポーネントの非プリミティブなデフォルト値は定数に切り出す
 impact: MEDIUM
-impactDescription: restores memoization by using a constant for default value
+impactDescription: デフォルト値を定数にしてメモ化を保つ
 tags: rerender, memo, optimization
-
 ---
 
-## Extract Default Non-primitive Parameter Value from Memoized Component to Constant
+## メモ化コンポーネントの非プリミティブなデフォルト値は定数に切り出す
 
-When memoized component has a default value for some non-primitive optional parameter, such as an array, function, or object, calling the component without that parameter results in broken memoization. This is because new value instances are created on every rerender, and they do not pass strict equality comparison in `memo()`.
+メモ化コンポーネントに配列・関数・オブジェクトのような非プリミティブな省略可能パラメータのデフォルト値がある場合、そのパラメータを渡さずに呼び出すとメモ化が壊れます。毎回の再レンダリングで新しい値インスタンスが作られ、`memo()` の厳密比較に通らないためです。
 
-To address this issue, extract the default value into a constant.
+この問題を避けるには、デフォルト値を定数に切り出してください。
 
-**Incorrect (`onClick` has different values on every rerender):**
+**誤り（`onClick` の値が毎回変わる）:**
 
 ```tsx
 const UserAvatar = memo(function UserAvatar({ onClick = () => {} }: { onClick?: () => void }) {
   // ...
 })
 
-// Used without optional onClick
+// 省略可能な onClick を渡さずに使う
 <UserAvatar />
 ```
 
-**Correct (stable default value):**
+**正しい例（安定したデフォルト値）:**
 
 ```tsx
 const NOOP = () => {};
@@ -33,6 +31,6 @@ const UserAvatar = memo(function UserAvatar({ onClick = NOOP }: { onClick?: () =
   // ...
 })
 
-// Used without optional onClick
+// 省略可能な onClick を渡さずに使う
 <UserAvatar />
 ```

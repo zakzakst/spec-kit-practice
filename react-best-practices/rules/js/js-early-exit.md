@@ -1,15 +1,15 @@
 ---
-title: Early Return from Functions
+title: 関数は早期リターンする
 impact: LOW-MEDIUM
-impactDescription: avoids unnecessary computation
+impactDescription: 不要な計算を避ける
 tags: javascript, functions, optimization, early-return
 ---
 
-## Early Return from Functions
+## 関数は早期リターンする
 
-Return early when result is determined to skip unnecessary processing.
+結果が確定したらすぐに返して、不要な処理をスキップしてください。
 
-**Incorrect (processes all items even after finding answer):**
+**誤り（答えが見つかっても全件を処理し続ける）:**
 
 ```typescript
 function validateUsers(users: User[]) {
@@ -25,14 +25,14 @@ function validateUsers(users: User[]) {
       hasError = true
       errorMessage = 'Name required'
     }
-    // Continues checking all users even after error found
+    // エラーを見つけても全ユーザーの確認を続ける
   }
   
   return hasError ? { valid: false, error: errorMessage } : { valid: true }
 }
 ```
 
-**Correct (returns immediately on first error):**
+**正しい例（最初のエラーで即座に返す）:**
 
 ```typescript
 function validateUsers(users: User[]) {

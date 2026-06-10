@@ -1,49 +1,49 @@
 ---
-title: Defer Await Until Needed
+title: 必要になるまで await を遅らせる
 impact: HIGH
-impactDescription: avoids blocking unused code paths
+impactDescription: 使われないコードパスをブロックしない
 tags: async, await, conditional, optimization
 ---
 
-## Defer Await Until Needed
+## 必要になるまで await を遅らせる
 
-Move `await` operations into the branches where they're actually used to avoid blocking code paths that don't need them.
+`await` を実際に使う分岐の中へ移動し、必要のないコードパスをブロックしないようにします。
 
-**Incorrect (blocks both branches):**
+**誤り（両方の分岐をブロックする）:**
 
 ```typescript
 async function handleRequest(userId: string, skipProcessing: boolean) {
   const userData = await fetchUserData(userId)
   
   if (skipProcessing) {
-    // Returns immediately but still waited for userData
+    // すぐに返るが、userData を待ってしまっている
     return { skipped: true }
   }
   
-  // Only this branch uses userData
+  // この分岐だけが userData を使う
   return processUserData(userData)
 }
 ```
 
-**Correct (only blocks when needed):**
+**正しい例（必要なときだけブロックする）:**
 
 ```typescript
 async function handleRequest(userId: string, skipProcessing: boolean) {
   if (skipProcessing) {
-    // Returns immediately without waiting
+    // 待たずにすぐ返す
     return { skipped: true }
   }
   
-  // Fetch only when needed
+  // 必要なときだけ取得する
   const userData = await fetchUserData(userId)
   return processUserData(userData)
 }
 ```
 
-**Another example (early return optimization):**
+**別の例（早期 return の最適化）:**
 
 ```typescript
-// Incorrect: always fetches permissions
+// 誤り: 常に permissions を取得する
 async function updateResource(resourceId: string, userId: string) {
   const permissions = await fetchPermissions(userId)
   const resource = await getResource(resourceId)
@@ -59,7 +59,7 @@ async function updateResource(resourceId: string, userId: string) {
   return await updateResourceData(resource, permissions)
 }
 
-// Correct: fetches only when needed
+// 正しい例: 必要なときだけ取得する
 async function updateResource(resourceId: string, userId: string) {
   const resource = await getResource(resourceId)
   
@@ -77,6 +77,6 @@ async function updateResource(resourceId: string, userId: string) {
 }
 ```
 
-This optimization is especially valuable when the skipped branch is frequently taken, or when the deferred operation is expensive.
+この最適化は、スキップされる分岐が頻繁に選ばれる場合や、遅延した処理が高コストな場合に特に有効です。
 
-For `await getFlag()` combined with a cheap synchronous guard (`flag && someCondition`), see [Check Cheap Conditions Before Async Flags](./async-cheap-condition-before-await.md).
+`await getFlag()` と安価な同期ガード（`flag && someCondition`）を組み合わせる場合は、[非同期フラグより先に安価な条件を確認する](./async-cheap-condition-before-await.md) を参照してください。

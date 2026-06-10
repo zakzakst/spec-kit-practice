@@ -1,15 +1,15 @@
 ---
-title: Put Interaction Logic in Event Handlers
+title: インタラクションロジックはイベントハンドラに置く
 impact: MEDIUM
-impactDescription: avoids effect re-runs and duplicate side effects
+impactDescription: effect の再実行と重複した副作用を避ける
 tags: rerender, useEffect, events, side-effects, dependencies
 ---
 
-## Put Interaction Logic in Event Handlers
+## インタラクションロジックはイベントハンドラに置く
 
-If a side effect is triggered by a specific user action (submit, click, drag), run it in that event handler. Do not model the action as state + effect; it makes effects re-run on unrelated changes and can duplicate the action.
+副作用が特定のユーザー操作（送信、クリック、ドラッグ）で発火するなら、そのイベントハンドラの中で実行してください。操作を state + effect として表現しないでください。無関係な変更で effect が再実行され、同じ操作が重複することがあります。
 
-**Incorrect (event modeled as state + effect):**
+**誤り（イベントを state + effect で表現している）:**
 
 ```tsx
 function Form() {
@@ -19,15 +19,15 @@ function Form() {
   useEffect(() => {
     if (submitted) {
       post('/api/register')
-      showToast('Registered', theme)
+      showToast('登録しました', theme)
     }
   }, [submitted, theme])
 
-  return <button onClick={() => setSubmitted(true)}>Submit</button>
+  return <button onClick={() => setSubmitted(true)}>送信</button>
 }
 ```
 
-**Correct (do it in the handler):**
+**正しい例（ハンドラの中で実行する）:**
 
 ```tsx
 function Form() {
@@ -35,11 +35,11 @@ function Form() {
 
   function handleSubmit() {
     post('/api/register')
-    showToast('Registered', theme)
+    showToast('登録しました', theme)
   }
 
-  return <button onClick={handleSubmit}>Submit</button>
+  return <button onClick={handleSubmit}>送信</button>
 }
 ```
 
-Reference: [Should this code move to an event handler?](https://react.dev/learn/removing-effect-dependencies#should-this-code-move-to-an-event-handler)
+参考: [このコードはイベントハンドラへ移すべきか？](https://react.dev/learn/removing-effect-dependencies#should-this-code-move-to-an-event-handler)

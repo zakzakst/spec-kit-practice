@@ -1,15 +1,15 @@
 ---
-title: Do Not Put Effect Events in Dependency Arrays
+title: Effect Event を依存配列に入れない
 impact: LOW
-impactDescription: avoids unnecessary effect re-runs and lint errors
+impactDescription: 不要な effect の再実行と lint エラーを防ぐ
 tags: advanced, hooks, useEffectEvent, dependencies, effects
 ---
 
-## Do Not Put Effect Events in Dependency Arrays
+## Effect Event を依存配列に入れない
 
-Effect Event functions do not have a stable identity. Their identity intentionally changes on every render. Do not include the function returned by `useEffectEvent` in a `useEffect` dependency array. Keep the actual reactive values as dependencies and call the Effect Event from inside the effect body or subscriptions created by that effect.
+Effect Event の関数は安定した identity を持ちません。identity は意図的に毎回のレンダーで変わります。`useEffectEvent` が返す関数を `useEffect` の依存配列に含めないでください。実際に反応すべき値だけを依存関係として残し、Effect Event は effect 本体か、その effect が作成したサブスクリプションの中から呼び出してください。
 
-**Incorrect (Effect Event added as a dependency):**
+**誤り: Effect Event を依存関係に追加している**
 
 ```tsx
 import { useEffect, useEffectEvent } from 'react'
@@ -30,9 +30,9 @@ function ChatRoom({ roomId, onConnected }: {
 }
 ```
 
-Including the Effect Event in dependencies makes the effect re-run every render and triggers the React Hooks lint rule.
+Effect Event を依存配列に入れると、毎回のレンダーで effect が再実行され、React Hooks の lint ルールにも引っかかります。
 
-**Correct (depend on reactive values, not the Effect Event):**
+**正しい例: Effect Event ではなく、反応的な値に依存する**
 
 ```tsx
 import { useEffect, useEffectEvent } from 'react'
@@ -53,4 +53,4 @@ function ChatRoom({ roomId, onConnected }: {
 }
 ```
 
-Reference: [React useEffectEvent: Effect Event in deps](https://react.dev/reference/react/useEffectEvent#effect-event-in-deps)
+参考: [React useEffectEvent: Effect Event in deps](https://react.dev/reference/react/useEffectEvent#effect-event-in-deps)

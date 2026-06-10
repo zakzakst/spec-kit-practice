@@ -1,23 +1,23 @@
 ---
-title: Version and Minimize localStorage Data
+title: localStorage データにバージョンを付けて最小化する
 impact: MEDIUM
-impactDescription: prevents schema conflicts, reduces storage size
+impactDescription: スキーマ衝突を防ぎ、保存容量を削減
 tags: client, localStorage, storage, versioning, data-minimization
 ---
 
-## Version and Minimize localStorage Data
+## localStorage データにバージョンを付けて最小化する
 
-Add version prefix to keys and store only needed fields. Prevents schema conflicts and accidental storage of sensitive data.
+キーにバージョン接頭辞を付け、必要なフィールドだけを保存します。これにより、スキーマ衝突や機密データの誤保存を防げます。
 
-**Incorrect:**
+**誤り:**
 
 ```typescript
-// No version, stores everything, no error handling
+// バージョンがなく、すべてを保存し、エラーハンドリングもない
 localStorage.setItem('userConfig', JSON.stringify(fullUserObject))
 const data = localStorage.getItem('userConfig')
 ```
 
-**Correct:**
+**正解:**
 
 ```typescript
 const VERSION = 'v2'
@@ -26,7 +26,7 @@ function saveConfig(config: { theme: string; language: string }) {
   try {
     localStorage.setItem(`userConfig:${VERSION}`, JSON.stringify(config))
   } catch {
-    // Throws in incognito/private browsing, quota exceeded, or disabled
+    // シークレット/プライベートブラウジング、容量超過、無効化時には例外が発生する
   }
 }
 
@@ -39,7 +39,7 @@ function loadConfig() {
   }
 }
 
-// Migration from v1 to v2
+// v1 から v2 への移行
 function migrate() {
   try {
     const v1 = localStorage.getItem('userConfig:v1')
@@ -52,10 +52,10 @@ function migrate() {
 }
 ```
 
-**Store minimal fields from server responses:**
+**サーバーレスポンスからは最小限のフィールドだけを保存する:**
 
 ```typescript
-// User object has 20+ fields, only store what UI needs
+// User オブジェクトには 20 個以上のフィールドがあるため、UI に必要なものだけ保存する
 function cachePrefs(user: FullUser) {
   try {
     localStorage.setItem('prefs:v1', JSON.stringify({
@@ -66,6 +66,6 @@ function cachePrefs(user: FullUser) {
 }
 ```
 
-**Always wrap in try-catch:** `getItem()` and `setItem()` throw in incognito/private browsing (Safari, Firefox), when quota exceeded, or when disabled.
+**必ず try-catch で囲む:** `getItem()` と `setItem()` は、シークレット/プライベートブラウジング（Safari, Firefox）、容量超過、無効化時に例外を投げます。
 
-**Benefits:** Schema evolution via versioning, reduced storage size, prevents storing tokens/PII/internal flags.
+**利点:** バージョン管理によるスキーマ進化、保存容量の削減、トークン/PII/内部フラグの保存防止。

@@ -1,18 +1,18 @@
 ---
-title: Avoid Layout Thrashing
+title: レイアウトスラッシングを避ける
 impact: MEDIUM
-impactDescription: prevents forced synchronous layouts and reduces performance bottlenecks
+impactDescription: 強制同期レイアウトを防ぎ、性能上のボトルネックを減らす
 tags: javascript, dom, css, performance, reflow, layout-thrashing
 ---
 
-## Avoid Layout Thrashing
+## レイアウトスラッシングを避ける
 
-Avoid interleaving style writes with layout reads. When you read a layout property (like `offsetWidth`, `getBoundingClientRect()`, or `getComputedStyle()`) between style changes, the browser is forced to trigger a synchronous reflow.
+スタイルの書き込みとレイアウトの読み取りを交互に行わないでください。`offsetWidth`、`getBoundingClientRect()`、`getComputedStyle()` などのレイアウトプロパティをスタイル変更の合間に読むと、ブラウザは強制的に同期再計算を実行させられます。
 
-**This is OK (browser batches style changes):**
+**これは問題ありません（ブラウザがスタイル変更をまとめて処理するため）:**
 ```typescript
 function updateElementStyles(element: HTMLElement) {
-  // Each line invalidates style, but browser batches the recalculation
+  // 各行でスタイルは無効化されるが、ブラウザが再計算をまとめる
   element.style.width = '100px'
   element.style.height = '200px'
   element.style.backgroundColor = 'blue'
@@ -20,45 +20,45 @@ function updateElementStyles(element: HTMLElement) {
 }
 ```
 
-**Incorrect (interleaved reads and writes force reflows):**
+**誤り（読み取りと書き込みが交互だと再計算が強制される）:**
 ```typescript
 function layoutThrashing(element: HTMLElement) {
   element.style.width = '100px'
-  const width = element.offsetWidth  // Forces reflow
+  const width = element.offsetWidth  // 再計算を強制する
   element.style.height = '200px'
-  const height = element.offsetHeight  // Forces another reflow
+  const height = element.offsetHeight  // さらに再計算を強制する
 }
 ```
 
-**Correct (batch writes, then read once):**
+**正しい例（書き込みをまとめ、その後に 1 回だけ読む）:**
 ```typescript
 function updateElementStyles(element: HTMLElement) {
-  // Batch all writes together
+  // すべての書き込みをまとめる
   element.style.width = '100px'
   element.style.height = '200px'
   element.style.backgroundColor = 'blue'
   element.style.border = '1px solid black'
   
-  // Read after all writes are done (single reflow)
+  // すべての書き込みが終わってから読む（再計算は 1 回）
   const { width, height } = element.getBoundingClientRect()
 }
 ```
 
-**Correct (batch reads, then writes):**
+**正しい例（読み取りをまとめてから書き込む）:**
 ```typescript
 function avoidThrashing(element: HTMLElement) {
-  // Read phase - all layout queries first
+  // 読み取りフェーズ - まずレイアウト問い合わせをすべて行う
   const rect1 = element.getBoundingClientRect()
   const offsetWidth = element.offsetWidth
   const offsetHeight = element.offsetHeight
   
-  // Write phase - all style changes after
+  // 書き込みフェーズ - その後にすべてのスタイル変更を行う
   element.style.width = '100px'
   element.style.height = '200px'
 }
 ```
 
-**Better: use CSS classes**
+**より良い方法: CSS クラスを使う**
 ```css
 .highlighted-box {
   width: 100px;
@@ -75,16 +75,16 @@ function updateElementStyles(element: HTMLElement) {
 }
 ```
 
-**React example:**
+**React の例:**
 ```tsx
-// Incorrect: interleaving style changes with layout queries
+// 誤り: スタイル変更とレイアウト問い合わせが交互になっている
 function Box({ isHighlighted }: { isHighlighted: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   
   useEffect(() => {
     if (ref.current && isHighlighted) {
       ref.current.style.width = '100px'
-      const width = ref.current.offsetWidth // Forces layout
+      const width = ref.current.offsetWidth // レイアウトを強制する
       ref.current.style.height = '200px'
     }
   }, [isHighlighted])
@@ -92,7 +92,7 @@ function Box({ isHighlighted }: { isHighlighted: boolean }) {
   return <div ref={ref}>Content</div>
 }
 
-// Correct: toggle class
+// 正しい例: クラスを切り替える
 function Box({ isHighlighted }: { isHighlighted: boolean }) {
   return (
     <div className={isHighlighted ? 'highlighted-box' : ''}>
@@ -102,6 +102,6 @@ function Box({ isHighlighted }: { isHighlighted: boolean }) {
 }
 ```
 
-Prefer CSS classes over inline styles when possible. CSS files are cached by the browser, and classes provide better separation of concerns and are easier to maintain.
+可能であれば、インラインスタイルよりも CSS クラスを使ってください。CSS ファイルはブラウザにキャッシュされ、クラスのほうが責務分離もしやすく、保守も簡単です。
 
-See [this gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) and [CSS Triggers](https://csstriggers.com/) for more information on layout-forcing operations.
+レイアウトを強制する操作の詳細は、[この gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) と [CSS Triggers](https://csstriggers.com/) を参照してください。

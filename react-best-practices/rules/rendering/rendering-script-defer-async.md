@@ -1,22 +1,22 @@
 ---
-title: Use defer or async on Script Tags
+title: Script タグには defer または async を使う
 impact: HIGH
-impactDescription: eliminates render-blocking
+impactDescription: レンダーブロックをなくす
 tags: rendering, script, defer, async, performance
 ---
 
-## Use defer or async on Script Tags
+## Script タグには defer または async を使う
 
-**Impact: HIGH (eliminates render-blocking)**
+**影響: 高（レンダーブロックをなくす）**
 
-Script tags without `defer` or `async` block HTML parsing while the script downloads and executes. This delays First Contentful Paint and Time to Interactive.
+`defer` や `async` のない script タグは、スクリプトのダウンロードと実行中に HTML の解析をブロックします。これにより、First Contentful Paint と Time to Interactive が遅れます。
 
-- **`defer`**: Downloads in parallel, executes after HTML parsing completes, maintains execution order
-- **`async`**: Downloads in parallel, executes immediately when ready, no guaranteed order
+- **`defer`**: 並列でダウンロードし、HTML の解析完了後に実行し、実行順序を保つ
+- **`async`**: 並列でダウンロードし、準備ができ次第すぐ実行し、順序は保証しない
 
-Use `defer` for scripts that depend on DOM or other scripts. Use `async` for independent scripts like analytics.
+DOM や他のスクリプトに依存するものには `defer` を使います。analytics のような独立したスクリプトには `async` を使います。
 
-**Incorrect (blocks rendering):**
+**不適切（描画をブロックする）:**
 
 ```tsx
 export default function Document() {
@@ -32,16 +32,16 @@ export default function Document() {
 }
 ```
 
-**Correct (non-blocking):**
+**適切（ブロックしない）:**
 
 ```tsx
 export default function Document() {
   return (
     <html>
       <head>
-        {/* Independent script - use async */}
+        {/* 独立したスクリプト - async を使う */}
         <script src="https://example.com/analytics.js" async />
-        {/* DOM-dependent script - use defer */}
+        {/* DOM 依存のスクリプト - defer を使う */}
         <script src="/scripts/utils.js" defer />
       </head>
       <body>{/* content */}</body>
@@ -50,7 +50,7 @@ export default function Document() {
 }
 ```
 
-**Note:** In Next.js, prefer the `next/script` component with `strategy` prop instead of raw script tags:
+**注:** Next.js では、素の script タグよりも `strategy` プロパティ付きの `next/script` コンポーネントを優先してください。
 
 ```tsx
 import Script from 'next/script'

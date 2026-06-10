@@ -1,19 +1,19 @@
 ---
-title: Strategic Suspense Boundaries
+title: 戦略的な Suspense 境界
 impact: HIGH
-impactDescription: faster initial paint
+impactDescription: 初期描画を高速化
 tags: async, suspense, streaming, layout-shift
 ---
 
-## Strategic Suspense Boundaries
+## 戦略的な Suspense 境界
 
-Instead of awaiting data in async components before returning JSX, use Suspense boundaries to show the wrapper UI faster while data loads.
+async コンポーネント内で JSX を返す前にデータを `await` する代わりに、Suspense 境界を使って、データ読み込み中でも外側の UI をより早く表示してください。
 
-**Incorrect (wrapper blocked by data fetching):**
+**誤り（外側の UI がデータ取得でブロックされる）:**
 
 ```tsx
 async function Page() {
-  const data = await fetchData() // Blocks entire page
+  const data = await fetchData() // ページ全体をブロックする
   
   return (
     <div>
@@ -28,9 +28,9 @@ async function Page() {
 }
 ```
 
-The entire layout waits for data even though only the middle section needs it.
+中央部分だけがデータを必要としているのに、レイアウト全体がそのデータを待ってしまいます。
 
-**Correct (wrapper shows immediately, data streams in):**
+**正しい例（外側の UI をすぐ表示し、データは後から流し込む）:**
 
 ```tsx
 function Page() {
@@ -49,18 +49,18 @@ function Page() {
 }
 
 async function DataDisplay() {
-  const data = await fetchData() // Only blocks this component
+  const data = await fetchData() // このコンポーネントだけをブロックする
   return <div>{data.content}</div>
 }
 ```
 
-Sidebar, Header, and Footer render immediately. Only DataDisplay waits for data.
+Sidebar、Header、Footer はすぐに描画されます。データを待つのは `DataDisplay` だけです。
 
-**Alternative (share promise across components):**
+**代替案（コンポーネント間で Promise を共有する）:**
 
 ```tsx
 function Page() {
-  // Start fetch immediately, but don't await
+  // 取得はすぐに開始するが、await はしない
   const dataPromise = fetchData()
   
   return (
@@ -77,23 +77,23 @@ function Page() {
 }
 
 function DataDisplay({ dataPromise }: { dataPromise: Promise<Data> }) {
-  const data = use(dataPromise) // Unwraps the promise
+  const data = use(dataPromise) // Promise を展開する
   return <div>{data.content}</div>
 }
 
 function DataSummary({ dataPromise }: { dataPromise: Promise<Data> }) {
-  const data = use(dataPromise) // Reuses the same promise
+  const data = use(dataPromise) // 同じ Promise を再利用する
   return <div>{data.summary}</div>
 }
 ```
 
-Both components share the same promise, so only one fetch occurs. Layout renders immediately while both components wait together.
+両方のコンポーネントが同じ Promise を共有するため、取得は 1 回だけです。レイアウトはすぐに描画され、両方のコンポーネントが同時に待機します。
 
-**When NOT to use this pattern:**
+**このパターンを使わない方がよい場合:**
 
-- Critical data needed for layout decisions (affects positioning)
-- SEO-critical content above the fold
-- Small, fast queries where suspense overhead isn't worth it
-- When you want to avoid layout shift (loading → content jump)
+- レイアウトの判断に必要な重要データがある場合（配置に影響する）
+- ファーストビュー上の SEO 重要コンテンツ
+- 小さくて高速なクエリで、Suspense のオーバーヘッドに見合わない場合
+- ローディングからコンテンツへの切り替えでレイアウトシフトを避けたい場合
 
-**Trade-off:** Faster initial paint vs potential layout shift. Choose based on your UX priorities.
+**トレードオフ:** 初期描画の高速化と、レイアウトシフトの可能性のどちらを優先するかです。UX の優先順位に応じて選んでください。

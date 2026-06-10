@@ -1,24 +1,24 @@
 ---
-title: Cache Storage API Calls
+title: Storage API 呼び出しをキャッシュする
 impact: LOW-MEDIUM
-impactDescription: reduces expensive I/O
+impactDescription: 高コストな I/O を減らす
 tags: javascript, localStorage, storage, caching, performance
 ---
 
-## Cache Storage API Calls
+## Storage API 呼び出しをキャッシュする
 
-`localStorage`, `sessionStorage`, and `document.cookie` are synchronous and expensive. Cache reads in memory.
+`localStorage`、`sessionStorage`、`document.cookie` は同期的で高コストです。読み取り結果はメモリにキャッシュしてください。
 
-**Incorrect (reads storage on every call):**
+**誤り（呼び出しのたびに storage を読む）:**
 
 ```typescript
 function getTheme() {
   return localStorage.getItem('theme') ?? 'light'
 }
-// Called 10 times = 10 storage reads
+// 10 回呼ばれる = storage の読み取りも 10 回
 ```
 
-**Correct (Map cache):**
+**正しい例（Map でキャッシュする）:**
 
 ```typescript
 const storageCache = new Map<string, string | null>()
@@ -32,13 +32,13 @@ function getLocalStorage(key: string) {
 
 function setLocalStorage(key: string, value: string) {
   localStorage.setItem(key, value)
-  storageCache.set(key, value)  // keep cache in sync
+  storageCache.set(key, value)  // キャッシュを同期しておく
 }
 ```
 
-Use a Map (not a hook) so it works everywhere: utilities, event handlers, not just React components.
+React コンポーネントだけでなく、ユーティリティやイベントハンドラなどどこでも使えるように、フックではなく `Map` を使ってください。
 
-**Cookie caching:**
+**Cookie のキャッシュ:**
 
 ```typescript
 let cookieCache: Record<string, string> | null = null
@@ -53,9 +53,9 @@ function getCookie(name: string) {
 }
 ```
 
-**Important (invalidate on external changes):**
+**重要（外部変更時は無効化する）:**
 
-If storage can change externally (another tab, server-set cookies), invalidate cache:
+Storage が外部から変更される可能性がある場合（別タブ、サーバー設定の cookie など）は、キャッシュを無効化してください。
 
 ```typescript
 window.addEventListener('storage', (e) => {

@@ -1,15 +1,15 @@
 ---
-title: Use Passive Event Listeners for Scrolling Performance
+title: スクロール性能のために passive イベントリスナーを使う
 impact: MEDIUM
-impactDescription: eliminates scroll delay caused by event listeners
+impactDescription: イベントリスナーによるスクロール遅延をなくす
 tags: client, event-listeners, scrolling, performance, touch, wheel
 ---
 
-## Use Passive Event Listeners for Scrolling Performance
+## スクロール性能のために passive イベントリスナーを使う
 
-Add `{ passive: true }` to touch and wheel event listeners to enable immediate scrolling. Browsers normally wait for listeners to finish to check if `preventDefault()` is called, causing scroll delay.
+touch と wheel のイベントリスナーには `{ passive: true }` を付けて、スクロールを即時に開始できるようにします。ブラウザは通常、`preventDefault()` が呼ばれるか確認するためにリスナーの完了を待つので、スクロール遅延が発生します。
 
-**Incorrect:**
+**誤り:**
 
 ```typescript
 useEffect(() => {
@@ -26,7 +26,7 @@ useEffect(() => {
 }, [])
 ```
 
-**Correct:**
+**正解:**
 
 ```typescript
 useEffect(() => {
@@ -43,6 +43,6 @@ useEffect(() => {
 }, [])
 ```
 
-**Use passive when:** tracking/analytics, logging, any listener that doesn't call `preventDefault()`.
+**passive を使う場面:** 計測/分析、ログ出力、`preventDefault()` を呼ばないすべてのリスナー。
 
-**Don't use passive when:** implementing custom swipe gestures, custom zoom controls, or any listener that needs `preventDefault()`.
+**passive を使わない場面:** カスタムのスワイプ操作、独自のズーム操作、`preventDefault()` が必要なリスナー。

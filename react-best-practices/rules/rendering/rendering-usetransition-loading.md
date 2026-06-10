@@ -1,15 +1,15 @@
 ---
-title: Use useTransition Over Manual Loading States
+title: 手動のローディング状態より useTransition を使う
 impact: LOW
-impactDescription: reduces re-renders and improves code clarity
+impactDescription: 再レンダーを減らし、コードをわかりやすくする
 tags: rendering, transitions, useTransition, loading, state
 ---
 
-## Use useTransition Over Manual Loading States
+## 手動のローディング状態より useTransition を使う
 
-Use `useTransition` instead of manual `useState` for loading states. This provides built-in `isPending` state and automatically manages transitions.
+ローディング状態には、手動の `useState` ではなく `useTransition` を使います。組み込みの `isPending` 状態が使え、トランジションも自動で管理されます。
 
-**Incorrect (manual loading state):**
+**不適切（手動のローディング状態）:**
 
 ```tsx
 function SearchResults() {
@@ -35,7 +35,7 @@ function SearchResults() {
 }
 ```
 
-**Correct (useTransition with built-in pending state):**
+**適切（`useTransition` と組み込みの pending 状態）:**
 
 ```tsx
 import { useTransition, useState } from 'react'
@@ -46,10 +46,10 @@ function SearchResults() {
   const [isPending, startTransition] = useTransition()
 
   const handleSearch = (value: string) => {
-    setQuery(value) // Update input immediately
+    setQuery(value) // 入力をすぐに更新する
     
     startTransition(async () => {
-      // Fetch and update results
+      // 結果を取得して更新する
       const data = await fetchResults(value)
       setResults(data)
     })
@@ -65,11 +65,11 @@ function SearchResults() {
 }
 ```
 
-**Benefits:**
+**利点:**
 
-- **Automatic pending state**: No need to manually manage `setIsLoading(true/false)`
-- **Error resilience**: Pending state correctly resets even if the transition throws
-- **Better responsiveness**: Keeps the UI responsive during updates
-- **Interrupt handling**: New transitions automatically cancel pending ones
+- **pending 状態を自動管理**: `setIsLoading(true/false)` を手動で扱う必要がない
+- **エラーに強い**: トランジションが例外を投げても pending 状態は正しくリセットされる
+- **応答性が高い**: 更新中も UI の応答性を保てる
+- **割り込みを処理できる**: 新しいトランジションが古い pending 状態を自動で打ち消す
 
 Reference: [useTransition](https://react.dev/reference/react/useTransition)

@@ -1,19 +1,19 @@
 ---
-title: Prevent Hydration Mismatch Without Flickering
+title: ちらつきなしで hydration mismatch を防ぐ
 impact: MEDIUM
-impactDescription: avoids visual flicker and hydration errors
+impactDescription: 見た目のちらつきと hydration エラーを防ぐ
 tags: rendering, ssr, hydration, localStorage, flicker
 ---
 
-## Prevent Hydration Mismatch Without Flickering
+## ちらつきなしで hydration mismatch を防ぐ
 
-When rendering content that depends on client-side storage (localStorage, cookies), avoid both SSR breakage and post-hydration flickering by injecting a synchronous script that updates the DOM before React hydrates.
+`localStorage` や cookie などのクライアント側ストレージに依存する内容を描画する場合は、React が hydrate する前に DOM を更新する同期スクリプトを注入することで、SSR の破綻と hydration 後のちらつきの両方を避けます。
 
-**Incorrect (breaks SSR):**
+**不適切（SSR が壊れる）:**
 
 ```tsx
 function ThemeWrapper({ children }: { children: ReactNode }) {
-  // localStorage is not available on server - throws error
+  // localStorage はサーバーでは使えないため、エラーになる
   const theme = localStorage.getItem('theme') || 'light'
   
   return (
@@ -24,16 +24,16 @@ function ThemeWrapper({ children }: { children: ReactNode }) {
 }
 ```
 
-Server-side rendering will fail because `localStorage` is undefined.
+サーバーサイドレンダリングは `localStorage` が undefined なので失敗します。
 
-**Incorrect (visual flickering):**
+**不適切（見た目がちらつく）:**
 
 ```tsx
 function ThemeWrapper({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState('light')
   
   useEffect(() => {
-    // Runs after hydration - causes visible flash
+    // hydration 後に実行されるため、見えるちらつきが発生する
     const stored = localStorage.getItem('theme')
     if (stored) {
       setTheme(stored)
@@ -48,9 +48,9 @@ function ThemeWrapper({ children }: { children: ReactNode }) {
 }
 ```
 
-Component first renders with default value (`light`), then updates after hydration, causing a visible flash of incorrect content.
+コンポーネントは最初にデフォルト値（`light`）で描画され、その後 hydration 後に更新されるため、誤った内容が一瞬表示されます。
 
-**Correct (no flicker, no hydration mismatch):**
+**適切（ちらつきなし、hydration mismatch なし）:**
 
 ```tsx
 function ThemeWrapper({ children }: { children: ReactNode }) {
@@ -77,6 +77,6 @@ function ThemeWrapper({ children }: { children: ReactNode }) {
 }
 ```
 
-The inline script executes synchronously before showing the element, ensuring the DOM already has the correct value. No flickering, no hydration mismatch.
+このインラインスクリプトは要素が表示される前に同期的に実行されるため、DOM にはすでに正しい値が入っています。ちらつきも hydration mismatch も発生しません。
 
-This pattern is especially useful for theme toggles, user preferences, authentication states, and any client-only data that should render immediately without flashing default values.
+このパターンは、テーマ切り替え、ユーザー設定、認証状態、そしてデフォルト値をちらつかせずに即座に描画したいクライアント専用データに特に有効です。

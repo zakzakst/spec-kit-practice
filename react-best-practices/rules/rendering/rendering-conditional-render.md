@@ -1,15 +1,15 @@
 ---
-title: Use Explicit Conditional Rendering
+title: 明示的な条件付きレンダリングを使う
 impact: LOW
-impactDescription: prevents rendering 0 or NaN
+impactDescription: 0 や NaN の描画を防ぐ
 tags: rendering, conditional, jsx, falsy-values
 ---
 
-## Use Explicit Conditional Rendering
+## 明示的な条件付きレンダリングを使う
 
-Use explicit ternary operators (`? :`) instead of `&&` for conditional rendering when the condition can be `0`, `NaN`, or other falsy values that render.
+条件が `0`、`NaN`、または描画されてしまう他の falsy 値になり得る場合は、条件付きレンダリングに `&&` ではなく明示的な三項演算子（`? :`）を使います。
 
-**Incorrect (renders "0" when count is 0):**
+**不適切（count が 0 のときに "0" が描画される）:**
 
 ```tsx
 function Badge({ count }: { count: number }) {
@@ -20,11 +20,11 @@ function Badge({ count }: { count: number }) {
   )
 }
 
-// When count = 0, renders: <div>0</div>
-// When count = 5, renders: <div><span class="badge">5</span></div>
+// count = 0 のとき: <div>0</div> が描画される
+// count = 5 のとき: <div><span class="badge">5</span></div> が描画される
 ```
 
-**Correct (renders nothing when count is 0):**
+**適切（count が 0 のときは何も描画しない）:**
 
 ```tsx
 function Badge({ count }: { count: number }) {
@@ -35,6 +35,6 @@ function Badge({ count }: { count: number }) {
   )
 }
 
-// When count = 0, renders: <div></div>
-// When count = 5, renders: <div><span class="badge">5</span></div>
+// count = 0 のとき: <div></div> が描画される
+// count = 5 のとき: <div><span class="badge">5</span></div> が描画される
 ```

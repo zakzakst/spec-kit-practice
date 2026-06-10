@@ -1,33 +1,33 @@
 ---
-title: Avoid Barrel File Imports
+title: バレルファイルのインポートを避ける
 impact: CRITICAL
-impactDescription: 200-800ms import cost, slow builds
+impactDescription: 200〜800msのインポートコスト、ビルドが遅くなる
 tags: bundle, imports, tree-shaking, barrel-files, performance
 ---
 
-## Avoid Barrel File Imports
+## バレルファイルのインポートを避ける
 
-Import directly from source files instead of barrel files to avoid loading thousands of unused modules. **Barrel files** are entry points that re-export multiple modules (e.g., `index.js` that does `export * from './module'`).
+バレルファイルではなくソースファイルから直接インポートして、使っていない何千ものモジュールを読み込まないようにします。**バレルファイル**とは、複数のモジュールを再エクスポートするエントリポイントのことです（例: `index.js` で `export * from './module'` を行うもの）。
 
-Popular icon and component libraries can have **up to 10,000 re-exports** in their entry file. For many React packages, **it takes 200-800ms just to import them**, affecting both development speed and production cold starts.
+人気のあるアイコンライブラリやコンポーネントライブラリでは、エントリファイルに**最大10,000件の再エクスポート**が含まれることがあります。多くの React パッケージでは、**インポートするだけで200〜800ms**かかり、開発速度と本番のコールドスタートの両方に影響します。
 
-**Why tree-shaking doesn't help:** When a library is marked as external (not bundled), the bundler can't optimize it. If you bundle it to enable tree-shaking, builds become substantially slower analyzing the entire module graph.
+**なぜ tree-shaking では改善しないのか:** ライブラリが external（バンドル対象外）として扱われている場合、バンドラは最適化できません。tree-shaking を有効にするためにバンドルすると、今度はモジュールグラフ全体の解析でビルドが大幅に遅くなります。
 
-**Incorrect (imports entire library):**
+**誤り（ライブラリ全体を読み込む）:**
 
 ```tsx
 import { Check, X, Menu } from 'lucide-react'
-// Loads 1,583 modules, takes ~2.8s extra in dev
-// Runtime cost: 200-800ms on every cold start
+// 1,583個のモジュールを読み込むため、開発時に約2.8秒余計にかかる
+// 実行時コスト: コールドスタートごとに200〜800ms
 
 import { Button, TextField } from '@mui/material'
-// Loads 2,225 modules, takes ~4.2s extra in dev
+// 2,225個のモジュールを読み込むため、開発時に約4.2秒余計にかかる
 ```
 
-**Correct - Next.js 13.5+ (recommended):**
+**正しい例 - Next.js 13.5+（推奨）:**
 
 ```js
-// next.config.js - automatically optimizes barrel imports at build time
+// next.config.js - ビルド時にバレルインポートを自動で最適化する
 module.exports = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@mui/material']
@@ -36,25 +36,25 @@ module.exports = {
 ```
 
 ```tsx
-// Keep the standard imports - Next.js transforms them to direct imports
+// 標準のインポートをそのまま使う - Next.js が直接インポートに変換する
 import { Check, X, Menu } from 'lucide-react'
-// Full TypeScript support, no manual path wrangling
+// TypeScript を完全にサポートし、パスを手作業で調整する必要がない
 ```
 
-This is the recommended approach because it preserves TypeScript type safety and editor autocompletion while still eliminating the barrel import cost.
+この方法は、バレルインポートのコストを解消しつつ、TypeScript の型安全性とエディタの補完を維持できるため推奨されます。
 
-**Correct - Direct imports (non-Next.js projects):**
+**正しい例 - 直接インポート（Next.js 以外のプロジェクト）:**
 
 ```tsx
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-// Loads only what you use
+// 使用するものだけを読み込む
 ```
 
-> **TypeScript warning:** Some libraries (notably `lucide-react`) don't ship `.d.ts` files for their deep import paths. Importing from `lucide-react/dist/esm/icons/check` resolves to an implicit `any` type, causing errors under `strict` or `noImplicitAny`. Prefer `optimizePackageImports` when available, or verify the library exports types for its subpaths before using direct imports.
+> **TypeScript の注意:** 一部のライブラリ（特に `lucide-react`）は、深いインポートパス向けの `.d.ts` ファイルを提供していません。`lucide-react/dist/esm/icons/check` からインポートすると暗黙の `any` 型になり、`strict` や `noImplicitAny` でエラーになります。利用可能なら `optimizePackageImports` を優先し、直接インポートを使う前にサブパスで型が提供されているか確認してください。
 
-These optimizations provide 15-70% faster dev boot, 28% faster builds, 40% faster cold starts, and significantly faster HMR.
+これらの最適化により、開発起動が15〜70%高速化し、ビルドが28%高速化し、コールドスタートが40%高速化し、HMR も大幅に速くなります。
 
-Libraries commonly affected: `lucide-react`, `@mui/material`, `@mui/icons-material`, `@tabler/icons-react`, `react-icons`, `@headlessui/react`, `@radix-ui/react-*`, `lodash`, `ramda`, `date-fns`, `rxjs`, `react-use`.
+影響を受けやすいライブラリ: `lucide-react`, `@mui/material`, `@mui/icons-material`, `@tabler/icons-react`, `react-icons`, `@headlessui/react`, `@radix-ui/react-*`, `lodash`, `ramda`, `date-fns`, `rxjs`, `react-use`。
 
-Reference: [How we optimized package imports in Next.js](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)
+参考: [Next.js のパッケージインポート最適化の取り組み](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)

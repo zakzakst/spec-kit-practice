@@ -1,22 +1,22 @@
 ---
-title: Cache Repeated Function Calls
+title: 繰り返しの関数呼び出しをキャッシュする
 impact: MEDIUM
-impactDescription: avoid redundant computation
+impactDescription: 冗長な計算を避ける
 tags: javascript, cache, memoization, performance
 ---
 
-## Cache Repeated Function Calls
+## 繰り返しの関数呼び出しをキャッシュする
 
-Use a module-level Map to cache function results when the same function is called repeatedly with the same inputs during render.
+レンダリング中に同じ関数が同じ入力で何度も呼ばれる場合は、モジュールレベルの `Map` を使って結果をキャッシュしてください。
 
-**Incorrect (redundant computation):**
+**誤り（冗長な計算）:**
 
 ```typescript
 function ProjectList({ projects }: { projects: Project[] }) {
   return (
     <div>
       {projects.map(project => {
-        // slugify() called 100+ times for same project names
+        // 同じ project 名に対して slugify() が 100 回以上呼ばれる
         const slug = slugify(project.name)
         
         return <ProjectCard key={project.id} slug={slug} />
@@ -26,10 +26,10 @@ function ProjectList({ projects }: { projects: Project[] }) {
 }
 ```
 
-**Correct (cached results):**
+**正しい例（結果をキャッシュする）:**
 
 ```typescript
-// Module-level cache
+// モジュールレベルのキャッシュ
 const slugifyCache = new Map<string, string>()
 
 function cachedSlugify(text: string): string {
@@ -45,7 +45,7 @@ function ProjectList({ projects }: { projects: Project[] }) {
   return (
     <div>
       {projects.map(project => {
-        // Computed only once per unique project name
+        // 一意な project 名ごとに 1 回だけ計算される
         const slug = cachedSlugify(project.name)
         
         return <ProjectCard key={project.id} slug={slug} />
@@ -55,7 +55,7 @@ function ProjectList({ projects }: { projects: Project[] }) {
 }
 ```
 
-**Simpler pattern for single-value functions:**
+**単一値を返す関数向けの、より簡単なパターン:**
 
 ```typescript
 let isLoggedInCache: boolean | null = null
@@ -69,12 +69,12 @@ function isLoggedIn(): boolean {
   return isLoggedInCache
 }
 
-// Clear cache when auth changes
+// 認証状態が変わったらキャッシュをクリアする
 function onAuthChange() {
   isLoggedInCache = null
 }
 ```
 
-Use a Map (not a hook) so it works everywhere: utilities, event handlers, not just React components.
+React コンポーネントだけでなく、ユーティリティやイベントハンドラなどどこでも使えるように、フックではなく `Map` を使ってください。
 
-Reference: [How we made the Vercel Dashboard twice as fast](https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast)
+参考: [How we made the Vercel Dashboard twice as fast](https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast)

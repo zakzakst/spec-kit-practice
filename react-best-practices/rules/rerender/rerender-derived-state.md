@@ -1,25 +1,25 @@
 ---
-title: Subscribe to Derived State
+title: 派生ブール状態を購読する
 impact: MEDIUM
-impactDescription: reduces re-render frequency
+impactDescription: 再レンダリング頻度を減らす
 tags: rerender, derived-state, media-query, optimization
 ---
 
-## Subscribe to Derived State
+## 派生ブール状態を購読する
 
-Subscribe to derived boolean state instead of continuous values to reduce re-render frequency.
+連続的な値ではなく、派生したブール状態を購読して再レンダリング頻度を減らしてください。
 
-**Incorrect (re-renders on every pixel change):**
+**誤り（ピクセル単位の変化で毎回再レンダリングされる）:**
 
 ```tsx
 function Sidebar() {
-  const width = useWindowWidth()  // updates continuously
+  const width = useWindowWidth()  // 継続的に更新される
   const isMobile = width < 768
   return <nav className={isMobile ? 'mobile' : 'desktop'} />
 }
 ```
 
-**Correct (re-renders only when boolean changes):**
+**正しい例（ブール値が変わったときだけ再レンダリングされる）:**
 
 ```tsx
 function Sidebar() {

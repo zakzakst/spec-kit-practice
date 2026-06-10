@@ -1,36 +1,36 @@
 ---
-title: Early Length Check for Array Comparisons
+title: 配列比較では先に長さを確認する
 impact: MEDIUM-HIGH
-impactDescription: avoids expensive operations when lengths differ
+impactDescription: 長さが異なるときに高コストな処理を避ける
 tags: javascript, arrays, performance, optimization, comparison
 ---
 
-## Early Length Check for Array Comparisons
+## 配列比較では先に長さを確認する
 
-When comparing arrays with expensive operations (sorting, deep equality, serialization), check lengths first. If lengths differ, the arrays cannot be equal.
+ソート、深い比較、シリアライズのような高コストな操作で配列を比較する場合は、先に長さを確認してください。長さが違えば、配列が等しいことはありません。
 
-In real-world applications, this optimization is especially valuable when the comparison runs in hot paths (event handlers, render loops).
+実際のアプリケーションでは、この最適化はホットパス（イベントハンドラ、レンダリングループ）で特に効果的です。
 
-**Incorrect (always runs expensive comparison):**
+**誤り（毎回高コストな比較を行う）:**
 
 ```typescript
 function hasChanges(current: string[], original: string[]) {
-  // Always sorts and joins, even when lengths differ
+  // 長さが違っても、毎回ソートして join する
   return current.sort().join() !== original.sort().join()
 }
 ```
 
-Two O(n log n) sorts run even when `current.length` is 5 and `original.length` is 100. There is also overhead of joining the arrays and comparing the strings.
+`current.length` が 5 で `original.length` が 100 でも、O(n log n) のソートを 2 回実行しています。さらに配列を join して文字列比較するコストもあります。
 
-**Correct (O(1) length check first):**
+**正しい例（先に O(1) の長さチェックをする）:**
 
 ```typescript
 function hasChanges(current: string[], original: string[]) {
-  // Early return if lengths differ
+  // 長さが違えばすぐに返す
   if (current.length !== original.length) {
     return true
   }
-  // Only sort when lengths match
+  // 長さが一致した場合だけソートする
   const currentSorted = current.toSorted()
   const originalSorted = original.toSorted()
   for (let i = 0; i < currentSorted.length; i++) {
@@ -42,8 +42,8 @@ function hasChanges(current: string[], original: string[]) {
 }
 ```
 
-This new approach is more efficient because:
-- It avoids the overhead of sorting and joining the arrays when lengths differ
-- It avoids consuming memory for the joined strings (especially important for large arrays)
-- It avoids mutating the original arrays
-- It returns early when a difference is found
+この新しい方法が効率的なのは次の理由です:
+- 長さが違うときに、ソートや join のオーバーヘッドを避けられる
+- 連結済み文字列のためのメモリ消費を避けられる（大きな配列では特に重要）
+- 元の配列を変更しない
+- 差分が見つかった時点で早期に返せる

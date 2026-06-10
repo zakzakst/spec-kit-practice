@@ -1,65 +1,65 @@
 ---
-title: Avoid Duplicate Serialization in RSC Props
+title: RSC の props で重複シリアライズを避ける
 impact: LOW
-impactDescription: reduces network payload by avoiding duplicate serialization
+impactDescription: 重複シリアライズを避けてネットワーク負荷を減らす
 tags: server, rsc, serialization, props, client-components
 ---
 
-## Avoid Duplicate Serialization in RSC Props
+## RSC の props で重複シリアライズを避ける
 
-**Impact: LOW (reduces network payload by avoiding duplicate serialization)**
+**Impact: LOW (重複シリアライズを避けてネットワーク負荷を減らす)**
 
-RSC→client serialization deduplicates by object reference, not value. Same reference = serialized once; new reference = serialized again. Do transformations (`.toSorted()`, `.filter()`, `.map()`) in client, not server.
+RSC と client の境界では、すべてのオブジェクトプロパティが文字列化され、HTML レスポンスとその後の RSC リクエストに埋め込まれます。このシリアライズ済みデータはページサイズと読み込み時間に直接影響するため、サイズは非常に重要です。クライアントが実際に使うフィールドだけを渡してください。
 
-**Incorrect (duplicates array):**
+**悪い例（配列を 2 回シリアライズする）:**
 
 ```tsx
-// RSC: sends 6 strings (2 arrays × 3 items)
+// RSC: 6 文字列を送る（2 配列 × 3 項目）
 <ClientList usernames={usernames} usernamesOrdered={usernames.toSorted()} />
 ```
 
-**Correct (sends 3 strings):**
+**良い例（3 文字列だけ送る）:**
 
 ```tsx
-// RSC: send once
+// RSC: 1 回だけ送る
 <ClientList usernames={usernames} />
 
-// Client: transform there
+// Client: 変換はクライアント側で行う
 'use client'
 const sorted = useMemo(() => [...usernames].sort(), [usernames])
 ```
 
-**Nested deduplication behavior:**
+**入れ子の重複排除の挙動:**
 
-Deduplication works recursively. Impact varies by data type:
+重複排除は再帰的に働きます。影響の大きさはデータ型によって異なります。
 
-- `string[]`, `number[]`, `boolean[]`: **HIGH impact** - array + all primitives fully duplicated
-- `object[]`: **LOW impact** - array duplicated, but nested objects deduplicated by reference
+- `string[]`, `number[]`, `boolean[]`: **影響大** - 配列とすべてのプリミティブが完全に重複する
+- `object[]`: **影響小** - 配列は重複するが、入れ子のオブジェクトは参照で重複排除される
 
 ```tsx
-// string[] - duplicates everything
-usernames={['a','b']} sorted={usernames.toSorted()} // sends 4 strings
+// string[] - すべて重複する
+usernames={['a','b']} sorted={usernames.toSorted()} // 4 文字列を送る
 
-// object[] - duplicates array structure only
-users={[{id:1},{id:2}]} sorted={users.toSorted()} // sends 2 arrays + 2 unique objects (not 4)
+// object[] - 配列構造だけが重複する
+users={[{id:1},{id:2}]} sorted={users.toSorted()} // 2 配列 + 2 個の一意なオブジェクトを送る（4 ではない）
 ```
 
-**Operations breaking deduplication (create new references):**
+**重複排除を壊す操作（新しい参照を作る）:**
 
-- Arrays: `.toSorted()`, `.filter()`, `.map()`, `.slice()`, `[...arr]`
-- Objects: `{...obj}`, `Object.assign()`, `structuredClone()`, `JSON.parse(JSON.stringify())`
+- 配列: `.toSorted()`, `.filter()`, `.map()`, `.slice()`, `[...arr]`
+- オブジェクト: `{...obj}`, `Object.assign()`, `structuredClone()`, `JSON.parse(JSON.stringify())`
 
-**More examples:**
+**その他の例:**
 
 ```tsx
-// ❌ Bad
+// 悪い例
 <C users={users} active={users.filter(u => u.active)} />
 <C product={product} productName={product.name} />
 
-// ✅ Good
+// 良い例
 <C users={users} />
 <C product={product} />
-// Do filtering/destructuring in client
+// フィルタリングや分割代入はクライアント側で行う
 ```
 
-**Exception:** Pass derived data when transformation is expensive or client doesn't need original.
+**例外:** 変換が高コストな場合や、クライアントが元データを必要としない場合は、派生データを渡しても構いません。

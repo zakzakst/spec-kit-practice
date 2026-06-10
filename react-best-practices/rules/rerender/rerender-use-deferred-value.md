@@ -1,15 +1,15 @@
 ---
-title: Use useDeferredValue for Expensive Derived Renders
+title: 重い派生レンダーには useDeferredValue を使う
 impact: MEDIUM
-impactDescription: keeps input responsive during heavy computation
+impactDescription: 重い計算中も入力の応答性を保つ
 tags: rerender, useDeferredValue, optimization, concurrent
 ---
 
-## Use useDeferredValue for Expensive Derived Renders
+## 重い派生レンダーには useDeferredValue を使う
 
-When user input triggers expensive computations or renders, use `useDeferredValue` to keep the input responsive. The deferred value lags behind, allowing React to prioritize the input update and render the expensive result when idle.
+ユーザー入力が高コストな計算やレンダーを引き起こすなら、`useDeferredValue` を使って入力の応答性を保ってください。deferred な値は少し遅れて更新されるので、React は入力更新を優先し、重い結果は空き時間に描画できます。
 
-**Incorrect (input feels laggy while filtering):**
+**誤り（フィルタリング中に入力がもたつく）:**
 
 ```tsx
 function Search({ items }: { items: Item[] }) {
@@ -25,7 +25,7 @@ function Search({ items }: { items: Item[] }) {
 }
 ```
 
-**Correct (input stays snappy, results render when ready):**
+**正しい例（入力は軽快に保ち、結果は準備できたら描画する）:**
 
 ```tsx
 function Search({ items }: { items: Item[] }) {
@@ -48,12 +48,12 @@ function Search({ items }: { items: Item[] }) {
 }
 ```
 
-**When to use:**
+**使う場面:**
 
-- Filtering/searching large lists
-- Expensive visualizations (charts, graphs) reacting to input
-- Any derived state that causes noticeable render delays
+- 大きなリストのフィルタリング / 検索
+- 入力に反応する重い可視化（チャート、グラフ）
+- 目に見える遅延を引き起こす派生 state 全般
 
-**Note:** Wrap the expensive computation in `useMemo` with the deferred value as a dependency, otherwise it still runs on every render.
+**注:** 重い計算は、`useDeferredValue` を依存値にして `useMemo` で包んでください。そうしないと、毎回のレンダーで計算され続けます。
 
-Reference: [React useDeferredValue](https://react.dev/reference/react/useDeferredValue)
+参考: [React useDeferredValue](https://react.dev/reference/react/useDeferredValue)

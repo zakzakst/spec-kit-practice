@@ -1,15 +1,15 @@
 ---
-title: Parallel Nested Data Fetching
+title: ネストしたデータ取得を並列化する
 impact: CRITICAL
-impactDescription: eliminates server-side waterfalls
+impactDescription: サーバー側のウォーターフォールをなくす
 tags: server, rsc, parallel-fetching, promise-chaining
 ---
 
-## Parallel Nested Data Fetching
+## ネストしたデータ取得を並列化する
 
-When fetching nested data in parallel, chain dependent fetches within each item's promise so a slow item doesn't block the rest.
+ネストしたデータを並列で取得するときは、各アイテムの Promise 内で依存する fetch をつなげて、1 件の遅いアイテムが他を止めないようにします。
 
-**Incorrect (a single slow item blocks all nested fetches):**
+**悪い例（1 件の遅いアイテムが、すべてのネストした fetch を止める）:**
 
 ```tsx
 const chats = await Promise.all(
@@ -21,9 +21,9 @@ const chatAuthors = await Promise.all(
 )
 ```
 
-If one `getChat(id)` out of 100 is extremely slow, the authors of the other 99 chats can't start loading even though their data is ready.
+100 件のうち 1 件の `getChat(id)` が非常に遅い場合でも、その 99 件の author は準備できているのに読み込みを始められません。
 
-**Correct (each item chains its own nested fetch):**
+**良い例（各アイテムが自分のネストした fetch をつなげる）:**
 
 ```tsx
 const chatAuthors = await Promise.all(
@@ -31,4 +31,4 @@ const chatAuthors = await Promise.all(
 )
 ```
 
-Each item independently chains `getChat` → `getUser`, so a slow chat doesn't block author fetches for the others.
+各アイテムが `getChat` から `getUser` へ独立してつながるため、1 件の遅い chat があっても他の author の fetch は止まりません。

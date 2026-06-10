@@ -1,15 +1,15 @@
 ---
-title: Use Activity Component for Show/Hide
+title: 表示/非表示には Activity コンポーネントを使う
 impact: MEDIUM
-impactDescription: preserves state/DOM
+impactDescription: 状態と DOM を保持する
 tags: rendering, activity, visibility, state-preservation
 ---
 
-## Use Activity Component for Show/Hide
+## 表示/非表示には Activity コンポーネントを使う
 
-Use React's `<Activity>` to preserve state/DOM for expensive components that frequently toggle visibility.
+React の `<Activity>` を使って、表示/非表示を頻繁に切り替える高コストなコンポーネントの状態と DOM を保持します。
 
-**Usage:**
+**使用例:**
 
 ```tsx
 import { Activity } from 'react'
@@ -23,4 +23,4 @@ function Dropdown({ isOpen }: Props) {
 }
 ```
 
-Avoids expensive re-renders and state loss.
+高コストな再レンダリングと状態消失を避けられます。
