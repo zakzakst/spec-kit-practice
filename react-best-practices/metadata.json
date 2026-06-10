@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "organization": "Vercel Engineering",
   "date": "January 2026",
-  "abstract": "Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
+  "abstract": "AIエージェントとLLM向けに設計された、ReactおよびNext.jsアプリケーションのパフォーマンス最適化に関する包括的なガイドです。8つのカテゴリにわたる40以上のルールが含まれており、影響度に応じて、重要度の高いもの（ウォーターフォールの排除、バンドルサイズの削減）から段階的なもの（高度なパターン）まで優先順位付けされています。各ルールには詳細な説明、誤った実装と正しい実装を比較した実例、自動リファクタリングとコード生成をガイドするための具体的な影響度指標が含まれています。",
   "references": [
     "https://react.dev",
     "https://nextjs.org",
