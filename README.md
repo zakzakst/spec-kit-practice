@@ -21,6 +21,9 @@
 
 - AIにプロンプトファイルの構成と具体的なサンプルファイル作成してもらう？
 
+## claude-code-best-practice
+- https://github.com/shanraisshan/claude-code-best-practice
+
 ## vercel agent skills
 
 - https://github.com/vercel-labs/agent-skills
