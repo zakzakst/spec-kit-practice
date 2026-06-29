@@ -31,7 +31,11 @@
   - https://zenn.dev/417/articles/ai-era-domain-knowledge-placement
     - ドキュメントの自動生成が難しいなら設計が悪い
 - 今回の会話をpromptなどに反映
+- issueから実装までやるprompt
+  - https://zenn.dev/explaza/articles/d0aeb08fcd1888
+  - https://github.com/unsu0707/interview-dev-loop/tree/main
 - instructions
+  - awesome-copilot\instructions\instructions.instructions.md
   - 下記を意識してみる
   - https://zenn.dev/tokium_dev/articles/claude-knowledge-organization
     - 常時メモ（索引）：MemGPT の working memory（LLMが常時手元に置く少量の作業記憶）
