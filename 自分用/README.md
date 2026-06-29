@@ -27,4 +27,18 @@
   - awesome-copilot\agents\implementation-plan.agent.md
 - デバッグ
   - awesome-copilot\agents\debug.agent.md
+- ドキュメント生成
+  - https://zenn.dev/417/articles/ai-era-domain-knowledge-placement
+    - ドキュメントの自動生成が難しいなら設計が悪い
+- 今回の会話をpromptなどに反映
 - instructions
+  - 下記を意識してみる
+  - https://zenn.dev/tokium_dev/articles/claude-knowledge-organization
+    - 常時メモ（索引）：MemGPT の working memory（LLMが常時手元に置く少量の作業記憶）
+      - ⇒ 解いている問題：常時読み込みが膨らむ
+    - 必要時メモ：Zettelkasten（1メモ1概念で小さく分け、必要なものだけ参照する手法）
+      - ⇒ 解いている問題：事例が積み上がる
+    - 構造化メモ：Cline Memory Bank（AIが起動時に必ず読む固定ファイル群）
+      - ⇒ 解いている問題：起動時に読む量が膨らむ
+    - 倉庫：PARA の Archives（いま使わないものを隔離する置き場）
+      - ⇒ 解いている問題：休眠知識を隔離する
