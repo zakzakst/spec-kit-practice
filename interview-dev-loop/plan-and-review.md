@@ -1,45 +1,45 @@
-# Plan and review details
+# 計画とレビューの詳細
 
-## Plan file
+## 計画ファイル
 
-Use the repo's durable plan convention. If there is none, use:
+リポジトリの永続的な計画規約を使用してください。ない場合は、以下を使用します：
 
 ```text
 docs/plans/plan_YYYYMMDDHHMMSS.md
 ```
 
-The plan should be concrete enough for a fresh implementation context to execute.
+計画は、新しい実装コンテキストが実行できるほど具体的である必要があります。
 
-Include:
+以下を含める：
 
-- goal
-- current findings
-- decisions
-- open questions resolved
-- scope
-- steps
-- validation
-- risks
+- 目標
+- 現在の調査結果
+- 決定事項
+- 解決した未回答の質問
+- スコープ
+- ステップ
+- 検証
+- リスク
 
-Keep the plan updated if scope changes after approval.
+承認後にスコープが変わった場合は、計画を更新してください。
 
-## Development pass
+## 開発パス
 
-A development pass should receive only the approved plan and task-local context needed to execute it.
+開発パスは、承認された計画と実行に必要なタスクローカルコンテキストのみを受け取るべきです。
 
-For fix passes, include the exact findings being fixed and require same-root-cause fixes across the approved scope.
+修正パスの場合は、修正される正確な調査結果を含め、承認されたスコープ全体で同じ根本原因の修正を要求します。
 
-## Review pass
+## レビューパス
 
-Use a code-review stance. Findings should lead and should be ordered by severity.
+コードレビューの立場を使用してください。調査結果が主導し、重要度で並べ替える必要があります。
 
-Focus on:
+以下に焦点を当てる：
 
-- correctness bugs
-- security or permission gaps
-- behavioral regressions
-- missing required tests
-- stale durable docs or plans
-- violations of local repo instructions
+- 正確性バグ
+- セキュリティまたは権限ギャップ
+- 動作回帰
+- 不足している必須テスト
+- 古い永続的なドキュメントまたは計画
+- ローカルリポジトリ指示への違反
 
-Avoid broad refactors and style preferences that do not affect behavior or maintainability.
+動作や保守性に影響しない広範なリファクターとスタイル設定は避けてください。

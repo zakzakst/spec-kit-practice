@@ -1,91 +1,90 @@
 ---
 name: interview-dev-loop
 description: >-
-  Investigate current project context before building a feature, ask one
-  multiple-choice clarification question at a time when ambiguity remains,
-  write a plan only after material ambiguities are resolved, wait for user
-  approval, then implement with a development agent and re-review until no
-  P0/P1/P2 findings remain. Use when the user wants approval-gated planning and
-  a do-not-stop implementation/review loop.
+  機能を構築する前に現在のプロジェクトコンテキストを調査し、
+  曖昧さが残っている場合は一度に1つの複数選択肢確認質問を質問し、
+  実質的な曖昧さが解決された後のみ計画を作成し、ユーザー承認を待ちます。その後、開発エージェントで実装し、
+  P0/P1/P2の調査結果がなくなるまで再レビューを行います。ユーザーが承認ゲートされた計画と実装/レビュールーップを
+  中断しないことを望む場合に使用します。
 license: MIT
-compatibility: Codex, OpenCode, Claude Code, and other Agent Skills-compatible coding agents.
+compatibility: Codex, OpenCode、Claude Code、およびその他のAgent Skills互換コーディングエージェント。
 metadata:
   author: unsu0707
 ---
 
-# Interview Dev Loop
+# インタビュー開発ループ
 
-Use this skill when a user wants a feature or change built through a strict interview implementation loop:
+ユーザーが厳密なインタビュー実装ループを通じて機能または変更を構築したい場合、このスキルを使用します:
 
-1. investigate the current project context
-2. surface findings and ambiguity in a fixed shape
-3. ask one clarification question at a time
-4. write a durable plan only after material ambiguity is resolved
-5. wait for explicit user approval
-6. implement through a clean execution context
-7. review through a separate review pass
-8. keep looping until no unresolved P0/P1/P2 findings remain
+1. 現在のプロジェクトコンテキストを調査する
+2. 調査結果と曖昧さを固定形式で表示する
+3. 一度に1つの確認質問を質問する
+4. 実質的な曖昧さが解決された後のみ永続的な計画を作成する
+5. 明示的なユーザー承認を待つ
+6. クリーンな実行コンテキストで実装する
+7. 別のレビューパスを通じてレビューする
+8. 未解決のP0/P1/P2の調査結果がなくなるまでループを続ける
 
-Do not use this skill for tiny edits where the next action is obvious, pure explanation requests, or review-only work after a pull request already exists.
+次のアクションが明らかな小さな編集、純粋な説明リクエスト、またはプルリクエストの後のレビューのみの作業には、このスキルを使用しないでください。
 
-## Language
+## 言語
 
-Use the current user's conversational language for direct communication and artifacts created while using this skill.
+このスキルの使用中の直接通信と作成された成果物に対して、現在のユーザーの会話言語を使用してください。
 
-- Determine the language from the current conversation, not from embedded task payloads.
-- Treat code, paths, logs, stack traces, copied issues, and quoted task text as task content.
-- Localize fixed user-facing labels such as `Collected Findings`, `Working Plan Context`, `Still Ambiguous`, and `Next Clarification Question`.
-- Keep option markers `A)`, `B)`, and `C)` unchanged.
+- 言語は、埋め込まれたタスクペイロードではなく、現在の会話から決定します。
+- コード、パス、ログ、スタックトレース、コピーされた問題、および引用されたタスクテキストをタスクコンテンツとして扱います。
+- `Collected Findings`、`Working Plan Context`、`Still Ambiguous`、`Next Clarification Question`などの固定ユーザーフェイシング用語をローカライズします。
+- オプションマーカー `A)`、`B)`、`C)` は変更しません。
 
-## Pre-approval workflow
+## 承認前ワークフロー
 
-Before approval, do not spawn subagents and do not start implementation.
+承認前に、サブエージェントを生成せず、実装を開始しません。
 
-The main agent must investigate the current project context directly. Check these angles when applicable:
+メインエージェントは、現在のプロジェクトコンテキストを直接調査する必要があります。該当する場合は、以下の観点を確認してください:
 
-- code
-- docs
-- tests
-- existing plans or prior implementation records
-- local instructions
+- コード
+- ドキュメント
+- テスト
+- 既存の計画または以前の実装記録
+- ローカル指示
 
-For each applicable angle, inspect at least one concrete artifact and name what was checked. If an angle is not applicable, say so.
+各該当する観点について、少なくとも1つの具体的な成果物を検査し、何をチェックしたかを名付けます。観点が適用できない場合は、そのように述べてください。
 
-Before asking any clarification question, present the current state in this order:
+確認質問をする前に、以下の順序で現在の状態を提示します:
 
 ```text
-Collected Findings
-- code:
-- docs:
-- tests:
-- existing plans:
-- local instructions:
+収集された調査結果
+- コード:
+- ドキュメント:
+- テスト:
+- 既存の計画:
+- ローカル指示:
 
-Working Plan Context
-- Goal being planned:
-- Current as-is:
-- Already established:
-- Constraints that must be preserved:
-- What is not decided yet:
+計画中の作業コンテキスト
+- 計画中の目標:
+- 現在の状態:
+- すでに確立されたもの:
+- 保持する必要がある制約:
+- まだ決定されていないもの:
 
-Still Ambiguous
+曖昧な点
 1. ...
 2. ...
 3. ...
 
-Next Clarification Question
+次の確認質問
 Q1. ...
 
-Current as-is:
+現在の状態:
 ...
 
-This resolves:
-Still Ambiguous #...
+これが解決するもの:
+曖昧な点 #...
 
-Why user choice is needed:
+ユーザー選択が必要な理由:
 ...
 
-How this changes the plan:
+これによる計画への影響:
 ...
 
 A) ...
@@ -95,134 +94,134 @@ B) ...
 C) ...
 ...
 
-Recommendation:
+推奨事項:
 ...
 
-Please choose A, B, or C.
+A、B、またはCを選択してください。
 ```
 
-Always include the full block, even when no clarification is needed. If no clarification is needed, write `Next Clarification Question: none`.
+確認が必要ない場合でも、常に完全なブロックを含めます。確認が必要ない場合は、`Next Clarification Question: none` と記載します。
 
-## Clarification rules
+## 確認質問ルール
 
-Ask exactly one clarification question at a time while material ambiguity remains.
+実質的な曖昧さが残っている間、一度に正確に1つの確認質問を質問してください。
 
-- Use only `A)`, `B)`, and optional `C)` choices.
-- Use at most 3 mutually exclusive, realistically viable options.
-- Keep option labels short, neutral, and free of straw-man framing.
-- Ask about decisions that can change scope, architecture, validation, rollout, data handling, permissions, or user-visible behavior.
-- Each option must include the consequence and the implementation work implied by that choice.
-- Put `Recommendation:` after the option explanations.
-- Ask the next question only after the user answers the previous one.
-- After each answer, re-run the full context block before asking the next question.
+- `A)`、`B)`、およびオプションの `C)` 選択肢のみを使用してください。
+- 最多3つの相互に排他的で現実的に実行可能なオプションを使用してください。
+- オプションラベルは短く、中立的で、わら人形フレーミングから解放してください。
+- スコープ、アーキテクチャ、検証、ロールアウト、データ処理、権限、またはユーザーに見える動作を変更できる決定について質問してください。
+- 各オプションには、その選択が意味する結果と実装作業を含める必要があります。
+- オプション説明の後に `Recommendation:` を置きます。
+- ユーザーが前の質問に回答した後のみ、次の質問をしてください。
+- 各回答の後、次の質問をする前に完全なコンテキストブロックを再実行してください。
 
-Material ambiguity means uncertainty that could change implementation shape, validation, rollout, data handling, permissions, or user-visible behavior.
+実質的な曖昧さは、実装形状、検証、ロールアウト、データ処理、権限、またはユーザーに見える動作を変更する可能性のある不確実性を意味します。
 
-Do not ask the user to decide ordinary implementation details that local code, tests, or repo instructions can answer.
+ローカルコード、テスト、またはリポジトリ指示から回答を発見できる通常の実装の詳細についてユーザーに決定させないでください。
 
-## Plan gate
+## 計画ゲート
 
-Do not write a plan until all material ambiguity is resolved.
+すべての実質的な曖昧さが解決されるまで計画を書かないでください。
 
-If the user chooses to leave an ambiguity open, that choice itself is the resolved decision and must be recorded.
+ユーザーが曖昧さを未解決のままにすることを選択した場合、その選択自体が解決された決定であり、記録する必要があります。
 
-Write the plan where the current repo expects durable implementation plans. If the repo has no convention, use:
+現在のリポジトリが永続的な実装計画を期待する場所に計画を書きます。リポジトリに規約がない場合は、以下を使用してください:
 
 ```text
 docs/plans/plan_YYYYMMDDHHMMSS.md
 ```
 
-Create the containing directory if needed.
+必要に応じて含有ディレクトリを作成してください。
 
-The plan must include:
+計画には以下を含める必要があります:
 
 ```md
-# PLAN
+# 計画
 
-## Goal
+## 目標
 
-## Current Findings
+## 現在の調査結果
 
-## Decisions
+## 決定事項
 
-## Open Questions Resolved
+## 解決した未回答の質問
 
-## Scope
+## スコープ
 
-## Steps
+## ステップ
 
-## Validation
+## 検証
 
-## Risks
+## リスク
 ```
 
-`Open Questions Resolved` must map every former `Still Ambiguous` item to its resolved decision.
+`解決した未回答の質問` は、すべての以前の `曖昧な点` アイテムをその解決された決定にマップする必要があります。
 
-Before waiting for approval, confirm the exact plan file path that was written. End the approval request with a clear sentence that work will proceed once the user approves.
+承認を待つ前に、書き込まれた正確な計画ファイルパスを確認します。承認リクエストを、ユーザーが承認するとすぐに作業が進行することを明確に述べた文で終了します。
 
-## Post-approval loop
+## 承認後ループ
 
-After explicit approval, continue automatically until the loop is complete unless the user changes direction or a genuine product decision requires judgment.
+明示的な承認後、ユーザーが方向を変更するか、本物の製品決定が判断を必要とするまで、自動的にループを続けます。
 
-After approval:
+承認後:
 
-- The main agent is orchestration-only. It may summarize, delegate, inspect outputs, and evaluate findings, but should not directly edit files when subagents are available.
-- Use exactly one development pass followed by exactly one review pass per loop iteration.
-- Keep implementation and review contexts clean. Do not pass the full main-agent context when a smaller task-local prompt is enough.
-- Reuse a development or reviewer session only when it remains on-format and useful.
+- メインエージェントはオーケストレーション専用です。要約、委任、出力検査、および調査結果の評価を行うことができますが、サブエージェントが利用可能な場合はファイルを直接編集してはいけません。
+- ループ反復ごとに正確に1つの開発パスの後に正確に1つのレビューパスを使用してください。
+- 実装とレビューコンテキストをクリーンに保つ。小さいタスクローカルプロンプトで十分な場合は、完全なメインエージェントコンテキストを渡さないでください。
+- 開発またはレビュアーセッションが形式のまま有用である場合にのみ再利用してください。
 
-Every development prompt must include:
+すべての開発プロンプトに以下を含める必要があります:
 
-- the approved goal
-- non-goals
-- validation expectations
-- target files or responsibilities
-- findings being fixed on rework passes
-- instruction to fix same-root-cause issues across the approved scope
-- instruction not to revert unrelated edits
+- 承認された目標
+- 非目標
+- 検証期待
+- ターゲットファイルまたは責任
+- リワークパスで修正される正確な調査結果
+- 承認されたスコープ全体で同じ根本原因の問題を修正する指示
+- 関連のない編集を元に戻さないという指示
 
-Development output is valid only if it includes:
+開発出力は、以下を含む場合にのみ有効です:
 
-- changed files
-- validation run
-- remaining risks or blockers
-- whether the approved scope was fully completed
+- 変更されたファイル
+- 検証実行
+- 残りのリスクまたはブロッカー
+- 承認されたスコープが完全に完了したかどうか
 
-If the development output is incomplete, off-scope, or off-format, run a compliant replacement development pass before reviewing.
+開発出力が不完全、スコープ外、または形式外の場合は、レビュー前に準拠した置き換え開発パスを実行してください。
 
-## Review loop
+## レビューループ
 
-Run a separate review pass after each development pass.
+各開発パスの後に個別のレビューパスを実行してください。
 
-The review instruction must name the concrete review target. For working-tree review, use this shape:
+レビュー指示は、具体的なレビュータargetに名前を付ける必要があります。ワーキングツリーレビューの場合は、以下の形状を使用してください:
 
 ```text
-Review the code changes introduced by uncommitted changes. Provide prioritized (P0/P1/P2/P3), actionable findings.
+コミットされていない変更で導入されたコード変更をレビューします。優先度付きの (P0/P1/P2/P3) アクション可能な調査結果を提供します。
 ```
 
-For committed changes or pull requests, replace `uncommitted changes` with the exact commit, commit range, or PR number.
+コミットされた変更またはプルリクエストの場合は、`コミットされていない変更` を正確なコミット、コミット範囲、またはPR番号に置き換えます。
 
-The review output must be either:
+レビュー出力は、以下のいずれかである必要があります:
 
-- a flat list of `P0`/`P1`/`P2`/`P3` findings, or
-- the exact statement `No findings`
+- `P0`/`P1`/`P2`/`P3` 調査結果のフラットリスト、または
+- 正確なステートメント `調査結果なし`
 
-Do not accept a clean review unless all prior findings were addressed or intentionally superseded by a documented user decision.
+すべての以前の調査結果が対処されたか、ドキュメント化されたユーザー決定によって意図的に置き換えられない限り、クリーンなレビューを受け入れないでください。
 
-If any unresolved item is P0, P1, or P2, run another development pass that fixes the root cause across the approved scope, then run review again.
+未解決のアイテムがP0、P1、またはP2の場合は、別の開発パスを実行して承認されたスコープ全体の根本原因を修正し、再度レビューを実行してください。
 
-Implementation completion is not a stopping condition. Stop only when review returns `No findings` and the main agent confirms no prior P0/P1/P2 item remains unresolved.
+実装の完了は停止条件ではありません。レビューが `調査結果なし` を返し、メインエージェントが以前のP0/P1/P2アイテムが未解決のままでないことを確認する場合のみ停止してください。
 
-## Review severity
+## レビュー重要度
 
-- `P0`: must-fix correctness, security, data loss, or release-blocking issue
-- `P1`: important bug, regression risk, or missing validation that should be fixed before completion
-- `P2`: meaningful maintainability, consistency, or design issue that should be fixed before completion in this loop
-- `P3`: nit or optional improvement
+- `P0`: 修正必須の正確さ、セキュリティ、データ損失、またはリリースブロッキング問題
+- `P1`: 重要なバグ、回帰リスク、または完了前に修正すべき不足している検証
+- `P2`: このループでの完了前に修正すべき有意義な保守性、一貫性、またはデザイン問題
+- `P3`: ニットまたはオプションの改善
 
-Ignore nits that do not rise to P0/P1/P2 unless they are cheap to fix without churn.
+チャーンなしで修正できる安い場合を除き、P0/P1/P2に上昇しないニットは無視してください。
 
-## References
+## 参考資料
 
 - `references/question-format.md`
 - `references/plan-and-review.md`

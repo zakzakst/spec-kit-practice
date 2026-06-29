@@ -1,35 +1,35 @@
-# Clarification question format
+# 確認質問のフォーマット
 
-Ask one question at a time in this format:
+一度に1つの質問を、以下のフォーマットで質問してください：
 
 ```text
-Q1. Which behavior should we support first?
+Q1. まず、どの動作をサポートすべきでしょうか？
 
-Current as-is:
-The current code supports the existing behavior only.
+現在の状態：
+現在のコードは既存の動作のみをサポートしています。
 
-This resolves:
-Still Ambiguous #1.
+解決する曖昧さ：
+曖昧さ #1 を解決します。
 
-Why user choice is needed:
-This is a product direction choice because each option preserves a different user-visible behavior and changes rollout risk.
+ユーザー選択が必要な理由：
+これは製品方向の選択です。各オプションは異なるユーザーに見える動作を保持し、ロールアウトリスクを変更するためです。
 
-How this changes the plan:
-The answer determines which workflow branches, tests, and rollout handling belong in scope.
+これによる計画への影響：
+この回答により、スコープに含まれるワークフロー分岐、テスト、ロールアウト処理が決定されます。
 
-A) Existing flow only
-This keeps the current behavior as the first supported path. Implementation would focus on preserving existing routes, tests, and data handling while deferring new behavior.
+A) 既存フローのみ
+現在の動作を最初にサポートされるパスとして保持します。実装は既存のルート、テスト、データ処理の保持に焦点を当て、新しい動作は後回しにします。
 
-B) New flow only
-This makes the new behavior the only supported path. Implementation would replace the existing workflow branches and update validation around the new behavior, with higher migration or compatibility risk.
+B) 新しいフローのみ
+新しい動作を唯一サポートされるパスにします。実装は既存のワークフロー分岐を置き換え、新しい動作に関する検証を更新します。移行またはコンパティビリティリスクが高くなります。
 
-C) Both
-This supports both behaviors during the transition. Implementation would add branching logic, tests for both paths, and rollout handling so existing users can continue while the new behavior is introduced.
+C) 両方
+遷移中に両方の動作をサポートします。実装は分岐ロジック、両方のパスのテスト、および既存ユーザーが新しい動作の導入中も使用を続けられるようにするロールアウト処理を追加します。
 
-Recommendation:
-C) Both, because it preserves existing users while allowing the new behavior to ship. Do not choose it if the goal is intentionally to remove the existing flow in this change.
+推奨事項：
+C) 両方。既存ユーザーを保持しながら、新しい動作を展開できるためです。目標が意図的にこの変更で既存フローを削除することである場合は選択しないでください。
 
-Please choose A, B, or C.
+A、B、またはCを選択してください。
 ```
 
-The question should unblock architecture, scope, validation, rollout, data handling, permissions, or user-visible behavior. Do not ask questions whose answer can be discovered from the repository.
+この質問は、アーキテクチャ、スコープ、検証、ロールアウト、データ処理、権限、またはユーザーに見える動作のブロッキングを解除する必要があります。リポジトリから回答を発見できる質問はしないでください。
