@@ -58,6 +58,9 @@
   - https://zenn.dev/aoki_monpro/articles/6ea28ed4c73aa2
 - 完了条件を明確にする指示（どこかで使えそうなのでメモ）
   - https://zenn.dev/sun_asterisk/articles/e144769108a880
+- プロンプトをリファクタリングするプロンプト
+  - 本当に必要な複雑さなのか
+  - https://zenn.dev/shintaroamaike/articles/67c21b040af42f
 
 ## 作りたいGem
 - 「こんな感じにしたい」サイトのURLのリストを渡して、クライアントが希望するデザイントーンを言語化する
