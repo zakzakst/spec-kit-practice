@@ -56,6 +56,8 @@
   - https://newspicks.com/news/16853096/body/
 - CodeGraph
   - https://zenn.dev/aoki_monpro/articles/6ea28ed4c73aa2
+- 完了条件を明確にする指示（どこかで使えそうなのでメモ）
+  - https://zenn.dev/sun_asterisk/articles/e144769108a880
 
 ## 作りたいGem
 - 「こんな感じにしたい」サイトのURLのリストを渡して、クライアントが希望するデザイントーンを言語化する
