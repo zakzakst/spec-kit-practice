@@ -52,6 +52,10 @@
       - ⇒ 解いている問題：起動時に読む量が膨らむ
     - 倉庫：PARA の Archives（いま使わないものを隔離する置き場）
       - ⇒ 解いている問題：休眠知識を隔離する
+- brand.md
+  - https://newspicks.com/news/16853096/body/
+- CodeGraph
+  - https://zenn.dev/aoki_monpro/articles/6ea28ed4c73aa2
 
 ## 作りたいGem
 - 「こんな感じにしたい」サイトのURLのリストを渡して、クライアントが希望するデザイントーンを言語化する
