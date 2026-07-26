@@ -1,0 +1,7 @@
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-customer-success
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-engineers
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-product
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-marketing
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-it
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/chatgpt-for-any-role
+- https://academy.openai.com/public/clubs/work-users-ynjqu/resources/use-cases-hr
