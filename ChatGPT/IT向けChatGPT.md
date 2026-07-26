@@ -1,101 +1,101 @@
 # IT向けChatGPT
 
-## ChatGPT for IT teams
-IT teams are responsible for keeping systems secure, efficient, and accessible—and ChatGPT can help them move faster and reduce manual work. It can summarize logs, write automation steps, explain complex configurations, and help communicate technical changes to non-technical teams.
+## ITチーム向けChatGPT
+IT チームは、システムを安全かつ効率的に、誰もが利用できる状態に保つ責任を担っています。ChatGPT は、その作業をより速く進め、手作業を減らす手助けをします。ログの要約、自動化手順の作成、複雑な設定の説明、非技術部門への技術変更の伝達などに役立ちます。
 
 ---
 
-## Cloud & vendor evaluations
-ChatGPT can help compare cloud services, IT vendors, and emerging technology solutions to guide strategic decision-making. Use deep research and web search for deeper real-time insights.
+## クラウドとベンダー評価
+ChatGPT は、クラウドサービス、IT ベンダー、新しい技術ソリューションを比較し、戦略的な意思決定を支援します。より深いリアルタイムの洞察には、ディープリサーチやウェブ検索を使ってください。
 
-### Compare cloud providers
-Compare AWS, Azure, and GCP for our use case: [insert workload or environment]. Consider cost, uptime, global availability, and ease of integration. Research using 2025 data, and present a table comparing each provider with a recommendation at the end.
+### クラウドプロバイダを比較する
+次の用途に対して AWS、Azure、GCP を比較してください: [ワークロードまたは環境を入力]。コスト、稼働率、グローバル可用性、連携のしやすさを考慮してください。2025 年のデータを使って調査し、各プロバイダを比較した表と最後の推奨を出してください。
 
-### Generate vendor comparison chart
-Research and compare remote access vendors for enterprise use. Focus on features, pricing, integrations, and support quality. Use 2025 data, and summarize the findings in a comparison table with notes.
+### ベンダー比較表を作成する
+エンタープライズ向けのリモートアクセスベンダーを調査し、比較してください。機能、価格、連携、サポート品質に焦点を当ててください。2025 年のデータを使い、所見を比較表と注記でまとめてください。
 
-### Compare AI observability tools
-I'm an IT Manager at [insert company]. I’m evaluating observability platforms. Research current offerings, pricing, supported environments, and key differentiators in 2025. Include citations and summarize insights in a comparison table with a recommendation for a mid-size engineering org.
+### AI オブザーバビリティツールを比較する
+私は [会社名を入力] の IT マネージャーです。オブザーバビリティプラットフォームを評価しています。2025 年時点の最新機能、価格、対応環境、主要な差別化要因を調査してください。引用を含め、比較表で洞察をまとめ、中規模のエンジニアリング組織向けの推奨も付けてください。
 
-### Investigate zero trust frameworks
-I'm a Security Architect working on adopting a zero trust model. Research leading frameworks (e.g., NIST 800-207) and recent updates to best practices in 2024–2025. Include real-world implementation case studies where possible. Provide a summarized comparison and an executive-ready briefing.
-
----
-
-## IT compliance & security
-ChatGPT guides research and documentation on compliance requirements, access reviews, and security posture evaluations.
-
-### Assess global data residency laws
-I’m an IT Compliance Lead planning a global data storage architecture. Research 2025 data residency requirements across the EU, US, APAC, and LATAM. Include regulatory restrictions and preferred cloud regions. Cite official documentation and summarize findings in a table grouped by region.
-
-### Analyze remote access tools
-As an IT Service Delivery Lead, I need a secure, scalable remote access tool for our hybrid team. Compare current vendors (e.g., BeyondTrust, TeamViewer Tensor, Chrome Remote Desktop) for enterprise use in 2025. Focus on SSO support, encryption, session logging, and pricing. Provide a security-focused executive summary with links to primary sources.
-
-### Generate compliance checklist
-Based on SOC 2 guidelines, create a checklist of IT-specific controls to review for an upcoming internal audit. Use this existing audit prep document as background. Organize the checklist by domain (e.g., access, change management, incident response).
-
-### Validate access controls
-Review this access matrix of users, roles, and systems. Check whether each user’s access level follows our least-privilege policy. Identify any potential overprovisioning, and provide a table listing users with permissions that may need to be scaled back.
-
-### Review API security posture
-Review this API schema and a sample set of traffic logs. Identify common API security issues such as poor input validation or lack of authentication. Provide a bullet-point list of findings with suggested fixes.
+### ゼロトラストフレームワークを調べる
+ゼロトラストモデルの導入を進めているセキュリティアーキテクトです。主要なフレームワーク（例: NIST 800-207）と、2024〜2025 年のベストプラクティスの最新動向を調査してください。可能であれば実際の導入事例も含めてください。要約比較と、経営層向けのブリーフィングを作成してください。
 
 ---
 
-## IT operations & asset management
-ChatGPT supports operational planning, asset lifecycle policies, onboarding processes, and IT ticket prioritization.
+## IT コンプライアンスとセキュリティ
+ChatGPT は、コンプライアンス要件、アクセスレビュー、セキュリティ態勢評価に関する調査と文書化を支援します。
 
-### Draft IT onboarding checklist
-Create a checklist for onboarding new hires from an IT perspective. Include key steps for account provisioning, security training, and hardware setup. Use this outline of our current process, and present the checklist organized by day or week.
+### グローバルなデータレジデンシー法を評価する
+グローバルなデータ保存アーキテクチャを計画している IT コンプライアンス責任者です。2025 年時点の EU、US、APAC、LATAM のデータレジデンシー要件を調査してください。規制上の制約と推奨クラウドリージョンを含めてください。公式ドキュメントを引用し、地域ごとに整理した表で要約してください。
 
-### Generate hardware lifecycle policy
-Create a draft policy for managing the lifecycle of company laptops and desktops. Reference this spreadsheet of device ages and current replacement costs. Write a formal document with guidance on replacement timelines, support windows, and environmental considerations.
+### リモートアクセスツールを分析する
+ハイブリッドチーム向けの安全で拡張性のあるリモートアクセスツールを探している IT サービスデリバリー責任者です。現在のベンダー（例: BeyondTrust、TeamViewer Tensor、Chrome Remote Desktop）を 2025 年時点でエンタープライズ用途向けに比較してください。SSO 対応、暗号化、セッションログ、価格に焦点を当ててください。一次情報へのリンク付きで、セキュリティ重視の経営層向け要約を作成してください。
 
-### Draft asset inventory policy
-Write a formal policy for maintaining and auditing IT asset inventory. Use this list of tools, departments, and stakeholders as a starting point. Include purpose, responsibilities, and process for inventory reconciliation.
+### コンプライアンスチェックリストを作成する
+SOC 2 ガイドラインに基づき、今後の社内監査で確認すべき IT 固有の統制項目のチェックリストを作成してください。この既存の監査準備文書を背景情報として使ってください。アクセス、変更管理、インシデント対応などのドメイン別に整理してください。
 
-### Help prioritize IT tickets
-Review this queue of open IT support tickets. Use this prioritization rubric based on impact, urgency, and SLA. Reorder the tickets accordingly and present the list as a prioritized backlog with a short reason for each ranking.
+### アクセス制御を検証する
+ユーザー、役割、システムのアクセスマトリクスを確認してください。各ユーザーのアクセスレベルが最小権限ポリシーに従っているか確認してください。過剰付与の可能性があれば特定し、権限を縮小すべきユーザーの一覧を表で示してください。
 
-### Track hardware lifecycle risk
-Use this device inventory file containing purchase dates, models, and OS versions. Highlight which assets are past end-of-life or nearing refresh thresholds. Create a table of at-risk devices and include a narrative summary for IT leadership.
-
----
-
-## IT communication & incident management
-ChatGPT assists with drafting communications, postmortems, and disaster recovery plans for IT services.
-
-### Draft an incident postmortem
-Summarize the recent [insert system or service] outage. Include the root cause, timeline of events, user impact, and actions taken. Use information from the incident ticket or war room notes, and format the summary as a shareable internal postmortem report.
-
-### Create a DR playbook draft
-Create a draft disaster recovery playbook for a critical production service. Use this system diagram and our recovery objectives (RTO, RPO). Organize the playbook into steps to take before, during, and after a service outage.
-
-### Write internal comms for downtime
-Write a professional internal communication announcing planned downtime for [insert system or tool]. Include timing, affected users, impact on work, and who to contact for questions. Write the message in the tone of an IT team update.
-
-### Translate error logs to plain language
-Help translate these system error logs into language that can be understood by a non-technical executive. Use definitions where needed, and summarize what each log entry means in a few clear sentences. Present the explanation as an email draft.
-
-### Evaluate SaaS tool redundancy
-Review our current list of SaaS tools used by IT, engineering, and ops. Use the attached spreadsheet with cost, team usage, and tool functions. Identify overlapping tools and recommend 3–5 candidates for consolidation, explaining why each was chosen in a short summary report.
+### API セキュリティの態勢をレビューする
+この API スキーマとトラフィックログのサンプルを確認してください。入力検証の甘さや認証不足など、一般的な API セキュリティ問題を特定してください。見つかった内容を、修正案付きの箇条書きで示してください。
 
 ---
 
-## IT monitoring & optimization
-CharGPT analyzes logs, uptime, and system performance to propose improvements and forecast trends.
+## IT 運用と資産管理
+ChatGPT は、運用計画、資産ライフサイクル方針、オンボーディング手順、IT チケットの優先順位付けを支援します。
 
-### Summarize system health trends
-Analyze the system health logs from the last 30 days. Focus on spikes in CPU/memory, service outages, and recurring error codes. Provide a concise summary of the key issues and add brief commentary on possible causes or needed follow-ups.
+### IT 向けオンボーディングチェックリストを作成する
+IT の観点から、新入社員向けのオンボーディングチェックリストを作成してください。アカウント発行、セキュリティ研修、ハードウェア設定の主要手順を含めてください。現在のプロセスのアウトラインを使い、日別または週別に整理して出力してください。
 
-### Suggest system monitoring improvements
-Review our monitoring setup for [insert system] based on the current configuration and recent alert history. Identify 2–3 areas for improvement, such as gaps in alert coverage, noise reduction, or metrics tuning. Present the suggestions in a short internal memo.
+### ハードウェアのライフサイクル方針を作成する
+会社のノート PC とデスクトップのライフサイクル管理ポリシーのドラフトを作成してください。デバイスの経年と現在の交換費用が分かるこのスプレッドシートを参照してください。交換時期、サポート期間、環境配慮を含む正式文書として書いてください。
 
-### Analyze service uptime and incident frequency
-Review this CSV with daily uptime % and incident logs for [insert service] over the past quarter. Identify patterns in outages, frequency of issues by severity, and calculate overall uptime. Summarize findings and suggest actions for improvement in a brief report.
+### 資産台帳の方針を作成する
+IT 資産台帳の維持と監査に関する正式なポリシーを書いてください。ツール、部門、ステークホルダーの一覧を出発点にしてください。目的、責任範囲、台帳照合のプロセスを含めてください。
 
-### Audit user access logs for anomalies
-Analyze this user access log export. Identify users or IP addresses with unusual access frequency, after-hours logins, or failed attempts. Flag suspicious patterns and summarize results in a security review format.
+### IT チケットの優先順位付けを支援する
+未処理の IT サポートチケットのキューを確認してください。影響度、緊急度、SLA に基づく優先順位付け基準を使ってください。順序を並べ替え、各順位の理由を短く添えた優先バックログとして出力してください。
 
-### Forecast IT support ticket volume
-Analyze this export of support ticket volume by week for the past 12 months. Identify seasonality trends and forecast volume for the next quarter. Visualize the trend and provide commentary for capacity planning.
+### ハードウェアのライフサイクルリスクを追跡する
+購入日、モデル、OS バージョンを含むデバイス在庫ファイルを使ってください。EOL を過ぎた資産や、更新期限が近い資産を強調してください。リスクのあるデバイスの表と、IT リーダー向けの要約を作成してください。
+
+---
+
+## IT コミュニケーションとインシデント管理
+ChatGPT は、IT サービス向けの連絡文、ポストモーテム、災害復旧計画の下書きを支援します。
+
+### インシデントのポストモーテムを下書きする
+最近の [システムまたはサービスを入力] 障害を要約してください。根本原因、出来事の時系列、ユーザーへの影響、実施した対応を含めてください。インシデントチケットまたは war room のメモを使い、共有可能な社内ポストモーテム報告書としてまとめてください。
+
+### DR プレイブックの草案を作成する
+重要な本番サービス向けの災害復旧プレイブックの草案を作成してください。このシステム図と復旧目標（RTO、RPO）を使ってください。障害の前、最中、後に行う手順に分けて整理してください。
+
+### ダウンタイムの社内連絡文を書く
+[システムまたはツールを入力] の計画停止を告知する社内向けの丁寧な連絡文を書いてください。時間、影響を受けるユーザー、業務への影響、問い合わせ先を含めてください。IT チームからの更新連絡のトーンで書いてください。
+
+### エラーログを平易な言葉に翻訳する
+このシステムのエラーログを、非技術系の役員にも理解できる言葉に翻訳してください。必要に応じて用語を定義し、各ログが何を意味するのかを数文で要約してください。メール下書きの形式で説明してください。
+
+### SaaS ツールの重複を評価する
+IT、エンジニアリング、オペレーションで使っている SaaS ツールの現在一覧を確認してください。コスト、チーム利用状況、ツール機能が分かる添付スプレッドシートを使ってください。重複しているツールを特定し、統合候補を 3〜5 件提案してください。短い要約レポートで、各候補が選ばれた理由も説明してください。
+
+---
+
+## IT 監視と最適化
+ChatGPT は、ログ、稼働率、システム性能を分析して改善提案やトレンド予測を行います。
+
+### システム健全性の傾向を要約する
+直近 30 日間のシステム健全性ログを分析してください。CPU/メモリの急増、サービス停止、繰り返し発生するエラーコードに注目してください。主な問題を簡潔に要約し、考えられる原因や追加対応の必要性について短くコメントしてください。
+
+### システム監視の改善提案をする
+現在の設定と最近のアラート履歴をもとに、[システムを入力] の監視構成を確認してください。アラート範囲の抜け、ノイズ低減、メトリクス調整など、2〜3 の改善点を特定してください。短い社内メモとして提案をまとめてください。
+
+### サービス稼働率とインシデント頻度を分析する
+過去 1 四半期の、[サービスを入力] に関する日次稼働率 % とインシデントログの CSV を確認してください。障害の傾向、重大度ごとの頻度、全体稼働率を算出してください。要点をまとめ、改善に向けたアクションを短いレポートで示してください。
+
+### ユーザーアクセスログの異常を監査する
+このユーザーアクセスログのエクスポートを分析してください。不自然なアクセス頻度、営業時間外ログイン、失敗試行があるユーザーや IP を特定してください。疑わしいパターンをフラグ付けし、セキュリティレビュー形式で結果を要約してください。
+
+### IT サポートチケットの量を予測する
+過去 12 か月の週次サポートチケット件数のエクスポートを分析してください。季節性の傾向を特定し、次四半期の件数を予測してください。トレンドを可視化し、キャパシティ計画向けのコメントを付けてください。

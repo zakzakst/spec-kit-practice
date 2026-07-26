@@ -1,101 +1,101 @@
-# 顧客成功のためのChatGPT
+# 顧客成功向けChatGPT
 
-## ChatGPT for customer success
-Customer success teams care deeply about adoption, retention, and long-term value, often bridging the gap between product capabilities and real-world outcomes. ChatGPT can help by accelerating research, drafting communications, organizing QBRs, and even surfacing product insights—so they can spend more time driving meaningful results.
-
----
-
-## Onboarding & lifecycle strategy
-ChatGPT can draft customer onboarding and lifecycle retention tactics through templates, feedback synthesis, research, and proactive playbooks.
-
-### Create onboarding plan template
-Create a reusable onboarding plan template for [type of customer]. Reference typical timelines, milestones, and stakeholder alignment needs. Format as a week-by-week table with task owners and goals.
-
-### Summarize onboarding feedback
-Summarize onboarding feedback from our last 10 customers in [segment]. Use these shared notes and survey answers. Output a short paragraph per theme: wins, blockers, suggestions.
-
-### Identify best practices for high-touch onboarding
-Research how leading B2B companies structure high-touch onboarding journeys. Focus on companies with $1M+ ACV and hybrid onboarding models. Include sources and structure the output as a bulleted summary of key tactics with references.
-
-### Suggest proactive playbooks
-Recommend 3 proactive outreach playbooks for at-risk customers in [industry/segment]. Use trends from recent churn, feature inactivity, and low engagement. Output should include: goal, trigger, CTA, and timing.
-
-### Brainstorm retention incentives
-Suggest creative retention strategies for accounts likely to downgrade in [industry]. Use trends in usage and renewal hesitations we’ve seen. Output 5 tested and 5 novel ideas with pros/cons.
+## 顧客成功チーム向けChatGPT
+顧客成功チームは、導入率、継続率、そして長期的な価値をとても重視し、製品機能と実際の成果の間をつなぐ役割を担います。ChatGPT は、調査の高速化、コミュニケーション文面の下書き、QBR の整理、さらには製品インサイトの抽出まで支援できるため、より多くの時間を意味のある成果づくりに充てられるようになります。
 
 ---
 
-## Competitive & benchmark research
-ChatGPT conducts external research to benchmark org structures, metrics, tooling, and competitive success program strategies for informed decision-making. Use deep research for even more comprehensive results.
+## オンボーディングとライフサイクル戦略
+ChatGPT は、テンプレート作成、フィードバックの要約、調査、先回りのプレイブック作成を通じて、顧客オンボーディングとライフサイクル継続施策の下書きを作成できます。
 
-### Benchmark CS org structure
-Benchmark the CS org structure for companies like ours in [industry, size]. Focus on roles per customer segment and ratio to revenue. Output as a comparison table with notes on headcount ratios.
+### オンボーディング計画テンプレートを作成する
+[顧客タイプ] 向けに再利用可能なオンボーディング計画テンプレートを作成してください。一般的なタイムライン、マイルストーン、関係者の合意形成に必要な内容を含めてください。週ごとの表形式で、担当者と目標が分かるようにしてください。
 
-### Benchmark success metrics by industry
-Research top 3 success metrics used for customer health scoring in the [industry] sector. Include CSAT, NRR, usage frequency, or other emerging benchmarks. Output as a table comparing metric, source, and benchmark value with citations.
+### オンボーディングのフィードバックを要約する
+[セグメント] の直近 10 社からのオンボーディング・フィードバックを要約してください。共有メモとアンケート回答を使ってください。成果、障害、提案の各テーマごとに短い段落で出力してください。
 
-### Evaluate CS tooling stacks
-Research typical Customer Success tech stacks for companies in early-stage, growth-stage, and enterprise. Include categories (e.g., CRM, Success Platform, Analytics). Output a comparison chart with examples and usage notes.
+### ハイタッチ型オンボーディングのベストプラクティスを特定する
+有力な B2B 企業がどのようにハイタッチ型オンボーディングを設計しているか調査してください。ACV が 100 万ドル以上で、ハイブリッド型オンボーディングを採用している企業に注目してください。出典を含め、主要な施策を箇条書きで要約してください。
 
-### Competitive enablement summary
-Research how competitors are supporting enterprise customers post-sale in [industry]. Include examples of success resources, team structure, and onboarding formats. Output as a table comparing 3 competitors with pros/cons per tactic.
+### 先回りのプレイブックを提案する
+[業界/セグメント] のリスクの高い顧客向けに、先回りのアウトリーチ・プレイブックを 3 つ提案してください。最近の解約、機能未使用、低エンゲージメントの傾向を踏まえてください。出力には、目的、トリガー、CTA、実施タイミングを含めてください。
 
-### Create competitive comparison of CS programs
-Research what customer success programs look like at our top 3 competitors. Focus on onboarding, health tracking, and expansion strategies. Output a comparison matrix.
-
----
-
-## Account planning & renewal prep
-ChatGPT guides structured preparation for executive communication, QBRs, renewal readiness, and strategic account planning. Use canvas for real-time editing capabilities.
-
-### Draft executive email update
-Write a weekly update email for [executive stakeholder at customer]. Use these internal notes from this week’s call and usage metrics: [paste here]. Output should be a short, polished email with 3 bullets.
-
-### Draft QBR talking points
-Summarize the top wins, risks, and product usage highlights for [Customer Name] ahead of our QBR. Use their latest health score, usage trends, and support ticket history. Format as a bulleted prep doc for internal review.
-
-### Prep for renewal call
-Create a renewal call prep checklist for [Customer Name]. Include contract terms, current usage, known risks, and upsell potential. Output as a bulleted checklist.
-
-### Create account plan summary
-Draft a 1-pager account plan for [Customer Name]. Use notes from our last 2 calls + contract info + goals: [paste here]. Output should be formatted as goals, blockers, actions, and renewals.
-
-### Outline renewal risk summary
-Draft a renewal risk summary for [Customer Name] ahead of our internal forecast call. Include their renewal date, usage trend, sentiment, and contract notes. Output should be a paragraph summary + 1-line recommendation.
+### 継続率向上の施策をブレインストーミングする
+[業界] でダウングレードの可能性が高いアカウントに対して、創造的な継続施策を提案してください。これまで見えている利用傾向と更新時の躊躇を踏まえてください。実績のある案を 5 件、新規性のある案を 5 件、各案のメリット・デメリット付きで出してください。
 
 ---
 
-## Data & health analysis
-Analyzes quantitative and qualitative customer signals to produce metrics definitions, performance insights, risk detection, and scoring frameworks. Create a custom GPT for analysis tasks you complete often.
+## 競合・ベンチマーク調査
+ChatGPT は、組織構造、指標、ツール、競合の成功プログラム戦略をベンチマークするための外部調査を行い、意思決定を支援します。より包括的な結果が必要な場合は、ディープリサーチを使ってください。
 
-### Outline success metrics by segment
-Outline a draft list of success metrics for [segment] customers. Include adoption goals, engagement targets, and renewal benchmarks. Format as a 2-column table: Metric | Definition.
+### CS 組織構造をベンチマークする
+[業界、規模] が同程度の企業における CS 組織構造をベンチマークしてください。顧客セグメントごとの役割と売上比率に注目してください。ヘッドカウント比率に関する注記付きの比較表で出力してください。
 
-### Evaluate CSAT score distribution
-Review this CSAT survey data from Q2. Calculate overall average, identify outlier scores, and summarize feedback themes if available. Output as a short summary with key stats and top positive/negative feedback examples.
+### 業界別の成功指標をベンチマークする
+[業界] における顧客の健全性スコアリングで使われている上位 3 つの成功指標を調査してください。CSAT、NRR、利用頻度、または新しいベンチマークを含めてください。指標、出典、ベンチマーク値を引用付きの表で比較してください。
 
-### Analyze support ticket trends
-Examine this export of support tickets from the last quarter. Identify the top 5 recurring issues and provide a short summary of root causes. Output should include a ranked list with issue, frequency, and potential CS actions.
+### CS ツールスタックを評価する
+初期段階、成長段階、エンタープライズ向け企業で一般的な Customer Success の技術スタックを調査してください。CRM、Success Platform、分析などのカテゴリを含めてください。例と利用メモ付きの比較表で出力してください。
 
-### Spot early signs of churn
-Review this customer usage data from the past 90 days. Identify any customers who may be at risk of churning based on usage drop, login frequency, or support interactions. Summarize the findings in a table with columns: Customer Name | Risk Factor | Notes.
+### 競合の支援体制を要約する
+[業界] において、競合他社が販売後のエンタープライズ顧客をどのように支援しているか調査してください。成功事例のリソース、チーム構成、オンボーディング形式の例を含めてください。3 社を、施策ごとのメリット・デメリット付きで比較する表で出力してください。
 
-### Standardize customer health scoring
-Build a draft health scoring rubric for [segment or region]. Use inputs like usage %, NPS, renewal status, and ticket volume. Output as a table with scoring ranges, weights, and color indicators.
+### CS プログラムの競合比較を作成する
+上位 3 社の競合がどのような Customer Success プログラムを展開しているか調査してください。オンボーディング、ヘルス管理、拡張戦略に注目してください。比較マトリクスで出力してください。
 
 ---
 
-## Visual & diagram design
-ChatGPT creates clear, presentation-ready visual diagrams and mockups to communicate journeys, flows, maturity stages, and health indicators.
+## アカウントプランニングと更新準備
+ChatGPT は、経営層向けコミュニケーション、QBR、更新準備、戦略的アカウントプランニングのための構造化された下準備を支援します。リアルタイム編集が必要な場合は canvas を使ってください。
 
-### Design customer health score mock-up
-Design a visual mock-up of a color-coded health score gauge for customers. Include Low, Medium, High ranges with suggested numerical ranges and icons. Style: dashboard-style, clean lines, professional.
+### 経営層向けの更新メールを下書きする
+[顧客側の経営層ステークホルダー] 向けの週次アップデートメールを書いてください。今週の会議メモと利用指標は以下を使ってください: [ここに貼り付け]。3 つの箇条書きを含む、短く洗練されたメールにしてください。
 
-### Visualize customer journey map
-Turn this outline of customer lifecycle stages into a visual journey map. Use the stages and pain points listed here: [paste text]. Output as a labeled diagram with 5 lifecycle stages.
+### QBR 用の要点を下書きする
+QBR に向けて [顧客名] の主な成果、リスク、製品利用のハイライトを要約してください。最新のヘルススコア、利用傾向、サポートチケット履歴を使ってください。社内レビュー用の箇条書き形式の準備資料にしてください。
 
-### Illustrate escalation process flow
-Create a diagram that illustrates the internal escalation process from CSM to Support to Engineering. Include 3 levels of severity and labeled handoff points. Style: flowchart format, minimal colors, ready for internal wiki.
+### 更新面談の準備をする
+[顧客名] 向けの更新面談準備チェックリストを作成してください。契約条件、現在の利用状況、既知のリスク、アップセルの可能性を含めてください。箇条書きのチェックリスト形式で出力してください。
 
-### Build a visual customer maturity model
-Create an image that visualizes a 4-stage customer maturity model for a SaaS platform. Each stage should have a title, key behavior pattern, and suggested CS touchpoint. Style: professional, clean, slide-ready.
+### アカウントプランの要約を作成する
+[顧客名] 向けの 1 ページ版アカウントプランを下書きしてください。直近 2 回の会話メモ、契約情報、目標: [ここに貼り付け] を使ってください。目標、障害、施策、更新の順に整理してください。
+
+### 更新リスクの要約をまとめる
+社内のフォーキャスト会議に向けて、[顧客名] の更新リスク要約を下書きしてください。更新日、利用傾向、感触、契約メモを含めてください。段落の要約と、1 行の推奨事項を出力してください。
+
+---
+
+## データとヘルス分析
+顧客シグナルの定量・定性両面を分析し、指標定義、パフォーマンス洞察、リスク検知、スコアリングの枠組みを作成します。よく行う分析作業にはカスタム GPT の作成も検討してください。
+
+### セグメント別の成功指標を整理する
+[セグメント] の顧客向け成功指標のドラフト一覧を作成してください。導入目標、エンゲージメント目標、更新ベンチマークを含めてください。2 列の表: 指標 | 定義 の形式にしてください。
+
+### CSAT スコア分布を評価する
+Q2 の CSAT アンケートデータを確認してください。全体平均を算出し、外れ値のスコアを特定し、もしあればフィードバックのテーマを要約してください。主要統計と、ポジティブ・ネガティブなフィードバック例を含む短い要約で出力してください。
+
+### サポートチケットの傾向を分析する
+直近四半期のサポートチケットのエクスポートを確認してください。繰り返し発生している上位 5 件の問題を特定し、根本原因の短い要約を出してください。問題、頻度、想定される CS のアクションを含む順位付きリストにしてください。
+
+### 解約の早期兆候を見つける
+過去 90 日間の顧客利用データを確認してください。利用低下、ログイン頻度、サポート対応をもとに、解約リスクのある顧客を特定してください。顧客名 | リスク要因 | メモ の列を持つ表で結果を要約してください。
+
+### 顧客ヘルススコアを標準化する
+[セグメントまたは地域] 向けのヘルススコアリング基準のドラフトを作成してください。利用率、NPS、更新状況、チケット件数などの入力値を使ってください。スコア範囲、重み、色分けを含む表で出力してください。
+
+---
+
+## ビジュアルと図のデザイン
+ChatGPT は、顧客体験、フロー、成熟度段階、ヘルス指標を伝えるための、分かりやすく発表向けの図やモックアップを作成します。
+
+### 顧客ヘルススコアのモックアップをデザインする
+顧客向けの色分けされたヘルススコアゲージのビジュアルモックアップをデザインしてください。Low, Medium, High の範囲を含め、推奨数値レンジとアイコンも入れてください。スタイルはダッシュボード風、すっきりした線、プロフェッショナルな見た目です。
+
+### 顧客ジャーニーマップを可視化する
+この顧客ライフサイクル段階の概要を、視覚的なジャーニーマップに変えてください。以下に記載されたステージと課題を使ってください: [テキストを貼り付け]。5 つのライフサイクル段階を持つラベル付き図にしてください。
+
+### エスカレーションの流れを図示する
+CSM から Support、Engineering へつながる社内エスカレーションプロセスを示す図を作成してください。3 段階の重大度と、ラベル付きの引き継ぎポイントを含めてください。スタイルはフローチャート形式、色は控えめ、社内 wiki にすぐ使えるデザインでお願いします。
+
+### 顧客成熟度モデルのビジュアルを作る
+SaaS プラットフォーム向けの 4 段階の顧客成熟度モデルを可視化する画像を作成してください。各段階にはタイトル、主な行動パターン、推奨される CS の接点を含めてください。スタイルはプロフェッショナル、洗練、スライド向けです。

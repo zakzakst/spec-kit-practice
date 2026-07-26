@@ -1,101 +1,101 @@
-# 製品向けChatGPT
+# 製品チーム向けChatGPT
 
-## ChatGPT for product teams
-The product team is the bridge between customer needs, business goals, and technical execution. They thrive on uncovering insights, validating ideas, and shaping roadmaps that balance user value with strategic impact. ChatGPT can accelerate their workflow by generating PRDs, summarizing customer feedback, exploring competitor products, and brainstorming features—freeing them to spend more time on decision-making and strategy.
-
----
-
-## Competitive & market research
-ChatGPT supports product teams by analyzing competitors, market trends, and regulatory factors to guide product strategy. Use deep research and web search for more real-time insights.
-
-### Compare competitors’ onboarding UX
-Research how 3 key competitors structure their onboarding flow for new users. Include screenshots, key steps, and points of friction or delight. Synthesize a comparison table and recommendations for improvement. Target product: [Insert product]
-
-### Benchmark competitor pricing strategies
-I’m a product manager launching a new SaaS product. Research how top 5 competitors in this space structure their pricing tiers, freemium vs. paid, feature gating, and upsell triggers. Use public sources and include URLs. Output: A comparison table with insights and risks.
-
-### Compare tech stack options
-Compare the pros and cons of integrating [technology/tool A] vs. [technology/tool B] into our product. Focus on scalability, cost, support, and developer experience. Include citations.
-
-### Identify regulatory risks for new features
-I’m a PM scoping a [feature] for financial services. Research recent regulatory guidance in the US, UK, and EU around the use of [feature] in customer-facing products. Summarize by region with citations. Output: A table of legal considerations to flag for our legal team and product design implications.
-
-### Research top product-led growth tactics
-Research the top 7 product-led growth strategies used by fast-scaling SaaS companies in the last 2 years. Prioritize those with measurable impact. Include 1–2 examples per tactic and source links. Output: Ranked list with strategy, example, and success metric.
+## 製品チーム向けChatGPT
+製品チームは、顧客ニーズ、事業目標、技術実装をつなぐ橋渡し役です。新しい価値の発見、アイデアの検証、ユーザー価値と戦略的インパクトの両方を満たすロードマップづくりを得意とします。ChatGPT は、PRD の作成、顧客フィードバックの要約、競合製品の調査、機能アイデアのブレインストーミングを通じて、意思決定と戦略により多くの時間を使えるようにします。
 
 ---
 
-## Product strategy & roadmapping
-ChatGPT guides prioritization, monetization, and vision-setting for product initiatives. Use a reasoning model for more strategic insights.
+## 競合・市場調査
+ChatGPT は、競合、市場動向、規制要因を分析して製品戦略を支援します。よりリアルタイムな洞察が必要な場合は、ディープリサーチやウェブ検索を使ってください。
 
-### Prioritize product roadmap items based on impact
-Review this list of upcoming product initiatives. Use the data provided (impact scores, effort estimates, and strategic alignment notes) to suggest priority order. Present the reordered list with justification for each recommendation. [Insert initiative list]
+### 競合のオンボーディング UX を比較する
+3 つの主要競合が新規ユーザー向けのオンボーディングフローをどのように構成しているか調査してください。スクリーンショット、主要ステップ、摩擦や好印象を与えるポイントを含めてください。比較表と改善提案に要約してください。対象製品: [製品名を入力]
 
-### Explore monetization models
-We’re considering pricing changes. Based on this product value and audience, suggest 3 monetization strategies. Include pros, cons, and examples of companies using each. [Insert product and audience details]
+### 競合の価格戦略をベンチマークする
+私は新しい SaaS 製品を立ち上げるプロダクトマネージャーです。この領域の上位 5 競合が、価格帯、フリーミアムか有料か、機能制限、アップセルのトリガーをどう設計しているか調査してください。公開情報と URL を含めてください。出力: 洞察とリスク付きの比較表。
 
-### Draft a vision statement for the product
-Based on this long-term goal and user need, write a concise product vision statement. Keep it inspiring and grounded in real outcomes. [Insert product goal]
+### 技術スタックの選択肢を比較する
+[技術/ツール A] と [技術/ツール B] を製品に組み込む場合のメリット・デメリットを比較してください。スケーラビリティ、コスト、サポート、開発者体験に焦点を当ててください。引用も含めてください。
 
-### Brainstorm feature ideas from customer feedback
-Review this batch of customer feedback from the past quarter. Identify pain points and generate a list of 5 feature ideas to address recurring themes. [Insert feedback or summary]
+### 新機能に関する規制リスクを特定する
+私は金融サービス向けの [機能] を企画している PM です。顧客向けプロダクトで [機能] を使う場合の、米国・英国・EU における最近の規制ガイダンスを調査してください。地域ごとに要約し、引用を付けてください。出力: 法務チームに共有すべき論点と製品設計への影響をまとめた表。
 
-### Plan A/B testing experiments
-Review this list of product UI changes and propose 2 A/B test setups. Include hypothesis, success metrics, and potential outcomes. [Insert UI changes or user goals]
-
----
-
-## Product content & communication
-ChatGPT creates clear and engaging product documentation, launch materials, and internal content. Use canvas for real-time editing.
-
-### Draft PRD for a new feature
-Based on this feature idea and customer need, write a first-draft PRD. Include user story, problem statement, solution overview, acceptance criteria, and success metrics. [Insert context or problem]
-
-### Draft changelog and release notes
-Using this release summary, draft user-facing changelog notes for our next version release. Use a friendly, clear tone and group by category (e.g., new, improved, fixed). [Insert release notes or ticket list]
-
-### Create a go-to-market FAQ
-Draft an internal FAQ for our sales and support teams about our upcoming feature launch. Use this background and anticipated questions. Write in a confident, informative tone. [Insert feature and launch details]
-
-### Generate a one-sentence value proposition
-Based on this feature description, write 3 versions of a clear, compelling one-sentence value proposition. Tailor each one to a different target audience. [Insert feature description]
-
-### Draft pitch deck for new product
-Create a 5-slide outline for a pitch deck introducing our new product to internal stakeholders. Include problem, solution, market, product overview, and timeline. [Insert product idea]
+### プロダクト主導成長の主要施策を調べる
+過去 2 年間に急成長した SaaS 企業が用いている、主要なプロダクト主導成長（PLG）戦略を 7 つ調査してください。効果が測定できるものを優先してください。施策ごとに 1 〜 2 の例と出典リンクを含めてください。出力: 戦略、例、成功指標を並べた順位付きリスト。
 
 ---
 
-## UX & visual design
-ChatGPT generates user journeys, concept visuals, and product design artifacts.
+## 製品戦略とロードマップ
+ChatGPT は、優先順位付け、マネタイズ、ビジョン策定を支援します。より戦略的な洞察が必要な場合は、推論モデルを使ってください。
 
-### Visualize a user journey map
-Create a user journey map for our [insert user persona] going through [insert experience]. Include emotional highs/lows, touchpoints, and moments of friction. Output as a visual flow.
+### 影響度に基づいてロードマップ項目を優先順位付けする
+今後予定している製品施策の一覧を確認してください。与えられたデータ（影響スコア、工数見積もり、戦略整合性メモ）を使って優先順位を提案してください。並び替えた一覧と、各提案の根拠を示してください。 [施策一覧を入力]
 
-### Design onboarding flow wireframe
-Generate a wireframe-style image of a 3-step onboarding flow for a finance app. Steps include: linking an account, setting financial goals, and reviewing suggestions. Style: greyscale wireframe with labels.
+### マネタイズモデルを検討する
+価格変更を検討しています。この製品価値と対象ユーザーを踏まえ、3 つのマネタイズ戦略を提案してください。各案の長所、短所、採用している企業の例も含めてください。 [製品と対象ユーザーの詳細を入力]
 
-### Illustrate product comparison visuals
-Create a side-by-side visual comparison of two app dashboards: one cluttered with too many metrics, and one simplified with actionable insights. Style: dashboard UI, minimalistic, neutral branding.
+### 製品のビジョンステートメントを作成する
+この長期目標とユーザーニーズをもとに、簡潔なプロダクトビジョンステートメントを書いてください。鼓舞する表現でありつつ、実際の成果に根ざした内容にしてください。 [製品目標を入力]
 
-### Design user journey infographics
-Generate a user journey infographic showing the onboarding experience for a mobile health-tracking app. Include key milestones, emotions, and friction points. Style: infographic, vertical layout, soft colors.
+### 顧客フィードバックから機能案をブレインストーミングする
+直近四半期の顧客フィードバックを確認してください。課題を特定し、繰り返し現れるテーマに対応する 5 つの機能案を作成してください。 [フィードバックまたは要約を入力]
+
+### A/B テストの実験を計画する
+製品 UI の変更案を確認し、2 つの A/B テスト設計を提案してください。仮説、成功指標、想定される結果を含めてください。 [UI 変更点またはユーザー目標を入力]
 
 ---
 
-## Data analysis & insights
-ChatGPT analyzes feedback, logs, and experiments to uncover trends and inform decisions.
+## 製品コンテンツとコミュニケーション
+ChatGPT は、分かりやすく魅力的な製品ドキュメント、ローンチ資料、社内コンテンツを作成します。リアルタイム編集が必要な場合は canvas を使ってください。
 
-### Analyze product feedback themes
-Analyze this set of user feedback and identify the 4 most frequent themes. Summarize each with example quotes and suggested product implications. [Insert feedback or data dump]
+### 新機能の PRD を下書きする
+この機能アイデアと顧客ニーズをもとに、PRD の初稿を書いてください。ユーザーストーリー、課題定義、ソリューション概要、受け入れ基準、成功指標を含めてください。 [背景または課題を入力]
 
-### Synthesize insights from usage data
-Based on the following product usage data, summarize 3 key behavioral trends and what they suggest about user needs. Recommend 2 follow-up investigations. [Insert data or summary]
+### 変更履歴とリリースノートを下書きする
+このリリース要約を使って、次回リリース向けのユーザー向け変更履歴ノートを作成してください。親しみやすく分かりやすいトーンで、カテゴリごとに整理してください（例: 新機能、改善、修正）。 [リリースノートまたはチケット一覧を入力]
 
-### Identify product adoption risks
-Review our product rollout plan and highlight 5 risks to successful adoption. Include likelihood, impact, and mitigation recommendations. [Insert rollout plan or summary]
+### Go-to-market FAQ を作成する
+新機能のローンチに関して、営業とサポート向けの社内 FAQ を作成してください。この背景情報と想定質問を使ってください。自信のある、分かりやすいトーンで書いてください。 [機能とローンチ詳細を入力]
 
-### Analyze A/B test results
-Review the results of our recent A/B test (test vs. control). Identify statistical significance, key metrics that changed, and recommend next steps. Present insights clearly with graphs if needed. [Upload test data]
+### 一文の価値提案を生成する
+この機能説明をもとに、明快で説得力のある一文の価値提案を 3 つ書いてください。それぞれ異なるターゲットに合わせて調整してください。 [機能説明を入力]
 
-### Compare feature adoption across customer segments
-Use this data to compare how small business vs. enterprise customers adopt our key features. Highlight major differences, usage frequencies, and retention impact. Format output as a table with insights. [Upload CSV or describe dataset]
+### 新製品のピッチデッキを下書きする
+社内ステークホルダー向けに新製品を紹介する 5 枚構成のピッチデッキ概要を作成してください。課題、解決策、市場、製品概要、タイムラインを含めてください。 [製品アイデアを入力]
+
+---
+
+## UX とビジュアルデザイン
+ChatGPT は、ユーザージャーニー、コンセプトビジュアル、製品デザインの成果物を生成します。
+
+### ユーザージャーニーマップを可視化する
+[ユーザーペルソナ] が [体験内容] を進むユーザージャーニーマップを作成してください。感情の浮き沈み、接点、摩擦の瞬間を含めてください。視覚的なフローとして出力してください。
+
+### オンボーディングフローのワイヤーフレームをデザインする
+金融アプリ向けの 3 ステップのオンボーディングフローを、ワイヤーフレーム風の画像として生成してください。ステップは、口座連携、財務目標の設定、提案内容の確認です。スタイルはモノクロのワイヤーフレームで、ラベル付きにしてください。
+
+### 製品比較ビジュアルを作成する
+2 つのアプリダッシュボードを並べて比較するビジュアルを作成してください。1 つは指標が多すぎて散らかった状態、もう 1 つは行動につながるインサイトに絞って簡潔にした状態です。スタイルはダッシュボード UI、ミニマル、ニュートラルなブランド表現でお願いします。
+
+### ユーザージャーニーのインフォグラフィックをデザインする
+モバイル健康管理アプリのオンボーディング体験を示すユーザージャーニーのインフォグラフィックを生成してください。主要マイルストーン、感情、摩擦ポイントを含めてください。スタイルは縦長レイアウトのインフォグラフィックで、柔らかい色合いにしてください。
+
+---
+
+## データ分析とインサイト
+ChatGPT は、フィードバック、ログ、実験を分析して傾向を抽出し、意思決定を支援します。
+
+### 製品フィードバックのテーマを分析する
+このユーザーフィードバックのセットを分析し、最も頻出する 4 つのテーマを特定してください。それぞれについて、例としての引用と、示唆される製品への影響を要約してください。 [フィードバックまたはデータを入力]
+
+### 利用データからインサイトを要約する
+以下の製品利用データをもとに、3 つの主要な行動傾向と、それが示唆するユーザーニーズを要約してください。追加で確認すべき調査を 2 つ提案してください。 [データまたは要約を入力]
+
+### 製品導入リスクを特定する
+製品展開計画を確認し、導入成功に対する 5 つのリスクを挙げてください。発生可能性、影響度、緩和策も含めてください。 [展開計画または要約を入力]
+
+### A/B テスト結果を分析する
+最近実施した A/B テストの結果（テスト群 vs. コントロール群）を確認してください。統計的有意性、変化した主要指標、今後の次の一手を提案してください。必要であればグラフを使って、分かりやすく示してください。 [テストデータをアップロード]
+
+### 顧客セグメント間の機能採用を比較する
+このデータを使って、中小企業とエンタープライズ顧客の主要機能の採用状況を比較してください。大きな違い、利用頻度、継続率への影響を強調してください。洞察付きの表形式で出力してください。 [CSV をアップロード、またはデータセットを説明]

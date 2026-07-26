@@ -1,104 +1,104 @@
 # エンジニア向けChatGPT
 
-## ChatGPT for engineering teams
-Engineers focus on building, fixing, and optimizing systems. They care about writing clean code, solving technical problems efficiently, and reducing bugs or downtime. ChatGPT can help by generating code snippets, explaining complex concepts, reviewing logic, writing documentation, and speeding up repetitive tasks so engineers can focus on shipping quality work faster.
+## エンジニアチーム向けChatGPT
+エンジニアは、システムを構築し、修正し、最適化することに集中しています。きれいなコードを書くこと、技術課題を効率よく解決すること、バグやダウンタイムを減らすことを大切にします。ChatGPT は、コードスニペットの生成、複雑な概念の説明、ロジックレビュー、ドキュメント作成、反復作業の高速化を通じて支援し、エンジニアがより速く高品質な成果を出せるようにします。
 
 ---
 
-## Research & benchmarking
-Use ChatGPT to provide comparative analyses of technologies, tools, and industry practices.
+## リサーチとベンチマーク
+ChatGPT を使って、技術、ツール、業界の実践に関する比較分析を行います。
 
-### Evaluate cloud providers for migration
-I’m an infrastructure engineer evaluating cloud migration options. Context: We’re moving from on-prem to the cloud for a fintech backend. Output: Compare AWS, GCP, and Azure for scalability, pricing, compliance, and developer tooling. Include citations.
+### クラウド移行向けにクラウドプロバイダを評価する
+私はクラウド移行の選択肢を検討しているインフラエンジニアです。背景: フィンテックのバックエンドをオンプレミスからクラウドへ移行します。出力: AWS、GCP、Azure をスケーラビリティ、価格、コンプライアンス、開発者向けツールの観点で比較してください。引用も含めてください。
 
-### Research frameworks for real-time apps
-I’m building a real-time collaboration tool. Context: We need low-latency and scalability. Output: Compare top frameworks (e.g., SignalR, Socket.io, WebRTC) with use cases, pros/cons, and current usage by other SaaS companies. Include sources.
+### リアルタイムアプリ向けフレームワークを調査する
+私はリアルタイムのコラボレーションツールを構築しています。背景: 低遅延とスケーラビリティが必要です。出力: 主要フレームワーク（例: SignalR、Socket.io、WebRTC）を、用途、長所・短所、他の SaaS 企業での現状の利用状況とともに比較してください。出典も含めてください。
 
-### Benchmark observability tools
-Benchmark the top observability tools. Context: We want to move from basic logging to full-stack monitoring. Output: Create a comparison table of features, pricing, integrations for Datadog, New Relic, Prometheus, and OpenTelemetry. Include sources.
+### オブザーバビリティツールをベンチマークする
+主要なオブザーバビリティツールをベンチマークしてください。背景: 基本的なログ取得からフルスタック監視へ移行したいと考えています。出力: Datadog、New Relic、Prometheus、OpenTelemetry の機能、価格、連携を比較した表を作成してください。出典も含めてください。
 
-### Analyze AI/ML trends in logistics
-I’m researching AI/ML adoption in logistics systems. Context: Our company is considering integrating predictive routing. Output: A 5-paragraph summary on current trends, vendors, and implementation patterns. Include citations and links.
+### ロジスティクスにおける AI/ML トレンドを分析する
+ロジスティクスシステムにおける AI/ML 採用を調査しています。背景: 予測ルーティングの導入を検討しています。出力: 現在のトレンド、ベンダー、実装パターンについて 5 段落で要約してください。引用とリンクを含めてください。
 
-### Investigate compliance best practices
-Research best practices for GDPR/CCPA compliance so we can help kick off discussions with our legal team. Context: Our app stores sensitive user data in the EU and US. Output: A compliance checklist with citations, sorted by regulation. Include links to documentation and regulations.
-
----
-
-## Technical reviews & documentation
-Use ChatGPT for engineering documentation, design reviews, and planning materials. Use canvas for real-time editing.
-
-### Review system design doc
-I’ve drafted a technical design document for [insert project or feature]. Review it for clarity, architectural soundness, and completeness. Highlight any missing considerations or questions reviewers may raise.
-
-### Document internal API behavior
-I need to document how this internal API works for other developers. Here’s the relevant code, schema, and usage examples: [insert materials]. Create clear documentation including endpoints, input/output formats, and expected behavior.
-
-### Draft runbook for on-call engineers
-I need to create a runbook for on-call engineers supporting [insert system]. Draft one that includes sections for system overview, common alerts, diagnostic steps, and escalation procedures.
-
-### Draft onboarding guide for new hires
-I need to write an onboarding guide for new engineers joining [insert team]. Create a draft with sections for required tools, access setup, codebase overview, and first tasks. Make it suitable for self-service onboarding.
-
-### Write JIRA ticket from spec
-Based on this engineering spec for [insert task or feature], write a JIRA ticket that includes the problem statement, context, goals, acceptance criteria, and technical notes for implementation.
+### コンプライアンスのベストプラクティスを調べる
+法務チームとの議論を始められるよう、GDPR/CCPA コンプライアンスのベストプラクティスを調査してください。背景: 当社のアプリは EU と US で機微なユーザーデータを保存しています。出力: 規制ごとに整理したコンプライアンスチェックリストを、引用付きで作成してください。関連ドキュメントと規制へのリンクも含めてください。
 
 ---
 
-## Debugging & optimization
-ChatGPT can help diagnose, troubleshoot, and improve system performance and reliability.
+## 技術レビューとドキュメント
+ChatGPT は、エンジニアリング文書、設計レビュー、計画資料の作成を支援します。リアルタイム編集には canvas を使ってください。
 
-### Debug failing system in production
-A system in production is intermittently failing, and we’re struggling to isolate the root cause. Based on the following logs, metrics, and recent changes: [insert context], help identify the most likely causes and suggest next steps for mitigation.
+### システム設計書をレビューする
+[プロジェクトまたは機能を入力] について技術設計書を作成しました。明確さ、アーキテクチャの妥当性、網羅性をレビューしてください。欠けている検討事項や、レビュー担当者から出そうな質問を指摘してください。
 
-### Analyze performance bottlenecks
-Our service is experiencing latency and degraded performance during peak usage. Here are metrics, logs, and relevant traces: [insert context]. Help identify the bottlenecks and recommend specific optimizations.
+### 内部 API の挙動を文書化する
+他の開発者向けに、この内部 API の動作を文書化する必要があります。関連するコード、スキーマ、利用例は次のとおりです: [素材を入力]。エンドポイント、入出力形式、期待される挙動を含む、分かりやすいドキュメントを作成してください。
 
-### Analyze a data pipeline failure
-A critical data pipeline failed in yesterday’s run. Here are the logs, data volume trends, and error outputs: [insert context]. Analyze what likely went wrong and provide recommendations to prevent recurrence.
+### オンコールエンジニア向けのランブックを下書きする
+[システムを入力] を担当するオンコールエンジニア向けにランブックを作成してください。システム概要、よくあるアラート、診断手順、エスカレーション手順を含めてください。
 
-### Suggest observability improvements
-We currently use [insert tools] for monitoring [insert service]. Review our observability setup and suggest improvements across metrics, logging, alerting, and dashboards to improve issue detection and debugging.
+### 新入社員向けオンボーディングガイドを下書きする
+[チームを入力] に参加する新しいエンジニア向けのオンボーディングガイドを書いてください。必要なツール、アクセス設定、コードベース概要、最初のタスクを含むドラフトを作成してください。セルフサービスで使える内容にしてください。
 
-### Brainstorm edge cases for testing
-We’re preparing test cases for [insert feature/system]. Brainstorm potential edge cases and failure scenarios that may not be covered by standard testing, including unusual user inputs, system state changes, and concurrency issues.
-
----
-
-## Data analysis & reporting
-ChatGPT supports with analyzing datasets, identifying trends, and creating visual reports.
-
-### Identify trends in product usage logs
-Analyze this CSV of product usage logs. Context: We want to identify usage trends over time and across user segments. Output: Summary stats + line or bar charts highlighting key trends.
-
-### Visualize system error rates over time
-Plot error rates over time from this dataset. Context: It contains application logs from the last month. Output: A time-series chart with callouts for error spikes and a short interpretation.
-
-### Analyze performance test results
-Analyze this set of performance test results. Context: It compares two versions of our backend service. Output: Side-by-side comparison charts + text summary of improvements or regressions.
-
-### Prioritize bugs based on impact
-Analyze this bug report dataset. Context: Each row includes severity, frequency, and affected users. Output: A prioritized list of top bugs with charts showing frequency vs. severity.
-
-### Summarize feedback from user surveys
-Summarize this user feedback CSV. Context: It includes ratings and open text responses from a recent survey. Output: Key themes, sentiment scores, and charts showing distribution of ratings.
+### 仕様書から JIRA チケットを作成する
+[タスクまたは機能を入力] に関するエンジニアリング仕様をもとに、問題定義、背景、目標、受け入れ基準、実装上の技術メモを含む JIRA チケットを書いてください。
 
 ---
 
-## System architecture & visualization
-ChatGPT can support generating diagrams, flowcharts, and visual representations of complex systems and processes.
+## デバッグと最適化
+ChatGPT は、障害の診断、トラブルシュート、システム性能と信頼性の改善を支援します。
 
-### Create a component diagram
-I need to visualize the architecture of [insert system or service]. Generate a component diagram showing key services, data flows, and third-party integrations. Use clear labels and group components logically.
+### 本番環境で失敗するシステムをデバッグする
+本番システムが断続的に失敗しており、根本原因の切り分けに苦戦しています。次のログ、メトリクス、最近の変更をもとに: [背景を入力]、最も可能性の高い原因を特定し、緩和策の次の手を提案してください。
 
-### Visualize system architecture
-Create an image of the system architecture. Context: It’s a microservices-based e-commerce platform with services for payments, catalog, and user profiles. Output: Diagram with labeled services and data flow arrows.
+### 性能ボトルネックを分析する
+ピーク時に、サービスのレイテンシとパフォーマンスが低下しています。次のメトリクス、ログ、関連トレースを確認してください: [背景を入力]。ボトルネックを特定し、具体的な最適化案を提案してください。
 
-### Explain CI/CD pipeline to stakeholders
-Create an image that explains our CI/CD process. Context: This is for a presentation to business stakeholders. Output: Diagram showing dev → build → test → deploy steps with basic icons and short descriptions.
+### データパイプライン障害を分析する
+昨日の実行で重要なデータパイプラインが失敗しました。ログ、データ量の推移、エラー出力は次のとおりです: [背景を入力]。何が起きた可能性が高いかを分析し、再発防止策を提案してください。
 
-### Model data flow in ML pipeline
-Create an image showing data flow in a machine learning pipeline. Context: We collect raw user data, clean it, train models, and serve predictions. Output: A labeled flowchart from raw data to inference.
+### オブザーバビリティ改善を提案する
+現在 [ツールを入力] を使って [サービスを入力] を監視しています。現在の監視構成を見直し、メトリクス、ログ、アラート、ダッシュボードの各面で改善案を提案してください。
 
-### Diagram customer journey through app
-Create a customer journey map through our mobile banking app. Context: Steps include onboarding, account linking, transactions, and support. Output: A visual flowchart with steps, screens, and decision points.
+### テスト用のエッジケースをブレインストーミングする
+[機能/システムを入力] のテストケースを準備しています。通常のテストではカバーされない可能性のある、珍しいユーザー入力、システム状態の変化、同時実行問題などのエッジケースや失敗シナリオを挙げてください。
+
+---
+
+## データ分析とレポート
+ChatGPT は、データセットの分析、傾向の特定、可視化レポートの作成を支援します。
+
+### 製品利用ログの傾向を特定する
+この製品利用ログの CSV を分析してください。背景: 時系列とユーザーセグメント横断での利用傾向を把握したいです。出力: 主要な傾向を示す要約統計と折れ線グラフまたは棒グラフ。
+
+### システムエラー率を時系列で可視化する
+このデータセットからエラー率の推移を描いてください。背景: これは先月のアプリケーションログです。出力: エラー急増地点の注釈付き時系列チャートと、短い解釈。
+
+### パフォーマンステスト結果を分析する
+このパフォーマンステスト結果のセットを分析してください。背景: バックエンドサービスの 2 つのバージョンを比較しています。出力: 改善または劣化を示す左右比較チャートとテキスト要約。
+
+### 影響度に基づいてバグを優先順位付けする
+このバグ報告データセットを分析してください。背景: 各行には重大度、頻度、影響を受けるユーザーが含まれています。出力: 頻度と重大度を示すチャート付きの、優先順位を付けた主要バグの一覧。
+
+### ユーザーアンケートのフィードバックを要約する
+このユーザーフィードバック CSV を要約してください。背景: 最近の調査の評価と自由記述回答が含まれています。出力: 主要テーマ、感情スコア、評価分布を示すチャート。
+
+---
+
+## システムアーキテクチャと可視化
+ChatGPT は、複雑なシステムやプロセスの図、フローチャート、可視表現の作成を支援します。
+
+### コンポーネント図を作成する
+[システムまたはサービスを入力] のアーキテクチャを可視化する必要があります。主要サービス、データフロー、サードパーティ連携を示すコンポーネント図を作成してください。分かりやすいラベルを付け、コンポーネントを論理的にグループ化してください。
+
+### システムアーキテクチャを可視化する
+システムアーキテクチャの画像を作成してください。背景: これは、決済、カタログ、ユーザープロファイルのサービスを持つマイクロサービスベースの EC プラットフォームです。出力: ラベル付きのサービスとデータフロー矢印を含む図。
+
+### ステークホルダーに CI/CD パイプラインを説明する
+当社の CI/CD プロセスを説明する画像を作成してください。背景: 経営層向けプレゼンテーション用です。出力: dev → build → test → deploy の流れを、基本的なアイコンと短い説明付きで示した図。
+
+### ML パイプラインのデータフローをモデル化する
+機械学習パイプラインのデータフローを示す画像を作成してください。背景: 生のユーザーデータを収集し、クレンジングし、モデルを学習させ、予測を提供します。出力: 生データから推論までのラベル付きフローチャート。
+
+### アプリ内の顧客ジャーニーを図示する
+モバイルバンキングアプリ内の顧客ジャーニーを図示してください。背景: ステップはオンボーディング、口座連携、取引、サポートです。出力: 各ステップ、画面、意思決定ポイントを示す視覚的なフローチャート。

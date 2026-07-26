@@ -1,104 +1,104 @@
-# マーケティングのためのChatGPT
+# マーケティング向けChatGPT
 
-## ChatGPT for marketing
-Today’s marketer is equal parts strategist, storyteller, and analyst. They care about resonant brand narratives, measurable pipeline impact, and staying ahead of ever-evolving channels—without sacrificing authenticity or inclusivity. ChatGPT helps them brainstorm campaign angles, iterate copy faster, surface audience insights, and pressure-test messaging so they can ship high-quality assets at the speed of the market.
-
----
-
-## Campaign planning & strategy
-ChatGPT supports building, organizing, and brainstorming marketing campaigns. Use a reasoning model for strategic brainstorming.
-
-### Visualize campaign timeline
-Build a timeline for our upcoming multi-channel campaign. Key dates and milestones are: [insert info]. Output as a horizontal timeline with phases, owners, and deadlines.
-
-### Brainstorm campaign ideas
-Brainstorm 5 creative campaign ideas for our upcoming [event/launch]. The audience is [insert target], and our goal is [insert goal]. Include a theme, tagline, and 1-2 core tactics per idea.
-
-### Draft a creative brief
-Create a creative brief for our next paid media campaign. Here's the goal, audience, and offer: [insert info]. Include sections for objective, audience insights, tone, assets needed, and KPIs.
-
-### Build a messaging framework
-Build a messaging framework for a new product. The product details are: [insert info]. Output a table with 3 pillars: key benefits, proof points, and emotional triggers.
-
-### Build a customer journey map
-Create a customer journey map for our [product/service]. Our typical customer is [insert profile]. Break it into stages, goals, touchpoints, and potential pain points per stage. Output as a table.
+## マーケティング向けChatGPT
+今日のマーケターは、戦略家、ストーリーテラー、アナリストの要素を併せ持ちます。心に響くブランドストーリー、測定可能なパイプラインへの貢献、そして変化の激しいチャネルを追い続ける力が求められます。その一方で、真正性や包括性を損なってはいけません。ChatGPT は、キャンペーンの切り口を考えたり、コピーを素早く改善したり、オーディエンスのインサイトを抽出したり、メッセージングの事前検証をしたりすることで、市場のスピードに合わせて高品質な素材を届ける手助けをします。
 
 ---
 
-## Competitive and market research
-ChatGPT can support researching competitor analysis, benchmarks, and emerging trends. Use web search or deep research for deeper real-time insights.
+## キャンペーン計画と戦略
+ChatGPT は、マーケティングキャンペーンの構築、整理、アイデア出しを支援します。戦略的なブレインストーミングには推論モデルを使ってください。
 
-### Competitive content analysis
-Research how top 5 competitors structure their blog content strategy. Include tone, topics, frequency, SEO focus, and CTAs. Provide URLs, takeaways, and a table summarizing common and standout tactics.
+### キャンペーンのタイムラインを可視化する
+今後実施するマルチチャネルキャンペーンのタイムラインを作成してください。主要日程とマイルストーンは次のとおりです: [情報を入力]。フェーズ、担当者、締切を含む横長のタイムラインとして出力してください。
 
-### Research emerging trends in buyer behavior
-Research 2024 trends in how [type] buyers research and evaluate [industry] products. Include behavior shifts, content preferences, and channel usage. Cite sources and format as a short briefing with bullet-point insights.
+### キャンペーン案をブレインストーミングする
+今後の [イベント/ローンチ] 向けに、創造的なキャンペーン案を 5 つ考えてください。対象は [ターゲットを入力]、目的は [目的を入力] です。各案にテーマ、タグライン、1〜2 の中核施策を含めてください。
 
-### Research regional campaign benchmarks
-Research typical CTRs, CPCs, and conversion rates for digital campaigns targeting [location] in 2024. Focus on [ad channels]. Include source links and a table comparing each metric by country.
+### クリエイティブブリーフを作成する
+次の有料メディアキャンペーン向けにクリエイティブブリーフを作成してください。目標、対象、オファーは次のとおりです: [情報を入力]。目的、対象インサイト、トーン、必要な素材、KPI のセクションを含めてください。
 
-### Research industry event competitor presence
-Compile a summary of how our competitors are participating in [insert upcoming event]. Include booth activations, speaking sessions, sponsorships, and media coverage. Output as a table with links and analysis.
+### メッセージングフレームワークを構築する
+新製品向けのメッセージングフレームワークを作成してください。製品詳細は次のとおりです: [情報を入力]。主要ベネフィット、証拠、感情的な訴求の 3 つの柱を持つ表で出力してください。
 
-### Research AI tools for marketers
-Research the most recommended [tools] for marketers by function (e.g. copywriting, planning, analytics, design). Create a table with features, pricing, pros/cons, and primary use case. Include sources.
-
----
-
-## Content & creative development
-ChatGPT can support you with generating marketing copy, visuals, and assets. Use canvas for real-time editing.
-
-### Draft a product launch email
-Write a launch email for our new product. Use the following info about the product and target audience: [insert details]. Make it engaging and persuasive, formatted as a marketing email ready for review.
-
-### Generate ad copy variations
-Create 5 ad copy variations for a [channel] campaign. Here’s the campaign theme and audience info: [insert context]. Each version should test a different hook or tone.
-
-### Create a social post series
-Draft a 3-post social media series promoting [event, product, or milestone]. Use this background for context: [paste details]. Each post should include copy and a suggested visual description.
-
-### Create a customer spotlight post
-Write a customer spotlight post based on this success story: [paste key details]. Make it conversational, authentic, and aligned to our brand voice. Output as a LinkedIn post draft.
-
-### Create an explainer video script
-Draft a script for a 60-second explainer video about [product/topic]. Here’s what it should cover: [insert info]. Make it punchy and clear, with suggested visuals or animations.
+### カスタマージャーニーマップを作成する
+[製品/サービス] 向けのカスタマージャーニーマップを作成してください。典型的な顧客像は [プロフィールを入力] です。各段階ごとに、ステージ、目標、接点、潜在的な課題に分けてください。表形式で出力してください。
 
 ---
 
-## Data analysis & optimization
-ChatGPT can analyze data, forecast trends, and improve decision-making. Upload data for deeper analysis.
+## 競合・市場調査
+ChatGPT は、競合分析、ベンチマーク、新興トレンドの調査を支援します。より深いリアルタイムの洞察が必要な場合は、ウェブ検索やディープリサーチを使ってください。
 
-### Identify top-performing marketing channels
-Analyze this marketing performance spreadsheet and identify which channels had the highest ROI. The file includes data from Q1–Q2 campaigns across email, social, paid search, and events. Summarize top 3 channels and create a chart showing ROI by channel.
+### 競合コンテンツを分析する
+上位 5 競合がブログコンテンツ戦略をどのように構成しているか調査してください。トーン、トピック、更新頻度、SEO の焦点、CTA を含めてください。URL、要点、共通点と際立った施策を要約した表を出してください。
 
-### Uncover customer churn patterns
-Review this customer churn dataset and identify common characteristics of churned customers. Use columns like tenure, product usage, and support tickets to group insights. Output a short summary with a chart or table showing top risk factors.
+### 購買行動の新興トレンドを調べる
+[業界] 製品を [タイプ] の購買担当者がどのように調査・評価しているか、2024 年のトレンドを調べてください。行動変化、好まれるコンテンツ、チャネル利用を含めてください。出典を示し、箇条書きのインサイトを含む短いブリーフ形式でまとめてください。
 
-### Summarize survey results
-Summarize insights from this post-campaign customer feedback survey. The file includes satisfaction ratings and open-ended responses. Provide a 3-bullet executive summary and a chart of top satisfaction drivers.
+### 地域別キャンペーンベンチマークを調べる
+2024 年に [地域] を対象としたデジタルキャンペーンの典型的な CTR、CPC、コンバージョン率を調査してください。[広告チャネル] に焦点を当ててください。出典リンクと、国別に指標を比較した表を含めてください。
 
-### Forecast next quarter’s lead volume
-Use this historical lead volume data from the past 6 quarters to project expected lead volume for the next quarter. Highlight any trends, seasonal patterns, and output a simple forecast chart.
+### 業界イベントでの競合の存在感を調べる
+競合各社が [今後のイベントを入力] にどう参加しているか要約してください。ブース施策、登壇セッション、スポンサーシップ、メディア露出を含めてください。リンクと分析付きの表で出力してください。
 
-### Optimize campaign budget allocation
-Based on this spreadsheet of previous campaign spend and returns, recommend a revised budget allocation for next quarter. Focus on maximizing ROI while reducing spend on underperforming channels. Output as a table with new % allocations.
+### マーケター向け AI ツールを調べる
+機能別（例: コピー作成、企画、分析、デザイン）に、マーケターに最も推奨されている [ツール] を調査してください。機能、価格、長所・短所、主な用途を含む表を作成してください。出典も含めてください。
 
 ---
 
-## Visual & brand communication
-Focuses on crafting cohesive visual strategies, brand narratives, and creative concepts. Create an image using ChatGPT.
+## コンテンツとクリエイティブ開発
+ChatGPT は、マーケティングコピー、ビジュアル、素材の生成を支援します。リアルタイム編集が必要な場合は canvas を使ってください。
 
-### Develop a brand style guide outline
-Create an outline for a brand style guide for [company/product]. Include sections for typography, color palette, logo usage, tone of voice, imagery style, and do’s/don’ts.
+### 製品ローンチメールを下書きする
+新製品のローンチメールを書いてください。製品とターゲットオーディエンスに関する情報は次のとおりです: [詳細を入力]。レビュー用のマーケティングメールとして使えるよう、魅力的で説得力のある文面にしてください。
 
-### Conceptualize visual storytelling
-Brainstorm 3 visual storytelling concepts for a brand campaign on [theme]. Include a concept name, visual style, and key narrative elements (e.g., story arc, mood, colors).
+### 広告コピーのバリエーションを作成する
+[チャネル] キャンペーン向けに広告コピーを 5 パターン作成してください。キャンペーンテーマと対象情報は次のとおりです: [文脈を入力]。それぞれ異なる訴求やトーンを試すようにしてください。
 
-### Create visual campaign moodboard
-Create a moodboard with 4 visuals for our [campaign or brand update]. Theme is [describe theme], and the tone should be [describe tone]. Use photoreal or illustrated style.
+### SNS 投稿シリーズを作成する
+[イベント、製品、またはマイルストーン] を宣伝する 3 投稿構成のソーシャルメディアシリーズを下書きしてください。背景情報は次のとおりです: [詳細を貼り付け]。各投稿には本文と推奨ビジュアルの説明を含めてください。
 
-### Evaluate brand consistency
-Review the following marketing assets [insert links/files] and evaluate brand consistency in terms of tone, visuals, and messaging. Provide 3 strengths and 3 gaps with recommendations.
+### 顧客スポットライト投稿を作成する
+この成功事例をもとに、顧客スポットライト投稿を書いてください: [要点を貼り付け]。会話調で本物らしく、ブランドボイスに沿った内容にしてください。LinkedIn 投稿の下書きとして出力してください。
 
-### Refresh brand identity concepts
-Suggest 3 creative directions to refresh our brand identity. Include possible color palettes, typography styles, visual motifs, and tone updates that align with [audience/market shift].
+### 説明動画の台本を作成する
+[製品/トピック] に関する 60 秒の説明動画の台本を下書きしてください。含めるべき内容は次のとおりです: [情報を入力]。テンポよく分かりやすく、推奨ビジュアルやアニメーションも添えてください。
+
+---
+
+## データ分析と最適化
+ChatGPT は、データ分析、トレンド予測、意思決定の改善を支援します。より深い分析にはデータをアップロードしてください。
+
+### 成果の高いマーケティングチャネルを特定する
+このマーケティング実績スプレッドシートを分析し、どのチャネルが最も高い ROI を生んだか特定してください。ファイルには、メール、SNS、有料検索、イベントにまたがる Q1〜Q2 のキャンペーンデータが含まれています。上位 3 チャネルを要約し、チャネル別 ROI のチャートを作成してください。
+
+### 顧客解約パターンを見つける
+この顧客解約データセットを確認し、離脱した顧客の共通特性を特定してください。在籍期間、製品利用、サポートチケットなどの列を使って洞察を整理してください。主要リスク要因を示すチャートまたは表を含む短い要約を出力してください。
+
+### アンケート結果を要約する
+キャンペーン後の顧客フィードバック調査の洞察を要約してください。ファイルには満足度評価と自由記述回答が含まれています。3 つの箇条書きによる経営向け要約と、満足度要因の上位項目を示すチャートを作成してください。
+
+### 次四半期のリード数を予測する
+過去 6 四半期のリード数データを使って、次四半期の想定リード数を予測してください。傾向、季節性パターンを強調し、シンプルな予測チャートを出力してください。
+
+### キャンペーン予算配分を最適化する
+過去のキャンペーン支出と成果のスプレッドシートをもとに、次四半期の予算配分を見直してください。成果の低いチャネルへの支出を抑えつつ、ROI の最大化に焦点を当ててください。新しい配分比率を表形式で出力してください。
+
+---
+
+## ビジュアルとブランドコミュニケーション
+一貫したビジュアル戦略、ブランドストーリー、クリエイティブコンセプトの設計に焦点を当てます。ChatGPT を使って画像を作成してください。
+
+### ブランドスタイルガイドの骨子を作成する
+[会社/製品] のブランドスタイルガイドのアウトラインを作成してください。タイポグラフィ、カラーパレット、ロゴの使い方、トーン、画像スタイル、やってよいこと・いけないことを含めてください。
+
+### ビジュアルストーリーテリングを構想する
+[テーマ] のブランドキャンペーン向けに、ビジュアルストーリーテリングのコンセプトを 3 つ考えてください。コンセプト名、ビジュアルスタイル、主要な物語要素（例: ストーリー展開、ムード、色）を含めてください。
+
+### ビジュアルキャンペーンのムードボードを作成する
+[キャンペーンまたはブランド更新] 向けに、4 枚のビジュアルで構成されるムードボードを作成してください。テーマは [テーマを記述]、トーンは [トーンを記述] にしてください。写真風またはイラスト風のスタイルでお願いします。
+
+### ブランド一貫性を評価する
+次のマーケティング素材 [リンク/ファイルを入力] を確認し、トーン、ビジュアル、メッセージの観点でブランド一貫性を評価してください。強みを 3 つ、ギャップを 3 つ、改善提案とともに示してください。
+
+### ブランド刷新のコンセプトを提案する
+ブランドアイデンティティを刷新するための 3 つの創造的な方向性を提案してください。想定されるカラーパレット、タイポグラフィ、ビジュアルモチーフ、トーンの更新を [対象者/市場の変化] に合わせて含めてください。

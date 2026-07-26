@@ -1,79 +1,79 @@
-# あらゆる役割に対応するChatGPT
+# あらゆる役割向けChatGPT
 
-## For Work Prompt Pack
-Check out examples below of ChatGPT use cases and prompts for any work role. Use the "Use Cases for Work GPT" built by OpenAI to get more ideas for your role, and the other function-specific role guidance in the OpenAI Academy for Work.
-
----
-
-## Communication & writing
-ChatGPT supports creating drafts, polishing copy, and adapting everyday workplace communications.
-
-### Write a professional email
-Write a professional email to [recipient]. The email is about [topic] and should be polite, clear, and concise. Provide a subject line and a short closing.
-
-### Rewrite for clarity
-Rewrite the following text so it is easier to understand. The text will be used in a professional setting. Ensure the tone is clear, respectful, and concise. Text: [paste text].
-
-### Adapt message for audience
-Reframe this message for [audience type: executives, peers, or customers]. The message was originally written for [context]. Adjust tone, word choice, and style to fit the intended audience. Text: [paste text].
-
-### Draft meeting invite
-Draft a meeting invitation for a session about [topic]. The meeting will include [attendees/roles] and should outline agenda items, goals, and preparation required. Provide the text in calendar-invite format.
-
-### Summarize long email
-Summarize this email thread into a short recap. The thread includes several back-and-forth messages. Highlight key decisions, action items, and open questions. Email: [paste text].
+## あらゆる職種向けプロンプト集
+以下は、どの職種でも使える ChatGPT のユースケースとプロンプト例です。OpenAI が作成した「Use Cases for Work GPT」を参考に、あなたの役割に合う使い方をさらに見つけてください。OpenAI Academy for Work にある、職種別のガイダンスも役立ちます。
 
 ---
 
-## Meetings & collaboration
-ChatGPT helps streamline preparation, note-taking, and follow-up.
+## コミュニケーションと文章作成
+ChatGPT は、下書きの作成、文章の磨き込み、日常的な社内外コミュニケーションの調整を支援します。
 
-### Create a meeting agenda
-Create a structured agenda for a meeting about [topic]. The meeting will last [time] and include [attendees]. Break the agenda into sections with time estimates and goals for each section.
+### 仕事用の丁寧なメールを書く
+[宛先] に送る丁寧なビジネスメールを書いてください。内容は [話題] についてで、礼儀正しく、明確で、簡潔にしてください。件名と短い結びの文も付けてください。
 
-### Summarize meeting notes
-Summarize these meeting notes into a structured recap. The notes are rough and informal. Organize them into categories: key decisions, next steps, and responsibilities. Notes: [paste text].
+### 分かりやすく書き直す
+以下の文章を、より理解しやすいように書き直してください。文章は業務上の場面で使います。トーンは明確で、敬意があり、簡潔であるようにしてください。文章: [テキストを貼り付け]。
 
-### Create an action items list
-Turn the following meeting notes into a clean task list. The tasks should be grouped by owner and include deadlines if mentioned. Notes: [paste text].
+### 読み手に合わせてメッセージを調整する
+このメッセージを [対象: 経営層、同僚、顧客] 向けに言い換えてください。元の文は [文脈] に向けて書かれています。トーン、語彙、文体を対象に合わせて調整してください。文章: [テキストを貼り付け]。
 
-### Prep questions for a meeting
-Suggest thoughtful questions to ask in a meeting about [topic]. The purpose of the meeting is [purpose]. Provide a list of at least 5 questions that show preparation and insight.
+### 会議招待文を下書きする
+[話題] に関する会議の招待文を下書きしてください。会議には [参加者/役割] が参加し、議題、目的、事前準備を明記してください。カレンダー招待形式の文章で出力してください。
 
-### Draft follow-up email
-Write a professional follow-up email after a meeting about [topic]. Include a recap of key points, assigned responsibilities, and next steps with deadlines. Use a clear and polite tone.
-
-### Identify root cause
-Analyze the following workplace issue: [describe issue]. The context is that the problem has occurred multiple times. Identify possible root causes and suggest questions to confirm them.
-
-### Compare options
-Compare the following two or more possible solutions: [list options]. The decision needs to be made in [timeframe]. Evaluate pros, cons, and potential risks for each option.
-
-### Decision criteria
-Help define clear decision-making criteria for [describe decision]. The context is that multiple stakeholders are involved. Provide a short list of weighted criteria to guide the choice.
-
-### Risk assessment
-Assess the potential risks of the following plan: [describe plan]. The plan is set to start on [date]. List risks by likelihood and impact, and suggest mitigation strategies.
-
-### Recommend best option
-Based on the following background: [describe situation and options], recommend the most suitable option. Explain your reasoning clearly and suggest first steps for implementation.
+### 長いメールを要約する
+このメールスレッドを短く要約してください。やり取りは複数往復あります。重要な決定事項、アクションアイテム、未解決の論点を強調してください。メール: [テキストを貼り付け]。
 
 ---
 
-## Organization & productivity
-ChatGPT helps structure tasks, time, and priorities.
+## 会議とコラボレーション
+ChatGPT は、会議前の準備、議事録、フォローアップを効率化します。
 
-### Document daily priorities
-Create a prioritized to-do list from the following tasks: [paste tasks]. The context is a typical workday with limited time. Suggest which tasks should be done first and why.
+### 会議アジェンダを作成する
+[話題] に関する会議の構造化されたアジェンダを作成してください。会議時間は [時間]、参加者は [参加者] です。各セクションごとに所要時間と目的を付けてください。
 
-### Create a weekly plan
-Build a weekly work plan for [describe role or situation]. The week includes deadlines, meetings, and individual focus time. Provide a balanced schedule with recommended priorities.
+### 会議メモを要約する
+この会議メモを、構造化された要約にしてください。メモはラフで非公式です。主要な決定事項、次のステップ、担当責任者のカテゴリに整理してください。メモ: [テキストを貼り付け]。
 
-### Summarize a long document
-Summarize the following document into 5 key points and 3 recommended actions. The document is [type: report, plan, or notes]. Keep the summary concise and professional. Text: [paste document].
+### アクションアイテム一覧を作成する
+以下の会議メモを、きれいなタスクリストに変換してください。タスクは担当者ごとにグループ化し、締切があれば含めてください。メモ: [テキストを貼り付け]。
 
-### Brainstorm solutions
-Brainstorm potential solutions to the following workplace challenge: [describe challenge]. Provide at least 5 varied ideas, noting pros and cons for each.
+### 会議用の質問を準備する
+[話題] に関する会議で投げかけると良い、よく考えられた質問を提案してください。会議の目的は [目的] です。準備と洞察が伝わる質問を少なくとも 5 つ挙げてください。
 
-### Write a project update
-Draft a short project update for stakeholders. The project is [describe project]. Include progress made, current blockers, and next steps. Write in a professional, concise style.
+### フォローアップメールを下書きする
+[話題] に関する会議の後に送る、丁寧なフォローアップメールを書いてください。重要なポイントの要約、担当分担、締切付きの次のステップを含めてください。明確で礼儀正しいトーンにしてください。
+
+### 根本原因を特定する
+次の職場の問題を分析してください: [問題を記述]。この問題は複数回発生しています。考えられる根本原因を特定し、それを確認するための質問も提案してください。
+
+### 選択肢を比較する
+次の 2 つ以上の解決策を比較してください: [選択肢を列挙]。意思決定は [期間] までに必要です。それぞれの長所、短所、潜在的なリスクを評価してください。
+
+### 判断基準を定義する
+[判断内容を記述] のための明確な意思決定基準を作成してください。複数のステークホルダーが関与している前提です。選択を導くための、重み付きの短い基準リストを出してください。
+
+### リスクを評価する
+次の計画の潜在的リスクを評価してください: [計画を記述]。開始予定日は [日付] です。発生可能性と影響度の順にリスクを挙げ、緩和策も提案してください。
+
+### 最適な選択肢を提案する
+次の背景情報に基づいて: [状況と選択肢を記述]、最も適切な選択肢を推奨してください。理由を明確に説明し、実施の最初のステップも提案してください。
+
+---
+
+## 組織と生産性
+ChatGPT は、タスク、時間、優先順位の整理を支援します。
+
+### 日々の優先事項を整理する
+次のタスクから、優先順位付きの ToDo リストを作成してください: [タスクを貼り付け]。文脈は、時間が限られた一般的な業務日です。どのタスクを先に行うべきか、その理由も提案してください。
+
+### 週次計画を作成する
+[役割や状況を記述] に合わせた 1 週間の業務計画を作成してください。締切、会議、個人の集中時間が含まれます。優先順位のバランスが取れた予定を提案してください。
+
+### 長文ドキュメントを要約する
+以下のドキュメントを、5 つの重要ポイントと 3 つの推奨アクションに要約してください。ドキュメントの種類は [レポート、計画、メモ] です。簡潔でプロフェッショナルな要約にしてください。本文: [ドキュメントを貼り付け]。
+
+### 解決策をブレインストーミングする
+次の職場の課題に対する解決策を考えてください: [課題を記述]。少なくとも 5 つの異なる案を出し、それぞれの長所と短所も記載してください。
+
+### プロジェクト更新を作成する
+ステークホルダー向けの短いプロジェクト更新を作成してください。プロジェクトは [プロジェクトを記述] です。進捗、現在の障害、次のステップを含めてください。プロフェッショナルで簡潔な文体にしてください。

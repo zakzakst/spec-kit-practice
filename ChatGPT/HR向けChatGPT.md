@@ -1,101 +1,101 @@
 # HR向けChatGPT
 
-## ChatGPT for HR Teams
-HR teams are the backbone of employee experience and operational alignment. ChatGPT can help HR teams save time by creating first drafts of policies, answering employee questions, summarizing survey feedback, and generating content for internal comms.
+## HR チーム向けChatGPT
+HR チームは、従業員体験と組織運営の基盤です。ChatGPT は、方針文書の初稿作成、従業員からの質問対応、アンケート結果の要約、社内コミュニケーション向けコンテンツの作成を通じて、HR チームの時間を節約するのに役立ちます。
 
 ---
 
-## Workspace experience and feedback
-ChatGPT helps HR teams explore employee feedback, trends, and reports to inform programs and inform the workplace experience.
+## 職場体験とフィードバック
+ChatGPT は、従業員のフィードバック、傾向、レポートを分析して、施策や職場体験の改善に活かすことを支援します。
 
-### Draft employee survey questions
-Write 6–8 employee survey questions designed to measure [e.g. belonging, manager trust, workload balance]. Ensure the questions are neutral and easy to understand. Format them as one question per line with rating scale suggestions.
+### 従業員アンケートの質問を作成する
+[例: 帰属意識、上司への信頼、業務量のバランス] を測定するための従業員アンケート質問を 6〜8 問作成してください。質問は中立的で、理解しやすい表現にしてください。1 行につき 1 問、評価尺度の提案付きで出力してください。
 
-### Generate performance review prompts
-Develop a set of five questions for performance reviews that encourage reflection, future goal setting, and actionable feedback. Tailor to [function/team], and keep the tone constructive and growth-oriented. Present the questions as a list for a review form.
+### 評価面談の質問を作成する
+振り返り、今後の目標設定、実行可能なフィードバックを促す、評価面談用の質問を 5 問作成してください。[職種/チーム] に合わせ、前向きで成長志向のトーンにしてください。レビュー用フォームの質問一覧として出力してください。
 
-### Analyze exit survey themes
-Review the following employee exit survey responses and identify the top recurring themes, concerns, and sentiment trends. These responses are from [department/timeframe]. Provide a thematic summary with bullet points and representative quotes. [Insert responses here]
+### 退職アンケートのテーマを分析する
+以下の従業員退職アンケート回答を確認し、繰り返し現れるテーマ、懸念点、感情の傾向を特定してください。回答は [部門/期間] のものです。テーマ別の要約を、箇条書きと代表的な引用を添えて示してください。 [回答をここに入力]
 
-### Analyze trends in employee attrition
-Analyze this employee attrition dataset from the last 12 months. Focus on patterns by department, tenure, and exit reasons. Summarize key insights and suggest 2–3 actions HR should consider. Present findings as bullet points followed by a short paragraph. [Upload your CSV or paste table here]
+### 従業員離職の傾向を分析する
+過去 12 か月の従業員離職データセットを分析してください。部門、在籍期間、退職理由ごとの傾向に注目してください。主要な洞察を要約し、HR が検討すべき 2〜3 のアクションを提案してください。箇条書きの所見の後に短い段落を付けて出力してください。 [CSV をアップロードするか、表を貼り付けてください]
 
-### Generate a compensation benchmarking report
-Based on this internal salary data and industry benchmarks, highlight pay discrepancies by role, gender, and level. Include averages, standard deviation, and a visual if possible. Provide a short summary for leadership review. [Upload benchmark and internal files]
-
----
-
-## HR research & compliance
-ChatGPT helps analyze HR trends, benchmarks, and industry data to inform policy and planning. Use deep research and web search for real-time insights.
-
-### Research global HR compliance updates
-Research the latest 2024–2025 HR compliance changes in the EU, US, and APAC (focus on remote work laws, employee classification, and data privacy). Provide links to official sources and summarize in plain language. Present findings in a 3-region comparison table with a 1-paragraph summary per region.
-
-### Benchmark average DEI budgets
-Research typical DEI program budgets and team sizes for companies with 500–5,000 employees in the US. Include industry benchmarks if available. Present key insights with 3 cited data points and include a simple bullet summary for leadership.
-
-### Explore top HR tech trends for 2025
-[You’re briefing HR leadership on tech trends.] Research and summarize the top 5 HR technology trends expected to shape 2025. Include use cases, vendor examples, and implications for mid-sized companies. Synthesize insights into a short executive briefing with citations and actionable recommendations.
-
-### Compare employee retention strategies across industries
-[You are building a retention initiative for a mid-sized tech firm.] Research 3 innovative, high-impact employee retention strategies used in tech, healthcare, and financial services. Focus on post-pandemic engagement challenges. Include cited examples and summarize key elements in a side-by-side comparison chart.
-
-### Research tools for recruiting
-Research 4 top-rated candidate screening or sourcing tools used by mid-market companies. Summarize features, pricing, compliance status (EEOC), and known limitations. Provide links to primary sources and present findings in a comparison table.
+### 報酬ベンチマークレポートを作成する
+この社内給与データと業界ベンチマークをもとに、役割、性別、レベルごとの賃金差を示してください。可能であれば平均、標準偏差、ビジュアルも含めてください。経営層レビュー向けの短い要約も付けてください。 [ベンチマークと社内ファイルをアップロード]
 
 ---
 
-## Talent acquisition & employee engagement
-ChatGPT guides recruiting processes, engagement planning, and employee communication.
+## HR 調査とコンプライアンス
+ChatGPT は、HR のトレンド、ベンチマーク、業界データを分析して、方針や計画に役立てることを支援します。リアルタイムの洞察が必要な場合は、ディープリサーチやウェブ検索を使ってください。
 
-### Create interview questions
-Develop behavioral interview questions aligned to our company values for a [role title] opening in [team/department]. We want to assess both technical skills and culture fit. Provide 6–8 questions grouped by competency.
+### グローバルな HR コンプライアンス更新を調査する
+EU、US、APAC における 2024〜2025 年の最新 HR コンプライアンス変更を調査してください（リモートワーク法、従業員区分、データプライバシーを重点的に）。公式ソースへのリンクを付け、平易な言葉で要約してください。3 地域の比較表として、地域ごとに 1 段落の要約を添えて示してください。
 
-### Write a job description draft
-Based on this information [insert job responsibilities, skills, team context], write a professional job description for a [job title]. Include a short intro, responsibilities, required qualifications, and what makes the role appealing.
+### DEI 予算の平均値をベンチマークする
+米国で従業員 500〜5,000 人規模の企業における、一般的な DEI プログラム予算とチーム規模を調査してください。業界別ベンチマークがあればそれも含めてください。3 つの引用済みデータポイントと、経営層向けの簡単な箇条書き要約を示してください。
 
-### Brainstorm engagement initiatives
-Generate five practical ideas for improving employee engagement across [company/team/region]. Consider our hybrid work model, current engagement scores, and time/resource constraints. Present each idea with a short description, expected impact, and implementation effort level.
+### 2025 年の HR テックトレンドを調べる
+[HR リーダーに技術トレンドを説明している場面を想定してください。] 2025 年を形作ると予想される HR テクノロジートレンドの上位 5 つを調査し、要約してください。ユースケース、ベンダー例、中規模企業への影響を含めてください。引用と実行可能な提案付きの短い経営向けブリーフィングにまとめてください。
 
-### Write internal recognition blurb
-Draft a short recognition message to celebrate [employee/team] for their recent accomplishment: [describe what they did]. Write it in a warm, appreciative tone suitable for Slack or email. Keep it under 100 words.
+### 業界別の従業員定着戦略を比較する
+[中規模のテック企業向け定着施策を作成していると想定してください。] テック、ヘルスケア、金融サービスで使われている、革新的で効果の高い従業員定着戦略を 3 つ調査してください。パンデミック後のエンゲージメント課題に焦点を当ててください。引用付きの例を含め、主要要素を横並びの比較表で要約してください。
 
-### Create a DEI workshop outline
-Design a one-hour DEI workshop for employees at [company/team]. The goal is to foster inclusive communication and awareness. Include an agenda, key learning objectives, interactive activities, and 2–3 discussion questions.
-
----
-
-## Policy & program development
-ChatGPT helps develop clear internal communications, onboarding plans, and wellbeing programs.
-
-### Draft an internal policy summary
-Summarize the key points of this [internal policy or handbook section] so HR business partners can understand and communicate it effectively. This policy relates to [brief description or context]. Present the summary in clear, professional language under 200 words.
-
-### Draft a return-to-office FAQ
-Write an employee-facing FAQ to support our return-to-office transition. Use this background information [insert key RTO plan details]. Cover top employee concerns (e.g. hybrid schedules, health protocols, expectations) in a warm and clear tone. Include 5–7 questions with answers.
-
-### Plan onboarding week
-Build a 5-day onboarding schedule for new hires in [department or region]. Include orientation goals, topics to cover, people to meet, and relevant tools or resources. Present it in a simple day-by-day table with time blocks if helpful.
-
-### Brainstorm wellbeing initiatives
-Suggest three tailored wellbeing programs for employees at [company/team], considering recent feedback and budget constraints. Include rationale, estimated costs, and potential success metrics. Present ideas as a short proposal summary.
-
-### Plan compliance training rollout
-Create a phased plan to roll out a new compliance training across [team/region]. Include timing, communications strategy, target audiences, and support materials. Present the plan in bullet points or as a 4-week calendar.
+### 採用向けツールを調査する
+ミッドマーケット企業で使われている、評価の高い候補者スクリーニングまたはソーシングツールを 4 つ調査してください。機能、価格、コンプライアンス状況（EEOC）、既知の制約を要約してください。一次情報へのリンクを付け、比較表で結果を示してください。
 
 ---
 
-## Internal brand visuals & communication
-ChatGPT creates HR visuals, banners, and internal branding assets for a polished employee experience.
+## 採用と従業員エンゲージメント
+ChatGPT は、採用プロセス、エンゲージメント施策、従業員向けコミュニケーションを支援します。
 
-### Create a welcome banner for onboarding
-Create an image for a new employee onboarding welcome banner. Style: clean and modern. Mood: warm and inclusive. Format: horizontal banner with space for overlay text. Include visual cues like a diverse team, coffee cups, or digital collaboration tools.
+### 面接質問を作成する
+[役職名] の [チーム/部門] での募集に対して、当社の企業価値に沿った行動面接質問を作成してください。技術スキルとカルチャーフィットの両方を確認したいです。能力ごとにグループ化した 6〜8 問を出してください。
 
-### Design an internal DEI poster
-Create a poster-style image for an internal DEI campaign. Style: bold, minimal. Include abstract representations of diversity (hands, overlapping shapes, color blocks). Mood: optimistic and forward-looking. Include placeholder space for a slogan or quote.
+### 求人票のドラフトを書く
+この情報 [業務内容、必要スキル、チーム背景を入力] をもとに、[職種名] 向けのプロフェッショナルな求人票を書いてください。短い導入文、業務内容、必要資格、この役割の魅力を含めてください。
 
-### Illustrate a hybrid work policy
-Generate an illustration showing a hybrid work scenario: a person working from home, a coworking space, and a modern office. Style: flat illustration or soft 3D. Intended for use in HR documentation.
+### エンゲージメント施策をブレインストーミングする
+[会社/チーム/地域] 全体の従業員エンゲージメントを改善するための実践的なアイデアを 5 つ提案してください。ハイブリッド勤務モデル、現在のエンゲージメントスコア、時間・予算の制約を考慮してください。各案に短い説明、期待効果、実装負荷を付けてください。
 
-### Visualize the employee lifecycle
-Create a simple visual diagram of the employee lifecycle: attract, onboard, develop, retain, offboard. Use icons or abstract figures to represent each phase. Style: corporate presentation-ready.
+### 社内表彰の文を作成する
+[従業員/チーム] の最近の成果 [何をしたかを記述] をたたえる短い表彰メッセージを下書きしてください。Slack やメールで使いやすい、温かく感謝のこもったトーンにしてください。100 語以内に収めてください。
+
+### DEI ワークショップの概要を作成する
+[会社/チーム] の従業員向けに 1 時間の DEI ワークショップを設計してください。目的は、包括的なコミュニケーションと意識向上です。アジェンダ、主要学習目標、参加型アクティビティ、2〜3 のディスカッション質問を含めてください。
+
+---
+
+## 方針とプログラム開発
+ChatGPT は、明確な社内コミュニケーション、オンボーディング計画、ウェルビーイング施策の設計を支援します。
+
+### 社内方針の要約を作成する
+この [社内ポリシーまたはハンドブックの節] の要点を要約し、HR ビジネスパートナーが理解し、効果的に説明できるようにしてください。この方針は [簡単な説明または背景] に関連しています。200 語以内の明確でプロフェッショナルな言葉で要約してください。
+
+### リモートワーク復帰の FAQ を作成する
+オフィス復帰を支援するための、従業員向け FAQ を作成してください。背景情報は次のとおりです: [RTO 計画の要点を入力]。ハイブリッド勤務、健康対策、期待値など、従業員の主な懸念を温かく分かりやすいトーンで扱ってください。5〜8 問を想定し、回答も付けてください。
+
+### オンボーディング週を設計する
+[部門または地域] の新入社員向けに、5 日間のオンボーディングスケジュールを作成してください。オリエンテーションの目標、扱うトピック、会うべき人、関連ツールや資料を含めてください。必要であれば時間帯も含めた、シンプルな日別表で示してください。
+
+### ウェルビーイング施策を考える
+最近のフィードバックと予算制約を踏まえ、[会社/チーム] の従業員に合わせたウェルビーイング施策を 3 つ提案してください。理由、概算コスト、成功指標の候補を含めてください。短い提案サマリーとして示してください。
+
+### コンプライアンス研修の展開計画を立てる
+[チーム/地域] に新しいコンプライアンス研修を段階的に展開する計画を作成してください。タイミング、コミュニケーション戦略、対象者、支援資料を含めてください。箇条書きまたは 4 週間のカレンダー形式で示してください。
+
+---
+
+## 社内ブランドビジュアルとコミュニケーション
+ChatGPT は、洗練された従業員体験のための HR 向けビジュアル、バナー、社内ブランディング素材を作成します。
+
+### オンボーディング向けのウェルカムバナーを作成する
+新入社員向けオンボーディングのウェルカムバナー画像を作成してください。スタイルは清潔感がありモダン。ムードは温かく、包容的にしてください。横長バナーで、上に文字を載せる余白を確保してください。多様なチーム、コーヒーカップ、デジタルコラボレーションツールなどのビジュアル要素を含めてください。
+
+### 社内 DEI ポスターをデザインする
+社内 DEI キャンペーン用のポスター風画像を作成してください。スタイルは大胆でミニマル。多様性を表す抽象表現（手、重なり合う形、カラーブロックなど）を含めてください。ムードは前向きで希望に満ちたものにしてください。スローガンや引用を入れるための余白も確保してください。
+
+### ハイブリッドワーク方針をイラスト化する
+ハイブリッドワークのシーンを示すイラストを生成してください。自宅で働く人、コワーキングスペース、現代的なオフィスを含めてください。スタイルはフラットイラストまたは柔らかい 3D。HR 資料での使用を想定してください。
+
+### 従業員ライフサイクルを可視化する
+従業員ライフサイクルを示すシンプルな図を作成してください: attract, onboard, develop, retain, offboard。各段階を表すアイコンまたは抽象的な人物を使ってください。スタイルは企業向けプレゼンテーションに適したものにしてください。
