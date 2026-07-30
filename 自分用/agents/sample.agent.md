@@ -1,6 +1,9 @@
 ---
 name: 自分用：サンプル
 description: サンプル
+argument-hint: エージェントとどのようにやり取りすればいいかのヒント
+<!-- user-invocable: false （チャットのエージェントドロップダウンに表示しない場合 false） -->
+<!-- disable-model-invocation: true （他のエージェントによってサブエージェントとして呼び出されるのを防ぐ場合 true） -->
 ---
 
 ## 目的
