@@ -10,6 +10,10 @@
 
 ## 作りたい
 
+> 現在下記プロンプトファイルを作成中です
+> 自分用\prompts\xxxxx.prompt.md
+> 作成できていない箇所を修正して、ファイルを完成させてください。
+
 - 以前作成したものも利用
   - https://github.com/zakzakst/next-practice6/tree/main/.github
 - やりたいことから、それに近いプロンプトファイルを探すプロンプト（「このリポジトリ内に「コードリーディングを補助してくれるプロンプトファイル」があるか探してもらえますでしょうか。」）
@@ -31,8 +35,6 @@
   - copilot\plan-agent\Plan.agent.md
   - .github\agents\speckit.clarify.agent.md
   - awesome-copilot\agents\task-planner.agent.md
-- リファクタリング
-  - awesome-copilot\agents\implementation-plan.agent.md
 - デバッグ
   - awesome-copilot\agents\debug.agent.md
 - ドキュメント生成
@@ -84,3 +86,5 @@
     - ソース
     - 期待
 - Gemのテンプレートを作りたい。現状フォーマットがバラバラ
+- リファクタリング
+  - awesome-copilot\agents\implementation-plan.agent.md
