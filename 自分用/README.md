@@ -14,8 +14,6 @@
 > 自分用\prompts\xxxxx.prompt.md
 > 作成できていない箇所を修正して、ファイルを完成させてください。
 
-- 以前作成したものも利用
-  - https://github.com/zakzakst/next-practice6/tree/main/.github
 - やりたいことから、それに近いプロンプトファイルを探すプロンプト（「このリポジトリ内に「コードリーディングを補助してくれるプロンプトファイル」があるか探してもらえますでしょうか。」）
 - コードの説明（ファイルを指定してやっている処理を説明）
 - テストコード作成
@@ -88,3 +86,5 @@
 - Gemのテンプレートを作りたい。現状フォーマットがバラバラ
 - リファクタリング
   - awesome-copilot\agents\implementation-plan.agent.md
+- 以前作成したものも利用
+  - https://github.com/zakzakst/next-practice6/tree/main/.github
