@@ -1,4 +1,33 @@
 - agent: タスクを他のエージェントに委任する
   - runSubagent:
-- browser:
-  - clickElement
+- browser: 統合ブラウザページを開いて操作する
+  - clickElement: ブラウザページの要素をクリックします
+  - dragElement: 要素を別の要素の上にドラッグする
+  - handleDialog: ブラウザページのダイアログに応答します
+  - hoverElement: ブラウザページ内の要素にカーソルを合わせる
+  - navigatePage: ブラウザページの移動または再読み込み
+  - openBrowserPage: 統合ブラウザでURLを開く
+  - readPage: ブラウザページのコンテンツを読み取ります
+  - runPlaywrightCode: ブラウザページに対してPlaywrightコードスニペットを実行する
+  - screenshotPage: ブラウザページのスクリーンショットをキャプチャします
+  - typeInPage: ブラウザページでテキストを入力するか、キーを押します
+- edit: ワークスペース内のファイルを編集します
+  - createDirectory:
+  - createFile:
+  - createJupyterNotebook:
+  - editFiles:
+  - editNotebook:
+  - rename:
+- execute: マシン上でコードやアプリケーションを実行します
+  - createAndRunTask:
+  - getTerminalOutput:
+  - killTerminal:
+  - runInTerminal:
+  - runNotebookCell:
+  - runTask:
+  - runTests:
+  - sendToTerminal:
+  - testFailure:
+- read: ワークスペース内のファイルを読み取ります
+- search: ワークスペース内のファイルを検索します
+
