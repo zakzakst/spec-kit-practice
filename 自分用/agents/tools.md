@@ -12,22 +12,48 @@
   - screenshotPage: ブラウザページのスクリーンショットをキャプチャします
   - typeInPage: ブラウザページでテキストを入力するか、キーを押します
 - edit: ワークスペース内のファイルを編集します
-  - createDirectory:
-  - createFile:
-  - createJupyterNotebook:
-  - editFiles:
-  - editNotebook:
-  - rename:
+  - createDirectory: ワークスペースに新しいディレクトリを作成します
+  - createFile: 新しいファイルを作成します
+  - createJupyterNotebook: 新しいJupyter Notebookを作成する
+  - editFiles: Edit Files
+  - editNotebook: ワークスペースでノートブックファイルを編集します
+  - rename: ワークスペース全体でシンボルの名前を変更する
 - execute: マシン上でコードやアプリケーションを実行します
-  - createAndRunTask:
-  - getTerminalOutput:
-  - killTerminal:
-  - runInTerminal:
-  - runNotebookCell:
-  - runTask:
-  - runTests:
-  - sendToTerminal:
-  - testFailure:
+  - createAndRunTask: ワークスペースでタスクを作成して実行する
+  - getTerminalOutput: Get output from a terminal execution that was moved to background
+  - killTerminal: Kill a terminal by its ID. Use this to clean up terminals that are no longer needed
+  - runInTerminal: ターミナルでコマンドを実行します
+  - runNotebookCell: ノートブックファイル内のセルの実行をトリガーします
+  - runTask: ワークスペースでタスクを実行します
+  - runTests: 単体テストを実行します（必要に応じてカバレッジを使用）
+  - sendToTerminal: Send input text to an active terminal execution
+  - testFailure: テストエラー情報を含める
 - read: ワークスペース内のファイルを読み取ります
+  - getNotebookSummary: This is a tool returns the list of the Notebook cells along with the id
+  - getTaskOutput: Get the output of a task
+  - problems: 特定のファイルのエラーを確認します
+  - readFile: ファイルの内容を読み取ります
+  - readNotebookCellOutput: 以前に実行されたセルの出力を読み取ります
+  - terminalLastCommand: Get the last command run in the active terminal
+  - terminalSelection: Get the current selection in the active terminal
+  - viewImage: 画像ファイルの内容を表示します
 - search: ワークスペース内のファイルを検索します
-
+  - codebase: セマンティック検索を使用して関連するファイルチャンク、シンボル、その他の情報を見つける
+  - fileSearch: globパターンを使用して名前でファイルを検索します
+  - listDirectory: ディレクトリの内容を一覧表示します
+  - textSearch: 正規表現でファイル内容を一覧表示します
+  - usages: シンボルの参照、定義、実装を検索する
+- todo: タスク計画のためのToDo項目の管理および追跡
+- vscode: VS Codeの機能を使用します
+  - askQuestions: 続行前に、択一選択、複数選択、またはフリーフォーム入力を使ってタスク要件を収集する
+  - extensions: VS Codeの拡張機能を検索します
+  - installExtension: Install an extension in VS Code. Use this tool to install an extension in VS Code
+  - memory: Manage persistent memory across conversations
+  - newWorkspace: VS Codeで新しいワークスペースをスキャフォールディングします
+  - resolveMemoryFileUri: Resolve a memory file path to its actual URI
+  - runCommand: Run a command in VS Code. Use this tool to run a command in VS Code
+  - vscodeAPI: VS Code APIリファレンスを使用して、VS Code拡張機能の開発に関する質問に回答します
+- web: Webから情報を取得します
+  - fetch: Webページからメインコンテンツをフェッチします。フェッチするページのURLを含める必要があります
+  - githubRepo: GitHubリポジトリで関連するソースコードスニペットをセマンティック検索します
+  - githubTextSearch: GitHubリポジトリまたは組織で、特定のキーワードまたはコードパターンを含むファイルを検索します

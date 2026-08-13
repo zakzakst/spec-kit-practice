@@ -79,6 +79,10 @@
 - 自分や周りの人がどういう価値観かを知る手がかりをためるメモの作成手伝い（obsidian連携想定、まとまったらAIで全体を踏まえて整理想定）
 - コードベースの改善のループを回すプロンプト群
 - サイトの改善のループを回すプロンプト群
+- Agent Debug Logs: https://code.visualstudio.com/docs/agents/agent-troubleshooting/chat-debug-view
+- chronicle cost-tips: https://zenn.dev/aeonpeople/articles/morihaya-20260527-copilot-cli-chronicle
+- /compact コマンド
+- /fork コマンド
 
 ## 作りたいGem
 - 「こんな感じにしたい」サイトのURLのリストを渡して、クライアントが希望するデザイントーンを言語化する
