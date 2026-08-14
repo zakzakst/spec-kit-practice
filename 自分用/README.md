@@ -14,17 +14,6 @@
 > 自分用\prompts\xxxxx.prompt.md
 > 作成できていない箇所を修正して、ファイルを完成させてください。
 
-- エージェントファイルのtoolsについて調べる
-  - https://docs.github.com/ja/copilot/reference/custom-agents-configuration#tools
-  - MCPサーバーの「利用可能なツール」を調べる方法が分からなかった（下記以降追えなかった）
-    - https://docs.github.com/ja/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers#writing-a-json-configuration-for-mcp-servers
-  - 一応、下記の手順で見れそうではあった
-    - チャットを開く
-    - 会話入力のテキストボックスの「ツールの構成」アイコンをクリック
-  - 一旦下記のgithub copilot組み込みのエージェントファイルで利用されているツールを理解する
-    - copilot\plan-agent\Plan.agent.md
-    - copilot\explore-agent\Explore.agent.md
-    - copilot\ask-agent\Ask.agent.md
 - やりたいことから、それに近いプロンプトファイルを探すプロンプト（「このリポジトリ内に「コードリーディングを補助してくれるプロンプトファイル」があるか探してもらえますでしょうか。」）
 - コードの説明（ファイルを指定してやっている処理を説明）
 - テストコード作成
@@ -103,3 +92,14 @@
   - awesome-copilot\agents\implementation-plan.agent.md
 - 以前作成したものも利用
   - https://github.com/zakzakst/next-practice6/tree/main/.github
+- エージェントファイルのtoolsについて調べる
+  - https://docs.github.com/ja/copilot/reference/custom-agents-configuration#tools
+  - MCPサーバーの「利用可能なツール」を調べる方法が分からなかった（下記以降追えなかった）
+    - https://docs.github.com/ja/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers#writing-a-json-configuration-for-mcp-servers
+  - 一応、下記の手順で見れそうではあった
+    - チャットを開く
+    - 会話入力のテキストボックスの「ツールの構成」アイコンをクリック
+  - 一旦下記のgithub copilot組み込みのエージェントファイルで利用されているツールを理解する
+    - copilot\plan-agent\Plan.agent.md
+    - copilot\explore-agent\Explore.agent.md
+    - copilot\ask-agent\Ask.agent.md
