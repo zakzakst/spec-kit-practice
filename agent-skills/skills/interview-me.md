@@ -1,225 +1,225 @@
 ---
 name: interview-me
-description: Extracts what the user actually wants instead of what they think they should want. Achieves this through one-question-at-a-time interview until ~95% confidence about the underlying intent. Use when an ask is underspecified ("build me X" without "for whom" or "why now"), when the user explicitly invokes ("interview me", "grill me", "are we sure?", "stress-test my thinking"), or when you catch yourself silently filling in ambiguous requirements before any plan, spec, or code exists.
+description: ユーザーが本当に欲しいものを、ユーザーが欲しいと思っているものではなく抽出します。1 問ずつの対話で、根底の意図について約 95% の確信が持てるまで掘ります。依頼が曖昧なとき（"X を作って" だけで "誰のため" や "なぜ今か" がない）、ユーザーが明示的に呼び出したとき（"interview me"、"grill me"、"are we sure?"、"stress-test my thinking" など）、またはプラン・仕様・コードの前に曖昧な要件を黙って補完しそうになったときに使います。
 ---
 
 # Interview Me
 
-## Overview
+## 概要
 
-What people ask for and what they actually want are different things. They ask for "a dashboard" because that's what one asks for, not because a dashboard solves their problem. They say "make it faster" without a number to hit.
+人が頼むものと、本当に欲しいものは違います。人は "dashboard" と頼みますが、それは問題を解くためではなく、そう頼むものだからです。"速くして" と言っても、何を基準に速くするのかは言いません。
 
-The cheapest moment to find this gap is before any plan, spec, or code exists. Once you've started building, switching costs are real, and the user will rationalize the wrong thing into a "good enough" thing. The misfit gets locked in.
+このギャップを見つける最も安いタイミングは、プラン・仕様・コードの前です。作り始めてからでは切り替えコストが発生し、ユーザーは間違ったものを "まあ十分" に合理化してしまいます。ズレは固定されます。
 
-This skill closes the gap before it costs anything. The other Define-phase skills assume you already know roughly what you want: `idea-refine` generates variations from an idea, `spec-driven-development` writes the requirements down, `doubt-driven-development` stress-tests a plan after you've drafted one. Interview-me is the part before all of those, where you ask one question at a time, with your best guess attached, until you can predict what the user is going to say before they say it.
+このスキルは、コストが発生する前にズレを埋めます。ほかの Define フェーズのスキルは、何を欲しいかおおよそ分かっている前提です。`idea-refine` はアイデアからバリエーションを作り、`spec-driven-development` は要件を書き下ろし、`doubt-driven-development` は下書きした計画をストレステストします。Interview-me はそれらの前、つまり 1 問ずつ、仮説を添えながら問い、相手が言う前に何を言うか予測できるまで掘る段階です。
 
-## When to Use
+## 使う場面
 
-Apply this skill when:
+次のときに使います。
 
-- The ask is missing at least one of: **who** the user is, **why** they want it, what **success** looks like, what the binding **constraint** is
-- The request is conventional rather than specific ("build me X", "make it faster") and you can't unpack the convention without guessing
-- You're tempted to start with assumptions you haven't surfaced
-- The user hasn't said which value they're optimizing for when two reasonable ones are in tension (simplicity vs. flexibility, cost vs. speed)
-- The user explicitly invokes: "interview me", "grill me", "before we start, are we sure?", "stress-test my thinking"
+- 依頼に次のいずれかが欠けている: **誰のためか**、**なぜ欲しいのか**、何をもって成功とするか、縛りとなる **制約** は何か
+- 依頼が慣習的であって具体的でない（"X を作って"、"速くして"）うえ、慣習を推測なしに解けない
+- まだ明示していない仮定から始めたくなっている
+- 2 つの妥当な値が緊張関係にあるのに、どちらを最適化したいか言っていない（単純さ vs 柔軟性、コスト vs 速度）
+- ユーザーが明示的に次のような言い方をした: "interview me"、"grill me"、"before we start, are we sure?"、"stress-test my thinking"
 
-**When NOT to use:**
+**使わない場面:**
 
-- The ask is unambiguous and self-contained ("rename this variable", "fix this typo")
-- The user has explicitly asked for speed over verification
-- Pure information requests ("how does X work?", "what does this code do?")
-- Mechanical operations (renames, formats, file moves)
-- You already have ≥95% confidence; re-read the stop condition below before assuming you don't
+- 依頼が明確で自己完結している（"この変数名を変えて"、"この typo を直して"）
+- ユーザーが検証より速度を明示的に優先した
+- 純粋な情報要求（"X はどう動く？"、"このコードは何をしている？"）
+- 機械的な操作（rename、format、file move）
+- すでに約 95% の確信がある。ないと思う前に、下の停止条件を読み直す
 
-## Loading Constraints
+## 読み込み制約
 
-This skill needs a live, responsive user. **Do not invoke in non-interactive contexts** like CI pipelines, scheduled runs, `/loop`, or autonomous-loop. If you're in one of those and the ask is underspecified, flag that as a blocker for the user instead of guessing.
+このスキルには、応答のあるライブユーザーが必要です。CI、scheduled runs、`/loop`、autonomous-loop のような非対話コンテキストでは使わないでください。そのような場面で依頼が曖昧なら、推測する代わりに、ユーザーに対して blocker として伝えてください。
 
-## The Process
+## プロセス
 
-### Step 1: Hypothesize, with a confidence number
+### Step 1: 仮説を立て、確信度を数値で書く
 
-Before asking anything, write down your current best read of what the user wants in **one sentence**, plus an honest confidence number (0–100%):
+何を求めているかの自分なりの理解を、**1 文** と、正直な確信度（0〜100%）で書きます。
 
-```
-HYPOTHESIS: You want a way to answer "how are we doing?" in standup, and "dashboard" was the convention that came to mind.
-CONFIDENCE: ~30% — missing: who it's for, what "metrics" means in context, and what success looks like
-```
-
-The number forces honesty. If you wrote down a high number but can't actually predict the user's reactions to the next three questions you'd ask, the number is wrong. Start at the confidence level you can defend.
-
-When confidence is below ~70%, append a brief reason on the same line — what's still unresolved or missing. This tells the user exactly what the interview needs to surface, and prevents the number from being a vague signal.
-
-### Step 2: Ask one question at a time, each with a guess attached
-
-Format:
-
-```
-Q: <one focused question>
-GUESS: <your hypothesis for the answer, with the reasoning that produced it>
+```text
+HYPOTHESIS: あなたは standup で "今どうなっているか" を答えられるようにしたくて、"dashboard" が思いついた表現だった
+CONFIDENCE: ~30% - まだ分かっていない: 誰のためか、"metrics" が文脈で何を意味するか、成功の形
 ```
 
-Wait for the user to react before asking the next question.
+数字は正直さを強制します。高い数字を書いても、次に聞く 3 つの質問で相手の反応を予測できないなら、その数字は間違いです。出せる確信度から始めてください。
 
-**Why one at a time, not a batch:**
+確信度が約 70% 未満なら、同じ行に簡単な理由を添えます - 何がまだ未解決か、何が欠けているかです。これで、何を埋めればよいかユーザーに伝わります。
 
-- The user can't react to your hypotheses if you bury them in a list
-- Batches encourage skim-reading and surface answers
-- The third question often depends on the answer to the first; asking them all at once locks in the wrong framing
-- The user's energy for thinking carefully is finite; spend it one question at a time
+### Step 2: 1 問ずつ、仮説を添えて聞く
 
-**Why attach a guess:**
+形式は次のとおりです。
 
-- The user reacts faster to a wrong guess than they generate an answer from scratch
-- It commits you to a hypothesis you can be visibly wrong about, which keeps you honest
-- It surfaces *your* assumptions, which is what the interview is meant to expose
-
-The risk here is a polite user agreeing with your guess to be agreeable. Mitigate by being visibly willing to be wrong, and occasionally guess in a direction you expect the user to push back on.
-
-### Step 3: Listen for "want vs. should want"
-
-The most dangerous answers are the ones where the user says what a thoughtful answer *sounds like* rather than what they actually want. Watch for:
-
-- Answers that pattern-match best-practice talk ("I want it to be scalable", "clean architecture") without specifics
-- Answers that defer to convention ("the way most apps do it", "the standard approach")
-- Phrases like "I should probably…", "I think I'm supposed to…", "good engineering practice says…"
-- Buzzwords as goals — when "modern", "scalable", "robust" are the answer instead of a specific outcome
-
-When you hear these, the question to ask is:
-
-> *"If you didn't have to justify this to anyone, what would you actually want?"*
-
-That single question often does more work than the previous five.
-
-### Step 4: Restate intent in the user's own words
-
-When your confidence is high, write back what you now think the user wants. Keep it tight (5–8 lines), use their language where possible, and structure it so the user can confirm or correct line by line:
-
+```text
+Q: <1 つに絞った質問>
+GUESS: <その答えの仮説と、そう考えた理由>
 ```
+
+ユーザーの反応を待ってから、次の質問をします。
+
+**なぜ一度に複数聞かないのか:**
+
+- 仮説が見えないと、ユーザーは反応できない
+- 一括質問は skim-reading を促し、表面的な答えになる
+- 3 つ目の質問は 1 つ目の答えに依存することが多い
+- ユーザーの思考エネルギーは有限です。1 問ずつ使ってください
+
+**なぜ仮説を添えるのか:**
+
+- 正しい答えをゼロから考えるより、間違った仮説に反応するほうが早い
+- 仮説を明示すると、間違えたときに分かりやすくなる
+- あなた自身の前提を表に出せる。これこそ、このインタビューの目的です
+
+ここでのリスクは、礼儀正しいユーザーが相手に合わせて仮説に乗ってしまうことです。間違える余地を見せ、時には相手が反論したくなる方向へ仮説を投げてください。
+
+### Step 3: "欲しいもの" と "欲しいと思うべきもの" を見分ける
+
+最も危険な答えは、思慮深い答えに聞こえるものです。ユーザーが本当に欲しいものではなく、そう答えるのが良さそうだから言っていることがあります。次の兆候に注意してください。
+
+- ベストプラクティスっぽい話（"scalable にしたい"、"clean architecture"）で、具体性がない
+- 慣習に逃げる（"普通のアプリのやり方"、"標準的な方法"）
+- "I should probably..."、"I think I'm supposed to..."、"good engineering practice says..." のような言い回し
+- 目標としての buzzword - "modern"、"scalable"、"robust" が、具体的な成果の代わりになっている
+
+そういう答えが来たら、次に聞くべき質問は:
+
+> *"誰に何と言われることもないなら、本当は何が欲しいですか？"*
+
+この 1 問は、前の 5 問より仕事をすることがよくあります。
+
+### Step 4: ユーザーの言葉で意図を言い直す
+
+確信度が高くなったら、今考えていることをユーザーに返します。短く（5〜6 行）、できるだけ相手の言葉を使い、1 行ずつ確認または修正できるように書きます。
+
+```text
 Here's what I now think you want:
 
-- Outcome:      <one line>
-- User:         <one line — who benefits>
-- Why now:      <one line — what changed>
-- Success:      <one line — how we know it worked>
-- Constraint:   <one line — the binding limit>
-- Out of scope: <one line — what we're explicitly not doing>
+- Outcome:      <1 行>
+- User:         <1 行 - 誰が得をするか>
+- Why now:      <1 行 - 何が変わったか>
+- Success:      <1 行 - うまくいったと分かる基準>
+- Constraint:   <1 行 - 縛りとなる条件>
+- Out of scope: <1 行 - 明確にやらないこと>
 
 Yes / no / refine?
 ```
 
-Including "Out of scope" is non-negotiable. Half of misalignment is silent disagreement about what is *not* being built.
+`Out of scope` は必須です。ズレの半分は、何を作らないかの静かな不一致です。
 
-### Step 5: Confirm — explicit yes, not "whatever you think"
+### Step 5: Confirm - 明示的な yes を取る
 
-The gate is an explicit "yes." The following are **not** yes:
+ゲートは明示的な "yes" です。次は yes ではありません。
 
-- "Whatever you think is best." → The user is delegating, which means they don't have 95% confidence either. Re-ask with two concrete options framed as a choice.
-- "Sounds good." → Ambiguous. Ask: "Anything you'd refine?" Silence isn't confirmation.
-- "Sure, let's go." → Often a polite exit, not an endorsement. Same follow-up.
-- Silence followed by "okay let's start." → The user has given up on the interview, not converged. Stop and ask whether you've missed something.
+- "Whatever you think is best." - ユーザーは委任しているので、自分でも 95% の確信がありません。2 つの具体案を choice として再度聞きます。
+- "Sounds good." - 曖昧です。"何か直したいところはありますか？" と聞きます。沈黙は確認ではありません。
+- "Sure, let's go." - しばしば丁寧な離脱で、承認ではありません。フォローアップします。
+- 沈黙のあとに "okay let's start." - ヒアリングが収束したのではなく、諦めただけです。何か見落としがないか確認します。
 
-If they correct you, fold the correction in and restate. Loop until you get an explicit yes.
+修正があれば、それを取り込んで言い直します。明示的な yes が来るまで繰り返します。
 
-### The 95% Confidence Stop
+### 95% 確信で止める
 
-You're done when you can answer yes to this:
+次の問いに yes と答えられたら終わりです。
 
-> *Can I predict the user's reaction to the next three questions I would ask?*
+> *次に自分が聞く 3 つの質問に対して、ユーザーの反応を予測できるか？*
 
-If yes, you have shared understanding. Stop interviewing and produce the restate. If no, you're not done; ask the next question.
+yes なら共有理解があります。インタビューを終え、言い直しを出します。no なら終わっていません。次の質問をします。
 
-This is a checkable test, not a vibe. It also has a floor: if you've gone several rounds and still can't predict, that's information about the ask, not a reason to keep grinding. Stop and tell the user: "I've asked X questions and I still can't predict your reactions. Something foundational is missing. Want to step back?"
+これは感覚ではなく、検証可能なテストです。しかも下限があります。何ラウンドか続けても予測できないなら、それは依頼についての情報であって、さらに頑張る理由ではありません。止まってこう伝えます。「X 回聞いたのに、まだ反応を予測できません。何か根本が足りないようです。少し戻りますか？」
 
-## Output
+## 出力
 
-The output of this skill is a **confirmed statement of intent**: the restate from Step 4, with an explicit yes from Step 5. That's the deliverable. Specs, plans, and task lists are downstream; they consume the intent this skill produces.
+このスキルの出力は、**確認済みの意図** です。Step 4 の言い直しに、Step 5 の明示的な yes が付いたものが成果物です。仕様、計画、タスクリストはその後です。ここで得た意図を受けて使います。
 
-If the user wants the intent to persist (a multi-session project, a handoff to another collaborator), offer to save it to `docs/intent/[topic].md`. Only save if they confirm.
+意図を残したいなら（複数セッションのプロジェクトや他者への引き継ぎ）、`docs/intent/[topic].md` に保存する提案をします。保存するのはユーザーが確認した場合だけです。
 
-## Example
+## 例
 
-A short before-and-after.
+短い before / after です。
 
-**Without `interview-me`:**
+**`interview-me` なし:**
 
+```text
+User: build me a dashboard for our metrics
+Agent: <chart library や layout を提案し始める>
 ```
-User:  build me a dashboard for our metrics
-Agent: <starts proposing chart libraries and layouts>
-```
 
-The agent has assumed: who it's for, what metrics, what "for our team" means, what success looks like. None of these are stated. Every assumption is a place the user can later say "that's not what I meant."
+エージェントは、誰向けか、どの metrics か、"for our team" が何を意味するか、成功の形は何かを勝手に仮定しています。これらはすべて書かれていません。仮定は、あとでユーザーが "そういう意味じゃない" と言える場所です。
 
-**With `interview-me`:**
+**`interview-me` あり:**
 
-```
+```text
 User: build me a dashboard for our metrics
 
 Agent:
-HYPOTHESIS: You want a way to answer "how are we doing?" in standup, and "dashboard" came to mind because that's the conventional answer.
-CONFIDENCE: ~30% — missing: who it's for, what "metrics" are, and what success looks like
+HYPOTHESIS: "今どうなっているか" を答えるものが欲しくて、"dashboard" が慣習として浮かんだ
+CONFIDENCE: ~30% - 何の metrics か、誰向けか、成功の形がまだ不明
 
-Q:     When you say "how are we doing?", who's asking — you alone, the engineering team in standup, or up the chain (e.g., your manager, an exec, a board)?
-GUESS: engineering team in standup, because "we" usually scopes that way and standups are where this question gets asked. If it's for execs the metrics and the framing change a lot.
+Q:     "How are we doing?" と言うとき、誰が答えを必要としていますか - あなた一人、standup の engineering team、あるいは上の階層（manager、exec、board）ですか？
+GUESS: engineering team in standup だと思います。"we" はその範囲を指すことが多く、standup はこの質問が出る場だからです。exec 向けなら metrics も framing も大きく変わります。
 
 User: It's actually for me. I keep losing track of which experiments are running and what their early signal looks like.
 
 Agent:
-Updated read: not a team dashboard at all. It's a personal experiment tracker. Confidence: ~60% — still missing: what "early signal" means and what done looks like.
+Updated read: もはや team dashboard ではなく、personal experiment tracker です。Confidence: ~60% - まだ missing: "early signal" の意味と、done の定義。
 
-Q:     Is the gap that you don't know which experiments exist, or that you can't see their results in one place?
-GUESS: the second one. You have a list of experiments somewhere, but their results live in five different tools, and reconciling them by hand is what you're tired of.
+Q:     実験が何件あるか分からないのが問題ですか、それとも結果を 1 か所で見られないのが問題ですか？
+GUESS: 後者だと思います。実験の一覧はどこかにあるが、結果が 5 つのツールに散っていて、それを手で寄せるのに疲れているのでは？
 
 User: First one actually. I literally don't have a list. They're spread across different docs.
 
-Agent: <continues>
+Agent: <続く>
 ```
 
-Two questions in, the agent has discovered the actual ask isn't "a dashboard." It's "a list." Different artifact, different scope, different work. The dashboard would have been wrong.
+2 問で、エージェントは実際の依頼が "dashboard" ではなく "list" だと知りました。別の artifact、別のスコープ、別の作業です。dashboard は間違いでした。
 
-## Interaction with Other Skills
+## 他スキルとの関係
 
-- **`idea-refine`**: downstream. If the confirmed intent is "I want X but I don't know how to scope it," hand off to `idea-refine` to generate variations against the now-explicit intent.
-- **`spec-driven-development`**: downstream. If the confirmed intent is concrete ("I want X for Y users with Z success criteria"), hand off to `spec-driven-development` to write it down.
-- **`planning-and-task-breakdown`**: two hops downstream of this skill (after the spec).
-- **`doubt-driven-development`**: opposite end of the timeline. Interview-me is pre-decision intent extraction; doubt-driven is post-decision artifact review. Both catch divergence, but at different moments.
-- **`source-driven-development`**: orthogonal. Interview-me clarifies what the user wants; SDD verifies framework facts. They don't compete.
+- **`idea-refine`**: downstream。確認済みの意図が "X が欲しいがスコープは分からない" なら、`idea-refine` に渡して、明示された意図に対してバリエーションを作ります。
+- **`spec-driven-development`**: downstream。確認済みの意図が具体的（"Y ユーザー向けに Z 成功条件の X が欲しい"）なら、`spec-driven-development` で書き起こします。
+- **`planning-and-task-breakdown`**: このスキルの 2 段階下流です（spec のあと）。
+- **`doubt-driven-development`**: タイムラインの反対側です。Interview-me は decision 前の intent 抽出、doubt-driven は decision 後の artifact review です。どちらもズレを見つけますが、タイミングが違います。
+- **`source-driven-development`**: 独立しています。Interview-me はユーザーの望みを明確にし、SDD は framework の事実を検証します。競合しません。
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "The ask is clear enough" | If you can't write the user's desired outcome in one sentence right now, the ask isn't clear. Run Step 1 before deciding. |
-| "Asking too many questions wastes their time" | Time wasted by 4–6 targeted questions is small. Time wasted by building the wrong thing is enormous, and the user is the one bearing that cost. |
-| "I'll figure it out as I build" | Switching costs after code exists are 10x what they are now. Discovery during implementation is rework. |
-| "They said 'whatever you think,' so I should just decide" | "Whatever you think" is delegation, not decision. Re-ask with two concrete options as a choice. |
-| "I should give them several options to pick from" | Options work when the user knows what they want and is choosing between trade-offs. They don't know what they want yet. Listing options widens the search; asking narrows it. |
-| "If I attach my guess, I'm leading them" | Leading is the point. Reacting is faster than generating from scratch. The risk is sycophancy, not leading; mitigate by being visibly willing to be wrong. |
-| "We've talked enough, I get it" | Test it: can you predict their reaction to the next three questions? If not, you don't get it yet. |
-| "The user said yes, we're done" | If the yes followed a vague restate or an open-ended "sounds good," the yes is hollow. Restate concretely and re-confirm. |
+| 「依頼は十分に明確だ」 | 今この瞬間に、ユーザーの望む結果を 1 文で書けないなら、依頼は明確ではありません。Step 1 を回してください。 |
+| 「質問しすぎると相手の時間を無駄にする」 | 4〜5 個の的確な質問で失う時間は小さいです。間違ったものを作る時間は膨大で、そのコストを払うのはユーザーです。 |
+| 「作りながら分かる」 | いまなら小さい切り替えコストが、実装後は 10 倍になります。実装中の発見は手戻りです。 |
+| 「whatever you think と言ったんだから、勝手に決めていい」 | "Whatever you think" は委任であって、決定ではありません。2 つの具体案を choice にして再度聞きます。 |
+| 「複数の選択肢を並べれば選んでもらえる」 | 選択肢は、ユーザーが何を欲しいか分かっていてトレードオフを選ぶときに有効です。まだ分かっていないなら、選択肢は探索を広げ、質問は狭めます。 |
+| 「仮説を添えると誘導してしまう」 | 誘導するのが目的です。生成より反応のほうが早いです。リスクはおべっかであって、誘導ではありません。外れる余地を見せればよいです。 |
+| 「もう十分話したから分かった」 | 試してください。次に自分が聞く 3 つの質問に対する反応を予測できますか？ できないなら、まだ分かっていません。 |
+| 「ユーザーが yes と言ったから終わり」 | もし yes が曖昧な言い直しや open-ended な "sounds good" のあとに来たなら、その yes は空っぽです。具体的に言い直して再確認します。 |
 
-## Red Flags
+## レッドフラグ
 
-- Three or more questions in a single message: that's batching, not interviewing
-- A question without your hypothesis attached: that's surveying, not committing
-- Accepting "whatever you think is best" as a terminal answer
-- Producing a spec, plan, or task list before the user has explicitly confirmed your restate
-- Questions framed as "what would be best practice?" instead of "what do you actually want?"
-- The user gives a sophistication-signaling answer ("scalable", "clean", "modern") and you accept it without probing whether it's what they actually want
-- Three or more rounds without your confidence visibly rising: you're asking the wrong questions, step back and reframe
-- A confidence number below ~70% with no reason attached: the user can't help close the gap if they don't know what's missing
-- Saving the intent doc before the user has confirmed (the doc itself implies a yes the user didn't give)
-- Skipping the "Out of scope" line in the restate (silent disagreement about non-goals is half of misalignment)
+- 1 通で 3 問以上聞く - それは interviewing ではなく batching です
+- 仮説を添えない質問 - それは surveying であって、commit ではありません
+- "whatever you think is best" を終端回答として受け入れる
+- ユーザーが明示的に確認する前に spec、plan、task list を作る
+- "何がベストプラクティスか" ではなく "本当は何が欲しいか" を聞いていない
+- ユーザーが sophistication-signaling な答え（"scalable"、"clean"、"modern"）を出したとき、実際に欲しいものか掘り下げずに受け入れる
+- 3 ラウンド以上続いても確信度が上がらない - 質問が間違っているので、少し戻って組み立て直す
+- ~70% 未満の確信度に理由が付いていない - 何が不足しているか分からなければ、ユーザーも埋められない
+- ユーザーが確認する前に意図文書を保存する（文書自体が、まだ得ていない yes を含意してしまう）
+- 言い直しで "Out of scope" 行を飛ばす（何を作らないかの静かな不一致は、ズレの半分です）
 
-## Verification
+## 検証
 
-After applying interview-me:
+`interview-me` を適用したあと、次を確認してください。
 
-- [ ] An explicit hypothesis with a confidence number was stated in the first turn
-- [ ] Every confidence number below ~70% was accompanied by a one-line reason (what's still unresolved or missing)
-- [ ] Questions were asked one at a time, each with the agent's guess attached
-- [ ] At least one "what would you actually want if you didn't have to justify it?" probe ran when the user gave a sophistication-signaling or convention-signaling answer
-- [ ] A concrete restate (Outcome / User / Why now / Success / Constraint / Out of scope) was written back to the user
-- [ ] The user confirmed the restate with an explicit yes (not "whatever you think," not "sounds good," not silence)
-- [ ] At the stop point, the agent could predict reactions to the next three questions it would ask
-- [ ] Any handoff to a downstream skill (`idea-refine`, `spec-driven-development`) was framed in terms of the confirmed intent, not the original underspecified ask
+- [ ] 最初のターンで、確信度付きの明示的な仮説を書いた
+- [ ] ~70% 未満の各確信度に、1 行の理由（未解決・不足しているもの）を添えた
+- [ ] 質問は 1 つずつ、各質問に仮説を添えて行った
+- [ ] ユーザーが sophistication-signaling や convention-signaling な答えをしたときに、"本当は何を望みますか？" の probe を少なくとも 1 回行った
+- [ ] Outcome / User / Why now / Success / Constraint / Out of scope を含む具体的な言い直しを返した
+- [ ] ユーザーが明示的な yes で言い直しを確認した（"whatever you think" でも "sounds good" でも沈黙でもない）
+- [ ] 停止点で、次に聞く 3 つの質問への反応を予測できた
+- [ ] downstream のスキル（`idea-refine`、`spec-driven-development`）への handoff は、元の曖昧な依頼ではなく、確認済みの意図をもとに行った

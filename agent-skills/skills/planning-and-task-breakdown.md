@@ -1,100 +1,96 @@
 ---
 name: planning-and-task-breakdown
-description: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
+description: 作業を順序立てたタスクに分解します。仕様がある、または要件が明確で、実装可能なタスクに切り分ける必要があるときに使います。タスクが大きすぎて着手しづらいとき、スコープを見積もりたいとき、並列作業が可能なときにも使います。
 ---
 
-# Planning and Task Breakdown
+# 計画とタスク分解
 
-## Overview
+## 概要
 
-Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
+明確な受け入れ条件を持つ、小さく検証可能なタスクに作業を分解します。よいタスク分解は、確実に作業をやり切るエージェントと、絡まった大混乱を生むエージェントの違いです。各タスクは、1 回の集中したセッションで実装・テスト・検証できる程度の小ささであるべきです。
 
-## When to Use
+## 使う場面
 
-- You have a spec and need to break it into implementable units
-- A task feels too large or vague to start
-- Work needs to be parallelized across multiple agents or sessions
-- You need to communicate scope to a human
-- The implementation order isn't obvious
+- 仕様があり、それを実装単位に分けたいとき
+- タスクが大きすぎる、または曖昧すぎて着手できないとき
+- 複数のエージェントやセッションに並列化したいとき
+- 人間にスコープを伝える必要があるとき
+- 実装順が自明でないとき
 
-**When NOT to use:** Single-file changes with obvious scope, or when the spec already contains well-defined tasks.
+**使わない場面:** 単一ファイルの変更でスコープが明らかなとき、または仕様自体に十分定義されたタスクがすでに含まれているとき。
 
-## The Planning Process
+## 計画プロセス
 
-### Step 1: Enter Plan Mode
+### Step 1: Plan モードに入る
 
-Before writing any code, operate in read-only mode:
+コードを書く前に、読み取り専用モードで作業します。
 
-- Read the spec and relevant codebase sections
-- Identify existing patterns and conventions
-- Map dependencies between components
-- Note risks and unknowns
+- 仕様と関連するコードベースの部分を読む
+- 既存のパターンと規約を見つける
+- コンポーネント間の依存関係を整理する
+- リスクと不明点を書き出す
 
-**Do NOT write code during planning.** The output is a plan document saved to `tasks/plan.md` and a task list recorded in the task list target (see Output Files; default `tasks/todo.md`), not implementation.
+**計画中はコードを書かないでください。** 出力は `tasks/plan.md` に保存する計画書と、タスクリストの保存先（出力ファイルを参照。既定は `tasks/todo.md`）に記録するタスクリストです。実装ではありません。
 
-### Step 2: Identify the Dependency Graph
+### Step 2: 依存グラフを作る
 
-Map what depends on what:
+何が何に依存しているかを整理します。
 
-```
+```text
 Database schema
-    │
-    ├── API models/types
-    │       │
-    │       ├── API endpoints
-    │       │       │
-    │       │       └── Frontend API client
-    │       │               │
-    │       │               └── UI components
-    │       │
-    │       └── Validation logic
-    │
-    └── Seed data / migrations
+    -> API models/types
+    -> API endpoints
+    -> Frontend API client
+    -> UI components
+    -> Validation logic
+    -> Seed data / migrations
 ```
 
-Implementation order follows the dependency graph bottom-up: build foundations first.
+実装順は、この依存グラフを下から上へたどります。土台から先に作ります。
 
-### Step 3: Slice Vertically
+### Step 3: 縦に切る
 
-Instead of building all the database, then all the API, then all the UI — build one complete feature path at a time:
+データベースを全部作ってから API を全部作って、それから UI を全部作るのではなく、1 つの完全な機能経路を順番に作ります。
 
-**Bad (horizontal slicing):**
-```
-Task 1: Build entire database schema
-Task 2: Build all API endpoints
-Task 3: Build all UI components
-Task 4: Connect everything
-```
+**悪い例（横方向の分割）:**
 
-**Good (vertical slicing):**
-```
-Task 1: User can create an account (schema + API + UI for registration)
-Task 2: User can log in (auth schema + API + UI for login)
-Task 3: User can create a task (task schema + API + UI for creation)
-Task 4: User can view task list (query + API + UI for list view)
+```text
+Task 1: データベーススキーマを全部作る
+Task 2: API エンドポイントを全部作る
+Task 3: UI コンポーネントを全部作る
+Task 4: 全体をつなぐ
 ```
 
-Each vertical slice delivers working, testable functionality.
+**良い例（縦方向の分割）:**
 
-### Step 4: Write Tasks
+```text
+Task 1: ユーザーがアカウントを作成できる（登録用のスキーマ + API + UI）
+Task 2: ユーザーがログインできる（認証用スキーマ + API + UI）
+Task 3: ユーザーがタスクを作成できる（タスク用スキーマ + API + UI）
+Task 4: ユーザーがタスクリストを見られる（取得処理 + API + UI）
+```
 
-Each task follows this structure, whether it lands in the markdown task list or as an item in an external tracker (see Output Files):
+各縦スライスは、動作する検証可能な機能を提供します。
+
+### Step 4: タスクを書く
+
+各タスクは、Markdown のタスクリストであっても外部トラッカーの項目であっても、次の構造に従います（出力ファイルを参照）。
 
 ```markdown
-## Task [N]: [Short descriptive title]
+## Task [N]: [短く説明的なタイトル]
 
-**Description:** One paragraph explaining what this task accomplishes.
+**Description:** このタスクが何を実現するかを 1 段落で説明します。
 
 **Acceptance criteria:**
-- [ ] [Specific, testable condition]
-- [ ] [Specific, testable condition]
+- [ ] [具体的で検証可能な条件]
+- [ ] [具体的で検証可能な条件]
 
 **Verification:**
-- [ ] Tests pass: [the repository's focused-test command]
-- [ ] Build succeeds: [the repository's build command]
-- [ ] Manual check: [description of what to verify]
+- [ ] テストが通る: [このリポジトリの対象テストコマンド]
+- [ ] ビルドが成功する: [このリポジトリのビルドコマンド]
+- [ ] 手動確認: [何を確認するかの説明]
 
-**Dependencies:** [Task numbers this depends on, or "None"]
+**Dependencies:** [依存するタスク番号、または "None"]
 
 **Files likely touched:**
 - `src/path/to/file.ts`
@@ -103,70 +99,71 @@ Each task follows this structure, whether it lands in the markdown task list or 
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
-### Step 5: Order and Checkpoint
+### Step 5: 順序とチェックポイント
 
-Arrange tasks so that:
+次の条件を満たすようにタスクを並べます。
 
-1. Dependencies are satisfied (build foundation first)
-2. Each task leaves the system in a working state
-3. Verification checkpoints occur after every 2-3 tasks
-4. High-risk tasks are early (fail fast)
+1. 依存関係が満たされること（基盤を先に作る）
+2. 各タスクの後にシステムが動く状態を保つこと
+3. 2〜3 タスクごとに検証チェックポイントを置くこと
+4. リスクの高いタスクは早めに置くこと（失敗を早く見つける）
 
-Add explicit checkpoints to the task list target:
+タスクリストの保存先に、明示的なチェックポイントを追加します。
 
 ```markdown
-## Checkpoint: After Tasks 1-3
-- [ ] All tests pass
-- [ ] Application builds without errors
-- [ ] Core user flow works end-to-end
-- [ ] Review with human before proceeding
+## Checkpoint: Tasks 1-3 の後
+- [ ] すべてのテストが通る
+- [ ] アプリケーションがエラーなくビルドできる
+- [ ] コアユーザーフローが end-to-end で動く
+- [ ] 次へ進む前に人間とレビューする
 ```
 
-## Task Sizing Guidelines
+## タスクのサイズ基準
 
-| Size | Files | Scope | Example |
-|------|-------|-------|---------|
-| **XS** | 1 | Single function or config change | Add a validation rule |
-| **S** | 1-2 | One component or endpoint | Add a new API endpoint |
-| **M** | 3-5 | One feature slice | User registration flow |
-| **L** | 5-8 | Multi-component feature | Search with filtering and pagination |
-| **XL** | 8+ | **Too large — break it down further** | — |
+| サイズ | ファイル数 | スコープ | 例 |
+|---|---|---|---|
+| **XS** | 1 | 単一関数や設定変更 | バリデーションルールの追加 |
+| **S** | 1-2 | 1 つのコンポーネントやエンドポイント | 新しい API エンドポイントの追加 |
+| **M** | 3-5 | 1 つの機能スライス | ユーザー登録フロー |
+| **L** | 5-8 | 複数コンポーネントの機能 | フィルタとページネーション付き検索 |
+| **XL** | 8+ | **大きすぎるので、さらに分割すること** | なし |
 
-If a task is L or larger, it should be broken into smaller tasks. An agent performs best on S and M tasks.
+タスクが L 以上なら、もっと小さく分けるべきです。エージェントは S と M のタスクで最もよく機能します。
 
-**When to break a task down further:**
-- It would take more than one focused session (roughly 2+ hours of agent work)
-- You cannot describe the acceptance criteria in 3 or fewer bullet points
-- It touches two or more independent subsystems (e.g., auth and billing)
-- You find yourself writing "and" in the task title (a sign it is two tasks)
+**さらに分割すべきタイミング:**
 
-## Output Files
+- 1 回の集中セッション（おおむね 2 時間以上のエージェント作業）を超えそうなとき
+- 受け入れ条件を 3 つ以下の箇条書きで説明できないとき
+- 2 つ以上の独立したサブシステムに触れるとき（例: auth と billing）
+- タスク名に "and" を書きたくなったとき（2 つのタスクを混ぜているサイン）
 
-- **Plan document:** Save the implementation plan to `tasks/plan.md`. This is always a markdown file — design decisions, risks, and open questions don't map cleanly onto individual tracker issues.
-- **Task list:** Record each task in the **task list target** (defined below).
+## 出力ファイル
 
-Create the `tasks/` directory if it does not exist.
+- **計画書:** 実装計画は `tasks/plan.md` に保存します。これは常に Markdown ファイルです。設計判断、リスク、未解決の質問は、個々の tracker issue にきれいに対応しないためです。
+- **タスクリスト:** 各タスクを、下で定義する **タスクリストの保存先** に記録します。
 
-### Task List Target
+`tasks/` ディレクトリがなければ作成してください。
 
-The task list target is where tasks and checkpoints are recorded. It is defined once, here; every other reference in this skill defers to it.
+### タスクリストの保存先
 
-- **Default: a checklist-style markdown file at `tasks/todo.md`.** This is the convention the `/build` command and other downstream tooling expect. Use it unless the project says otherwise.
-- **External tracker:** if the project's agent rules (`CLAUDE.md`, `AGENTS.md`, etc.) or the user designate an issue tracker (e.g. GitHub Issues, Jira, Linear, `bd`/beads), create one tracker item per task instead of writing `tasks/todo.md`. Map the Step 4 structure onto the tracker's fields: acceptance criteria and verification steps in the item body, dependencies via the tracker's linking mechanism (`bd dep add`, "blocked by", etc.). Record Step 5 checkpoints as tracker items too, or as a checklist in the plan document if the tracker has no natural equivalent.
+タスクリストの保存先とは、タスクとチェックポイントを記録する場所です。ここで 1 度だけ定義され、それ以降の参照はすべてここに従います。
 
-When using an external tracker, note it in `tasks/plan.md` (e.g. "Tasks tracked in Linear project FOO") so downstream steps and future sessions know where to look, and keep the plan document's Task List section as an ordered index of tracker item IDs or links rather than a duplicate checklist.
+- **既定:** `tasks/todo.md` にあるチェックリスト形式の Markdown ファイル。これは `/build` コマンドや他の下流ツールが前提にしている形式です。プロジェクトに別の指定がない限り、これを使ってください。
+- **外部トラッカー:** プロジェクトのエージェントルール（`CLAUDE.md`、`AGENTS.md` など）や人間が issue tracker（GitHub Issues、Jira、Linear、`bd`/beads など）を指定している場合は、`tasks/todo.md` ではなく、タスクごとに 1 件ずつ tracker 項目を作成します。Step 4 の構造をトラッカーのフィールドに写し替えてください。受け入れ条件と検証ステップは項目本文へ、依存関係はトラッカーのリンク機構（`bd dep add`、"blocked by" など）へ入れます。Step 5 のチェックポイントも、可能なら tracker 項目として記録するか、トラッカーに自然な対応先がない場合は計画書のチェックリストに書きます。
 
-## Plan Document Template
+外部トラッカーを使う場合は、`tasks/plan.md` にその旨を記します（例: "Tasks tracked in Linear project FOO"）。そうすることで、下流の手順や次回セッションが参照先を見失いません。また、計画書の Task List セクションは、重複したチェックリストではなく、tracker 項目 ID やリンクの順序付き索引にしてください。
+
+## 計画書テンプレート
 
 ```markdown
 # Implementation Plan: [Feature/Project Name]
 
 ## Overview
-[One paragraph summary of what we're building]
+[何を作るのかの 1 段落要約]
 
 ## Architecture Decisions
-- [Key decision 1 and rationale]
-- [Key decision 2 and rationale]
+- [重要な判断 1 とその理由]
+- [重要な判断 2 とその理由]
 
 ## Task List
 
@@ -175,73 +172,73 @@ When using an external tracker, note it in `tasks/plan.md` (e.g. "Tasks tracked 
 - [ ] Task 2: ...
 
 ### Checkpoint: Foundation
-- [ ] Tests pass, builds clean
+- [ ] テストが通る、ビルドがクリーン
 
 ### Phase 2: Core Features
 - [ ] Task 3: ...
 - [ ] Task 4: ...
 
 ### Checkpoint: Core Features
-- [ ] End-to-end flow works
+- [ ] end-to-end の流れが動く
 
 ### Phase 3: Polish
 - [ ] Task 5: ...
 - [ ] Task 6: ...
 
 ### Checkpoint: Complete
-- [ ] All acceptance criteria met
-- [ ] Ready for review
+- [ ] すべての受け入れ条件を満たす
+- [ ] レビュー可能な状態
 
 ## Risks and Mitigations
 | Risk | Impact | Mitigation |
-|------|--------|------------|
+|---|---|---|
 | [Risk] | [High/Med/Low] | [Strategy] |
 
 ## Open Questions
-- [Question needing human input]
+- [人間の入力が必要な質問]
 ```
 
-When tasks live in an external tracker, keep the Task List section above as an ordered index of tracker item IDs or links instead of a duplicate checklist.
+タスクを外部トラッカーで管理する場合でも、Task List セクションは重複したチェックリストではなく、tracker 項目 ID やリンクの順序付き索引として保ってください。
 
-## Parallelization Opportunities
+## 並列化の余地
 
-When multiple agents or sessions are available:
+複数のエージェントやセッションが使えるとき:
 
-- **Safe to parallelize:** Independent feature slices, tests for already-implemented features, documentation
-- **Must be sequential:** Database migrations, shared state changes, dependency chains
-- **Needs coordination:** Features that share an API contract (define the contract first, then parallelize)
+- **並列化しやすい:** 独立した機能スライス、既に実装済み機能のテスト、ドキュメント
+- **順番が必要:** データベースマイグレーション、共有状態の変更、依存関係の連鎖
+- **調整が必要:** API 契約を共有する機能（まず契約を定義し、その後で並列化する）
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "I'll figure it out as I go" | That's how you end up with a tangled mess and rework. 10 minutes of planning saves hours. |
-| "The tasks are obvious" | Write them down anyway. Explicit tasks surface hidden dependencies and forgotten edge cases. |
-| "Planning is overhead" | Planning is the task. Implementation without a plan is just typing. |
-| "I can hold it all in my head" | Context windows are finite. Written plans survive session boundaries and compaction. |
+| 「やりながら考えればいい」 | それでできるのは、絡まった混乱とやり直しです。10 分の計画で数時間を節約できます。 |
+| 「タスクは自明だ」 | それでも書いてください。明文化すると、隠れた依存関係や見落としが表に出ます。 |
+| 「計画はオーバーヘッドだ」 | 計画こそが作業です。計画なしの実装は、ただタイピングしているだけです。 |
+| 「全部頭に入れられる」 | コンテキストウィンドウは有限です。文書化された計画は、セッションの境界や圧縮をまたいで残ります。 |
 
-## Red Flags
+## レッドフラグ
 
-- Starting implementation without a written task list
-- Writing `tasks/todo.md` when the project has designated an external tracker (or scattering tasks across both)
-- Tasks that say "implement the feature" without acceptance criteria
-- No verification steps in the plan
-- All tasks are XL-sized
-- No checkpoints between tasks
-- Dependency order isn't considered
+- 書面化されたタスクリストなしで実装を始める
+- プロジェクトで外部トラッカーが指定されているのに `tasks/todo.md` を書く（または両方に散らす）
+- 受け入れ条件なしで「機能を実装する」とだけ書かれたタスク
+- 計画に検証ステップがない
+- すべてのタスクが XL サイズ
+- タスク間にチェックポイントがない
+- 依存順が考慮されていない
 
-## Verification
+## 検証
 
-Before starting implementation, confirm:
+実装を始める前に、次を確認してください。
 
-- [ ] Every task has acceptance criteria
-- [ ] Every task has a verification step
-- [ ] Task dependencies are identified and ordered correctly
-- [ ] Tasks are recorded in the task list target (default `tasks/todo.md`)
-- [ ] No task touches more than ~5 files
-- [ ] Checkpoints exist between major phases
-- [ ] The human has reviewed and approved the plan
+- [ ] すべてのタスクに受け入れ条件がある
+- [ ] すべてのタスクに検証ステップがある
+- [ ] タスクの依存関係が特定され、正しい順序になっている
+- [ ] タスクがタスクリストの保存先に記録されている（既定は `tasks/todo.md`）
+- [ ] 1 タスクあたりの変更ファイル数がおおむね 5 個以下である
+- [ ] 主要フェーズの間にチェックポイントがある
+- [ ] 人間が計画をレビューし、承認している
 
 ## See Also
 
-Acceptance criteria are per-task and answer "did we build the right thing?". They sit on top of the project-wide Definition of Done, the standing bar every task clears before it counts as done. See `../../references/definition-of-done.md`.
+受け入れ条件は各タスク単位で、「正しいものを作れたか？」に答えるものです。これは、プロジェクト全体の Definition of Done の上に載るものです。Definition of Done は、タスクが完了と見なされる前に満たすべき常設の基準です。詳細は `../../references/definition-of-done.md` を参照してください。

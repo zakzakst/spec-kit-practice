@@ -1,238 +1,234 @@
 ---
 name: git-workflow-and-versioning
-description: Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog.
+description: git のワークフロー実践を整理します。あらゆるコード変更、コミット、ブランチ、コンフリクト解消、複数の並列作業の整理、リリース切り、セマンティックバージョンの選定、タグ付け、変更履歴の作成に使います。
 ---
 
-# Git Workflow and Versioning
+# Git ワークフローとバージョニング
 
-## Overview
+## 概要
 
-Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+Git は安全網です。コミットは保存ポイント、ブランチはサンドボックス、履歴は文書として扱います。AI エージェントが高速にコードを生む今こそ、規律あるバージョン管理が、変更を管理可能・レビュー可能・巻き戻し可能に保ちます。
 
-## When to Use
+## 使う場面
 
-Always. Every code change flows through git.
+常に使います。すべてのコード変更は git を通ります。
 
-## Core Principles
+## コア原則
 
-### Trunk-Based Development (Recommended)
+### Trunk-Based Development（推奨）
 
-Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
+`main` は常にデプロイ可能な状態に保ちます。1〜3 日でマージする短命な feature branch を使います。長命な開発ブランチは隠れたコストです。ずれが大きくなり、マージコンフリクトが増え、統合が遅れます。DORA の研究でも、trunk-based development は高パフォーマンスなチームと相関があります。
 
-```
-main ──●──●──●──●──●──●──●──●──●──  (always deployable)
-        ╲      ╱  ╲    ╱
-         ●──●─╱    ●──╱    ← short-lived feature branches (1-3 days)
-```
-
-This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
-
-- **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
-- **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
-- **Feature flags > long branches.** Prefer deploying incomplete work behind flags rather than keeping it on a branch for weeks.
-
-### 1. Commit Early, Commit Often
-
-Each successful increment gets its own commit. Don't accumulate large uncommitted changes.
-
-```
-Work pattern:
-  Implement slice → Test → Verify → Commit → Next slice
-
-Not this:
-  Implement everything → Hope it works → Giant commit
+```text
+main ->->->->->->->->->->  (always deployable)
+        ^  ^    ^          short-lived feature branches (1-3 days)
 ```
 
-Commits are save points. If the next change breaks something, you can revert to the last known-good state instantly.
+これは推奨デフォルトです。gitflow や長命ブランチを使うチームでも、原則（原子的なコミット、小さな変更、説明的なメッセージ）はそのブランチ戦略に適用できます。重要なのは commit の規律であり、特定の branching 戦略そのものではありません。
 
-### 2. Atomic Commits
+- **Dev branch はコストです。** 1 日長く生きるごとに、マージリスクが溜まります。
+- **Release branch は許容される。** main を進めながらリリースを安定化したいときに使います。
+- **Feature flags は長い branch より良い。** 未完成の作業は、何週間も branch に置くより、flag の裏に隠してデプロイするほうがよいです。
 
-Each commit does one logical thing:
+### 1. 早く、頻繁にコミットする
 
+成功した増分ごとに 1 つの commit を作ります。大きな未コミット変更を溜めないでください。
+
+```text
+作業の流れ:
+  slice を実装 -> テスト -> 検証 -> コミット -> 次の slice
+
+こうではない:
+  すべて実装 -> うまくいくと祈る -> 巨大コミット
 ```
-# Good: Each commit is self-contained
+
+コミットは保存ポイントです。次の変更が壊しても、最後に動いていた状態へすぐ戻れます。
+
+### 2. 原子的なコミット
+
+各コミットは 1 つの論理的なことだけを行います。
+
+```text
+# Good: 各 commit が自己完結
 git log --oneline
-a1b2c3d Add task creation endpoint with validation
-d4e5f6g Add task creation form component
-h7i8j9k Connect form to API and add loading state
-m1n2o3p Add task creation tests (unit + integration)
+a1b2c3d タスク作成 endpoint に validation を追加
+d4e5f6g タスク作成 form component を追加
+h7i8j9k form を API に接続し、loading state を追加
+m1n2o3p タスク作成テストを追加（unit + integration）
 
-# Bad: Everything mixed together
+# Bad: すべて混在
 git log --oneline
-x1y2z3a Add task feature, fix sidebar, update deps, refactor utils
+x1y2z3a タスク機能追加、sidebar 修正、deps 更新、utils リファクタリング
 ```
 
-### 3. Descriptive Messages
+### 3. 説明的なメッセージ
 
-Commit messages explain the *why*, not just the *what*:
+コミットメッセージは *何を* だけでなく *なぜ* を説明します。
 
-```
-# Good: Explains intent
-feat: add email validation to registration endpoint
+```text
+# Good: 意図が分かる
+feat: registration endpoint に email validation を追加
 
-Prevents invalid email formats from reaching the database.
-Uses Zod schema validation at the route handler level,
-consistent with existing validation patterns in auth.ts.
+無効な email 形式が database に入るのを防ぐ。
+auth.ts の既存 validation パターンに合わせて、
+route handler で Zod schema validation を使う。
 
-# Bad: Describes what's obvious from the diff
+# Bad: 差分を見れば分かることだけを書く
 update auth.ts
 ```
 
-**Format:**
+**形式:**
+
+```text
+<type>: <短い説明>
+
+<任意の body - 何をではなく、なぜを書く>
 ```
-<type>: <short description>
 
-<optional body explaining why, not what>
-```
+**type:**
+- `feat` - 新機能
+- `fix` - バグ修正
+- `refactor` - バグ修正でも新機能でもないコード変更
+- `test` - テストの追加・更新
+- `docs` - ドキュメントのみ
+- `chore` - ツール、依存関係、設定
 
-**Types:**
-- `feat` — New feature
-- `fix` — Bug fix
-- `refactor` — Code change that neither fixes a bug nor adds a feature
-- `test` — Adding or updating tests
-- `docs` — Documentation only
-- `chore` — Tooling, dependencies, config
+### 4. 関心事を分ける
 
-### 4. Keep Concerns Separate
+フォーマット変更と振る舞い変更は混ぜません。リファクタリングと機能追加も混ぜません。各変更タイプは別 commit にします。理想的には別 PR です。
 
-Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit — and ideally a separate PR:
-
-```
-# Good: Separate concerns
+```text
+# Good: 関心事を分ける
 git commit -m "refactor: extract validation logic to shared utility"
 git commit -m "feat: add phone number validation to registration"
 
-# Bad: Mixed concerns
+# Bad: 混ぜる
 git commit -m "refactor validation and add phone number field"
 ```
 
-**Separate refactoring from feature work.** A refactoring change and a feature change are two different changes — submit them separately. This makes each change easier to review, revert, and understand in history. Small cleanups (renaming a variable) can be included in a feature commit at reviewer discretion.
+**リファクタリングと機能作業は分ける。** 既存コードのリファクタリングと新しい振る舞いの追加は 2 つの変更です。別々に提出してください。小さな整理（変数名変更など）は、レビューアーの判断で feature commit に含めても構いません。
 
-### 5. Size Your Changes
+### 5. サイズを整える
 
-Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
+commit / PR はおおむね 100 行前後を目標にします。1000 行を超える変更は分割してください。分割方法は `code-review-and-quality` を参照します。
 
+```text
+~100 行   -> レビューしやすい
+~300 行   -> 1 つの論理変更なら許容
+~1000 行  -> 分割する
 ```
-~100 lines  → Easy to review, easy to revert
-~300 lines  → Acceptable for a single logical change
-~1000 lines → Split into smaller changes
-```
 
-## Branching Strategy
+## ブランチ戦略
 
 ### Feature Branches
 
-```
+```text
 main (always deployable)
-  │
-  ├── feature/task-creation    ← One feature per branch
-  ├── feature/user-settings    ← Parallel work
-  └── fix/duplicate-tasks      ← Bug fixes
+  -> feature/task-creation   1 つの機能
+  -> feature/user-settings   並列作業
+  -> fix/duplicate-tasks     バグ修正
 ```
 
-- Branch from `main` (or the team's default branch)
-- Keep branches short-lived (merge within 1-3 days) — long-lived branches are hidden costs
-- Delete branches after merge
-- Prefer feature flags over long-lived branches for incomplete features
+- `main`（またはチームの既定 branch）から分岐する
+- branch は短命にする（1〜3 日でマージ） - 長命 branch は隠れたコスト
+- マージ後は削除する
+- 未完成機能は長命 branch より feature flag を使う
 
 ### Branch Naming
 
-```
-feature/<short-description>   → feature/task-creation
-fix/<short-description>       → fix/duplicate-tasks
-chore/<short-description>     → chore/update-deps
-refactor/<short-description>  → refactor/auth-module
+```text
+feature/<short-description>   -> feature/task-creation
+fix/<short-description>       -> fix/duplicate-tasks
+chore/<short-description>     -> chore/update-deps
+refactor/<short-description>  -> refactor/auth-module
 ```
 
-## Working with Worktrees
+## Worktree の使い方
 
-For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
+並列 AI エージェント作業では、git worktree を使って複数 branch を同時に走らせます。
 
 ```bash
-# Create a worktree for a feature branch
+# feature branch 用に worktree を作る
 git worktree add ../project-feature-a feature/task-creation
 git worktree add ../project-feature-b feature/user-settings
 
-# Each worktree is a separate directory with its own branch
-# Agents can work in parallel without interfering
+# 各 worktree はそれぞれの branch を持つ別ディレクトリ
+# エージェントは干渉せず並列作業できる
 ls ../
-  project/              ← main branch
-  project-feature-a/    ← task-creation branch
-  project-feature-b/    ← user-settings branch
+  project/              main branch
+  project-feature-a/    task-creation branch
+  project-feature-b/    user-settings branch
 
-# When done, merge and clean up
+# 終わったら merge して片付ける
 git worktree remove ../project-feature-a
 ```
 
-Benefits:
-- Multiple agents can work on different features simultaneously
-- No branch switching needed (each directory has its own branch)
-- If one experiment fails, delete the worktree — nothing is lost
-- Changes are isolated until explicitly merged
+**利点:**
+- 複数エージェントが異なる機能で同時に作業できる
+- branch 切り替えが不要（各ディレクトリが独自 branch を持つ）
+- 1 つの実験が失敗しても worktree を消せばよい - 失うものはない
+- 変更は明示的に merge されるまで隔離される
 
-## The Save Point Pattern
+## Save Point パターン
 
-```
+```text
 Agent starts work
-    │
-    ├── Makes a change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    ├── Makes another change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    └── Feature complete → All commits form a clean history
+  -> change を加える
+     -> test passes? commit -> continue
+     -> test fails? revert to last commit -> investigate
+  -> another change
+     -> test passes? commit -> continue
+     -> test fails? revert to last commit -> investigate
+  -> feature complete, clean history
 ```
 
-This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
+このパターンでは、失うのは常に 1 増分分までです。エージェントが暴走しても、`git reset --hard HEAD` で最後の成功状態に戻れます。
 
 ## Change Summaries
 
-After any modification, provide a structured summary. This makes review easier, documents scope discipline, and surfaces unintended changes:
+何か変更したら、構造化した要約を出します。レビューがしやすくなり、スコープ規律が文書化され、意図しない変更が表に出ます。
 
-```
+```text
 CHANGES MADE:
-- src/routes/tasks.ts: Added validation middleware to POST endpoint
-- src/lib/validation.ts: Added TaskCreateSchema using Zod
+- src/routes/tasks.ts: POST endpoint に validation middleware を追加
+- src/lib/validation.ts: Zod で TaskCreateSchema を追加
 
 THINGS I DIDN'T TOUCH (intentionally):
-- src/routes/auth.ts: Has similar validation gap but out of scope
-- src/middleware/error.ts: Error format could be improved (separate task)
+- src/routes/auth.ts: 同様の validation gap があるがスコープ外
+- src/middleware/error.ts: error format は改善余地がある（別タスク）
 
 POTENTIAL CONCERNS:
-- The Zod schema is strict — rejects extra fields. Confirm this is desired.
-- Added zod as a dependency (72KB gzipped) — already in package.json
+- Zod schema は strict - extra fields を拒否する。これでよいか確認
+- zod を dependency として追加（72KB gzipped） - 既に package.json にはある
 ```
 
-This pattern catches wrong assumptions early and gives reviewers a clear map of the change. The "DIDN'T TOUCH" section is especially important — it shows you exercised scope discipline and didn't go on an unsolicited renovation.
+このパターンは、誤った仮定を早く見つけ、レビューアーに変更の地図を渡します。`DIDN'T TOUCH` セクションは特に重要です。scope discipline を守り、勝手な改装をしていないことを示します。
 
 ## Pre-Commit Hygiene
 
-Before every commit:
+毎回 commit 前に:
 
 ```bash
-# 1. Check what you're about to commit
+# 1. 何を commit するか確認
 git diff --staged
 
-# 2. Ensure no secrets
+# 2. 秘密情報がないか確認
 git diff --staged | grep -i "password\|secret\|api_key\|token"
 
-# 3. Run tests
+# 3. テスト実行
 npm test
 
-# 4. Run linting
+# 4. lint 実行
 npm run lint
 
-# 5. Run type checking
+# 5. 型チェック
 npx tsc --noEmit
 ```
 
-Automate this with git hooks:
+git hook で自動化できます。
 
 ```json
-// package.json (using lint-staged + husky)
+// package.json (lint-staged + husky)
 {
   "lint-staged": {
     "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
@@ -241,115 +237,115 @@ Automate this with git hooks:
 }
 ```
 
-## Handling Generated Files
+## Generated Files の扱い
 
-- **Commit generated files** only if the project expects them (e.g., `package-lock.json`, Prisma migrations)
-- **Don't commit** build output (`dist/`, `.next/`), environment files (`.env`), or IDE config (`.vscode/settings.json` unless shared)
-- **Have a `.gitignore`** that covers: `node_modules/`, `dist/`, `.env`, `.env.local`, `*.pem`
+- **生成ファイルはコミットする** - プロジェクトが期待している場合のみ（例: `package-lock.json`、Prisma migrations）
+- **コミットしない** - build output（`dist/`、`.next/`）、環境ファイル（`.env`）、IDE 設定（共有しない `vscode/settings.json` など）
+- **`.gitignore` を用意する** - `node_modules/`、`dist/`、`.env`、`.env.local`、`*.pem`
 
-## Using Git for Debugging
+## Git を使ったデバッグ
 
 ```bash
-# Find which commit introduced a bug
+# バグを入れた commit を探す
 git bisect start
 git bisect bad HEAD
 git bisect good <known-good-commit>
-# Git checkouts midpoints; run your test at each to narrow down
+# Git が中間 commit を checkout するので、そのたびにテストを走らせる
 
-# View what changed recently
+# 直近の変更を見る
 git log --oneline -20
 git diff HEAD~5..HEAD -- src/
 
-# Find who last changed a specific line
+# 特定行を最後に変更した人を調べる
 git blame src/services/task.ts
 
-# Search commit messages for a keyword
+# キーワードで commit message を検索
 git log --grep="validation" --oneline
 ```
 
-## Release & Versioning
+## Release と Versioning
 
-Commits are how *you* track change; a **version** is how your *consumers* track it. The moment anything else depends on your code — another team, a published package, a deployed client — "latest on main" stops being a sufficient answer to "what am I running, and is it safe to upgrade?" A version number and a changelog are the contract that answers it.
+commit は *あなた* が変更を追う方法で、version は *利用者* が変更を追う方法です。何か他者があなたのコードに依存する瞬間 - 別チーム、公開パッケージ、デプロイ済みクライアント - には、"main の latest" だけでは「今何を動かしていて、アップグレードして安全か」を答えられません。version number と changelog が、その答えです。
 
 ### Semantic Versioning
 
-For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carry meaning:
+利用者がいるものは `MAJOR.MINOR.PATCH` を付け、番号に意味を持たせます。
 
+```text
+MAJOR  breaking change - 利用者はコードを変える必要がある
+MINOR  互換性のある新機能 - 安全にアップグレードできる
+PATCH  互換性のあるバグ修正 - 安全にアップグレードできる
 ```
-  MAJOR  breaking change — consumers must change their code to upgrade
-  MINOR  new functionality, backward-compatible — safe to upgrade
-  PATCH  bug fix, backward-compatible — safe to upgrade
-```
 
-The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law — see the `api-and-interface-design` skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.
+番号は約束です。コードもそれに合わせてください。利用者が頼っていた振る舞いを変える "patch" は、見せかけの major change です（Hyrum's Law - `api-and-interface-design` を参照）。破壊的か迷うなら、壊すものだと仮定してください。予想外の major は、壊れた利用者よりはるかに安いです。
 
-### Tag the release, and let the tag be the source of truth
+### リリースに tag を付け、tag を正とする
 
-A release is an immutable point in history, not a moving branch. Tag it so it can always be reproduced:
+release は動く branch ではなく、不変の歴史の一点です。tag を付けて、いつでも再現できるようにします。
 
 ```bash
 git tag -a v1.4.0 -m "Release 1.4.0"
 git push origin v1.4.0
 ```
 
-Derive the version from the tag rather than hand-editing it in scattered files, so the artifact, the tag, and the changelog can never disagree.
+version は手で散在ファイルを書き換えるのではなく、tag から導出します。そうすれば artifact、tag、changelog が食い違いません。
 
-### Keep a changelog written for humans
+### 人間向けの changelog を保つ
 
-A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
+changelog は `git log` ではありません。利用者向けに、「何が変わり、自分に関係あるか」を答えるものです。`Added / Changed / Fixed / Deprecated / Removed / Security` にまとめ、新しいものを上にし、各 entry は内部実装ではなく利用者への影響で書きます。
 
 ```markdown
 ## [1.4.0] - 2025-06-12
 ### Added
-- Bulk task import via CSV
+- CSV による一括タスク import
 ### Fixed
-- Timezone drift in recurring task due dates
+- recurring task の due date の timezone drift
 ### Deprecated
-- `GET /v1/tasks/all` — use the paginated `GET /v1/tasks` (removal in 2.0)
+- `GET /v1/tasks/all` - ページネーション付き `GET /v1/tasks` を使ってください（2.0 で削除）
 ```
 
-Write the entry in the same change that makes the change, while the impact is fresh — not reconstructed from commit archaeology at release time. Breaking changes get a migration note and a deprecation window (follow the `deprecation-and-migration` skill); shipping the actual release is the `shipping-and-launch` skill's job — this section is the versioning contract that feeds it.
+entry は、変更したその時点で同じ change に書きます。release 時に commit archaeology から掘り起こすのではありません。breaking change には migration note と deprecation window を付けます（`deprecation-and-migration` を参照）。実際の release を shipping するのは `shipping-and-launch` の役目です。この節は、その前段の versioning contract です。
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "I'll commit when the feature is done" | One giant commit is impossible to review, debug, or revert. Commit each slice. |
-| "The message doesn't matter" | Messages are documentation. Future you (and future agents) will need to understand what changed and why. |
-| "I'll squash it all later" | Squashing destroys the development narrative. Prefer clean incremental commits from the start. |
-| "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem — merge within 1-3 days. |
-| "I'll split this change later" | Large changes are harder to review, riskier to deploy, and harder to revert. Split before submitting, not after. |
-| "I don't need a .gitignore" | Until `.env` with production secrets gets committed. Set it up immediately. |
-| "It's just a small fix, bump the patch" | Check what consumers can observe. A behavior change they relied on is a major, whatever the diff size. |
-| "The changelog is just the commit log" | Commits are for you; the changelog is for consumers, curated by impact. Generating one from raw commits buries what matters. |
-| "We'll write the changelog at release time" | By then the impact is reconstructed from memory and half of it is missing. Write the entry with the change. |
+| 「feature が終わったら commit する」 | 巨大な 1 commit はレビューもデバッグも revert もできません。slice ごとに commit してください。 |
+| 「メッセージはどうでもいい」 | メッセージは文書です。未来のあなたと未来のエージェントは、何が変わってなぜ変わったかを知る必要があります。 |
+| 「あとで squash する」 | squash は開発の物語を消します。最初からきれいな incremental commit にしてください。 |
+| 「branch はオーバーヘッド」 | 短命 branch はほぼ無料で、作業の衝突を防ぎます。問題なのは長命 branch です - 1〜3 日で merge してください。 |
+| 「この変更はあとで分ければいい」 | 大きな変更はレビューしづらく、デプロイも revert も危険です。提出前に分割してください。 |
+| 「.gitignore は要らない」 | 本番秘密情報を含む `.env` が commit されるまで、そう言えますか。今すぐ用意してください。 |
+| 「小さい fix だから patch でいい」 | 利用者から見えるものを確認してください。頼っていた振る舞いが変わるなら、diff の大きさに関係なく major です。 |
+| 「changelog は commit log で十分」 | commit は自分向け、changelog は利用者向けです。生の commit から生成すると、重要なものが埋もれます。 |
+| 「release 時に changelog を書けばいい」 | その時点では影響を記憶から再構成することになり、半分は欠けます。変更と同時に書いてください。 |
 
-## Red Flags
+## レッドフラグ
 
-- Large uncommitted changes accumulating
-- Commit messages like "fix", "update", "misc"
-- Formatting changes mixed with behavior changes
-- No `.gitignore` in the project
-- Committing `node_modules/`, `.env`, or build artifacts
-- Long-lived branches that diverge significantly from main
-- Force-pushing to shared branches
-- A breaking change shipped under a minor or patch version bump
-- A release with no tag, or a version number hand-edited out of sync with the tag
-- A user-facing release with no changelog entry, or a changelog that's just dumped commit messages
+- 大きな未コミット変更が溜まっている
+- "fix"、"update"、"misc" のような commit message
+- 振る舞い変更とフォーマット変更が混ざっている
+- プロジェクトに `.gitignore` がない
+- `node_modules/`、`.env`、build artifacts を commit している
+- main から大きくずれた長命 branch
+- 共有 branch への force-push
+- breaking change を minor または patch bump で出している
+- tag がない release、または tag と食い違う手編集 version number
+- 利用者向け release に changelog がない、または commit message をただ流しただけ
 
-## Verification
+## 検証
 
-For every commit:
+各 commit について:
 
-- [ ] Commit does one logical thing
-- [ ] Message explains the why, follows type conventions
-- [ ] Tests pass before committing
-- [ ] No secrets in the diff
-- [ ] No formatting-only changes mixed with behavior changes
-- [ ] `.gitignore` covers standard exclusions
+- [ ] 1 つの論理的なことだけをしている
+- [ ] メッセージがなぜを説明し、type 規約に従っている
+- [ ] commit 前にテストが通っている
+- [ ] diff に秘密情報がない
+- [ ] フォーマット変更と振る舞い変更が混ざっていない
+- [ ] `.gitignore` が標準除外をカバーしている
 
-For every release (anything with consumers):
+各 release（利用者がいるもの）について:
 
-- [ ] The version bump matches the change: breaking → major, additive → minor, fix → patch
-- [ ] The release is tagged, and the version is derived from the tag, not hand-edited out of sync
-- [ ] The changelog has a curated, human-readable entry grouped by impact for this version
+- [ ] version bump が変更に合っている: breaking -> major, additive -> minor, fix -> patch
+- [ ] release に tag が付き、version は tag から導出され、手編集でずれていない
+- [ ] changelog に、その version の影響でまとめられた、人間が読める entry がある

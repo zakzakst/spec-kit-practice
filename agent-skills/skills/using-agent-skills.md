@@ -1,191 +1,192 @@
 ---
 name: using-agent-skills
-description: Discovers and invokes agent skills. Use when starting a session or when you need to discover which skill applies to the current task. This is the meta-skill that governs how all other skills are discovered and invoked.
+description: エージェントスキルを見つけて呼び出します。セッション開始時や、現在のタスクに合うスキルを探す必要があるときに使います。これは他のすべてのスキルの見つけ方と使い方を統括するメタスキルです。
 ---
 
-# Using Agent Skills
+# エージェントスキルの使い方
 
-## Overview
+## 概要
 
-Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
+Agent Skills は、開発フェーズごとに整理されたエンジニアリングワークフローの集まりです。各スキルには、上級エンジニアが実践する具体的な進め方が埋め込まれています。このメタスキルは、今のタスクに適したスキルを見つけて適用するための手引きです。
 
-## Skill Discovery
+## スキルの見つけ方
 
-When a task arrives, identify the development phase and apply the corresponding skill:
+タスクが来たら、開発フェーズを見極めて対応するスキルを適用します。
 
-```
-Task arrives
-    │
-    ├── Don't know what you want yet? ──────→ interview-me
-    ├── Have a rough concept, need variants? → idea-refine
-    ├── New project/feature/change? ──→ spec-driven-development
-    ├── Have a spec, need tasks? ──────→ planning-and-task-breakdown
-    ├── Implementing code? ────────────→ incremental-implementation
-    │   ├── UI work? ─────────────────→ frontend-ui-engineering
-    │   ├── API work? ────────────────→ api-and-interface-design
-    │   ├── Need better context? ─────→ context-engineering
-    │   ├── Need doc-verified code? ───→ source-driven-development
-    │   └── Stakes high / unfamiliar code? ──→ doubt-driven-development
-    ├── Writing/running tests? ────────→ test-driven-development
-    │   └── Browser-based? ───────────→ browser-testing-with-devtools
-    ├── Something broke? ──────────────→ debugging-and-error-recovery
-    ├── Reviewing code? ───────────────→ code-review-and-quality
-    │   ├── Too complex? ─────────────→ code-simplification
-    │   ├── Security concerns? ───────→ security-and-hardening
-    │   └── Performance concerns? ────→ performance-optimization
-    ├── Committing/branching? ─────────→ git-workflow-and-versioning
-    ├── CI/CD pipeline work? ──────────→ ci-cd-and-automation
-    ├── Deprecating/migrating? ────────→ deprecation-and-migration
-    ├── Writing docs/ADRs? ───────────→ documentation-and-adrs
-    ├── Adding logs/metrics/alerts? ───→ observability-and-instrumentation
-    └── Deploying/launching? ─────────→ shipping-and-launch
-```
-
-## Core Operating Behaviors
-
-These behaviors apply at all times, across all skills. They are non-negotiable.
-
-### 1. Surface Assumptions
-
-Before implementing anything non-trivial, explicitly state your assumptions:
-
-```
-ASSUMPTIONS I'M MAKING:
-1. [assumption about requirements]
-2. [assumption about architecture]
-3. [assumption about scope]
-→ Correct me now or I'll proceed with these.
+```text
+タスクが来る
+    ├─ まだ何を求めているか分からない？ -> `interview-me`
+    ├─ ざっくりした構想はあるが、案を広げたい？ -> `idea-refine`
+    ├─ 新規プロジェクト / 機能 / 変更？ -> `spec-driven-development`
+    ├─ 仕様はあるが、タスクに分解したい？ -> `planning-and-task-breakdown`
+    ├─ コードを実装している？ -> `incremental-implementation`
+    │  ├─ UI の作業？ -> `frontend-ui-engineering`
+    │  ├─ API の作業？ -> `api-and-interface-design`
+    │  ├─ もっと文脈が必要？ -> `context-engineering`
+    │  ├─ ドキュメントで裏付けたコードが必要？ -> `source-driven-development`
+    │  └─ リスクが高い / 慣れていないコード？ -> `doubt-driven-development`
+    ├─ テストを書いている / 実行している？ -> `test-driven-development`
+    │  └─ ブラウザベース？ -> `browser-testing-with-devtools`
+    ├─ 何か壊れた？ -> `debugging-and-error-recovery`
+    ├─ コードレビューしている？ -> `code-review-and-quality`
+    │  ├─ 複雑すぎる？ -> `code-simplification`
+    │  ├─ セキュリティ上の懸念？ -> `security-and-hardening`
+    │  └─ パフォーマンス上の懸念？ -> `performance-optimization`
+    ├─ コミット / ブランチ操作？ -> `git-workflow-and-versioning`
+    ├─ CI/CD パイプラインの作業？ -> `ci-cd-and-automation`
+    ├─ 非推奨化 / 移行？ -> `deprecation-and-migration`
+    ├─ ドキュメント / ADR の作成？ -> `documentation-and-adrs`
+    ├─ ログ / メトリクス / アラートの追加？ -> `observability-and-instrumentation`
+    └─ デプロイ / リリース？ -> `shipping-and-launch`
 ```
 
-Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early — it's cheaper than rework.
+## すべてのスキルに共通する基本動作
 
-### 2. Manage Confusion Actively
+これらの振る舞いは、常に、すべてのスキルに適用されます。例外はありません。
 
-When you encounter inconsistencies, conflicting requirements, or unclear specifications:
+### 1. 前提を明示する
 
-1. **STOP.** Do not proceed with a guess.
-2. Name the specific confusion.
-3. Present the tradeoff or ask the clarifying question.
-4. Wait for resolution before continuing.
+非自明な実装に取りかかる前に、まず自分が置いている前提を明示します。
 
-**Bad:** Silently picking one interpretation and hoping it's right.
-**Good:** "I see X in the spec but Y in the existing code. Which takes precedence?"
-
-### 3. Push Back When Warranted
-
-You are not a yes-machine. When an approach has clear problems:
-
-- Point out the issue directly
-- Explain the concrete downside (quantify when possible — "this adds ~200ms latency" not "this might be slower")
-- Propose an alternative
-- Accept the human's decision if they override with full information
-
-Sycophancy is a failure mode. "Of course!" followed by implementing a bad idea helps no one. Honest technical disagreement is more valuable than false agreement.
-
-### 4. Enforce Simplicity
-
-Your natural tendency is to overcomplicate. Actively resist it.
-
-Before finishing any implementation, ask:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer look at this and say "why didn't you just..."?
-
-If you build 1000 lines and 100 would suffice, you have failed. Prefer the boring, obvious solution. Cleverness is expensive.
-
-### 5. Maintain Scope Discipline
-
-Touch only what you're asked to touch.
-
-Do NOT:
-- Remove comments you don't understand
-- "Clean up" code orthogonal to the task
-- Refactor adjacent systems as a side effect
-- Delete code that seems unused without explicit approval
-- Add features not in the spec because they "seem useful"
-
-Your job is surgical precision, not unsolicited renovation.
-
-### 6. Verify, Don't Assume
-
-Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
-
-Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `../../references/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
-
-## Failure Modes to Avoid
-
-These are the subtle errors that look like productivity but create problems:
-
-1. Making wrong assumptions without checking
-2. Not managing your own confusion — plowing ahead when lost
-3. Not surfacing inconsistencies you notice
-4. Not presenting tradeoffs on non-obvious decisions
-5. Being sycophantic ("Of course!") to approaches with clear problems
-6. Overcomplicating code and APIs
-7. Modifying code or comments orthogonal to the task
-8. Removing things you don't fully understand
-9. Building without a spec because "it's obvious"
-10. Skipping verification because "it looks right"
-
-## Skill Rules
-
-1. **Check for an applicable skill before starting work.** Skills encode processes that prevent common mistakes.
-
-2. **Skills are workflows, not suggestions.** Follow the steps in order. Don't skip verification steps.
-
-3. **Multiple skills can apply.** A feature implementation might involve `idea-refine` → `spec-driven-development` → `planning-and-task-breakdown` → `incremental-implementation` → `test-driven-development` → `code-review-and-quality` → `code-simplification` → `shipping-and-launch` in sequence.
-
-4. **When in doubt, start with a spec.** If the task is non-trivial and there's no spec, begin with `spec-driven-development`.
-
-## Lifecycle Sequence
-
-For a complete feature, the typical skill sequence is:
-
-```
-1.  interview-me                → Extract what the user actually wants
-2.  idea-refine                 → Refine vague ideas
-3.  spec-driven-development     → Define what we're building
-4.  planning-and-task-breakdown → Break into verifiable chunks
-5.  context-engineering         → Load the right context
-6.  source-driven-development   → Verify against official docs
-7.  incremental-implementation  → Build slice by slice
-8.  observability-and-instrumentation → Instrument as you build (runs parallel with 7-9, not after)
-9.  doubt-driven-development    → Cross-examine non-trivial decisions in-flight
-10. test-driven-development     → Prove each slice works
-11. code-review-and-quality     → Review before merge
-12. code-simplification         → Reduce unnecessary complexity while preserving behavior
-13. git-workflow-and-versioning → Clean commit history
-14. documentation-and-adrs      → Document decisions
-15. deprecation-and-migration   → Retire old systems and move users safely when needed
-16. shipping-and-launch         → Deploy safely
+```text
+前提としていること:
+1. [要件に関する前提]
+2. [アーキテクチャに関する前提]
+3. [スコープに関する前提]
+-> いま修正してください。そうでなければ、この前提で進めます。
 ```
 
-Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
+曖昧な要件を黙って補完してはいけません。もっともよくある失敗は、誤った前提をそのまま進めてしまうことです。不確実性は早めに表に出してください。やり直しよりずっと安上がりです。
 
-## Quick Reference
+### 2. 混乱はその場で整理する
 
-| Phase | Skill | One-Line Summary |
-|-------|-------|-----------------|
-| Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
-| Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
-| Define | spec-driven-development | Requirements and acceptance criteria before code |
-| Plan | planning-and-task-breakdown | Decompose into small, verifiable tasks |
-| Build | incremental-implementation | Thin vertical slices, test each before expanding |
-| Build | source-driven-development | Verify against official docs before implementing |
-| Build | doubt-driven-development | Adversarial fresh-context review of every non-trivial decision |
-| Build | context-engineering | Right context at the right time |
-| Build | frontend-ui-engineering | Production-quality UI with accessibility |
-| Build | api-and-interface-design | Stable interfaces with clear contracts |
-| Verify | test-driven-development | Failing test first, then make it pass |
-| Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
-| Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
-| Review | code-review-and-quality | Five-axis review with quality gates |
-| Review | code-simplification | Preserve behavior while reducing unnecessary complexity |
-| Review | security-and-hardening | OWASP prevention, input validation, least privilege |
-| Review | performance-optimization | Measure first, optimize only what matters |
-| Ship | git-workflow-and-versioning | Atomic commits, clean history |
-| Ship | ci-cd-and-automation | Automated quality gates on every change |
-| Ship | deprecation-and-migration | Remove old systems and migrate users safely |
-| Ship | documentation-and-adrs | Document the why, not just the what |
-| Ship | observability-and-instrumentation | Structured logs, RED metrics, traces, symptom-based alerts |
-| Ship | shipping-and-launch | Pre-launch checklist, monitoring, rollback plan |
+矛盾、食い違い、曖昧な仕様に出会ったら、次の順で対応します。
+
+1. いったん止まる
+2. どこが混乱点かを具体的に示す
+3. トレードオフか確認事項を提示する
+4. 解決するまで待つ
+
+**悪い例:** どちらか一方の解釈を勝手に選んで、うまくいくと期待する。  
+**良い例:** 「仕様では X ですが、既存コードでは Y です。どちらを優先しますか？」
+
+### 3. 必要ならはっきり異議を唱える
+
+あなたは何でも肯定する存在ではありません。明らかに問題のある方法には、次を行います。
+
+- 問題点をはっきり指摘する
+- 具体的な不利益を説明する（可能なら数値化する。例: 「遅くなるかもしれない」ではなく「約200ms遅くなる」）
+- 代替案を提案する
+- 十分な情報を渡されたうえで人間が判断を変えないなら、その決定を受け入れる
+
+おべっかは失敗の一種です。「もちろんです！」と返して、明らかに悪い案を実装するのは誰の役にも立ちません。正直な技術的異議のほうが、見せかけの同意より価値があります。
+
+### 4. 単純さを守る
+
+人は複雑にしすぎる傾向があります。意識して抑えてください。
+
+実装を終える前に、次を自問します。
+
+- もっと少ない行数でできないか
+- この抽象化は複雑さに見合っているか
+- スタッフエンジニアが見て「なぜ最初からこうしなかった？」と言う構成ではないか
+
+1000行必要ないのに1000行書いたなら失敗です。地味で明快な解決策を優先してください。小賢しさは高くつきます。
+
+### 5. スコープを守る
+
+頼まれた範囲だけを触ってください。
+
+やってはいけないこと:
+
+- 理解していないコメントを消す
+- 関係のないコードを「きれいにする」
+- ついでに周辺システムまでリファクタリングする
+- 使われていなさそうだという理由だけで、許可なくコードを削除する
+- 仕様にない機能を「便利そうだから」と追加する
+
+あなたの役割は外科的な精度であり、勝手な改装ではありません。
+
+### 6. 検証を省略しない
+
+各スキルには検証ステップがあります。タスクは、検証に通るまで完了ではありません。「たぶん合っている」は不十分です。証拠が必要です（テスト成功、ビルド結果、実行時データなど）。
+
+各スキル固有の検証は局所チェックです。どの変更にも共通して適用される全体基準は Definition of Done です。テストが通り、回帰がなく、動作が実行時に確認され、ドキュメントが更新されている必要があります。詳細は `../../references/definition-of-done.md` を参照してください。これは各タスクの受け入れ条件を置き換えるものではなく、補完するものです。
+
+## 避けるべき失敗パターン
+
+一見生産的に見えて、実際には問題を増やす微妙な失敗です。
+
+1. 前提を確認せずに誤ったまま進める
+2. 自分の混乱を放置したまま突き進む
+3. 気づいた矛盾を表に出さない
+4. 非自明な判断にトレードオフを示さない
+5. 明らかに問題のある案に対しておべっかを使う
+6. コードや API を過剰に複雑化する
+7. タスクと無関係なコードやコメントを変更する
+8. よく分からないものを削除する
+9. 「明らかだから」と仕様なしで作り始める
+10. 「見た目は正しそう」で検証を飛ばす
+
+## スキルのルール
+
+1. **作業を始める前に、適用可能なスキルを確認する。** スキルは、よくある失敗を防ぐためのワークフローです。
+
+2. **スキルは提案ではなく手順です。** 順番どおりに従ってください。検証ステップは飛ばしません。
+
+3. **複数のスキルが同時に当てはまることがある。** たとえば機能実装では、`idea-refine` -> `spec-driven-development` -> `planning-and-task-breakdown` -> `incremental-implementation` -> `test-driven-development` -> `code-review-and-quality` -> `code-simplification` -> `shipping-and-launch` の順で使うことがあります。
+
+4. **迷ったら、まず仕様から始める。** タスクが非自明で、まだ仕様がないなら、`spec-driven-development` から始めてください。
+
+## ライフサイクルの流れ
+
+機能を最後まで作るときの典型的な流れです。
+
+```text
+1.  interview-me                      -> ユーザーが本当に求めているものを引き出す
+2.  idea-refine                       -> 曖昧なアイデアを整理する
+3.  spec-driven-development           -> 何を作るかを定義する
+4.  planning-and-task-breakdown       -> 検証可能な単位に分ける
+5.  context-engineering               -> 適切な文脈を読み込む
+6.  source-driven-development         -> 公式ドキュメントで裏付ける
+7.  incremental-implementation        -> 小さく縦に積み上げる
+8.  observability-and-instrumentation  -> 実装しながら計測可能にする（7〜9 と並行）
+9.  doubt-driven-development          -> 非自明な判断をその場で検証する
+10. test-driven-development           -> 各スライスが動くことを証明する
+11. code-review-and-quality           -> マージ前にレビューする
+12. code-simplification               -> 振る舞いを保ちながら不要な複雑さを減らす
+13. git-workflow-and-versioning       -> 履歴を整える
+14. documentation-and-adrs            -> 判断を文書化する
+15. deprecation-and-migration         -> 古い仕組みを安全に退役・移行する
+16. shipping-and-launch               -> 安全にデプロイする
+```
+
+すべてのタスクにすべてのスキルが必要なわけではありません。たとえばバグ修正なら、`debugging-and-error-recovery` -> `test-driven-development` -> `code-review-and-quality` だけで足りることもあります。
+
+## 早見表
+
+| フェーズ | スキル | 一言要約 |
+|---|---|---|
+| 定義 | interview-me | 何を作るべきかを、計画や仕様やコードの前に引き出す |
+| 定義 | idea-refine | 構造化された発散と収束でアイデアを磨く |
+| 定義 | spec-driven-development | コードより先に要件と受け入れ条件を固める |
+| 計画 | planning-and-task-breakdown | 小さく検証可能なタスクに分解する |
+| 実装 | incremental-implementation | 細い縦スライスで、広げる前に一つずつ検証する |
+| 実装 | source-driven-development | 実装前に公式ドキュメントで確認する |
+| 実装 | doubt-driven-development | 非自明な判断を、新鮮な視点で敵対的に検証する |
+| 実装 | context-engineering | 適切な文脈を適切なタイミングで読む |
+| 実装 | frontend-ui-engineering | アクセシビリティを備えた本番品質の UI を作る |
+| 実装 | api-and-interface-design | 明確な契約を持つ安定したインターフェースを設計する |
+| 検証 | test-driven-development | まず失敗するテストを書いてから通す |
+| 検証 | browser-testing-with-devtools | Chrome DevTools MCP で実行時を確認する |
+| 検証 | debugging-and-error-recovery | 再現 -> 局所化 -> 修正 -> ガードを行う |
+| レビュー | code-review-and-quality | 5 つの観点で品質を確認する |
+| レビュー | code-simplification | 振る舞いを保ったまま不要な複雑さを削る |
+| レビュー | security-and-hardening | OWASP に基づく防御、入力検証、最小権限 |
+| レビュー | performance-optimization | まず測り、本当に効く部分だけを最適化する |
+| リリース | git-workflow-and-versioning | 小さく原子的なコミット、きれいな履歴 |
+| リリース | ci-cd-and-automation | すべての変更に自動品質ゲートをかける |
+| リリース | deprecation-and-migration | 古いシステムを廃止し、安全に移行する |
+| リリース | documentation-and-adrs | 「何を」より「なぜ」を文書化する |
+| リリース | observability-and-instrumentation | 構造化ログ、RED メトリクス、トレース、症状ベースのアラート |
+| リリース | shipping-and-launch | 事前チェック、監視、ロールバック計画 |

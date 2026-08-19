@@ -1,249 +1,130 @@
 ---
 name: incremental-implementation
-description: Delivers changes incrementally. Use when implementing any feature or change that touches more than one file. Use when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
+description: 機能を小さく、検証可能な増分で実装します。大きな変更を一度に入れず、各ステップで動く状態を保ちながら進めたいときに使います。
 ---
 
-# Incremental Implementation
+# 段階的実装
 
-## Overview
+## 概要
 
-Build in thin vertical slices — implement one piece, test it, verify it, then expand. Avoid implementing an entire feature in one pass. Each increment should leave the system in a working, testable state. This is the execution discipline that makes large features manageable.
+大きな変更を、薄い縦スライスに分けて 1 つずつ実装します。各増分は、実装・テスト・確認ができる小ささに保ちます。狙いは「いきなり全部作る」ではなく、常に動く状態を保ちながら前に進むことです。
 
-## When to Use
+## 使う場面
 
-- Implementing any multi-file change
-- Building a new feature from a task breakdown
-- Refactoring existing code
-- Any time you're tempted to write more than ~100 lines before testing
+- 仕様や計画はあるが、実装をどこから切るか迷うとき
+- 大きな変更を安全に進めたいとき
+- 1 回の作業で全部を終えるには大きすぎるとき
+- テストしながら実装を進めたいとき
 
-**When NOT to use:** Single-file, single-function changes where the scope is already minimal.
+**使わない場面:** 1 ファイルの小変更や、すでに十分小さい修正。
 
-## The Increment Cycle
+## 基本方針
 
-```
-┌──────────────────────────────────────┐
-│                                      │
-│   Implement ──→ Test ──→ Verify ──┐  │
-│       ▲                           │  │
-│       └───── Commit ◄─────────────┘  │
-│              │                       │
-│              ▼                       │
-│          Next slice                  │
-│                                      │
-└──────────────────────────────────────┘
-```
+### 1. 1 ステップ 1 目的
 
-For each slice:
+各ステップは 1 つの具体的な目的だけを持ちます。複数の目的を 1 回でやろうとしないでください。
 
-1. **Implement** the smallest complete piece of functionality
-2. **Test** — run the test suite (or write a test if none exists)
-3. **Verify** — confirm the slice works as expected (tests pass, build succeeds, manual check)
-4. **Commit** -- save your progress with a descriptive message (see `git-workflow-and-versioning` for atomic commit guidance)
-5. **Move to the next slice** — carry forward, don't restart
+```text
+良い:
+- まず schema を追加する
+- 次に route handler をつなぐ
+- 次に UI を表示する
 
-## Slicing Strategies
-
-### Vertical Slices (Preferred)
-
-Build one complete path through the stack:
-
-```
-Slice 1: Create a task (DB + API + basic UI)
-    → Tests pass, user can create a task via the UI
-
-Slice 2: List tasks (query + API + UI)
-    → Tests pass, user can see their tasks
-
-Slice 3: Edit a task (update + API + UI)
-    → Tests pass, user can modify tasks
-
-Slice 4: Delete a task (delete + API + UI + confirmation)
-    → Tests pass, full CRUD complete
+悪い:
+- schema、API、UI、テストを全部一気にやる
 ```
 
-Each slice delivers working end-to-end functionality.
+### 2. まず土台、次に依存先
 
-### Contract-First Slicing
+依存される側から作ります。上から下へではなく、下から上へ積みます。
 
-When backend and frontend need to develop in parallel:
-
-```
-Slice 0: Define the API contract (types, interfaces, OpenAPI spec)
-Slice 1a: Implement backend against the contract + API tests
-Slice 1b: Implement frontend against mock data matching the contract
-Slice 2: Integrate and test end-to-end
-```
-
-### Risk-First Slicing
-
-Tackle the riskiest or most uncertain piece first:
-
-```
-Slice 1: Prove the WebSocket connection works (highest risk)
-Slice 2: Build real-time task updates on the proven connection
-Slice 3: Add offline support and reconnection
+```text
+1. data model / types
+2. validation / domain logic
+3. API / service layer
+4. UI / integration
+5. polish / cleanup
 ```
 
-If Slice 1 fails, you discover it before investing in Slices 2 and 3.
+### 3. 各ステップで止まって確認する
 
-## Implementation Rules
+各ステップの終わりで、動作確認をします。
 
-### Rule 0: Simplicity First
+- テストを走らせる
+- 必要なら build を通す
+- その段階までの動作が壊れていないか確認する
 
-Before writing any code, ask: "What is the simplest thing that could work?"
+止まらずに積み続けると、どこで壊れたか分からなくなります。
 
-After writing code, review it against these checks:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer look at this and say "why didn't you just..."?
-- Am I building for hypothetical future requirements, or the current task?
+### 4. 失敗したら小さく戻す
 
-```
-SIMPLICITY CHECK:
-✗ Generic EventBus with middleware pipeline for one notification
-✓ Simple function call
+ステップが失敗したら、原因が分かるまでその増分を小さくします。大きな塊のまま直そうとしないでください。
 
-✗ Abstract factory pattern for two similar components
-✓ Two straightforward components with shared utilities
+### 5. 常に動く状態を保つ
 
-✗ Config-driven form builder for three forms
-✓ Three form components
-```
+各増分が終わるたびに、システムは少なくともその段階で動くべきです。未完成でも、壊れた状態を長く持ち越さないことが重要です。
 
-Three similar lines of code is better than a premature abstraction. Implement the naive, obviously-correct version first. Optimize only after correctness is proven with tests.
+## 実装の進め方
 
-### Rule 0.5: Scope Discipline
+### Step 1: スライスを決める
 
-Touch only what the task requires.
+まず、最小の縦スライスを 1 つ決めます。理想は「ユーザーが 1 つのことをできる」単位です。
 
-Do NOT:
-- "Clean up" code adjacent to your change
-- Refactor imports in files you're not modifying
-- Remove comments you don't fully understand
-- Add features not in the spec because they "seem useful"
-- Modernize syntax in files you're only reading
+### Step 2: 一番下から作る
 
-If you notice something worth improving outside your task scope, note it — don't fix it:
+そのスライスで必要な最下層から作り始めます。型や validation が先なら先に作ります。
 
-```
-NOTICED BUT NOT TOUCHING:
-- src/utils/format.ts has an unused import (unrelated to this task)
-- The auth middleware could use better error messages (separate task)
-→ Want me to create tasks for these?
-```
+### Step 3: テストを書く
 
-### Rule 1: One Thing at a Time
+その増分を守るテストを書きます。TDD が使えるなら failing test から始めます。
 
-Each increment changes one logical thing. Don't mix concerns:
+### Step 4: 最小実装で通す
 
-**Bad:** One commit that adds a new component, refactors an existing one, and updates the build config.
+必要最小限の実装を入れます。将来の拡張は今入れません。
 
-**Good:** Three separate commits — one for each change.
+### Step 5: その増分を確認する
 
-### Rule 2: Keep It Compilable
+テスト、必要なら build、必要なら手動確認を行い、その段階の完了を確かめます。
 
-After each increment, the project must build and existing tests must pass. Don't leave the codebase in a broken state between slices.
+### Step 6: 次の増分へ進む
 
-### Rule 3: Feature Flags for Incomplete Features
+次の依存を足します。最初の増分が安定してから進めます。
 
-If a feature isn't ready for users but you need to merge increments:
+## よくある分割の例
 
-```typescript
-// Feature flag for work-in-progress
-const ENABLE_TASK_SHARING = process.env.FEATURE_TASK_SHARING === 'true';
+```text
+Feature: user registration
 
-if (ENABLE_TASK_SHARING) {
-  // New sharing UI
-}
+Increment 1: validation schema
+Increment 2: POST endpoint
+Increment 3: form UI
+Increment 4: loading / error state
+Increment 5: polish
 ```
 
-This lets you merge small increments to the main branch without exposing incomplete work.
+```text
+Feature: search with filters
 
-### Rule 4: Safe Defaults
-
-New code should default to safe, conservative behavior:
-
-```typescript
-// Safe: disabled by default, opt-in
-export function createTask(data: TaskInput, options?: { notify?: boolean }) {
-  const shouldNotify = options?.notify ?? false;
-  // ...
-}
+Increment 1: filter state and URL sync
+Increment 2: backend query supports one filter
+Increment 3: add the second filter
+Increment 4: pagination
+Increment 5: empty / error states
 ```
 
-### Rule 5: Rollback-Friendly
+## レッドフラグ
 
-Each increment should be independently revertable:
+- 1 回で全部入れようとする
+- テストなしで大きな変更を積む
+- 最初に UI だけ、あとで API をやる、のような横方向分割
+- 壊れた状態を長く放置する
+- ステップごとに確認しない
 
-- Additive changes (new files, new functions) are easy to revert
-- Modifications to existing code should be minimal and focused
-- Database migrations should have corresponding rollback migrations
-- Avoid deleting something in one commit and replacing it in the same commit — separate them
+## 検証
 
-## Working with Agents
+各増分のあとに次を確認します。
 
-When directing an agent to implement incrementally:
-
-```
-"Let's implement Task 3 from the plan.
-
-Start with just the database schema change and the API endpoint.
-Don't touch the UI yet — we'll do that in the next increment.
-
-After implementing, run the repository's test and build commands to
-verify nothing is broken."
-```
-
-Be explicit about what's in scope and what's NOT in scope for each increment.
-
-## Increment Checklist
-
-After each increment, verify with the repository's own commands (see the test-driven-development skill's Discover the Stack First section):
-
-- [ ] The change does one thing and does it completely
-- [ ] All existing tests still pass (the repository's test command: `npm test`, `./gradlew test`, `pytest`, ...)
-- [ ] The build succeeds (the repository's build command)
-- [ ] Type checking passes, where the stack has one (`npx tsc --noEmit`, `mypy`, ...)
-- [ ] Linting passes (the repository's lint command)
-- [ ] The new functionality works as expected
-- [ ] The change is committed with a descriptive message
-
-**Note:** Run each verification command after a change that could affect it. After a successful run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no information.
-
-## Common Rationalizations
-
-| Rationalization | Reality |
-|---|---|
-| "I'll test it all at the end" | Bugs compound. A bug in Slice 1 makes Slices 2-5 wrong. Test each slice. |
-| "It's faster to do it all at once" | It *feels* faster until something breaks and you can't find which of 500 changed lines caused it. |
-| "These changes are too small to commit separately" | Small commits are free. Large commits hide bugs and make rollbacks painful. |
-| "I'll add the feature flag later" | If the feature isn't complete, it shouldn't be user-visible. Add the flag now. |
-| "This refactor is small enough to include" | Refactors mixed with features make both harder to review and debug. Separate them. |
-| "Let me run the build command again just to be sure" | After a successful run, repeating the same command adds nothing unless the code has changed since. Run it again after subsequent edits, not as reassurance. |
-
-## Red Flags
-
-- More than 100 lines of code written without running tests
-- Multiple unrelated changes in a single increment
-- "Let me just quickly add this too" scope expansion
-- Skipping the test/verify step to move faster
-- Build or tests broken between increments
-- Large uncommitted changes accumulating
-- Building abstractions before the third use case demands it
-- Touching files outside the task scope "while I'm here"
-- Creating new utility files for one-time operations
-- Running the same build/test command twice in a row without any intervening code change
-
-## Verification
-
-After completing all increments for a task:
-
-- [ ] Each increment was individually tested and committed
-- [ ] The full test suite passes
-- [ ] The build is clean
-- [ ] The feature works end-to-end as specified
-- [ ] No uncommitted changes remain
-
-## See Also
-
-Per-increment verification is the local check. Before declaring a task done, apply the project-wide Definition of Done as the final gate, the standing bar every increment clears regardless of the task. See `../../references/definition-of-done.md`.
+- [ ] その段階で動く
+- [ ] テストが通る
+- [ ] 次の依存を足す前に、いまの増分が安定している
+- [ ] 変更が小さく、レビューしやすい

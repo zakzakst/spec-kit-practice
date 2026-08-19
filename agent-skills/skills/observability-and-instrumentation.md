@@ -1,63 +1,63 @@
 ---
 name: observability-and-instrumentation
-description: Instruments code so production behavior is visible and diagnosable. Use when adding logging, metrics, tracing, or alerting. Use when shipping any feature that runs in production and you need evidence it works. Use when production issues are reported but you can't tell what happened from the available data.
+description: 本番での振る舞いを可視化し、原因を追跡できるようにコードへ計測を入れます。ログ、メトリクス、トレーシング、アラートを追加するときに使います。本番で動く機能を出すとき、あるいは本番障害が起きていて手元の情報だけでは何が起きたか分からないときに使います。
 ---
 
-# Observability and Instrumentation
+# 可観測性と計測
 
-## Overview
+## 概要
 
-Code you can't observe is code you can't operate. Observability is the ability to answer "what is the system doing and why?" from the outside, using the telemetry the code emits. Instrumentation is not a post-launch add-on — it's written alongside the feature, the same way tests are. If a feature ships without telemetry, the first user-reported bug becomes archaeology instead of a query.
+観測できないコードは、運用できないコードです。可観測性とは、コードが出すテレメトリを使って外側から「システムは何をしていて、なぜそうなっているのか？」に答えられることです。計測はリリース後の後付け作業ではありません。テストと同じように、機能と並行して書くものです。テレメトリなしで機能を出すと、最初のユーザー報告バグはクエリではなく考古学になります。
 
-## When to Use
+## 使う場面
 
-- Building any feature that will run in production
-- Adding a new service, endpoint, background job, or external integration
-- A production incident took too long to diagnose ("we couldn't tell what happened")
-- Setting up or reviewing alerting rules
-- Reviewing a PR that adds I/O, retries, queues, or cross-service calls
+- 本番で動くあらゆる機能を作るとき
+- 新しいサービス、エンドポイント、バックグラウンドジョブ、外部連携を追加するとき
+- 本番障害の原因特定に時間がかかりすぎたとき（「何が起きたか分からなかった」）
+- アラートルールを設定または見直すとき
+- I/O、リトライ、キュー、サービス間呼び出しを追加する PR をレビューするとき
 
-**NOT for:**
-- Diagnosing a failure happening right now — use the `debugging-and-error-recovery` skill (observability is what makes that skill fast next time)
-- Profiling and optimizing measured slowness — use the `performance-optimization` skill
-- Launch-day monitoring checklists and rollback triggers — see the `shipping-and-launch` skill; this skill covers the instrumentation that feeds them
+**対象外:**
+- いま起きている障害の切り分け - `debugging-and-error-recovery` を使ってください（可観測性は、次回からその作業を速くします）
+- 計測済みの遅さをプロファイリングして最適化するとき - `performance-optimization` を使ってください
+- リリース当日の監視チェックリストやロールバック条件 - `shipping-and-launch` を参照してください。この skill は、それらの元になる計測を扱います
 
-## Process
+## 手順
 
-### 1. Define "working" before instrumenting
+### 1. 計測する前に「正常」を定義する
 
-Telemetry without a question is noise. Before adding any instrumentation, write down 2–4 questions an on-call engineer will ask about this feature:
+問いのないテレメトリはノイズです。何かを計測する前に、この機能についてオンコール担当が答えたい質問を 2〜3 個書き出してください。
 
 ```
 FEATURE: checkout payment retry
-QUESTIONS ON-CALL WILL ASK:
-1. What fraction of payments succeed on first attempt vs after retry?
-2. When a payment fails permanently, why? (provider error? timeout? validation?)
-3. Is the payment provider slower than usual?
-→ Every signal below must help answer one of these.
+ON-CALL が答えたい質問:
+1. 支払いの何割が 1 回目で成功し、何割がリトライ後に成功するか？
+2. 支払いが最終的に失敗するとき、その理由は何か？（プロバイダエラー？タイムアウト？バリデーション？）
+3. 支払いプロバイダはいつもより遅いか？
+以下のすべてのシグナルは、そのうちのどれか 1 つに答えられる必要があります。
 ```
 
-If you can't name the questions, you're not ready to instrument — you'll log everything and learn nothing.
+質問を言葉にできないなら、まだ計測する段階ではありません。全部ログに出して、何も学べない状態になります。
 
-### 2. Pick the right signal for each question
+### 2. 質問ごとに適切なシグナルを選ぶ
 
-| Signal | Answers | Cost profile | Example |
+| シグナル | 答えられること | コストの傾向 | 例 |
 |---|---|---|---|
-| **Structured log** | "What happened in this specific case?" | Per-event; grows with traffic | `payment_failed` with provider error code |
-| **Metric** | "How often / how fast, in aggregate?" | Fixed per series; cheap to query | p99 latency of provider calls |
-| **Trace** | "Where did time go across services?" | Per-request; usually sampled | One slow checkout, broken down by hop |
+| **構造化ログ** | 「この個別ケースで何が起きたか？」 | イベントごと。トラフィックに応じて増える | プロバイダのエラーコード付き `payment_failed` |
+| **メトリクス** | 「全体として、どのくらいの頻度・速度か？」 | シリーズごとに固定。問い合わせは安い | プロバイダ呼び出しの p99 レイテンシ |
+| **トレース** | 「サービスをまたいで、どこに時間が消えたか？」 | リクエストごと。通常はサンプリング | 1 件の遅い checkout をホップごとに分解 |
 
-Rule of thumb: metrics tell you **that** something is wrong, traces tell you **where**, logs tell you **why**.
+目安としては、メトリクスは「何かがおかしい」を教え、トレースは「どこがおかしいか」を教え、ログは「なぜおかしいか」を教えます。
 
-### 3. Structured logging
+### 3. 構造化ログ
 
-Log events, not prose. Every log line is a JSON object with a stable event name and machine-readable fields:
+ログは文章ではなくイベントとして残します。各ログ行は、安定したイベント名と機械可読なフィールドを持つ JSON オブジェクトにします。
 
 ```typescript
-// BAD: string interpolation — unqueryable, inconsistent
+// 悪い例: 文字列補間 - クエリできず、一貫性もない
 logger.info(`Payment ${id} failed for user ${userId} after ${n} retries`);
 
-// GOOD: stable event name + structured fields
+// 良い例: 安定したイベント名 + 構造化フィールド
 logger.warn({
   event: 'payment_failed',
   paymentId: id,
@@ -67,19 +67,19 @@ logger.warn({
 }, 'payment failed');
 ```
 
-**Log levels — use them consistently:**
+**ログレベルは一貫して使います。**
 
-| Level | Meaning | On-call action |
-|---|---|---|
-| `error` | Invariant broken; someone may need to act | Investigate |
-| `warn` | Degraded but handled (retry succeeded, fallback used) | Watch for trends |
-| `info` | Significant business event (order placed, job finished) | None |
-| `debug` | Diagnostic detail | Off in production by default |
+| レベル | 意味 | オンコールの対応 |
+|---|---|---|---|
+| `error` | 不変条件が壊れた。誰かの対応が必要かもしれない | 調査する |
+| `warn` | 劣化はしているが処理は継続できた（リトライ成功、フォールバック使用など） | 傾向を監視する |
+| `info` | 重要なビジネスイベント（注文完了、ジョブ終了など） | なし |
+| `debug` | 診断用の詳細情報 | 本番では既定でオフ |
 
-**Correlation IDs are mandatory.** Generate (or accept) a request ID at the system boundary and attach it to every log line, span, and outbound call. Without it, you cannot reconstruct a single request from interleaved logs:
+**相関 ID は必須です。** システム境界でリクエスト ID を生成または受け取り、すべてのログ行、span、外向き呼び出しに付与してください。これがないと、混在したログから 1 つのリクエストを再構成できません。
 
 ```typescript
-// Express: child logger per request, ID propagated downstream
+// Express: リクエストごとの child logger を作り、ID を下流へ伝播する
 app.use((req, res, next) => {
   req.id = req.headers['x-request-id'] ?? crypto.randomUUID();
   req.log = logger.child({ requestId: req.id });
@@ -88,13 +88,13 @@ app.use((req, res, next) => {
 });
 ```
 
-**Never log secrets, tokens, passwords, or full PII.** This is a hard rule from the `security-and-hardening` skill — telemetry pipelines are a classic data-leak path. Allowlist fields; don't log whole request bodies.
+**秘密情報、トークン、パスワード、完全な PII は絶対にログに出さないでください。** これは `security-and-hardening` からの厳格なルールです。テレメトリの経路は典型的な情報漏えい経路です。許可するフィールドだけを選び、リクエストボディ全体をそのまま出してはいけません。
 
-### 4. Metrics
+### 4. メトリクス
 
-For request-driven services, instrument **RED** on every endpoint and every external dependency: **R**ate (requests/sec), **E**rrors (failure rate), **D**uration (latency histogram, not average). For resources (queues, pools, hosts), use **USE**: **U**tilization, **S**aturation, **E**rrors.
+リクエスト駆動のサービスでは、すべてのエンドポイントと外部依存について **RED** を計測します。**R**ate（リクエスト/秒）、**E**rrors（失敗率）、**D**uration（平均ではなくレイテンシのヒストグラム）です。リソース（キュー、プール、ホスト）には **USE** を使います。**U**tilization、**S**aturation、**E**rrors です。
 
-As with tracing, the vendor-neutral path is the OpenTelemetry metrics API (same SDK and context as step 5). The example below uses Prometheus' `prom-client` — one common backend choice, not the only one; the RED/USE and cardinality rules are identical either way.
+トレーシングと同様に、ベンダー非依存の道は OpenTelemetry の metrics API です（step 5 と同じ SDK と context を使います）。以下の例は Prometheus の `prom-client` を使っていますが、これは一例であって唯一の選択肢ではありません。RED/USE とカーディナリティのルールはどのバックエンドでも同じです。
 
 ```typescript
 import { Histogram } from 'prom-client';
@@ -102,26 +102,26 @@ import { Histogram } from 'prom-client';
 const httpDuration = new Histogram({
   name: 'http_request_duration_seconds',
   help: 'HTTP request duration',
-  labelNames: ['method', 'route', 'status_class'],  // '2xx', not '200'
+  labelNames: ['method', 'route', 'status_class'],  // '200' ではなく '2xx'
   buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
 });
 ```
 
-**Cardinality is the failure mode.** Every unique label combination is a separate time series. Labels must come from small, fixed sets (route template, status class, provider name). Never use user IDs, raw URLs, error messages, or other unbounded values as labels — that belongs in logs and traces.
+**失敗しやすいのはカーディナリティです。** ラベルの組み合わせ 1 つ 1 つが別の time series になります。ラベルには、値の種類が少なく固定されたものだけを使ってください（route template、status class、provider name など）。user ID、raw URL、エラーメッセージ、その他の上限なしの値はラベルにしてはいけません。そういう情報はログやトレースに入れるものです。
 
 ```
-OK as label:    route="/api/tasks/:id"   status_class="5xx"   provider="stripe"
-NEVER a label:  user_id, email, request_id, full URL, error message text
+ラベルとしてOK:   route="/api/tasks/:id"   status_class="5xx"   provider="stripe"
+ラベルにしてはダメ: user_id, email, request_id, full URL, error message text
 ```
 
-Track averages never, percentiles always: an average hides the 1% of users having a terrible time. Use histograms and read p50/p95/p99.
+平均値は追わず、パーセンタイルを追います。平均値は、つらい体験をしている上位 1% のユーザーを隠してしまいます。ヒストグラムを使い、p50/p95/p99 を見てください。
 
-### 5. Distributed tracing
+### 5. 分散トレーシング
 
-Use OpenTelemetry — it's the vendor-neutral standard, and auto-instrumentation covers HTTP, gRPC, and common DB clients with near-zero code:
+OpenTelemetry を使ってください。ベンダー非依存の標準であり、HTTP、gRPC、一般的な DB クライアントは自動計測でほぼコードなしにカバーできます。
 
 ```typescript
-// tracing.ts — must be imported before anything else
+// tracing.ts - ほかの何よりも先に import される必要がある
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 
@@ -132,72 +132,72 @@ const sdk = new NodeSDK({
 sdk.start();
 ```
 
-Add manual spans only around meaningful internal units of work (e.g., `applyDiscounts`, `chargeProvider`) and attach the attributes on-call will filter by. Propagate context across every async boundary — HTTP headers, queue message metadata — or the trace dies at the gap. Sample head-based at a low rate by default; keep 100% of errors if your backend supports tail sampling.
+手動 span は、`applyDiscounts` や `chargeProvider` のような意味のある内部作業単位だけに付けてください。そして、オンコール担当が絞り込める属性を付与します。HTTP ヘッダーやキューメッセージのメタデータなど、すべての async 境界をまたいで context を伝播してください。そうしないと、その隙間で trace が切れます。既定では head-based sampling を低率で行い、バックエンドが tail sampling をサポートしているなら、エラーは 100% 保持してください。
 
-### 6. Alerting
+### 6. アラート
 
-Alert on **symptoms users feel**, not on causes:
+アラートは原因ではなく、**ユーザーが体感する症状**に対して出します。
 
 ```
-SYMPTOM (page-worthy):           CAUSE (dashboard, not a page):
-error rate > 1% for 5 min        CPU at 85%
-p99 latency > 2s                 one pod restarted
-queue age > 10 min               disk at 70%
+症状（ページ対象）:           原因（ダッシュボード用で、ページ対象ではない）:
+エラー率 > 1% が 5 分継続      CPU が 85%
+p99 レイテンシ > 2 秒         pod が 1 つ再起動
+キュー滞留時間 > 10 分         ディスク使用率 70%
 ```
 
-Cause-based alerts fire when nothing is wrong and miss failures you didn't predict. Symptom-based alerts fire exactly when users are hurt, regardless of the cause.
+原因ベースのアラートは、何も起きていないときに鳴り、予測していなかった障害を見逃します。症状ベースのアラートは、原因に関係なく、ユーザーが実際に困っている瞬間にだけ鳴ります。
 
-Rules for every alert you create:
+作成するすべてのアラートには、次のルールがあります。
 
-1. **It must be actionable.** If the response is "ignore it, it self-heals", delete the alert.
-2. **It links to a runbook** — even three lines: what it means, first query to run, escalation path.
-3. **It has a threshold and duration** justified by the SLO or by historical data, not by a guess.
-4. Use two severities only: **page** (user-facing, act now) and **ticket** (degradation, act this week). A third tier becomes noise that trains people to ignore everything.
+1. **実行可能であること。** 対応が「無視してよい。自然回復する」なら、そのアラートは削除してください。
+2. **runbook にリンクすること。** 3 行でも構いません。意味、最初に実行するクエリ、エスカレーション先を書きます。
+3. **しきい値と継続時間があること。** SLO や履歴データに基づくべきで、勘で決めてはいけません。
+4. 重大度は 2 段階だけにします。**page**（ユーザー影響あり、今すぐ対応）と **ticket**（劣化、今週中に対応）です。3 段階目を作るとノイズになり、何でも無視されるようになります。
 
-### 7. Verify the telemetry itself
+### 7. テレメトリ自体を検証する
 
-Instrumentation is code; it can be wrong. Before calling the work done, trigger the paths and look at the actual output:
+計測もコードです。間違うことがあります。作業完了を宣言する前に、実際にその経路を通して、出力を確認してください。
 
-- Force an error in staging → find it in the logs by `requestId`, confirm fields are structured (not `[object Object]`)
-- Send test traffic → confirm metric series appear with the expected labels and sane values
-- Follow one request across services in the tracing UI → no broken spans
-- Fire each new alert once (lower the threshold temporarily) → confirm it reaches the right channel and the runbook link works
+- staging でエラーを意図的に起こし、`requestId` でログから見つけ、フィールドが構造化されていること（`[object Object]` ではないこと）を確認する
+- テストトラフィックを流し、期待したラベルと妥当な値でメトリクス系列が出ることを確認する
+- 1 つのリクエストをサービス間で追い、トレーシング UI で span が切れていないことを確認する
+- 新しいアラートをそれぞれ 1 回ずつ鳴らし（しきい値を一時的に下げる）、正しいチャンネルに届き、runbook リンクが機能することを確認する
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 現実 |
 |---|---|
-| "I'll add logging after it works" | "After" becomes "after the first incident", which is the most expensive moment to discover you're blind. Instrument as you build. |
-| "More logs = more observability" | Unstructured noise makes incidents slower, not faster. Three queryable events beat three hundred prose lines. |
-| "console.log is fine for now" | Unstructured output can't be filtered, correlated, or alerted on. The structured logger costs five extra minutes once. |
-| "We can just look at the dashboards when something breaks" | Dashboards built without defined questions show you everything except the answer. Start from on-call questions. |
-| "Alert on everything important, we'll tune later" | A noisy pager trains people to ignore it. The tuning never happens; the missed real page does. |
-| "User ID as a metric label makes debugging easier" | It also makes your metrics backend fall over. High-cardinality lookups belong in logs and traces. |
-| "Tracing is overkill for our two services" | Two services already means cross-service latency questions logs can't answer. Auto-instrumentation makes the cost trivial. |
+| 「動いてからログを足せばいい」 | 「あとで」は「最初の障害のあと」になりがちです。いちばん高くつく瞬間に盲目であることが分かります。実装しながら計測してください。 |
+| 「ログが多いほど可観測性が高い」 | 構造化されていないノイズは、障害対応を速くするのではなく遅くします。3 行のクエリ可能なイベントは、300 行の文章より価値があります。 |
+| 「とりあえず `console.log` でいい」 | 構造化されていない出力は、フィルタも相関もアラートもできません。構造化ロガーへの切り替えは一度だけ 5 分多くかかるだけです。 |
+| 「何か壊れたらダッシュボードを見ればいい」 | 質問を定義せずに作ったダッシュボードは、答え以外のすべてを見せます。まずオンコールの質問から始めてください。 |
+| 「重要なものは全部アラートにして、調整は後で」 | ノイズの多い pager は、最終的に無視されるようになります。調整は進まず、本当に必要なアラートが落ちてしまいます。 |
+| 「ユーザー ID をメトリクスのラベルにするとデバッグしやすい」 | その代わり、メトリクス基盤が落ちやすくなります。高カーディナリティの検索はログとトレースに置いてください。 |
+| 「サービスが 2 つならトレーシングは過剰」 | サービスが 2 つあるだけで、ログでは答えられないサービス間レイテンシの質問が発生します。自動計測ならコストはほぼありません。 |
 
-## Red Flags
+## 危険信号
 
-- A feature PR with retries, queues, or external calls and zero new telemetry
-- Log lines built by string interpolation instead of structured fields
-- No correlation/request ID — each log line is an orphan
-- Metrics labeled with user IDs, raw URLs, or error message text (cardinality bomb)
-- Latency tracked as an average with no percentiles
-- Alerts that fire daily and get acknowledged without action
-- Alerts on causes (CPU, memory) paging humans while user-facing error rate is unmonitored
-- Secrets, tokens, or full request bodies appearing in logs
-- "It works on my machine" as the only evidence a production feature is healthy
+- リトライ、キュー、外部呼び出しを含む機能 PR なのに、テレメトリが 1 つも追加されていない
+- 文字列補間で作られたログ行がある（構造化フィールドではない）
+- 相関 ID / リクエスト ID がない。各ログ行が孤立している
+- メトリクスのラベルにユーザー ID、raw URL、エラーメッセージが使われている（カーディナリティ爆弾）
+- レイテンシが平均値だけで追われ、パーセンタイルがない
+- 毎日のように鳴って、ただ acknowledge されるだけのアラート
+- CPU やメモリなど原因ベースのアラートが人間を起こしている一方で、ユーザー向けエラー率は監視されていない
+- 秘密情報、トークン、完全なリクエストボディがログに出ている
+- 本番機能が健康である証拠として「自分のマシンでは動く」が使われている
 
-## Verification
+## 検証
 
-After instrumenting a feature, confirm:
+機能に計測を入れたら、次を確認してください。
 
-- [ ] The on-call questions for this feature are written down, and each signal maps to one
-- [ ] All log output is structured (JSON), with stable event names and a correlation ID on every line
-- [ ] No secrets, tokens, or unredacted PII in any log line (spot-check actual output)
-- [ ] RED metrics exist for every new endpoint and every external dependency, with bounded label sets
-- [ ] Latency is a histogram; p95/p99 are queryable
-- [ ] A single request can be followed end-to-end in the tracing UI without broken spans
-- [ ] Every new alert is symptom-based, has a runbook link, and was test-fired once
-- [ ] An induced failure in staging was located via telemetry alone, without reading the source
+- [ ] この機能に対するオンコールの質問が書き出されており、各シグナルがそのどれか 1 つに対応している
+- [ ] すべてのログ出力が構造化 JSON であり、安定したイベント名と各行の相関 ID がある
+- [ ] どのログ行にも秘密情報、トークン、未マスクの PII が含まれていない（実際の出力を spot-check する）
+- [ ] 新しい各エンドポイントと各外部依存に RED メトリクスがあり、ラベル集合が有限である
+- [ ] レイテンシはヒストグラムであり、p95/p99 を問い合わせられる
+- [ ] 1 つのリクエストを、壊れた span なしでトレーシング UI 上でエンドツーエンドに追える
+- [ ] 新しいアラートはすべて症状ベースで、runbook リンクがあり、1 回はテスト発報した
+- [ ] staging で意図的に起こした障害を、ソースを読まずにテレメトリだけで特定できた
 
-For the at-a-glance version of this list, including the pre-launch instrumentation gate, see `../../references/observability-checklist.md`.
+ざっと見られる版として、リリース前の計測ゲートも含む一覧は `../../references/observability-checklist.md` を参照してください。

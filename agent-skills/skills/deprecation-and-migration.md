@@ -1,146 +1,146 @@
 ---
 name: deprecation-and-migration
-description: Manages deprecation and migration. Use when removing old systems, APIs, or features. Use when migrating users from one implementation to another. Use when deciding whether to maintain or sunset existing code.
+description: 古いシステム、API、機能の退役と移行を扱います。古い仕組みを外したいとき、ユーザーを新実装へ安全に移したいとき、既存コードを維持するか切り捨てるか判断したいときに使います。
 ---
 
-# Deprecation and Migration
+# 非推奨化と移行
 
-## Overview
+## 概要
 
-Code is a liability, not an asset. Every line of code has ongoing maintenance cost — bugs to fix, dependencies to update, security patches to apply, and new engineers to onboard. Deprecation is the discipline of removing code that no longer earns its keep, and migration is the process of moving users safely from the old to the new.
+コードは資産ではなく負債です。コードの 1 行ごとに、保守、テスト、依存関係更新、セキュリティパッチ、新人のオンボーディングといった継続コストがかかります。非推奨化は、もはや価値を生まないコードを取り除く規律であり、移行は、ユーザーを古いものから新しいものへ安全に移すプロセスです。
 
-Most engineering organizations are good at building things. Few are good at removing them. This skill addresses that gap.
+多くの組織は作るのは得意ですが、外すのは苦手です。このスキルはそのギャップを埋めます。
 
-## When to Use
+## 使う場面
 
-- Replacing an old system, API, or library with a new one
-- Sunsetting a feature that's no longer needed
-- Consolidating duplicate implementations
-- Removing dead code that nobody owns but everybody depends on
-- Planning the lifecycle of a new system (deprecation planning starts at design time)
-- Deciding whether to maintain a legacy system or invest in migration
+- 古いシステム、API、ライブラリを新しいものへ置き換えるとき
+- もう不要な機能を廃止するとき
+- 重複した実装を統合するとき
+- 誰も責任を持たないが皆が依存している死んだコードを消すとき
+- 新しいシステムのライフサイクルを計画するとき（非推奨化の計画は設計時から始める）
+- レガシーシステムを維持するか、移行へ投資するか決めるとき
 
-## Core Principles
+## コア原則
 
-### Code Is a Liability
+### コードは負債
 
-Every line of code has ongoing cost: it needs tests, documentation, security patches, dependency updates, and mental overhead for anyone working nearby. The value of code is the functionality it provides, not the code itself. When the same functionality can be provided with less code, less complexity, or better abstractions — the old code should go.
+各行のコードには継続コストがあります。テスト、ドキュメント、セキュリティパッチ、依存関係更新、近くで作業する人の認知負荷です。コードの価値は、それが提供する機能であって、コード自体ではありません。同じ機能を、より少ないコード、より少ない複雑さ、より良い抽象化で提供できるなら、古いコードは退くべきです。
 
-### Hyrum's Law Makes Removal Hard
+### Hyrum's Law で削除は難しくなる
 
-With enough users, every observable behavior becomes depended on — including bugs, timing quirks, and undocumented side effects. This is why deprecation requires active migration, not just announcement. Users can't "just switch" when they depend on behaviors the replacement doesn't replicate.
+利用者が増えると、観測可能な振る舞いはすべて依存対象になります。バグ、タイミングの癖、文書化されていない副作用までも含みます。だから非推奨化には、単なる告知ではなく、積極的な移行が必要です。置き換え先が同じ振る舞いを再現しないと、ユーザーは "ただ切り替える" ことができません。
 
-### Deprecation Planning Starts at Design Time
+### 非推奨化の計画は設計時から始める
 
-When building something new, ask: "How would we remove this in 3 years?" Systems designed with clean interfaces, feature flags, and minimal surface area are easier to deprecate than systems that leak implementation details everywhere.
+新しいものを作るとき、次を考えます: "3 年後にこれをどう外すか？" 明確なインターフェース、feature flag、最小の surface area を持つシステムは、実装詳細があちこちに漏れたシステムより非推奨化しやすくなります。
 
-## The Deprecation Decision
+## 非推奨化の判断
 
-Before deprecating anything, answer these questions:
+何かを非推奨化する前に、次を答えます。
 
+```text
+1. この system はまだ unique value を提供しているか？
+   -> yes なら維持する。no なら次へ。
+
+2. 何人のユーザー / consumer が依存しているか？
+   -> migration scope を数える。
+
+3. 置き換え先はあるか？
+   -> no なら、先に置き換え先を作る。代替なしに非推奨化しない。
+
+4. 各 consumer の migration cost は？
+   -> 自動化できるならやる。手作業で高コストなら、保守コストと比べる。
+
+5. 非推奨化しない場合の継続保守コストは？
+   -> セキュリティリスク、エンジニア時間、複雑さによる機会損失。
 ```
-1. Does this system still provide unique value?
-   → If yes, maintain it. If no, proceed.
 
-2. How many users/consumers depend on it?
-   → Quantify the migration scope.
+## Advisory と Compulsory
 
-3. Does a replacement exist?
-   → If no, build the replacement first. Don't deprecate without an alternative.
+| Type | 使う場面 | 機構 |
+|---|---|---|
+| **Advisory** | 移行は任意で、古い system は安定している | 警告、ドキュメント、後押し。ユーザーが自分のタイミングで移行する |
+| **Compulsory** | 古い system にセキュリティ問題がある、進行を妨げる、保守コストが持続不能 | 期限を切る。旧 system は日付 X で削除する。migration tooling を提供する |
 
-4. What's the migration cost for each consumer?
-   → If trivially automated, do it. If manual and high-effort, weigh against maintenance cost.
+**既定は advisory です。** compulsroy は、保守コストやリスクが強制移行を正当化するときだけ使います。Compulsory deprecation には、migration tooling、documentation、support が必要です - 期限を告知するだけではだめです。
 
-5. What's the ongoing maintenance cost of NOT deprecating?
-   → Security risk, engineer time, opportunity cost of complexity.
-```
+## Migration Process
 
-## Compulsory vs Advisory Deprecation
+### Step 1: 置き換え先を作る
 
-| Type | When to Use | Mechanism |
-|------|-------------|-----------|
-| **Advisory** | Migration is optional, old system is stable | Warnings, documentation, nudges. Users migrate on their own timeline. |
-| **Compulsory** | Old system has security issues, blocks progress, or maintenance cost is unsustainable | Hard deadline. Old system will be removed by date X. Provide migration tooling. |
+working alternative なしに非推奨化しません。置き換え先は次を満たす必要があります。
 
-**Default to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing migration. Compulsory deprecation requires providing migration tooling, documentation, and support — you can't just announce a deadline.
+- 古い system の重要な use case をすべてカバーする
+- documentation と migration guide がある
+- production で実証されている（"理論上 better" だけではだめ）
 
-## The Migration Process
-
-### Step 1: Build the Replacement
-
-Don't deprecate without a working alternative. The replacement must:
-
-- Cover all critical use cases of the old system
-- Have documentation and migration guides
-- Be proven in production (not just "theoretically better")
-
-### Step 2: Announce and Document
+### Step 2: 告知と文書化
 
 ```markdown
 ## Deprecation Notice: OldService
 
 **Status:** Deprecated as of 2025-03-01
-**Replacement:** NewService (see migration guide below)
-**Removal date:** Advisory — no hard deadline yet
+**Replacement:** NewService (migration guide below)
+**Removal date:** Advisory - no hard deadline yet
 **Reason:** OldService requires manual scaling and lacks observability.
-            NewService handles both automatically.
+           NewService handles both automatically.
 
 ### Migration Guide
-1. Replace `import { client } from 'old-service'` with `import { client } from 'new-service'`
-2. Update configuration (see examples below)
-3. Run the migration verification script: `npx migrate-check`
+1. `import { client } from 'old-service'` を `import { client } from 'new-service'` に置き換える
+2. 設定を更新する（下の例を参照）
+3. migration verification script を実行する: `npx migrate-check`
 ```
 
-### Step 3: Migrate Incrementally
+### Step 3: 段階的に移行する
 
-Migrate consumers one at a time, not all at once. For each consumer:
+consumer は一斉ではなく、1 つずつ移行します。各 consumer について:
 
+```text
+1. deprecated system との touchpoint をすべて洗い出す
+2. replacement に切り替える
+3. 振る舞いが一致するか検証する（テスト、統合チェック）
+4. old system への参照を削除する
+5. 回帰がないことを確認する
 ```
-1. Identify all touchpoints with the deprecated system
-2. Update to use the replacement
-3. Verify behavior matches (tests, integration checks)
-4. Remove references to the old system
-5. Confirm no regressions
-```
 
-**The Churn Rule:** If you own the infrastructure being deprecated, you are responsible for migrating your users — or providing backward-compatible updates that require no migration. Don't announce deprecation and leave users to figure it out.
+**Churn Rule:** 非推奨化する infrastructure を自分で持っているなら、ユーザーの移行責任はあなたにあります。あるいは、移行が不要な後方互換更新を提供します。非推奨化を告げて、あとはユーザー任せにしてはいけません。
 
-### Step 4: Remove the Old System
+### Step 4: 古い system を削除する
 
-Only after all consumers have migrated:
+すべての consumer が移行したあとにだけ、次を実行します。
 
-```
-1. Verify zero active usage (metrics, logs, dependency analysis)
-2. Remove the code
-3. Remove associated tests, documentation, and configuration
-4. Remove the deprecation notices
-5. Celebrate — removing code is an achievement
+```text
+1. active usage が 0 であることを確認する（metrics、logs、dependency analysis）
+2. コードを削除する
+3. 関連する tests、documentation、configuration を削除する
+4. deprecation notice を消す
+5. 祝う - code を減らせたのは成果です
 ```
 
 ## Migration Patterns
 
 ### Strangler Pattern
 
-Run old and new systems in parallel. Route traffic incrementally from old to new. When the old system handles 0% of traffic, remove it.
+古い system と新しい system を並行運転し、トラフィックを徐々に新しいほうへ流します。old system が 0% になったら削除します。
 
-```
-Phase 1: New system handles 0%, old handles 100%
-Phase 2: New system handles 10% (canary)
-Phase 3: New system handles 50%
-Phase 4: New system handles 100%, old system idle
+```text
+Phase 1: New 0%, Old 100%
+Phase 2: New 10% (canary)
+Phase 3: New 50%
+Phase 4: New 100%, Old idle
 Phase 5: Remove old system
 ```
 
 ### Adapter Pattern
 
-Create an adapter that translates calls from the old interface to the new implementation. Consumers keep using the old interface while you migrate the backend.
+古い interface の呼び出しを新しい実装へ翻訳する adapter を作ります。consumer は古い interface のまま使い続け、内部だけを移行します。
 
 ```typescript
 // Adapter: old interface, new implementation
 class LegacyTaskService implements OldTaskAPI {
   constructor(private newService: NewTaskService) {}
 
-  // Old method signature, delegates to new implementation
+  // 古い method signature のまま、新しい実装に委譲
   getTask(id: number): OldTask {
     const task = this.newService.findById(String(id));
     return this.toOldFormat(task);
@@ -150,7 +150,7 @@ class LegacyTaskService implements OldTaskAPI {
 
 ### Feature Flag Migration
 
-Use feature flags to switch consumers from old to new system one at a time:
+feature flag で、consumer を old から new へ 1 つずつ切り替えます。
 
 ```typescript
 function getTaskService(userId: string): TaskService {
@@ -161,87 +161,87 @@ function getTaskService(userId: string): TaskService {
 }
 ```
 
-### Database Schema Migrations (Expand/Contract)
+### Database Schema Migration（Expand / Contract）
 
-A schema change is the riskiest migration because the data is the one thing you cannot roll back by reverting a deploy. The failure mode is coupling the schema change to the code change: rename a column in the same release that starts using the new name, and during the rollout window — when old and new code run at once — one of them is querying a column that doesn't exist. The fix is to **never change a column in place**. Migrate in additive phases so old and new code are both valid at every step.
+schema change はもっとも危険な migration です。data は deploy を revert しても巻き戻せないからです。失敗パターンは、schema change と code change を同じ release に結びつけることです。列名を変えた release で同時に新しい名前を使い始めると、rollout window 中に古い code と新しい code が同時に動き、一方が存在しない column を参照します。解決策は **column を in place で変えないこと** です。old code と new code がどの段階でも両立するよう、additive phase で進めます。
 
+```text
+EXPAND -> MIGRATE -> CONTRACT
+新しい column を追加し、   既存 row を backfill し、   旧 column を読む code が
+nullable のまま old と     app から old+new を dual- なくなったら、後の別 deploy
+並べて置く                write する                で削除する
 ```
-EXPAND ──────────────→ MIGRATE ──────────────→ CONTRACT
-add the new column,    backfill existing rows,  once no code reads the
-nullable, alongside    dual-write old+new from  old column, drop it in
-the old one            the app                  a later, separate deploy
-```
 
-**Worked example — renaming `name` to `full_name`:**
+**Worked example - `name` を `full_name` に rename する:**
 
-1. **Expand.** Add `full_name` as nullable. Deploy. (Old code ignores it; nothing breaks.)
-2. **Dual-write.** App writes both `name` and `full_name` on every insert/update. Deploy.
-3. **Backfill.** Copy `name → full_name` for existing rows, in batches, so you don't lock the table.
-4. **Switch reads.** Point the app at `full_name`, keep writing both. Deploy and bake.
-5. **Contract.** Stop writing `name`, then — in a *separate, later* deploy — drop the column.
+1. **Expand.** `full_name` を nullable で追加して deploy する（old code は無視するので壊れない）
+2. **Dual-write.** insert / update のたびに `name` と `full_name` の両方へ書く
+3. **Backfill.** 既存 rows を `name -> full_name` で batch で埋める（table lock を避ける）
+4. **Switch reads.** app の read を `full_name` に切り替え、書き込みは両方に続ける
+5. **Contract.** `name` への書き込みを止め、その後の別 deploy で column を drop する
 
-Each step is independently deployable and reversible: if step 4 misbehaves, roll the code back and `full_name` is still being populated. Treat each phase as a thin vertical slice — see the `incremental-implementation` skill.
+各 step は独立して deploy / revert 可能です。Step 4 が悪さをしたら code を戻しても、`full_name` はまだ埋まっています。各 phase は `incremental-implementation` に従う thin vertical slice として扱います。
 
-**Rules:**
-- **Additive first, destructive last and alone.** Adds (new nullable column, new table, new index) are safe in any deploy; drops and renames get their own deploy *after* no code references the old shape.
-- **Every migration has a tested down path.** A migration you can't reverse is a deploy you can't roll back. Write and run the `down` before merging.
-- **Backfill in batches, off the hot path.** A single `UPDATE` over millions of rows locks the table; chunk it and throttle.
-- **Build large indexes without blocking writes** (e.g. Postgres `CREATE INDEX CONCURRENTLY`).
-- **Decouple from code by feature flag** when the cutover is risky, exactly as in the Feature Flag Migration pattern above.
+**ルール:**
+- **Additive first, destructive last and alone.** 追加（new nullable column、新しい table、新しい index）はどの deploy でも安全。drop と rename は、旧 shape を参照する code がなくなった後に、独立した deploy で行う
+- **すべての migration に tested down path を持たせる。** 逆に戻せない migration は revert できない deploy です。merge 前に `down` を書いて実行する
+- **Backfill は batch で、hot path の外で行う。** 1 回の `UPDATE` で数百万 rows を触ると table が lock されます。chunk して throttle する
+- **大きな index は書き込みを止めずに作る**（例: Postgres の `CREATE INDEX CONCURRENTLY`）
+- **cutover が危険なら feature flag で code から切り離す**。上の Feature Flag Migration と同じです
 
 ## Zombie Code
 
-Zombie code is code that nobody owns but everybody depends on. It's not actively maintained, has no clear owner, and accumulates security vulnerabilities and compatibility issues. Signs:
+Zombie code は、誰も責任を持たないのに皆が依存している code です。積極的に保守されず、明確な owner がなく、security vulnerability や互換性問題を溜めます。兆候:
 
-- No commits in 6+ months but active consumers exist
-- No assigned maintainer or team
-- Failing tests that nobody fixes
-- Dependencies with known vulnerabilities that nobody updates
-- Documentation that references systems that no longer exist
+- 6 か月以上 commit がないのに active consumer がいる
+- 担当 maintainer や team がいない
+- 誰も直さない failing test がある
+- known vulnerability のある dependency を誰も更新しない
+- 存在しない system を参照する documentation がある
 
-**Response:** Either assign an owner and maintain it properly, or deprecate it with a concrete migration plan. Zombie code cannot stay in limbo — it either gets investment or removal.
+**対応:** owner を割り当てて適切に維持するか、具体的な migration plan を付けて非推奨化します。Zombie code を宙ぶらりんにしてはいけません。投資するか削除するかのどちらかです。
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "It still works, why remove it?" | Working code that nobody maintains accumulates security debt and complexity. Maintenance cost grows silently. |
-| "Someone might need it later" | If it's needed later, it can be rebuilt. Keeping unused code "just in case" costs more than rebuilding. |
-| "The migration is too expensive" | Compare migration cost to ongoing maintenance cost over 2-3 years. Migration is usually cheaper long-term. |
-| "We'll deprecate it after we finish the new system" | Deprecation planning starts at design time. By the time the new system is done, you'll have new priorities. Plan now. |
-| "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the migration yourself (the Churn Rule). |
-| "We can maintain both systems indefinitely" | Two systems doing the same thing is double the maintenance, testing, documentation, and onboarding cost. |
-| "Just rename the column, it's one line" | During the rollout, old and new code run together — one will query a column that no longer exists. Expand/contract, never rename in place. |
-| "I'll add the column and drop the old one in the same migration" | That couples a safe add to a destructive drop. Drops get their own deploy, after no code references the old shape. |
-| "We'll write the rollback if we need it" | A migration with no down path is a deploy you can't reverse. Write and run the `down` before merging. |
+| 「まだ動くのに、なぜ消すの？」 | 誰も保守しない code は security debt と複雑さを積み上げます。保守コストは静かに増えます。 |
+| 「後で誰かが必要とするかも」 | 後で必要なら再実装できます。使われていない code を "念のため" 残すほうが高くつきます。 |
+| 「migration が高すぎる」 | 2〜3 年の継続保守コストと比べてください。多くの場合、長期的には migration のほうが安いです。 |
+| 「新 system が終わってから非推奨化する」 | 非推奨化計画は設計時から始めます。新 system 完成時には、別の優先事項が増えています。今計画してください。 |
+| 「ユーザーは自分で移行する」 | しません。tooling、documentation、incentive を提供するか、自分で移行してください（Churn Rule）。 |
+| 「両方の system を無期限に維持できる」 | 同じことをする 2 つの system は、保守、テスト、文書化、オンボーディングのコストが 2 倍です。 |
+| 「ただ column 名を変えればいい、1 行だ」 | rollout 中は old と new code が同時に走ります。片方は存在しない column を参照します。expand/contract を使い、in place の rename はしないでください。 |
+| 「column を追加して、同じ migration で old を消せばいい」 | 安全な追加と破壊的な削除を結びつけています。drop は独立した deploy で、旧 shape を参照する code がなくなった後に行います。 |
+| 「必要になったら rollback を書く」 | down path のない migration は、戻せない deploy です。merge 前に down を書いて実行してください。 |
 
-## Red Flags
+## レッドフラグ
 
-- Deprecated systems with no replacement available
-- Deprecation announcements with no migration tooling or documentation
-- "Soft" deprecation that's been advisory for years with no progress
-- Zombie code with no owner and active consumers
-- New features added to a deprecated system (invest in the replacement instead)
-- Deprecation without measuring current usage
-- Removing code without verifying zero active consumers
-- A schema change and the code that depends on it shipped in the same deploy
-- A column renamed or dropped in place rather than via expand/contract
-- A migration merged with no tested down path, or a backfill that locks the table
+- 代替のない deprecated system
+- migration tooling や documentation なしの非推奨化告知
+- 何年も advisory のままで進展がない "soft" deprecation
+- owner のいない zombie code と active consumer
+- deprecated system に新機能を足す（代わりに replacement に投資する）
+- current usage を測らずに非推奨化する
+- zero active consumer を確認せずに code を消す
+- schema change と、その変更に依存する code が同じ deploy で出る
+- column を expand/contract ではなく in place で rename / drop する
+- tested down path のない migration、または table を lock する backfill
 
-## Verification
+## 検証
 
-After completing a deprecation:
+deprecation を完了したら:
 
-- [ ] Replacement is production-proven and covers all critical use cases
-- [ ] Migration guide exists with concrete steps and examples
-- [ ] All active consumers have been migrated (verified by metrics/logs)
-- [ ] Old code, tests, documentation, and configuration are fully removed
-- [ ] No references to the deprecated system remain in the codebase
-- [ ] Deprecation notices are removed (they served their purpose)
+- [ ] replacement が production で実証され、すべての重要な use case をカバーしている
+- [ ] 具体的な手順と例を含む migration guide がある
+- [ ] active consumer がすべて移行済み（metrics / logs で確認）
+- [ ] old code、tests、documentation、configuration が完全に削除されている
+- [ ] deprecated system への参照が codebase に残っていない
+- [ ] deprecation notice が削除されている（役目を終えた）
 
-After a database schema migration:
+database schema migration を完了したら:
 
-- [ ] The change ships in additive phases (expand → backfill → contract), not a single in-place edit
-- [ ] Old and new code are both valid against the schema at every deploy step
-- [ ] Each migration has a tested down path; backfills run in throttled batches
-- [ ] Destructive steps (drop/rename) ship in their own deploy after no code references the old shape
+- [ ] 変更は additive phase（expand -> backfill -> contract）で出ており、in-place edit ではない
+- [ ] 各 deploy step で old と new の両方が schema に対して有効
+- [ ] 各 migration に tested down path があり、backfill は throttle された batch で実行される
+- [ ] 破壊的 step（drop / rename）は、旧 shape を参照する code がなくなった後に独立した deploy で出る

@@ -1,197 +1,198 @@
 ---
 name: shipping-and-launch
-description: Prepares production launches. Use when preparing to deploy to production. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
+description: 本番リリースの準備をします。本番へのデプロイ準備、事前チェックリスト、監視設定、段階的ロールアウト、ロールバック戦略が必要なときに使います。
 ---
 
-# Shipping and Launch
+# 出荷とリリース
 
-## Overview
+## 概要
 
-Ship with confidence. The goal is not just to deploy — it's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
+自信を持って出荷しましょう。目標は単にデプロイすることではなく、安全にデプロイし、監視を整え、ロールバック計画を用意し、成功の定義を明確にしておくことです。すべてのリリースは、元に戻せて、観測できて、段階的であるべきです。
 
-## When to Use
+## 使う場面
 
-- Deploying a feature to production for the first time
-- Releasing a significant change to users
-- Migrating data or infrastructure
-- Opening a beta or early access program
-- Any deployment that carries risk (all of them)
+- 機能を初めて本番にデプロイするとき
+- ユーザー向けに大きな変更を出すとき
+- データやインフラを移行するとき
+- ベータ版や早期アクセスを開始するとき
+- リスクを伴うすべてのデプロイ（つまり全部）
 
-## The Pre-Launch Checklist
+## リリース前チェックリスト
 
-### Code Quality
+### コード品質
 
-- [ ] All tests pass (unit, integration, e2e)
-- [ ] Build succeeds with no warnings
-- [ ] Lint and type checking pass
-- [ ] Code reviewed and approved
-- [ ] No TODO comments that should be resolved before launch
-- [ ] No `console.log` debugging statements in production code
-- [ ] Error handling covers expected failure modes
+- [ ] すべてのテストが通る（unit、integration、e2e）
+- [ ] ビルドが警告なしで成功する
+- [ ] lint と型チェックが通る
+- [ ] コードレビュー済みで承認されている
+- [ ] リリース前に解決すべき TODO コメントがない
+- [ ] 本番コードに `console.log` デバッグ文がない
+- [ ] 想定される失敗モードをエラーハンドリングでカバーしている
 
-### Security
+### セキュリティ
 
-- [ ] No secrets in code or version control
-- [ ] The ecosystem's dependency audit (`npm audit`, `pip-audit`, `cargo audit`, ...) shows no critical or high vulnerabilities
-- [ ] Input validation on all user-facing endpoints
-- [ ] Authentication and authorization checks in place
-- [ ] Security headers configured (CSP, HSTS, etc.)
-- [ ] Rate limiting on authentication endpoints
-- [ ] CORS configured to specific origins (not wildcard)
+- [ ] コードやバージョン管理に秘密情報がない
+- [ ] エコシステムの依存関係監査（`npm audit`、`pip-audit`、`cargo audit` など）で重大または高リスクの脆弱性がない
+- [ ] すべてのユーザー向けエンドポイントで入力検証をしている
+- [ ] 認証・認可チェックが実装されている
+- [ ] セキュリティヘッダー（CSP、HSTS など）が設定されている
+- [ ] 認証エンドポイントで rate limiting を行っている
+- [ ] CORS が特定の origin のみに設定されている（ワイルドカードではない）
 
-### Performance
+### パフォーマンス
 
-- [ ] Core Web Vitals within "Good" thresholds
-- [ ] No N+1 queries in critical paths
-- [ ] Images optimized (compression, responsive sizes, lazy loading)
-- [ ] Bundle size within budget
-- [ ] Database queries have appropriate indexes
-- [ ] Caching configured for static assets and repeated queries
+- [ ] Core Web Vitals が「良好」基準内に収まっている
+- [ ] 重要経路に N+1 クエリがない
+- [ ] 画像が最適化されている（圧縮、レスポンシブサイズ、遅延読み込み）
+- [ ] バンドルサイズが予算内に収まっている
+- [ ] データベースクエリに適切な index がある
+- [ ] 静的アセットと繰り返しクエリにキャッシュが設定されている
 
-### Accessibility
+### アクセシビリティ
 
-- [ ] Keyboard navigation works for all interactive elements
-- [ ] Screen reader can convey page content and structure
-- [ ] Color contrast meets WCAG 2.1 AA (4.5:1 for text)
-- [ ] Focus management correct for modals and dynamic content
-- [ ] Error messages are descriptive and associated with form fields
-- [ ] No accessibility warnings in axe-core or Lighthouse
+- [ ] すべての操作可能要素でキーボード操作できる
+- [ ] スクリーンリーダーでページ内容と構造が伝わる
+- [ ] 色のコントラストが WCAG 2.1 AA（テキスト 4.5:1）を満たす
+- [ ] モーダルや動的コンテンツのフォーカス管理が正しい
+- [ ] エラーメッセージが具体的で、フォーム項目と関連付けられている
+- [ ] axe-core や Lighthouse にアクセシビリティ警告がない
 
-### Infrastructure
+### インフラ
 
-- [ ] Environment variables set in production
-- [ ] Database migrations applied (or ready to apply)
-- [ ] DNS and SSL configured
-- [ ] CDN configured for static assets
-- [ ] Logging and error reporting configured
-- [ ] Health check endpoint exists and responds
+- [ ] 本番環境の環境変数が設定されている
+- [ ] データベースマイグレーションが適用済み、または適用可能な状態である
+- [ ] DNS と SSL が設定されている
+- [ ] CDN が静的アセット向けに設定されている
+- [ ] ロギングとエラー報告が設定されている
+- [ ] ヘルスチェックエンドポイントが存在し、応答する
 
-### Documentation
+### ドキュメント
 
-- [ ] README updated with any new setup requirements
-- [ ] API documentation current
-- [ ] ADRs written for any architectural decisions
-- [ ] Changelog updated
-- [ ] User-facing documentation updated (if applicable)
+- [ ] 新しいセットアップ要件があれば README を更新した
+- [ ] API ドキュメントが最新である
+- [ ] 設計判断があれば ADR を書いた
+- [ ] changelog を更新した
+- [ ] ユーザー向けドキュメントを更新した（該当する場合）
 
-## Feature Flag Strategy
+## Feature Flag 戦略
 
-Ship behind feature flags to decouple deployment from release:
+デプロイとリリースを分離するために、feature flag の背後で出荷します。
 
 ```typescript
-// Feature flag check
+// Feature flag の確認
 const flags = await getFeatureFlags(userId);
 
 if (flags.taskSharing) {
-  // New feature: task sharing
+  // 新機能: タスク共有
   return <TaskSharingPanel task={task} />;
 }
 
-// Default: existing behavior
+// デフォルト: 既存動作
 return null;
 ```
 
-**Feature flag lifecycle:**
+**feature flag のライフサイクル:**
 
 ```
-1. DEPLOY with flag OFF     → Code is in production but inactive
-2. ENABLE for team/beta     → Internal testing in production environment
-3. GRADUAL ROLLOUT          → 5% → 25% → 50% → 100% of users
-4. MONITOR at each stage    → Watch error rates, performance, user feedback
-5. CLEAN UP                 → Remove flag and dead code path after full rollout
+1. flag OFF のまま DEPLOY     - コードは本番にあるが非アクティブ
+2. チーム / beta に ENABLE     - 本番環境での内部テスト
+3. 段階的 ROLLOUT              - 5% → 25% → 50% → 100% のユーザーへ
+4. 各段階で MONITOR            - エラー率、性能、ユーザーフィードバックを見る
+5. CLEAN UP                    - 全体展開後に flag と不要コードを削除する
 ```
 
-**Rules:**
-- Every feature flag has an owner and an expiration date
-- Clean up flags within 2 weeks of full rollout
-- Don't nest feature flags (creates exponential combinations)
-- Test both flag states (on and off) in CI
+**ルール:**
+- すべての feature flag には owner と有効期限を持たせる
+- 全面展開後 2 週間以内に flag を片付ける
+- feature flag を入れ子にしない（組み合わせが指数的に増える）
+- CI で flag の on/off 両方をテストする
 
-## Staged Rollout
+## 段階的ロールアウト
 
-### The Rollout Sequence
+### ロールアウトの流れ
 
 ```
-1. DEPLOY to staging
-   └── Full test suite in staging environment
-   └── Manual smoke test of critical flows
+1. staging に DEPLOY
+   - staging 環境でフルテストスイートを実行
+   - 重要フローを手動で smoke test する
 
-2. DEPLOY to production (feature flag OFF)
-   └── Verify deployment succeeded (health check)
-   └── Check error monitoring (no new errors)
+2. 本番に DEPLOY（feature flag は OFF）
+   - デプロイ成功を確認する（ヘルスチェック）
+   - エラー監視を確認する（新規エラーなし）
 
-3. ENABLE for team (flag ON for internal users)
-   └── Team uses the feature in production
-   └── 24-hour monitoring window
+3. チームに ENABLE（社内ユーザー向けに flag ON）
+   - チームが本番環境で機能を使う
+   - 24 時間の監視期間
 
-4. CANARY rollout (flag ON for 5% of users)
-   └── Monitor error rates, latency, user behavior
-   └── Compare metrics: canary vs. baseline
-   └── 24-48 hour monitoring window
-   └── Advance only if all thresholds pass (see table below)
+4. canary rollout（5% のユーザーに flag ON）
+   - エラー率、レイテンシ、ユーザー行動を監視する
+   - 指標を比較する: canary vs baseline
+   - 24〜48 時間の監視期間
+   - 下の表のしきい値をすべて満たした場合のみ次へ進む
 
-5. GRADUAL increase (25% -> 50% -> 100%)
-   └── Same monitoring at each step
-   └── Ability to roll back to previous percentage at any point
+5. 段階的増加（25% -> 50% -> 100%）
+   - 各段階で同じ監視を行う
+   - いつでも前の割合にロールバックできるようにする
 
-6. FULL rollout (flag ON for all users)
-   └── Monitor for 1 week
-   └── Clean up feature flag
+6. 全面展開（全ユーザーに flag ON）
+   - 1 週間監視する
+   - feature flag を片付ける
 ```
 
-### Rollout Decision Thresholds
+### ロールアウト判定のしきい値
 
-Use these thresholds to decide whether to advance, hold, or roll back at each stage:
+各段階で進めるか、据え置くか、ロールバックするかの判断に次のしきい値を使います。
 
-| Metric | Advance (green) | Hold and investigate (yellow) | Roll back (red) |
+| 指標 | 進める（green） | 据え置きして調査（yellow） | ロールバック（red） |
 |--------|-----------------|-------------------------------|-----------------|
-| Error rate | Within 10% of baseline | 10-100% above baseline | >2x baseline |
-| P95 latency | Within 20% of baseline | 20-50% above baseline | >50% above baseline |
-| Client JS errors | No new error types | New errors at <0.1% of sessions | New errors at >0.1% of sessions |
-| Business metrics | Neutral or positive | Decline <5% (may be noise) | Decline >5% |
+| エラー率 | baseline から 10% 以内 | baseline より 10〜100% 高い | baseline の 2 倍超 |
+| P95 レイテンシ | baseline から 20% 以内 | baseline より 20〜50% 高い | baseline より 50% 超高い |
+| クライアント JS エラー | 新しいエラー種別なし | セッションの 0.1% 未満で新規エラー | セッションの 0.1% 超で新規エラー |
+| ビジネス指標 | 中立または改善 | 5% 未満の低下（ノイズの可能性あり） | 5% 超の低下 |
 
-### When to Roll Back
+### ロールバックすべきとき
 
-Roll back immediately if:
-- Error rate increases by more than 2x baseline
-- P95 latency increases by more than 50%
-- User-reported issues spike
-- Data integrity issues detected
-- Security vulnerability discovered
+次のいずれかに当てはまる場合は、すぐにロールバックします。
 
-## Monitoring and Observability
+- エラー率が baseline の 2 倍超に増えた
+- P95 レイテンシが 50% 超増えた
+- ユーザー報告の問題が急増した
+- データ整合性の問題が検出された
+- セキュリティ脆弱性が見つかった
 
-### What to Monitor
+## 監視と可観測性
+
+### 監視対象
 
 ```
-Application metrics:
-├── Error rate (total and by endpoint)
-├── Response time (p50, p95, p99)
-├── Request volume
-├── Active users
-└── Key business metrics (conversion, engagement)
+アプリケーション指標:
+- エラー率（全体とエンドポイント別）
+- 応答時間（p50, p95, p99）
+- リクエスト量
+- アクティブユーザー
+- 主要ビジネス指標（conversion, engagement）
 
-Infrastructure metrics:
-├── CPU and memory utilization
-├── Database connection pool usage
-├── Disk space
-├── Network latency
-└── Queue depth (if applicable)
+インフラ指標:
+- CPU とメモリ使用率
+- データベース接続プール使用率
+- ディスク容量
+- ネットワークレイテンシ
+- キュー深さ（該当する場合）
 
-Client metrics:
-├── Core Web Vitals (LCP, INP, CLS)
-├── JavaScript errors
-├── API error rates from client perspective
-└── Page load time
+クライアント指標:
+- Core Web Vitals（LCP, INP, CLS）
+- JavaScript エラー
+- クライアント視点での API エラー率
+- ページ読み込み時間
 ```
 
-### Error Reporting
+### エラー報告
 
 ```typescript
-// Set up error boundary with reporting
+// レポート付きの error boundary を設定する
 class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Report to error tracking service
+    // エラー追跡サービスへ送信する
     reportError(error, {
       componentStack: info.componentStack,
       userId: getCurrentUser()?.id,
@@ -207,7 +208,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Server-side error reporting
+// サーバーサイドのエラー報告
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   reportError(err, {
     method: req.method,
@@ -215,96 +216,97 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     userId: req.user?.id,
   });
 
-  // Don't expose internals to users
+  // 内部情報をユーザーに見せない
   res.status(500).json({
     error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
   });
 });
 ```
 
-### Post-Launch Verification
+### リリース後の確認
 
-In the first hour after launch:
+リリース後 1 時間以内に次を確認します。
 
 ```
-1. Check health endpoint returns 200
-2. Check error monitoring dashboard (no new error types)
-3. Check latency dashboard (no regression)
-4. Test the critical user flow manually
-5. Verify logs are flowing and readable
-6. Confirm rollback mechanism works (dry run if possible)
+1. ヘルスチェックが 200 を返す
+2. エラー監視ダッシュボードで新しいエラー種別がない
+3. レイテンシダッシュボードに悪化がない
+4. 重要なユーザーフローを手動で確認する
+5. ログが流れていて、読めることを確認する
+6. ロールバック機構が動くことを確認する（可能なら dry run）
 ```
 
-## Rollback Strategy
+## ロールバック戦略
 
-Every deployment needs a rollback plan before it happens:
+すべてのデプロイには、事前にロールバック計画が必要です。
 
 ```markdown
-## Rollback Plan for [Feature/Release]
+## [機能/リリース名] のロールバック計画
 
-### Trigger Conditions
-- Error rate > 2x baseline
-- P95 latency > [X]ms
-- User reports of [specific issue]
+### 発動条件
+- エラー率が baseline の 2 倍超
+- P95 レイテンシが [X]ms 超
+- [特定の問題] に関するユーザー報告
 
-### Rollback Steps
-1. Disable feature flag (if applicable)
-   OR
-1. Deploy previous version: `git revert <commit> && git push`
-2. Verify rollback: health check, error monitoring
-3. Communicate: notify team of rollback
+### ロールバック手順
+1. feature flag を無効化する（該当する場合）
+   または
+1. 1 つ前のバージョンをデプロイする: `git revert <commit> && git push`
+2. ロールバックを確認する: ヘルスチェック、エラー監視
+3. 連絡する: チームへロールバックを通知する
 
-### Database Considerations
-- Migration [X] has a rollback: `npx prisma migrate rollback`
-- Data inserted by new feature: [preserved / cleaned up]
+### データベースの注意点
+- Migration [X] にはロールバックがある: `npx prisma migrate rollback`
+- 新機能で追加されたデータ: [保持済み / 削除済み]
 
-### Time to Rollback
-- Feature flag: < 1 minute
-- Redeploy previous version: < 5 minutes
-- Database rollback: < 15 minutes
+### ロールバックにかかる時間
+- Feature flag: 1 分未満
+- 旧バージョンの再デプロイ: 5 分未満
+- データベースロールバック: 15 分未満
 ```
-## See Also
 
-- For the project-wide Definition of Done that every change must clear before this checklist, see `../../references/definition-of-done.md`
-- For security pre-launch checks, see `../../references/security-checklist.md`
-- For performance pre-launch checklist, see `../../references/performance-checklist.md`
-- For accessibility verification before launch, see `../../references/accessibility-checklist.md`
+## 参考
 
-## Common Rationalizations
+- このチェックリストの前に、すべての変更が満たすべきプロジェクト全体の Definition of Done は `../../references/definition-of-done.md` を参照してください
+- セキュリティのリリース前チェックは `../../references/security-checklist.md` を参照してください
+- パフォーマンスのリリース前チェックは `../../references/performance-checklist.md` を参照してください
+- リリース前のアクセシビリティ確認は `../../references/accessibility-checklist.md` を参照してください
 
-| Rationalization | Reality |
+## よくある言い訳
+
+| 言い訳 | 現実 |
 |---|---|
-| "It works in staging, it'll work in production" | Production has different data, traffic patterns, and edge cases. Monitor after deploy. |
-| "We don't need feature flags for this" | Every feature benefits from a kill switch. Even "simple" changes can break things. |
-| "Monitoring is overhead" | Not having monitoring means you discover problems from user complaints instead of dashboards. |
-| "We'll add monitoring later" | Add it before launch. You can't debug what you can't see. |
-| "Rolling back is admitting failure" | Rolling back is responsible engineering. Shipping a broken feature is the failure. |
+| 「staging で動いたから production でも動く」 | 本番には別のデータ、別のトラフィックパターン、別のエッジケースがあります。デプロイ後に監視してください。 |
+| 「これに feature flag は要らない」 | すべての機能に kill switch の価値があります。「単純」な変更でも壊れることがあります。 |
+| 「監視はオーバーヘッドだ」 | 監視がないと、問題はダッシュボードではなくユーザー苦情から見つかります。 |
+| 「監視はあとで足す」 | リリース前に入れてください。見えないものはデバッグできません。 |
+| 「ロールバックは失敗を認めることだ」 | ロールバックは責任あるエンジニアリングです。壊れた機能を出すほうが失敗です。 |
 
-## Red Flags
+## 危険信号
 
-- Deploying without a rollback plan
-- No monitoring or error reporting in production
-- Big-bang releases (everything at once, no staging)
-- Feature flags with no expiration or owner
-- No one monitoring the deploy for the first hour
-- Production environment configuration done by memory, not code
-- "It's Friday afternoon, let's ship it"
+- ロールバック計画なしでデプロイしている
+- 本番に監視やエラー報告がない
+- 一気に全部出す big-bang リリース
+- owner や期限のない feature flag
+- 最初の 1 時間、誰もデプロイを監視していない
+- 本番環境の設定をコードではなく記憶だけで行っている
+- 「金曜の午後だけど、出しちゃおう」
 
-## Verification
+## 検証
 
-Before deploying:
+デプロイ前:
 
-- [ ] Pre-launch checklist completed (all sections green)
-- [ ] Feature flag configured (if applicable)
-- [ ] Rollback plan documented
-- [ ] Monitoring dashboards set up
-- [ ] Team notified of deployment
+- [ ] リリース前チェックリストの全項目が完了している
+- [ ] feature flag が設定されている（該当する場合）
+- [ ] ロールバック計画が文書化されている
+- [ ] 監視ダッシュボードが用意されている
+- [ ] チームにデプロイ予定を通知した
 
-After deploying:
+デプロイ後:
 
-- [ ] Health check returns 200
-- [ ] Error rate is normal
-- [ ] Latency is normal
-- [ ] Critical user flow works
-- [ ] Logs are flowing
-- [ ] Rollback tested or verified ready
+- [ ] ヘルスチェックが 200 を返す
+- [ ] エラー率が正常
+- [ ] レイテンシが正常
+- [ ] 重要なユーザーフローが動作する
+- [ ] ログが流れている
+- [ ] ロールバックをテスト済み、またはすぐ使えることを確認済み

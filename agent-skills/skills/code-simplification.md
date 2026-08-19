@@ -1,72 +1,72 @@
 ---
 name: code-simplification
-description: Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
+description: 読みやすさのためにコードを簡素化します。振る舞いを変えずに複雑さを減らすリファクタリングに使います。コードが動いてはいるが、読む・保守する・拡張するのに重すぎるときに使います。不要な複雑さが溜まったコードをレビューするときにも使います。
 ---
 
-# Code Simplification
+# コード簡素化
 
-> Inspired by the [Claude Code Simplifier plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md). Adapted here as a model-agnostic, process-driven skill for any AI coding agent.
+> [Claude Code Simplifier plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md) に着想を得て、どの AI コーディングエージェントでも使える、モデル非依存・プロセス駆動のスキルとして整えたものです。
 
-## Overview
+## 概要
 
-Simplify code by reducing complexity while preserving exact behavior. The goal is not fewer lines — it's code that is easier to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
+振る舞いを一切変えずに、複雑さを減らしてコードを簡素化します。目標は行数を減らすことではありません。読む・理解する・変更する・デバッグするのが楽なコードにすることです。簡素化のたびに、1 つの簡単なテストを通してください: 「新しいチームメンバーが、元のコードより速く理解できるか？」
 
-## When to Use
+## 使う場面
 
-- After a feature is working and tests pass, but the implementation feels heavier than it needs to be
-- During code review when readability or complexity issues are flagged
-- When you encounter deeply nested logic, long functions, or unclear names
-- When refactoring code written under time pressure
-- When consolidating related logic scattered across files
-- After merging changes that introduced duplication or inconsistency
+- 機能は動いてテストも通るが、実装が必要以上に重いと感じるとき
+- コードレビューで可読性や複雑さの問題が指摘されたとき
+- 深いネスト、長い関数、分かりにくい名前に出会ったとき
+- 時間に追われて書かれたコードをリファクタリングするとき
+- 関連ロジックが複数ファイルに散らばっているとき
+- 重複や不整合を生んだ変更をマージしたあと
 
-**When NOT to use:**
+**使わない場面:**
 
-- Code is already clean and readable — don't simplify for the sake of it
-- You don't understand what the code does yet — comprehend before you simplify
-- The code is performance-critical and the "simpler" version would be measurably slower
-- You're about to rewrite the module entirely — simplifying throwaway code wastes effort
+- コードがすでにきれいで読みやすい - ためらいなく簡素化しない
+- まだ何をしているか理解していない - まず理解してから簡素化する
+- パフォーマンスが重要で、"簡単" に見える版が測定可能に遅くなる
+- モジュールを全面的に書き直す直前 - 捨てるコードに労力をかけない
 
-## The Five Principles
+## 5 つの原則
 
-### 1. Preserve Behavior Exactly
+### 1. 振る舞いを正確に保つ
 
-Don't change what the code does — only how it expresses it. All inputs, outputs, side effects, error behavior, and edge cases must remain identical. If you're not sure a simplification preserves behavior, don't make it.
+コードが何をするかは変えず、どう表現するかだけを変えます。入力、出力、副作用、エラー、境界条件はすべて同一でなければなりません。簡素化が振る舞いを保つか確信できないなら、やりません。
 
-```
-ASK BEFORE EVERY CHANGE:
-→ Does this produce the same output for every input?
-→ Does this maintain the same error behavior?
-→ Does this preserve the same side effects and ordering?
-→ Do all existing tests still pass without modification?
-```
-
-### 2. Follow Project Conventions
-
-Simplification means making code more consistent with the codebase, not imposing external preferences. Before simplifying:
-
-```
-1. Read CLAUDE.md / project conventions
-2. Study how neighboring code handles similar patterns
-3. Match the project's style for:
-   - Import ordering and module system
-   - Function declaration style
-   - Naming conventions
-   - Error handling patterns
-   - Type annotation depth
+```text
+各変更の前に確認:
+-> すべての入力で同じ出力か？
+-> 同じエラー振る舞いか？
+-> 同じ副作用と順序を保つか？
+-> 既存テストは変更なしで全部通るか？
 ```
 
-Simplification that breaks project consistency is not simplification — it's churn.
+### 2. プロジェクト規約に従う
 
-### 3. Prefer Clarity Over Cleverness
+簡素化は、外部の好みを押し付けることではなく、コードベースにより一貫させることです。簡素化の前に:
 
-Explicit code is better than compact code when the compact version requires a mental pause to parse.
+```text
+1. CLAUDE.md / project conventions を読む
+2. 周辺コードが似たパターンをどう扱うかを見る
+3. 次の点でプロジェクトの流儀に合わせる:
+   - import 順序と module system
+   - function declaration のスタイル
+   - naming conventions
+   - error handling パターン
+   - type annotation の深さ
+```
+
+規約を壊す簡素化は、簡素化ではなく churn です。
+
+### 3. 巧妙さより明快さを優先する
+
+コンパクトさより、明白さを優先します。短くても、読むのに一瞬止まるなら明快ではありません。
 
 ```typescript
-// UNCLEAR: Dense ternary chain
+// 分かりにくい: 複雑な三項演算子
 const label = isNew ? 'New' : isUpdated ? 'Updated' : isArchived ? 'Archived' : 'Active';
 
-// CLEAR: Readable mapping
+// 分かりやすい: 読める mapping
 function getStatusLabel(item: Item): string {
   if (item.isNew) return 'New';
   if (item.isUpdated) return 'Updated';
@@ -76,120 +76,120 @@ function getStatusLabel(item: Item): string {
 ```
 
 ```typescript
-// UNCLEAR: Chained reduces with inline logic
+// 分かりにくい: reduce の中にロジックを詰め込みすぎ
 const result = items.reduce((acc, item) => ({
   ...acc,
   [item.id]: { ...acc[item.id], count: (acc[item.id]?.count ?? 0) + 1 }
 }), {});
 
-// CLEAR: Named intermediate step
+// 分かりやすい: 名前付きの中間ステップ
 const countById = new Map<string, number>();
 for (const item of items) {
   countById.set(item.id, (countById.get(item.id) ?? 0) + 1);
 }
 ```
 
-### 4. Maintain Balance
+### 4. バランスを保つ
 
-Simplification has a failure mode: over-simplification. Watch for these traps:
+簡素化には、やりすぎという失敗もあります。次を警戒します。
 
-- **Inlining too aggressively** — removing a helper that gave a concept a name makes the call site harder to read
-- **Combining unrelated logic** — two simple functions merged into one complex function is not simpler
-- **Removing "unnecessary" abstraction** — some abstractions exist for extensibility or testability, not complexity
-- **Optimizing for line count** — fewer lines is not the goal; easier comprehension is
+- **インライン化しすぎる** - helper を消して概念に名前がなくなると、呼び出し側が読みにくくなる
+- **無関係なロジックをまとめる** - 2 つの単純な関数を 1 つの複雑な関数にしても簡単にはならない
+- **"不要に見える" 抽象を消す** - 抽象は拡張性やテスト容易性のためにあることもある
+- **行数だけで最適化する** - 少ない行数が目的ではない。理解しやすさが目的
 
-### 5. Scope to What Changed
+### 5. 変更範囲を絞る
 
-Default to simplifying recently modified code. Avoid drive-by refactors of unrelated code unless explicitly asked to broaden scope. Unscoped simplification creates noise in diffs and risks unintended regressions.
+基本は、最近変更されたコードを簡素化します。明示的に範囲を広げるよう求められていない限り、関係ないコードまで勝手にリファクタリングしません。範囲外の簡素化は diff を汚し、意図しない回帰を生みます。
 
-## The Simplification Process
+## 簡素化のプロセス
 
-### Step 1: Understand Before Touching (Chesterton's Fence)
+### Step 1: 触る前に理解する（Chesterton's Fence）
 
-Before changing or removing anything, understand why it exists. This is Chesterton's Fence: if you see a fence across a road and don't understand why it's there, don't tear it down. First understand the reason, then decide if the reason still applies.
+何かを変えたり消したりする前に、それが存在する理由を理解します。これは Chesterton's Fence です。道にフェンスがあって、なぜあるか分からないなら壊してはいけません。理由を理解してから、その理由がまだ有効か判断します。
 
-```
-BEFORE SIMPLIFYING, ANSWER:
-- What is this code's responsibility?
-- What calls it? What does it call?
-- What are the edge cases and error paths?
-- Are there tests that define the expected behavior?
-- Why might it have been written this way? (Performance? Platform constraint? Historical reason?)
-- Check git blame: what was the original context for this code?
-```
-
-If you can't answer these, you're not ready to simplify. Read more context first.
-
-### Step 2: Identify Simplification Opportunities
-
-Scan for these patterns — each one is a concrete signal, not a vague smell:
-
-**Structural complexity:**
-
-| Pattern | Signal | Simplification |
-|---------|--------|----------------|
-| Deep nesting (3+ levels) | Hard to follow control flow | Extract conditions into guard clauses or helper functions |
-| Long functions (50+ lines) | Multiple responsibilities | Split into focused functions with descriptive names |
-| Nested ternaries | Requires mental stack to parse | Replace with if/else chains, switch, or lookup objects |
-| Boolean parameter flags | `doThing(true, false, true)` | Replace with options objects or separate functions |
-| Repeated conditionals | Same `if` check in multiple places | Extract to a well-named predicate function |
-
-**Naming and readability:**
-
-| Pattern | Signal | Simplification |
-|---------|--------|----------------|
-| Generic names | `data`, `result`, `temp`, `val`, `item` | Rename to describe the content: `userProfile`, `validationErrors` |
-| Abbreviated names | `usr`, `cfg`, `btn`, `evt` | Use full words unless the abbreviation is universal (`id`, `url`, `api`) |
-| Misleading names | Function named `get` that also mutates state | Rename to reflect actual behavior |
-| Comments explaining "what" | `// increment counter` above `count++` | Delete the comment — the code is clear enough |
-| Comments explaining "why" | `// Retry because the API is flaky under load` | Keep these — they carry intent the code can't express |
-
-**Redundancy:**
-
-| Pattern | Signal | Simplification |
-|---------|--------|----------------|
-| Duplicated logic | Same 5+ lines in multiple places | Extract to a shared function |
-| Dead code | Unreachable branches, unused variables, commented-out blocks | Remove (after confirming it's truly dead) |
-| Unnecessary abstractions | Wrapper that adds no value | Inline the wrapper, call the underlying function directly |
-| Over-engineered patterns | Factory-for-a-factory, strategy-with-one-strategy | Replace with the simple direct approach |
-| Redundant type assertions | Casting to a type that's already inferred | Remove the assertion |
-
-### Step 3: Apply Changes Incrementally
-
-Make one simplification at a time. Run tests after each change. **Submit refactoring changes separately from feature or bug fix changes.** A PR that refactors and adds a feature is two PRs — split them.
-
-```
-FOR EACH SIMPLIFICATION:
-1. Make the change
-2. Run the test suite
-3. If tests pass → commit (or continue to next simplification)
-4. If tests fail → revert and reconsider
+```text
+簡素化前に答える:
+- このコードの責任は何か？
+- 誰が呼んでいるか？ 何を呼んでいるか？
+- エッジケースとエラーパスは？
+- 期待される振る舞いを定義するテストはあるか？
+- なぜこの形で書かれたのか？（性能、プラットフォーム制約、歴史的理由）
+- git blame を見る: 当初の文脈は何だったか？
 ```
 
-Avoid batching multiple simplifications into a single untested change. If something breaks, you need to know which simplification caused it.
+答えられないなら、まだ簡素化の準備ができていません。先に文脈を読んでください。
 
-**The Rule of 500:** If a refactoring would touch more than 500 lines, invest in automation (codemods, sed scripts, AST transforms) rather than making the changes by hand. Manual edits at that scale are error-prone and exhausting to review.
+### Step 2: 簡素化の機会を見つける
 
-### Step 4: Verify the Result
+次のパターンを探します - それぞれ具体的なシグナルです。
 
-After all simplifications, step back and evaluate the whole:
+**構造的複雑さ:**
 
+| パターン | シグナル | 簡素化 |
+|---|---|---|
+| 深いネスト（3 層以上） | 制御フローが追いにくい | guard clause や helper に分ける |
+| 長い関数（50 行以上） | 複数の責務がある | 焦点の合った関数に分割する |
+| 入れ子の三項演算子 | 理解にメンタルスタックが必要 | if/else、switch、lookup object に置き換える |
+| boolean 引数フラグ | `doThing(true, false, true)` | options object か別関数にする |
+| 条件分岐の繰り返し | 同じ `if` が複数箇所にある | 分かりやすい predicate 関数に抽出する |
+
+**命名と可読性:**
+
+| パターン | シグナル | 簡素化 |
+|---|---|---|
+| 一般的な名前 | `data`, `result`, `temp`, `val`, `item` | 中身が分かる名前に変更: `userProfile`, `validationErrors` |
+| 略称 | `usr`, `cfg`, `btn`, `evt` | 普遍的な略語（`id`, `url`, `api`）以外は完全な単語を使う |
+| 誤解を招く名前 | 状態を変えるのに `get` と名付ける | 実際の振る舞いに合わせて rename する |
+| "何を" を説明するコメント | `// increment counter` の上に `count++` | コメントを消す - コードで十分 |
+| "なぜ" を説明するコメント | `// API が負荷時に不安定なので retry する` | 残す - コードでは表しにくい意図だから |
+
+**冗長性:**
+
+| パターン | シグナル | 簡素化 |
+|---|---|---|
+| 重複ロジック | 同じ 5 行以上が複数箇所にある | 共有関数に抽出する |
+| 死んだコード | 到達不能な branch、未使用変数、コメントアウトされた塊 | 本当に死んでいると確認したら削除する |
+| 不要な抽象化 | 価値のない wrapper | wrapper を inline して直接呼ぶ |
+| 過剰設計 | factory のための factory、strategy が 1 個しかない | 単純な直書きに置き換える |
+| 冗長な type assertion | すでに推論できる型への cast | assertion を消す |
+
+### Step 3: 1 つずつ変更する
+
+簡素化は 1 つずつ行います。1 つ変えるたびにテストを回してください。**リファクタリング変更は、feature や bug fix と分けて提出します。** リファクタリングと機能追加を混ぜた PR は 2 つに分けます。
+
+```text
+各簡素化で:
+1. 変更する
+2. テストスイートを回す
+3. テストが通る -> commit（または次の簡素化へ）
+4. テストが落ちる -> 戻して再考
 ```
-COMPARE BEFORE AND AFTER:
-- Is the simplified version genuinely easier to understand?
-- Did you introduce any new patterns inconsistent with the codebase?
-- Is the diff clean and reviewable?
-- Would a teammate approve this change?
+
+複数の簡素化を一度にまとめて未検証で入れないでください。壊れたら、どの簡素化が原因か分からなくなります。
+
+**Rule of 500:** 500 行以上触るリファクタリングなら、手でやるより codemod、sed スクリプト、AST transform のような自動化に投資してください。手作業の大規模編集はレビューも大変でミスも増えます。
+
+### Step 4: 結果を検証する
+
+簡素化が終わったら、全体を見ます。
+
+```text
+BEFORE / AFTER を比較:
+- 簡素版のほうが本当に理解しやすいか？
+- コードベースと合わない新しいパターンを入れていないか？
+- diff はきれいでレビューしやすいか？
+- チームメイトならこの変更を承認するか？
 ```
 
-If the "simplified" version is harder to understand or review, revert. Not every simplification attempt succeeds.
+もし "簡素化" した版のほうが理解しにくい、レビューしにくいなら、戻します。すべての簡素化が成功するわけではありません。
 
-## Language-Specific Guidance
+## 言語別ガイダンス
 
 ### TypeScript / JavaScript
 
 ```typescript
-// SIMPLIFY: Unnecessary async wrapper
+// 簡素化: 不要な async wrapper
 // Before
 async function getUser(id: string): Promise<User> {
   return await userService.findById(id);
@@ -199,7 +199,7 @@ function getUser(id: string): Promise<User> {
   return userService.findById(id);
 }
 
-// SIMPLIFY: Verbose conditional assignment
+// 簡素化: 長い条件付き代入
 // Before
 let displayName: string;
 if (user.nickname) {
@@ -210,7 +210,7 @@ if (user.nickname) {
 // After
 const displayName = user.nickname || user.fullName;
 
-// SIMPLIFY: Manual array building
+// 簡素化: 手書き配列構築
 // Before
 const activeUsers: User[] = [];
 for (const user of users) {
@@ -221,7 +221,7 @@ for (const user of users) {
 // After
 const activeUsers = users.filter((user) => user.isActive);
 
-// SIMPLIFY: Redundant boolean return
+// 簡素化: 冗長な boolean return
 // Before
 function isValid(input: string): boolean {
   if (input.length > 0 && input.length < 100) {
@@ -238,7 +238,7 @@ function isValid(input: string): boolean {
 ### Python
 
 ```python
-# SIMPLIFY: Verbose dictionary building
+# 簡素化: 辞書構築の冗長さ
 # Before
 result = {}
 for item in items:
@@ -246,7 +246,7 @@ for item in items:
 # After
 result = {item.id: item.name for item in items}
 
-# SIMPLIFY: Nested conditionals with early return
+# 簡素化: 深い条件分岐を早期 return にする
 # Before
 def process(data):
     if data is not None:
@@ -273,7 +273,7 @@ def process(data):
 ### React / JSX
 
 ```tsx
-// SIMPLIFY: Verbose conditional rendering
+// 簡素化: 条件付きレンダリングの冗長さ
 // Before
 function UserBadge({ user }: Props) {
   if (user.isAdmin) {
@@ -289,43 +289,43 @@ function UserBadge({ user }: Props) {
   return <Badge variant={variant}>{label}</Badge>;
 }
 
-// SIMPLIFY: Prop drilling through intermediate components
-// Before — consider whether context or composition solves this better.
-// This is a judgment call — flag it, don't auto-refactor.
+// 簡素化: 中間コンポーネントをまたぐ prop drilling
+// Before - これは context や composition のほうが良いか考える
+// これは判断案件です - 自動でリファクタリングしない
 ```
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "It's working, no need to touch it" | Working code that's hard to read will be hard to fix when it breaks. Simplifying now saves time on every future change. |
-| "Fewer lines is always simpler" | A 1-line nested ternary is not simpler than a 5-line if/else. Simplicity is about comprehension speed, not line count. |
-| "I'll just quickly simplify this unrelated code too" | Unscoped simplification creates noisy diffs and risks regressions in code you didn't intend to change. Stay focused. |
-| "The types make it self-documenting" | Types document structure, not intent. A well-named function explains *why* better than a type signature explains *what*. |
-| "This abstraction might be useful later" | Don't preserve speculative abstractions. If it's not used now, it's complexity without value. Remove it and re-add when needed. |
-| "The original author must have had a reason" | Maybe. Check git blame — apply Chesterton's Fence. But accumulated complexity often has no reason; it's just the residue of iteration under pressure. |
-| "I'll refactor while adding this feature" | Separate refactoring from feature work. Mixed changes are harder to review, revert, and understand in history. |
+| 「動いているから触らなくていい」 | 読みにくい code は、壊れたときに直しにくいです。今簡素化するほうが、今後の変更すべてで得になります。 |
+| 「少ない行数ほど簡単」 | 1 行の入れ子三項演算子は、5 行の if/else より簡単とは限りません。シンプルさは行数ではなく、理解の速さです。 |
+| 「ついでに関係ないコードも簡素化する」 | 範囲外の簡素化は diff を汚し、触る予定のなかった code に回帰を生みます。集中してください。 |
+| 「型があるから self-documenting」 | 型は構造を説明しても、意図は説明しません。よく名付けられた関数のほうが、型シグネチャより "なぜ" を伝えます。 |
+| 「この抽象化は将来使えるかもしれない」 | speculative な抽象化を残さないでください。今使っていないなら、価値のない複雑さです。消して、必要になったら再追加します。 |
+| 「元の作者には理由があったはず」 | そうかもしれません。`git blame` を見てください - Chesterton's Fence を適用します。ただし、積み重なった複雑さには理由がないことも多いです。単なる圧力下での反復の残滓です。 |
+| 「この feature に合わせて refactor する」 | リファクタリングと機能作業は分けてください。混ざった変更はレビューも revert も履歴理解も難しくなります。 |
 
-## Red Flags
+## レッドフラグ
 
-- Simplification that requires modifying tests to pass (you likely changed behavior)
-- "Simplified" code that is longer and harder to follow than the original
-- Renaming things to match your preferences rather than project conventions
-- Removing error handling because "it makes the code cleaner"
-- Simplifying code you don't fully understand
-- Batching many simplifications into one large, hard-to-review commit
-- Refactoring code outside the scope of the current task without being asked
+- 簡素化のためにテストを変えないと通らない（振る舞いを変えた可能性が高い）
+- "簡素化" 後のコードが元より長く、追いにくい
+- 自分の好みを project conventions より優先して rename する
+- "コードがきれいになるから" と error handling を削る
+- 十分に理解していないコードを簡素化する
+- 多数の簡素化を 1 つの大きな、レビューしにくい commit にまとめる
+- 現在のタスク範囲外のコードを、頼まれてもいないのにリファクタリングする
 
-## Verification
+## 検証
 
-After completing a simplification pass:
+簡素化パスを終えたら、次を確認します。
 
-- [ ] All existing tests pass without modification
-- [ ] Build succeeds with no new warnings
-- [ ] Linter/formatter passes (no style regressions)
-- [ ] Each simplification is a reviewable, incremental change
-- [ ] The diff is clean — no unrelated changes mixed in
-- [ ] Simplified code follows project conventions (checked against CLAUDE.md or equivalent)
-- [ ] No error handling was removed or weakened
-- [ ] No dead code was left behind (unused imports, unreachable branches)
-- [ ] A teammate or review agent would approve the change as a net improvement
+- [ ] 既存テストが変更なしで通る
+- [ ] build が新しい警告なしで通る
+- [ ] linter / formatter が通る（style regression がない）
+- [ ] 各簡素化はレビュー可能な、増分の変更になっている
+- [ ] diff がきれい - 関係ない変更が混ざっていない
+- [ ] 簡素化後のコードが project conventions に従っている（CLAUDE.md などと照合）
+- [ ] error handling を削除・弱体化していない
+- [ ] dead code が残っていない（未使用 import、到達不能 branch など）
+- [ ] チームメイトかレビューエージェントが、この変更を net improvement として承認するはず

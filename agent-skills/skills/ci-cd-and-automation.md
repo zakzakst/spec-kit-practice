@@ -1,61 +1,57 @@
 ---
 name: ci-cd-and-automation
-description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
+description: CI/CD パイプラインの設定を自動化します。ビルドやデプロイのパイプラインを設定・変更するとき、品質ゲートを自動化するとき、CI でテストランナーを設定するとき、デプロイ戦略を整えるときに使います。
 ---
 
-# CI/CD and Automation
+# CI/CD と自動化
 
-## Overview
+## 概要
 
-Automate quality gates so that no change reaches production without passing tests, lint, type checking, and build. CI/CD is the enforcement mechanism for every other skill — it catches what humans and agents miss, and it does so consistently on every single change.
+テスト、lint、型チェック、ビルドを通過した変更だけが本番に届くよう、品質ゲートを自動化します。CI/CD は他のすべての skill を実際に効かせるための強制機構です。人間やエージェントが見落とすものを、毎回一貫して検出します。
 
-**Shift Left:** Catch problems as early in the pipeline as possible. A bug caught in linting costs minutes; the same bug caught in production costs hours. Move checks upstream — static analysis before tests, tests before staging, staging before production.
+**Shift Left:** 問題はできるだけパイプラインの早い段階で見つけます。lint で見つかるバグは数分で済みますが、本番で見つかる同じバグは何時間もかかります。チェックを上流へ移動しましょう。静的解析をテストより前に、テストを staging より前に、staging を本番より前に置きます。
 
-**Faster is Safer:** Smaller batches and more frequent releases reduce risk, not increase it. A deployment with 3 changes is easier to debug than one with 30. Frequent releases build confidence in the release process itself.
+**速いほど安全:** 小さなバッチで頻繁にリリースするほうが、リスクは下がります。30 変更のデプロイより、3 変更のデプロイのほうがデバッグしやすいです。頻繁なリリースは、リリースプロセス自体への信頼も高めます。
 
-## When to Use
+## 使う場面
 
-- Setting up a new project's CI pipeline
-- Adding or modifying automated checks
-- Configuring deployment pipelines
-- When a change should trigger automated verification
-- Debugging CI failures
+- 新しいプロジェクトの CI パイプラインを作るとき
+- 自動チェックを追加・変更するとき
+- デプロイパイプラインを設定するとき
+- 変更をきっかけに自動検証を走らせたいとき
+- CI の失敗を調べるとき
 
-## The Quality Gate Pipeline
+## 品質ゲートのパイプライン
 
-Every change goes through these gates before merge:
+すべての変更は、マージ前に次のゲートを通過します。
 
 ```
 Pull Request Opened
-    │
-    ▼
-┌─────────────────┐
-│   LINT CHECK     │  eslint, prettier
-│   ↓ pass         │
-│   TYPE CHECK     │  tsc --noEmit
-│   ↓ pass         │
-│   UNIT TESTS     │  jest/vitest
-│   ↓ pass         │
-│   BUILD          │  npm run build
-│   ↓ pass         │
-│   INTEGRATION    │  API/DB tests
-│   ↓ pass         │
-│   E2E (optional) │  Playwright/Cypress
-│   ↓ pass         │
-│   SECURITY AUDIT │  npm audit
-│   ↓ pass         │
-│   BUNDLE SIZE    │  bundlesize check
-└─────────────────┘
-    │
-    ▼
+    ↓
+  LINT CHECK     eslint, prettier
+  ↓ pass
+  TYPE CHECK     tsc --noEmit
+  ↓ pass
+  UNIT TESTS     jest/vitest
+  ↓ pass
+  BUILD          npm run build
+  ↓ pass
+  INTEGRATION    API/DB tests
+  ↓ pass
+  E2E (optional) Playwright/Cypress
+  ↓ pass
+  SECURITY AUDIT npm audit
+  ↓ pass
+  BUNDLE SIZE    bundlesize check
+    ↓
   Ready for review
 ```
 
-**No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.
+**ゲートは 1 つも飛ばせません。** lint が失敗したら lint を直します。ルールを無効化してはいけません。テストが失敗したらコードを直します。テストを飛ばしてはいけません。
 
-## GitHub Actions Configuration
+## GitHub Actions の設定
 
-### Basic CI Pipeline
+### 基本の CI パイプライン
 
 ```yaml
 # .github/workflows/ci.yml
@@ -97,7 +93,7 @@ jobs:
         run: npm audit --audit-level=high
 ```
 
-### With Database Integration Tests
+### データベース統合テスト付き
 
 ```yaml
   integration:
@@ -134,9 +130,9 @@ jobs:
           DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
 ```
 
-> **Note:** Even for CI-only test databases, use GitHub Secrets for credentials rather than hardcoding values. This builds good habits and prevents accidental reuse of test credentials in other contexts.
+> **注:** CI 専用のテストデータベースであっても、認証情報はハードコードせず GitHub Secrets を使ってください。よい習慣になり、他の場面でテスト用認証情報を誤用するのを防げます。
 
-### E2E Tests
+### E2E テスト
 
 ```yaml
   e2e:
@@ -161,43 +157,40 @@ jobs:
           path: playwright-report/
 ```
 
-## Feeding CI Failures Back to Agents
+## CI 失敗をエージェントに戻す
 
-The power of CI with AI agents is the feedback loop. When CI fails:
+AI エージェントと CI を組み合わせる強みは、フィードバックループにあります。CI が失敗したら次の流れで進めます。
 
 ```
 CI fails
-    │
-    ▼
-Copy the failure output
-    │
-    ▼
-Feed it to the agent:
-"The CI pipeline failed with this error:
+    ↓
+失敗出力をコピーする
+    ↓
+エージェントに渡す:
+"CI pipeline failed with this error:
 [paste specific error]
 Fix the issue and verify locally before pushing again."
-    │
-    ▼
-Agent fixes → pushes → CI runs again
+    ↓
+エージェントが修正 → push → CI が再実行される
 ```
 
-**Key patterns:**
+**重要なパターン:**
 
 ```
-Lint failure → Agent runs `npm run lint --fix` and commits
-Type error  → Agent reads the error location and fixes the type
-Test failure → Agent follows debugging-and-error-recovery skill
-Build error → Agent checks config and dependencies
+Lint failure     → エージェントが `npm run lint --fix` を実行してコミットする
+Type error       → エージェントがエラー箇所を読んで型を直す
+Test failure     → エージェントが debugging-and-error-recovery skill に従う
+Build error      → エージェントが設定と依存関係を確認する
 ```
 
-## Deployment Strategies
+## デプロイ戦略
 
-### Preview Deployments
+### Preview デプロイ
 
-Every PR gets a preview deployment for manual testing:
+すべての PR に、手動確認用の preview デプロイを用意します。
 
 ```yaml
-# Deploy preview on PR (Vercel/Netlify/etc.)
+# PR ごとの preview デプロイ（Vercel/Netlify など）
 deploy-preview:
   runs-on: ubuntu-latest
   if: github.event_name == 'pull_request'
@@ -207,55 +200,52 @@ deploy-preview:
       run: npx vercel --token=${{ secrets.VERCEL_TOKEN }}
 ```
 
-### Feature Flags
+### Feature Flag
 
-Feature flags decouple deployment from release. Deploy incomplete or risky features behind flags so you can:
+Feature flag はデプロイとリリースを分離します。未完成またはリスクの高い機能は flag の背後に置くことで、次のことができます。
 
-- **Ship code without enabling it.** Merge to main early, enable when ready.
-- **Roll back without redeploying.** Disable the flag instead of reverting code.
-- **Canary new features.** Enable for 1% of users, then 10%, then 100%.
-- **Run A/B tests.** Compare behavior with and without the feature.
+- **コードだけ先に出す。** main に早めにマージし、準備ができたら有効化します。
+- **再デプロイなしでロールバックする。** コードを戻す代わりに flag を無効にします。
+- **新機能を canary で出す。** 1% のユーザー、その後 10%、その後 100% に広げます。
+- **A/B テストを行う。** 機能あり・なしで挙動を比較します。
 
 ```typescript
-// Simple feature flag pattern
+// シンプルな feature flag パターン
 if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
   return renderNewCheckout();
 }
 return renderLegacyCheckout();
 ```
 
-**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt — set a cleanup date when you create them.
+**flag のライフサイクル:** 作成 → テスト向けに有効化 → canary → 全面展開 → flag と不要コードを削除する。ずっと残る flag は技術的負債になります。作成時に片付け日を決めてください。
 
-### Staged Rollouts
+### 段階的リリース
 
 ```
-PR merged to main
-    │
-    ▼
-  Staging deployment (auto)
-    │ Manual verification
-    ▼
-  Production deployment (manual trigger or auto after staging)
-    │
-    ▼
-  Monitor for errors (15-minute window)
-    │
-    ├── Errors detected → Rollback
-    └── Clean → Done
+PR が main にマージされる
+    ↓
+  staging デプロイ（自動）
+    ↓ 手動確認
+  production デプロイ（手動トリガー、または staging 後に自動）
+    ↓
+  エラーを監視（15 分ウィンドウ）
+    ↓
+  エラー検出 → Rollback
+  問題なし    → 完了
 ```
 
-### Rollback Plan
+### ロールバック計画
 
-Every deployment should be reversible:
+すべてのデプロイは元に戻せる必要があります。
 
 ```yaml
-# Manual rollback workflow
+# 手動ロールバックワークフロー
 name: Rollback
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to rollback to'
+        description: 'ロールバック先のバージョン'
         required: true
 
 jobs:
@@ -264,23 +254,23 @@ jobs:
     steps:
       - name: Rollback deployment
         run: |
-          # Deploy the specified previous version
+          # 指定された前のバージョンをデプロイする
           npx vercel rollback ${{ inputs.version }}
 ```
 
-## Environment Management
+## 環境管理
 
 ```
-.env.example       → Committed (template for developers)
-.env                → NOT committed (local development)
-.env.test           → Committed (test environment, no real secrets)
-CI secrets          → Stored in GitHub Secrets / vault
-Production secrets  → Stored in deployment platform / vault
+.env.example       → コミットする（開発者向けテンプレート）
+.env               → コミットしない（ローカル開発用）
+.env.test          → コミットする（テスト環境、実秘密情報なし）
+CI secrets         → GitHub Secrets / vault に保存
+Production secrets → デプロイ先プラットフォーム / vault に保存
 ```
 
-CI should never have production secrets. Use separate secrets for CI testing.
+CI に本番秘密情報を持たせてはいけません。CI テスト用には別の secret を使ってください。
 
-## Automation Beyond CI
+## CI 以外の自動化
 
 ### Dependabot / Renovate
 
@@ -295,38 +285,40 @@ updates:
     open-pull-requests-limit: 5
 ```
 
-### Build Cop Role
+### Build Cop の役割
 
-Designate someone responsible for keeping CI green. When the build breaks, the Build Cop's job is to fix or revert — not the person whose change caused the break. This prevents broken builds from accumulating while everyone assumes someone else will fix it.
+CI を green に保つ担当者を決めておきます。ビルドが壊れたとき、Build Cop の仕事は直すか revert することです。壊した本人の担当ではありません。これにより、誰かが直すだろうと思って壊れたビルドが積み上がるのを防げます。
 
-### PR Checks
+### PR チェック
 
-- **Required reviews:** At least 1 approval before merge
-- **Required status checks:** CI must pass before merge
-- **Branch protection:** No force-pushes to main
-- **Auto-merge:** If all checks pass and approved, merge automatically
+- **必須レビュー:** マージ前に少なくとも 1 件の承認が必要
+- **必須ステータスチェック:** マージ前に CI が通る必要がある
+- **ブランチ保護:** main への force-push を禁止する
+- **自動マージ:** すべてのチェックが通って承認済みなら、自動でマージする
 
-## CI Optimization
+## CI の最適化
 
-When the pipeline exceeds 10 minutes, apply these strategies in order of impact:
+パイプラインが 10 分を超える場合は、影響の大きい順に次の戦略を適用します。
 
 ```
-Slow CI pipeline?
-├── Cache dependencies
-│   └── Use actions/cache or setup-node cache option for node_modules
-├── Run jobs in parallel
-│   └── Split lint, typecheck, test, build into separate parallel jobs
-├── Only run what changed
-│   └── Use path filters to skip unrelated jobs (e.g., skip e2e for docs-only PRs)
-├── Use matrix builds
-│   └── Shard test suites across multiple runners
-├── Optimize the test suite
-│   └── Remove slow tests from the critical path, run them on a schedule instead
-└── Use larger runners
-    └── GitHub-hosted larger runners or self-hosted for CPU-heavy builds
+CI パイプラインが遅い？
+  ↓
+依存関係をキャッシュする
+  ↓   `actions/cache` か setup-node の cache オプションで node_modules を使う
+ジョブを並列化する
+  ↓   lint, typecheck, test, build を別々の並列ジョブに分割する
+変更されたものだけを走らせる
+  ↓   path filter を使って無関係なジョブを飛ばす（例: docs-only PR では e2e を飛ばす）
+matrix build を使う
+  ↓   テストスイートを複数 runner に分割する
+テストスイートを最適化する
+  ↓   重要経路から遅いテストを外し、スケジュール実行に回す
+より大きい runner を使う
+  ↓   CPU 重めのビルドには GitHub-hosted の大きい runner か self-hosted を使う
 ```
 
-**Example: caching and parallelism**
+**例: キャッシュと並列化**
+
 ```yaml
 jobs:
   lint:
@@ -357,34 +349,34 @@ jobs:
       - run: npm test -- --coverage
 ```
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 現実 |
 |---|---|
-| "CI is too slow" | Optimize the pipeline (see CI Optimization below), don't skip it. A 5-minute pipeline prevents hours of debugging. |
-| "This change is trivial, skip CI" | Trivial changes break builds. CI is fast for trivial changes anyway. |
-| "The test is flaky, just re-run" | Flaky tests mask real bugs and waste everyone's time. Fix the flakiness. |
-| "We'll add CI later" | Projects without CI accumulate broken states. Set it up on day one. |
-| "Manual testing is enough" | Manual testing doesn't scale and isn't repeatable. Automate what you can. |
+| 「CI が遅すぎる」 | スキップするのではなく、パイプラインを最適化してください（下の CI 最適化を参照）。5 分のパイプラインは、何時間ものデバッグを防ぎます。 |
+| 「この変更は trivial だから CI は飛ばしていい」 | trivial な変更でも build は壊れます。しかも trivial な変更なら CI はすぐ終わります。 |
+| 「テストが flaky だから再実行すればいい」 | flaky test は本当のバグを隠し、みんなの時間を無駄にします。flaky さを直してください。 |
+| 「CI はあとで入れる」 | CI のないプロジェクトは壊れた状態が積み上がります。初日から入れてください。 |
+| 「手動テストで十分」 | 手動テストはスケールせず、再現性もありません。できることは自動化してください。 |
 
-## Red Flags
+## 危険信号
 
-- No CI pipeline in the project
-- CI failures ignored or silenced
-- Tests disabled in CI to make the pipeline pass
-- Production deploys without staging verification
-- No rollback mechanism
-- Secrets stored in code or CI config files (not secrets manager)
-- Long CI times with no optimization effort
+- プロジェクトに CI パイプラインがない
+- CI の失敗が無視されている、または黙殺されている
+- パイプラインを通すために CI 上でテストを無効化している
+- staging 確認なしで本番デプロイしている
+- ロールバック機構がない
+- secret がコードや CI 設定ファイルに置かれている（secret manager ではない）
+- CI 時間が長いのに最適化の努力がない
 
-## Verification
+## 検証
 
-After setting up or modifying CI:
+CI を設定または変更したあとに、次を確認してください。
 
-- [ ] All quality gates are present (lint, types, tests, build, audit)
-- [ ] Pipeline runs on every PR and push to main
-- [ ] Failures block merge (branch protection configured)
-- [ ] CI results feed back into the development loop
-- [ ] Secrets are stored in the secrets manager, not in code
-- [ ] Deployment has a rollback mechanism
-- [ ] Pipeline runs in under 10 minutes for the test suite
+- [ ] すべての品質ゲートが存在する（lint、types、tests、build、audit）
+- [ ] パイプラインがすべての PR と main への push で動く
+- [ ] 失敗がマージをブロックする（ブランチ保護が設定されている）
+- [ ] CI の結果が開発ループに戻ってくる
+- [ ] secret はコードではなく secret manager に保存されている
+- [ ] デプロイにロールバック機構がある
+- [ ] テストスイートのパイプラインが 10 分未満で完了する

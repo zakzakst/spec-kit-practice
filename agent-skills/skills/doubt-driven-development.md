@@ -1,92 +1,90 @@
 ---
 name: doubt-driven-development
-description: Subjects every non-trivial decision to a fresh-context adversarial review before it stands. Use when correctness matters more than speed, when working in unfamiliar code, when stakes are high (production, security-sensitive logic, irreversible operations), or any time a confident output would be cheaper to verify now than to debug later.
+description: 重要でないこと以外のあらゆる判断を、新鮮な文脈の敵対的レビューにかけます。正しさが速度より重要なとき、慣れていないコードを扱うとき、リスクが高いとき（本番、セキュリティに関わる処理、取り消しにくい操作）、または自信のある出力を今すぐ検証したほうが後でデバッグするより安いときに使います。
 ---
 
 # Doubt-Driven Development
 
-## Overview
+## 概要
 
-A confident answer is not a correct one. Long sessions accumulate context that quietly turns assumptions into "facts" without anyone noticing. Doubt-driven development is the discipline of materializing a fresh-context reviewer — biased to **disprove**, not approve — before any non-trivial output stands.
+自信があることは、正しいことを意味しません。長いセッションではコンテキストが積み重なり、気づかないうちに前提が「事実」へ変わります。Doubt-driven development は、非自明な出力を出す前に、**承認ではなく反証**を目的にした新鮮な文脈のレビューを具現化する規律です。
 
-This is not `/review`. `/review` is a verdict on a finished artifact. This is an in-flight posture: non-trivial decisions get cross-examined while course-correction is still cheap.
+これは `/review` ではありません。`/review` は完成物への最終判定です。これは進行中の姿勢です。コース修正がまだ安い段階で、非自明な判断を交差尋問します。
 
-## When to Use
+## 使う場面
 
-A decision is **non-trivial** when at least one of these is true:
+次のどれかが真なら、その判断は **non-trivial** です。
 
-- It introduces or modifies branching logic
-- It crosses a module or service boundary
-- It asserts a property the type system or compiler cannot verify (thread safety, idempotence, ordering, invariants)
-- Its correctness depends on context the future reader cannot see
-- Its blast radius is irreversible (production deploy, data migration, public API change)
+- 分岐ロジックを追加・変更する
+- モジュールまたはサービス境界をまたぐ
+- 型システムやコンパイラでは保証できない性質（スレッド安全性、冪等性、順序、不変条件）を主張する
+- 正しさが、後から読む人には見えない文脈に依存する
+- 破壊力が取り消しにくい（本番デプロイ、データ移行、公開 API 変更）
 
-Apply the skill when:
+次の場面で使います。
 
-- About to make an architectural decision under uncertainty
-- About to commit non-trivial code
-- About to claim a non-obvious fact ("this is safe", "this scales", "this matches the spec")
-- Working in code you don't fully understand
+- 不確実なアーキテクチャ判断をしようとしている
+- 非自明なコードをコミットしようとしている
+- 非自明な事実を主張しようとしている（"安全だ"、"スケールする"、"仕様に合っている" など）
+- 十分に理解していないコードを扱っている
 
-**When NOT to use:**
+**使わない場面:**
 
-- Mechanical operations (renaming, formatting, file moves)
-- Following a clear, unambiguous user instruction
-- Reading or summarizing existing code
-- One-line changes with obvious correctness
-- Pure tooling operations (running tests, listing files)
-- The user has explicitly asked for speed over verification
+- 機械的操作（rename、format、file move）
+- 明確で曖昧さのないユーザー指示に従うとき
+- 既存コードの読み取りや要約
+- 1 行変更で正しさが明白なもの
+- 純粋な tooling 操作（テスト実行、ファイル一覧）
+- ユーザーが検証より速度を明示的に優先した
 
-If you doubt every keystroke, you ship nothing. The skill applies only to non-trivial decisions as defined above.
+すべてのキー入力を疑うなら、何も出荷できません。このスキルは、上で定義した non-trivial な判断にだけ適用します。
 
-## Loading Constraints
+## 読み込み制約
 
-This skill is designed for the **main-session orchestrator**, where Step 3 (DOUBT, detailed below) can spawn a fresh-context reviewer.
+このスキルは **main-session orchestrator** 向けです。Step 3（DOUBT、後述）で新鮮な文脈のレビュアーを起動できます。
 
-- **Do NOT add this skill to a persona's `skills:` frontmatter.** A persona that follows Step 3 would spawn another persona — the orchestration anti-pattern explicitly forbidden by `../../references/orchestration-patterns.md` ("personas do not invoke other personas").
-- **If you find yourself applying this skill from inside a subagent context** (where Claude Code prevents nested subagent spawn): the preferred path is to surface to the user that doubt-driven cannot run nested and let the main session handle it. As a last resort only, a degraded self-questioning fallback exists — rewrite ARTIFACT + CONTRACT as a fresh self-prompt with a hard mental separator from your prior reasoning, and walk Steps 1–5. This is **not fresh-context review** (you carry your own context with you), so flag the result as degraded and prefer escalation whenever the user is reachable.
+- **persona の `skills:` frontmatter にこのスキルを追加しないでください。** Step 3 を追う persona は別の persona を起動することになり、`../../references/orchestration-patterns.md` にある禁止されたオーケストレーション anti-pattern に当たります。
+- **subagent 文脈からこのスキルを使おうとしている場合**（Claude Code が nested subagent を禁止する場面）: 望ましいのは、この doubt-driven は nested では実行できないとユーザーへ伝え、main session に処理させることです。最後の手段としてだけ、劣化版の自己問い直し fallback があります - ARTIFACT + CONTRACT を、前の推論から明確に切り離した fresh self-prompt に書き直し、Step 1〜5 を自分で回します。これは **fresh-context review ではありません**（自分のコンテキストを持ち続けるため）ので、結果は劣化版として扱い、ユーザーに到達可能ならエスカレーションを優先してください。
 
-## The Process
+## プロセス
 
-Copy this checklist when applying the skill:
+このチェックリストをそのまま使ってください。
 
-```
+```text
 Doubt cycle:
-- [ ] Step 1: CLAIM — wrote the claim + why-it-matters
-- [ ] Step 2: EXTRACT — isolated artifact + contract, stripped reasoning
-- [ ] Step 3: DOUBT — invoked fresh-context reviewer with adversarial prompt
-- [ ] Step 4: RECONCILE — classified every finding against the artifact text
-- [ ] Step 5: STOP — met stop condition (trivial findings, 3 cycles, or user override)
+- [ ] Step 1: CLAIM - 主張と、その主張が重要な理由を書いた
+- [ ] Step 2: EXTRACT - artifact と contract を分離し、推論を削った
+- [ ] Step 3: DOUBT - fresh-context reviewer に adversarial prompt を投げた
+- [ ] Step 4: RECONCILE - すべての指摘を artifact の文面に照らして分類した
+- [ ] Step 5: STOP - 停止条件（些細な指摘、3 サイクル、またはユーザーの override）を満たした
 ```
 
-### Step 1: CLAIM — Surface what stands
+### Step 1: CLAIM - 何が立っているかを明示する
 
-Name the decision in two or three lines:
+判断を 2〜3 行で書きます。
 
-```
-CLAIM: "The new caching layer is thread-safe under the
-        read-heavy workload described in the spec."
-WHY THIS MATTERS: a race here corrupts user data and is
-                  hard to detect in QA.
+```text
+CLAIM: "新しい caching layer は、spec で説明された read-heavy workload に対して thread-safe だ"
+WHY THIS MATTERS: ここで race が起きるとユーザーデータが壊れ、QA では検出しにくい
 ```
 
-If you can't write the claim that compactly, you have a vibe, not a decision. Surface it before scrutinizing it.
+この主張を短く書けないなら、判断ではなく感覚です。疑う前に表に出してください。
 
-### Step 2: EXTRACT — Smallest reviewable unit
+### Step 2: EXTRACT - 最小のレビュー単位
 
-A fresh-context reviewer needs the **artifact** and the **contract**, not the journey.
+fresh-context reviewer に必要なのは、**artifact** と **contract** であって、思考の道のりではありません。
 
-- Code: the diff or the function — not the whole file
-- Decision: the proposal in 3–5 sentences plus the constraints it has to satisfy
-- Assertion: the claim plus the evidence that supposedly supports it (kept distinct from the Step 1 CLAIM block, which is the orchestrator's hypothesis under scrutiny)
+- Code: diff か関数そのもの - ファイル全体ではない
+- Decision: 3〜4 文の提案と、満たすべき制約
+- Assertion: 主張と、その裏付けとして使った evidence（Step 1 の CLAIM ブロックとは別。Step 1 は orchestratior の仮説です）
 
-Strip your reasoning. If you hand over conclusions, you'll get back validation of your conclusions. The unit must be small enough that a reviewer can hold it in mind in one read — if it's a 500-line PR, decompose first.
+推論を削ってください。結論を渡すと、結論の追認が返ってきます。単位は 1 回で持てる大きさにしてください。500 行の PR なら、先に分解します。
 
-### Step 3: DOUBT — Invoke the fresh-context reviewer
+### Step 3: DOUBT - fresh-context reviewer を起動する
 
-The reviewer's prompt **must be adversarial**. Framing decides the answer.
+レビュー担当への prompt は **敵対的** でなければなりません。フレーミングが答えを決めます。
 
-```
+```text
 Adversarial review. Find what is wrong with this artifact.
 Assume the author is overconfident. Look for:
 - Unstated assumptions
@@ -103,141 +101,141 @@ ARTIFACT: <paste artifact>
 CONTRACT: <paste contract>
 ```
 
-**Pass ARTIFACT + CONTRACT only. Do NOT pass the CLAIM.** Handing the reviewer your conclusion biases it toward agreement. The reviewer must independently determine whether the artifact satisfies the contract.
+**ARTIFACT + CONTRACT だけを渡してください。CLAIM は渡さないでください。** 結論を渡すと、レビュアーはそれを追認しがちです。レビュアーは独立して artifact が contract を満たすか判断しなければなりません。
 
-In Claude Code, the role-based reviewers in `agents/` start with isolated context by design and are usable here — see `agents/` for the roster and per-domain match.
+Claude Code では、`agents/` の役割ベースのレビュアーは隔離された context で始まるので、この用途に使えます。roster と domain 別の対応は `agents/` を参照してください。
 
-**The adversarial prompt above takes precedence over the persona's default response shape.** Personas like `code-reviewer` are written to produce balanced verdicts with both strengths and weaknesses; doubt-driven needs issues-only output. Paste the adversarial prompt verbatim into the invocation so it overrides the persona's default. If a persona's response shape can't be overridden cleanly, fall back to a generic subagent with the adversarial prompt.
+**上の adversarial prompt が persona の既定出力形状より優先されます。** `code-reviewer` のような persona は、通常は強みと弱みの両方を含むバランスの取れた verdict を返すよう書かれていますが、doubt-driven では issues-only の出力が必要です。起動時にその prompt を verbatim で貼って、既定形状を上書きしてください。persona の出力形状がきれいに上書きできないなら、generic subagent に adversarial prompt を渡してください。
 
 #### Cross-model escalation
 
-A single-model reviewer shares blind spots with the original author — a colder, different-architecture model catches them. Doubt-driven is already opt-in for non-trivial decisions, so within that scope offering cross-model is part of the skill's value, not optional friction.
+単一モデルのレビュアーは、元の作者と盲点を共有します。別アーキテクチャの冷たいモデルのほうが見つけやすいことがあります。doubt-driven は non-trivial 判断に対してもともと任意ではないので、その範囲では cross-model を提案するのはこのスキルの価値の一部であり、余計な摩擦ではありません。
 
-**Interactive sessions: always offer. Never silently skip.**
+**対話セッションでは、必ず提案する。静かに省略しない。**
 
-**Step 1: Ask the user**
+**Step 1: ユーザーに尋ねる**
 
-After the single-model review in Step 3 above, but before RECONCILE, pause and ask:
+Step 3 の single-model review が終わったあと、RECONCILE の前にいったん止めて、次のように尋ねます。
 
 > *"Single-model review complete. Want a cross-model second opinion? Options: Gemini CLI, Codex CLI, manual external review (you paste it elsewhere), or skip."*
 
-This question is mandatory in every interactive doubt cycle — even on artifacts that feel low-stakes. The user — not the agent — decides whether the cost is worth it. The agent's job is to surface the choice.
+これは interactive な doubt cycle では必須です。artifact が軽そうに見えても同じです。コストに見合うかどうかを決めるのはユーザーです。エージェントの役目は選択肢を表に出すことです。
 
-**Step 2: If the user picks a CLI — verify, then invoke**
+**Step 2: CLI を選んだら、確認してから起動する**
 
-1. Check the tool is in PATH (`which gemini`, `which codex`).
-2. Test it works (`gemini --version` or equivalent) before passing the full prompt — a stale or broken binary may pass `which` but fail on real input.
-3. Confirm the exact invocation with the user, including required flags, auth, and env vars (e.g., API keys). Implementations vary; never assume.
-4. Pass ARTIFACT + CONTRACT + the adversarial prompt **only**. No session context, no CLAIM.
-5. Mind shell escaping. If the artifact contains quotes, `$(...)`, or backticks, prefer stdin (`echo … | gemini`) or a heredoc over inline `-p "…"`. When in doubt, ask the user to confirm the invocation before running it.
-6. Take the output into Step 4 (RECONCILE).
+1. ツールが PATH にあるか確認する（`which gemini`, `which codex`）
+2. 実際に動くかテストする（`gemini --version` など） - 古い / 壊れた binary は `which` を通っても本番入力で失敗することがある
+3. 必要な flags、auth、env vars を含めて、正確な起動方法をユーザーに確認する
+4. ARTIFACT + CONTRACT + adversarial prompt **だけ**を渡す。session context も CLAIM も渡さない
+5. shell escaping に注意する。artifact に quote、`$(...)`、backtick が含まれるなら、`-p "..."` の inline より stdin（`echo ... | gemini`）か heredoc を使う
+6. 出力を Step 4（RECONCILE）に持ち込む
 
-**Never interpolate the artifact into a shell-quoted argument.** Code, markdown, and review prompts routinely contain backticks, `$(...)`, and quote characters that will either truncate the prompt or execute embedded shell. Write the full prompt to a file and pipe it through stdin.
+**artifact を shell でクォートした引数に直接埋め込まないでください。** コード、Markdown、review prompt には backtick、`$(...)`、quote がよく含まれ、prompt を切るか、埋め込まれた shell を実行してしまいます。全プロンプトを一時ファイルに書いて stdin で流してください。
 
-Example shapes (verify flags against your installed tool — syntax differs across implementations and versions):
+例（使っているツールの flags は確認してください。実装やバージョンで違います）:
 
 ```bash
-# Write the adversarial prompt + ARTIFACT + CONTRACT to a temp file first.
-# Then pipe via stdin so shell metacharacters in the artifact stay inert.
+# adversarial prompt + ARTIFACT + CONTRACT を一時ファイルに書く
+# その後 stdin で流す。artifact 内の shell metacharacter を inert にするため。
 
-# Codex (read-only sandbox keeps the CLI from writing to your workspace):
+# Codex (read-only sandbox では CLI が workspace に書き込まない):
 codex exec --sandbox read-only -C <repo-path> - < /tmp/doubt-prompt.md
 
-# Gemini ('--approval-mode plan' is read-only; '-p ""' triggers non-interactive
-# mode and the prompt is read from stdin):
+# Gemini ('--approval-mode plan' は read-only; '-p ""' で非対話モード、
+# prompt は stdin から読む):
 gemini --approval-mode plan -p "" < /tmp/doubt-prompt.md
 ```
 
-A read-only sandbox is the load-bearing detail: a doubt artifact may itself contain instructions (intentional or accidental prompt injection) that the cross-model CLI would otherwise execute against your workspace.
+read-only sandbox は重要です。doubt artifact 自体が instructions を含む場合（意図的でも偶発的でも）、cross-model CLI がそれを workspace に対して実行してしまう恐れがあります。
 
-**Step 3: If the CLI is unavailable or fails**
+**Step 3: CLI が使えない、または失敗したら**
 
-Surface the failure explicitly. Offer: run it manually, try a different tool, or skip. Do not silently fall back to single-model — the user should know cross-model didn't happen.
+失敗をはっきり伝えます。手動で実行する、別のツールを試す、スキップする、の選択肢を出します。single-model に黙って戻ってはいけません。cross-model が行われなかったことをユーザーは知るべきです。
 
-**Step 4: If the user skips**
+**Step 4: ユーザーがスキップしたら**
 
-Acknowledge the skip in the output (*"Proceeding with single-model findings only"*) and continue to RECONCILE. Skipping is fine; silent skipping is not.
+スキップを出力に明記し、続行します（"Proceeding with single-model findings only"）。スキップ自体は問題ありません。黙ってスキップするのが問題です。
 
-**Non-interactive contexts** (CI, `/loop`, autonomous-loop, scheduled runs):
+**非対話コンテキスト**（CI、`/loop`、autonomous-loop、scheduled runs）:
 
-- Cross-model is **skipped**, and the skip must be **announced** in the output: *"Cross-model skipped: non-interactive context."*
-- **Never invoke an external CLI without explicit user authorization** — this is a load-bearing safety property.
+- cross-model は **スキップ** し、そのスキップを出力に **明示** します: *"Cross-model skipped: non-interactive context."*
+- **明示的なユーザー許可なしに外部 CLI を起動してはいけません** - これは重要な安全性です
 
-Cross-model adds cost, latency, and tool fragility. The agent surfaces the choice every cycle; the user decides whether this artifact warrants it.
+cross-model はコスト、待ち時間、ツールの脆さを増やします。このスキルは interactive な doubt cycle ごとに選択肢を出し、ユーザーが artifact にその価値があるか決めます。
 
-### Step 4: RECONCILE — Fold findings back
+### Step 4: RECONCILE - 指摘を折り返す
 
-The reviewer's output is data, not verdict. **You are still the orchestrator.** Re-read the artifact text against each finding before classifying — rubber-stamping the reviewer is the same failure mode as ignoring it.
+レビュアーの出力はデータであって verdict ではありません。**最終的な orchestrator はあなたです。** 各指摘を分類する前に、artifact の文面と照らし合わせて読み直してください。レビュアーを盲目的に追認するのは、無視するのと同じ失敗です。
 
-For each finding, classify in this **precedence order** (first matching class wins):
+各指摘について、この **優先順** で分類します（最初に当てはまるものが勝ち）:
 
-1. **Contract misread** — reviewer flagged something specifically because the CONTRACT you provided was unclear or incomplete. Fix the contract first, re-classify on the next cycle.
-2. **Valid + actionable** — real issue requiring a change to the artifact. Change it, re-loop.
-3. **Valid trade-off** — issue is real but cost of fixing exceeds cost of accepting. Document the trade-off explicitly so the user sees it.
-4. **Noise** — reviewer flagged something that's actually correct under context the reviewer didn't have. Note it, move on, and ask: would adding that context to the contract have prevented the false flag?
+1. **Contract misread** - reviewer が、あなたの CONTRACT が曖昧または不完全だったために指摘した。まず contract を直し、次の cycle で再分類する
+2. **Valid + actionable** - 実在する問題で、artifact を変える必要がある。直して再ループする
+3. **Valid trade-off** - 問題は本物だが、直すコストが受け入れるコストより高い。ユーザーが見えるように、トレードオフを明示する
+4. **Noise** - reviewer が context 不足で誤って指摘した。注記して先へ進み、もし contract に context を足していれば false flag を防げたか考える
 
-A fresh reviewer can be wrong because it lacks context. Don't defer just because it's "fresh."
+fresh reviewer は context が足りないために間違うことがあります。fresh だからといって、無条件に従う必要はありません。
 
-### Step 5: STOP — Bounded loop, not recursion
+### Step 5: STOP - 再帰ではなく bounded loop
 
-Stop when:
+次の場合に止めます。
 
-- Next iteration returns only trivial or already-considered findings, **or**
-- 3 cycles completed (escalate to user, don't grind a fourth alone), **or**
-- User explicitly says "ship it"
+- 次の反復で、すでに考慮済みか trivial な指摘しか出ない
+- 3 サイクル完了した（4 周目は回さず、ユーザーへエスカレート）
+- ユーザーが明示的に "ship it" と言った
 
-If after 3 cycles the reviewer still surfaces substantive issues, the artifact may not be ready. Surface this to the user — three unresolved cycles is information about the artifact, not a reason to keep looping.
+3 サイクル経っても substantive な問題が出るなら、artifact はまだ準備できていない可能性があります。ユーザーにそれを伝えてください。3 回の未解決サイクルは artifact についての情報であって、さらにループする理由ではありません。
 
-If 3 cycles is "obviously insufficient" because the artifact is large: the artifact is too big — return to Step 2 and decompose. Do not lift the bound.
+3 サイクルでは明らかに足りないくらい artifact が大きいなら、artifact が大きすぎます。Step 2 に戻って分解してください。上限を上げてはいけません。
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "I'm confident, skip the doubt step" | Confidence correlates poorly with correctness on novel problems. Moments of certainty are exactly when blind spots hide. |
-| "Spawning a reviewer is expensive" | Debugging a wrong commit in production is more expensive. The check is bounded; the bug isn't. |
-| "The reviewer will just nitpick" | Only if unscoped. Constrain the prompt to "issues that would make this fail under the contract." |
-| "I'll do doubt at the end with `/review`" | `/review` is a final gate. Doubt-driven catches wrong directions early when course-correction is cheap. By PR time it's too late. |
-| "If I doubt every step I'll never ship" | The skill applies to non-trivial decisions, not every keystroke. Re-read "When NOT to Use." |
-| "Two opinions are always better than one" | Not when the second has less context and produces noise. Reconcile, don't defer. |
-| "The reviewer disagreed so I was wrong" | The reviewer lacks your context — disagreement is information, not verdict. Re-read the artifact, classify, then decide. |
-| "Cross-model is always better" | Cross-model catches blind spots a single model shares with itself, but it adds cost and tool fragility. Offer it every interactive doubt cycle — the user decides whether the artifact warrants it. The agent's job is to surface the choice, not to gate it. |
-| "User said yes once, so I can keep invoking the CLI" | Each invocation is its own authorization. The artifact, the prompt, and the flags change between calls — re-confirm the exact command with the user before every run. |
+| 「自信があるから doubt は飛ばす」 | 自信は、新規問題では正しさとあまり相関しません。確信が強い瞬間ほど盲点があります。 |
+| 「レビュアーを起動すると高くつく」 | 本番で間違った commit をデバッグするほうが高くつきます。チェックは bounded、バグは bounded ではありません。 |
+| 「レビュアーは揚げ足取りするだけ」 | スコープを絞らなければそうなるだけです。prompt を "契約上 fail になる issue" に絞ってください。 |
+| 「最後に `/review` で doubt すればいい」 | `/review` は最終ゲートです。doubt-driven は、コース修正がまだ安い段階で wrong direction を捕まえます。PR 時点では遅すぎます。 |
+| 「毎ステップ疑っていたら出荷できない」 | このスキルは non-trivial な判断だけに適用します。すべてのキー入力ではありません。When NOT to Use を読み直してください。 |
+| 「2 つの意見は常に 1 つより良い」 | 2 つ目が context 不足でノイズを出すなら違います。defer ではなく reconcile してください。 |
+| 「レビュアーが反対したから自分が間違っていた」 | レビュアーはあなたの context を持っていません。反対は情報であって verdict ではありません。artifact を読み直し、分類し、それから判断します。 |
+| 「cross-model は常に better」 | cross-model は single model が自分自身と共有する盲点を見つけやすいですが、コストと fragility を増やします。interactive な doubt cycle ごとに提案し、ユーザーが必要性を決めます。選択肢を出すのがエージェントの役目で、ゲートにすることではありません。 |
+| 「一度 yes をもらったから CLI は毎回勝手に起動していい」 | 1 回ごとに許可が必要です。artifact、prompt、flags は毎回変わります。毎回、正確な command を再確認してください。 |
 
-## Red Flags
+## レッドフラグ
 
-- Spawning a fresh-context reviewer for a one-line rename or formatting change
-- Treating reviewer output as authoritative without re-reading the artifact text
-- Looping >3 cycles without escalating to the user
-- Prompting the reviewer with "is this good?" instead of "find issues"
-- Skipping doubt under time pressure on a high-stakes decision
-- Re-spawning fresh-context on an unchanged artifact (you'll get the same findings; you're stalling)
-- **Doubt theater (checkable signal)**: across 2 or more cycles where the reviewer surfaced substantive findings, zero findings were classified as actionable. You are validating, not doubting. Stop and escalate.
-- Doubting only after committing — that's `/review`, not doubt-driven development
-- Hardcoding an external CLI invocation without confirming with the user that the tool exists, is configured, and accepts that exact syntax
-- **Silently skipping cross-model in an interactive doubt cycle.** Even when not recommending it, the offer must be visible. Skipping is fine; silent skipping is not.
-- Falling back silently when an external CLI errors or is missing — surface the failure and let the user redirect
-- Stripping the contract from the reviewer's input
-- Passing the CLAIM to the reviewer (biases toward agreement)
+- 1 行の rename や formatting change に fresh-context reviewer を起動する
+- artifact の文面を再読せずに reviewer の出力を権威として扱う
+- 3 サイクル超でユーザーへエスカレーションせずにループする
+- "is this good?" ではなく "find issues" と prompt しない
+- 高リスク判断で時間圧を理由に doubt を飛ばす
+- 変更していない artifact に対して fresh-context を再起動する（同じ指摘が返るだけで、足踏みです）
+- **Doubt theater**（確認可能な兆候）: 2 サイクル以上で substantive な指摘が出たのに、actionable と分類された指摘が 0 件。つまり、疑っているのではなく validation しているだけです。止まってエスカレートしてください。
+- コミット後にだけ doubt をする - それは `/review` であって doubt-driven development ではありません
+- ツールが存在するか、設定されているか、その syntax で本当に動くかをユーザー確認なしで外部 CLI を hardcode する
+- **対話中の doubt cycle で cross-model を黙ってスキップする。** 推奨しない場合でも、選択肢は見える形で出す必要があります。スキップは可、黙ってスキップは不可です。
+- 外部 CLI エラーや欠如に黙って fallback する - 失敗を表に出し、ユーザーに方向転換してもらう
+- reviewer の入力から contract を削る
+- CLAIM を reviewer に渡す（追認バイアスがかかる）
 
-## Interaction with Other Skills
+## 他スキルとの関係
 
-- **`code-review-and-quality` / `/review`**: complementary. `/review` is post-hoc PR verdict; doubt-driven is in-flight per-decision. Use both.
-- **`source-driven-development`**: SDD verifies *facts about frameworks* against official docs. Doubt-driven verifies *your reasoning about the artifact*. SDD checks the API exists; doubt-driven checks you used it correctly under the contract.
-- **`test-driven-development`**: TDD's RED step is doubt made concrete — a failing test is a disproof attempt. When TDD applies, that failing test *is* the doubt step for behavioral claims.
-- **`debugging-and-error-recovery`**: when the reviewer surfaces a real failure mode, drop into the debugging skill to localize and fix.
-- **Repo orchestration rules** (`../../references/orchestration-patterns.md`): this skill orchestrates from the main session. A persona calling another persona is anti-pattern B — see Loading Constraints above.
+- **`code-review-and-quality` / `/review`**: 補完関係です。`/review` は PR 後の最終 verdict、doubt-driven は進行中の各判断です。両方使います。
+- **`source-driven-development`**: SDD は公式 docs を使って *フレームワークの事実* を確認します。Doubt-driven は *artifact に対する自分の推論* を検証します。SDD は API の存在を確かめ、doubt-driven は contract に照らして正しく使ったかを確かめます。
+- **`test-driven-development`**: TDD の RED step は doubt を具体化したものです - 失敗するテストは反証の試みです。TDD が当てはまるなら、その失敗するテストが behavior の主張に対する doubt step です。
+- **`debugging-and-error-recovery`**: reviewer が実在の failure mode を示したら、デバッグスキルに切り替えて局所化と修正を行います。
+- **Repo orchestration rules** (`../../references/orchestration-patterns.md`): このスキルは main session から orchestrate します。persona が別 persona を呼ぶのは anti-pattern B です。上の Loading Constraints を参照してください。
 
-## Verification
+## 検証
 
-After applying doubt-driven development:
+Doubt-driven development を適用したあと、次を確認します。
 
-- [ ] Every non-trivial decision (per the definition above) was named explicitly as a CLAIM before standing
-- [ ] At least one fresh-context review per non-trivial artifact (a failing test produced by TDD's RED step satisfies this for behavioral claims, per Interaction with Other Skills)
-- [ ] The reviewer received ARTIFACT + CONTRACT — NOT the CLAIM, NOT your reasoning
-- [ ] The reviewer's prompt was adversarial ("find issues"), not validating ("is it good")
-- [ ] Findings were classified against the artifact text (not rubber-stamped) using the precedence: contract misread / actionable / trade-off / noise
-- [ ] A stop condition was met (trivial findings, 3 cycles, or user override)
-- [ ] In interactive mode, cross-model was **explicitly offered** to the user (regardless of artifact stakes) and the response was acknowledged in the output
-- [ ] In non-interactive mode, cross-model was skipped and the skip was announced
-- [ ] Any external CLI invocation was preceded by a PATH check, a working-binary test, syntax confirmation with the user, and explicit authorization to run
+- [ ] non-trivial な判断（上の定義に従う）を、立たせる前に CLAIM として明示した
+- [ ] 少なくとも 1 つの fresh-context review を non-trivial artifact ごとに実施した（TDD の RED step が作る failing test は、behavior の主張に対するこの役割を果たします）
+- [ ] reviewer に渡したのは ARTIFACT + CONTRACT であり、CLAIM も推論も渡していない
+- [ ] reviewer の prompt は validating ではなく adversarial（"find issues"）だった
+- [ ] 指摘を artifact の文面に照らして分類した（盲目的な追認ではない）
+- [ ] 停止条件（些細な指摘、3 サイクル、ユーザー override）のいずれかを満たした
+- [ ] interactive mode では cross-model をユーザーに **明示的に提案** した（artifact の重要度に関係なく）し、応答を output に明記した
+- [ ] non-interactive mode では cross-model をスキップし、その旨を明記した
+- [ ] 外部 CLI を起動した場合、PATH 確認、動作確認、ユーザーへの syntax 確認、明示的な許可が先にあった

@@ -1,396 +1,390 @@
 ---
 name: code-review-and-quality
-description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch.
+description: 多面的なコードレビューを行います。マージ前のあらゆる変更に使います。自分、別のエージェント、人間が書いたコードを評価するときにも使います。メインブランチに入る前に複数の観点で品質を確認したいときに使います。
 ---
 
-# Code Review and Quality
+# コードレビューと品質
 
-## Overview
+## 概要
 
-Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers five axes: correctness, readability, architecture, security, and performance.
+多面的なコードレビューと品質ゲートです。すべての変更はマージ前にレビューされます。例外はありません。レビューは 5 つの軸で行います。正しさ、読みやすさ、アーキテクチャ、セキュリティ、パフォーマンスです。
 
-**The approval standard:** Approve a change when it definitely improves overall code health, even if it isn't perfect. Perfect code doesn't exist — the goal is continuous improvement. Don't block a change because it isn't exactly how you would have written it. If it improves the codebase and follows the project's conventions, approve it.
+**承認基準:** 変更がコード全体の健全性を明らかに改善するなら、完璧でなくても承認します。完璧なコードは存在しません。目標は継続的改善です。自分ならこう書く、という理由だけで変更を止めてはいけません。コードベースを改善し、プロジェクトの規約に沿っているなら承認します。
 
-## When to Use
+## 使う場面
 
-- Before merging any PR or change
-- After completing a feature implementation
-- When another agent or model produced code you need to evaluate
-- When refactoring existing code
-- After any bug fix (review both the fix and the regression test)
+- PR や変更をマージする前
+- 機能実装を完了したあと
+- 別のエージェントやモデルが生成したコードを評価するとき
+- 既存コードをリファクタリングするとき
+- バグ修正のあと（修正と回帰テストの両方をレビューする）
 
-## The Five-Axis Review
+## 5 つの観点でレビューする
 
-Every review evaluates code across these dimensions:
+### 1. 正しさ
 
-### 1. Correctness
+コードは主張どおりに動くか？
 
-Does the code do what it claims to do?
+- 仕様やタスク要件に合っているか？
+- エッジケース（null、空、境界値）は扱っているか？
+- エラーパスも処理されているか（ハッピーパスだけではないか）？
+- すべてのテストが通るか？ テストは本当に適切なものを検証しているか？
+- off-by-one、レースコンディション、状態不整合はないか？
 
-- Does it match the spec or task requirements?
-- Are edge cases handled (null, empty, boundary values)?
-- Are error paths handled (not just the happy path)?
-- Does it pass all tests? Are the tests actually testing the right things?
-- Are there off-by-one errors, race conditions, or state inconsistencies?
+### 2. 読みやすさと単純さ
 
-### 2. Readability & Simplicity
+他のエンジニア（またはエージェント）が、作者の説明なしで理解できるか？
 
-Can another engineer (or agent) understand this code without the author explaining it?
+- 名前は説明的で、プロジェクトの規約と一致しているか？（`temp`、`data`、`result` だけではないか）
+- 制御フローは素直か？（入れ子の三項演算子や深いコールバックを避ける）
+- コードは論理的に整理されているか？（関連コードがまとまり、境界が明確か）
+- 「賢い」仕掛けで単純化できる箇所はないか？
+- **もっと少ない行数でできないか？**（100 行で済むのに 1000 行書いたら失敗）
+- **抽象化は複雑さに見合っているか？**（3 回使うまでは一般化しない）
+- 非自明な意図を明確にするためにコメントが必要か？（ただし明白なコードにコメントは不要）
+- `_unused` のような不要物、後方互換用の継ぎ手、`// removed` コメントのような死骸はないか？
+- **無関係なフローに新しい条件分岐を足していないか？** それは軽い指摘ではなく設計の匂いです。既存フローに絡めず、専用のヘルパー、状態、ポリシーへ切り出してください。
+- **同じ形の条件分岐が繰り返されていないか？** モデル化不足かディスパッチャ不足のサインです。「一時的」な分岐はだいたい恒久負債です。
 
-- Are names descriptive and consistent with project conventions? (No `temp`, `data`, `result` without context)
-- Is the control flow straightforward (avoid nested ternaries, deep callbacks)?
-- Is the code organized logically (related code grouped, clear module boundaries)?
-- Are there any "clever" tricks that should be simplified?
-- **Could this be done in fewer lines?** (1000 lines where 100 suffice is a failure)
-- **Are abstractions earning their complexity?** (Don't generalize until the third use case)
-- Would comments help clarify non-obvious intent? (But don't comment obvious code.)
-- Are there dead code artifacts: no-op variables (`_unused`), backwards-compat shims, or `// removed` comments?
-- **Is a new conditional bolted onto an unrelated flow?** That's a design smell, not a nit — push the logic into its own helper, state, or policy instead of tangling an existing path.
-- **Do repeated conditionals on the same shape appear?** They signal a missing model or dispatcher. A "temporary" branch is usually permanent debt.
+### 3. アーキテクチャ
 
-### 3. Architecture
+変更はシステム設計に合っているか？
 
-Does the change fit the system's design?
+- 既存パターンに従っているか、新しいパターンを導入しているか？ 新しいなら妥当性があるか？
+- モジュール境界は保たれているか？
+- 共有すべき重複コードはないか？
+- 依存関係の流れは正しいか（循環依存がないか）？
+- 抽象化レベルは適切か（過剰設計でも、密結合でもないか）？
+- **このリファクタリングは複雑さを減らしているか、それとも移動しているだけか？** 読む人が保持しなければならない概念の数を数えてください。「よりきれい」になったはずなのに、その数が変わらないなら、きれいにはなっていません。枝、モード、レイヤーを消す構成を優先し、抽象化を磨くだけの変更より、抽象化を削るほうを優先してください。
+- **機能固有のロジックが共有モジュールや汎用モジュールに漏れていないか？** ロジックは所有レイヤーに置き、既存の正規のヘルパーを再利用し、ほぼ同じ別実装を増やさないでください。アーキテクチャのずれを一般化してはいけません。
+- **型境界は明示されているか？** 不要な `any` / `unknown` / optional / cast や、あいまいな不変条件を覆い隠すサイレントフォールバックを疑ってください。境界を明示すれば、周辺の制御フローが単純になることが多いです。
 
-- Does it follow existing patterns or introduce a new one? If new, is it justified?
-- Does it maintain clean module boundaries?
-- Is there code duplication that should be shared?
-- Are dependencies flowing in the right direction (no circular dependencies)?
-- Is the abstraction level appropriate (not over-engineered, not too coupled)?
-- **Does this refactor reduce complexity or just relocate it?** Count the concepts a reader must hold to follow the change. If a "cleaner" version leaves that count unchanged, it isn't cleaner — prefer the restructuring that makes whole branches, modes, or layers disappear over one that re-centralizes the same logic. Prefer deleting an abstraction to polishing it.
-- **Is feature-specific logic leaking into a shared or general-purpose module?** Keep logic in its owning layer, reuse the existing canonical helper instead of a near-duplicate, and don't normalize architectural drift.
-- **Are type boundaries explicit?** Question gratuitous `any`/`unknown`/optional/casts and silent fallbacks that paper over an unclear invariant — making the boundary explicit often makes the surrounding control flow simpler.
+### 4. セキュリティ
 
-### 4. Security
+詳細は `security-and-hardening` を参照してください。変更は脆弱性を持ち込んでいないか？
 
-For detailed security guidance, see `security-and-hardening`. Does the change introduce vulnerabilities?
+- ユーザー入力は検証・サニタイズされているか？
+- 秘密情報はコード、ログ、バージョン管理から除外されているか？
+- 必要な場所で認証・認可が確認されているか？
+- SQL はパラメータ化されているか（文字列連結していないか）？
+- 出力は XSS を防ぐようエンコードされているか？
+- 依存関係は信頼できるソースで、既知の脆弱性がないか？
+- 外部ソース（API、ログ、ユーザーコンテンツ、設定ファイルなど）のデータは、ロジックや描画に使う前に信頼できないものとして扱われているか？
 
-- Is user input validated and sanitized?
-- Are secrets kept out of code, logs, and version control?
-- Is authentication/authorization checked where needed?
-- Are SQL queries parameterized (no string concatenation)?
-- Are outputs encoded to prevent XSS?
-- Are dependencies from trusted sources with no known vulnerabilities?
-- Is data from external sources (APIs, logs, user content, config files) treated as untrusted?
-- Are external data flows validated at system boundaries before use in logic or rendering?
+### 5. パフォーマンス
 
-### 5. Performance
+詳細なプロファイリングと最適化は `performance-optimization` を参照してください。変更は性能問題を持ち込んでいないか？
 
-For detailed profiling and optimization, see `performance-optimization`. Does the change introduce performance problems?
+- N+1 クエリはないか？
+- 無制限ループや制限のないデータ取得はないか？
+- 非同期にすべき同期処理はないか？
+- UI コンポーネントで不要な再レンダーはないか？
+- 一覧エンドポイントにページネーションはあるか？
+- ホットパスで大きなオブジェクトを作っていないか？
 
-- Any N+1 query patterns?
-- Any unbounded loops or unconstrained data fetching?
-- Any synchronous operations that should be async?
-- Any unnecessary re-renders in UI components?
-- Any missing pagination on list endpoints?
-- Any large objects created in hot paths?
+## 構造上の改善策
 
-## Structural Remedies
+構造上の問題を指摘するなら、問題だけでなく「どう直すか」も提案します。「複雑すぎる」で終わるレビューは、作者を迷わせるだけです。名前を付けて修正方針を示してください。
 
-When you flag a structural problem, propose the move — not just the problem. A review that only says "this is complex" leaves the author guessing. Reach for a named restructuring:
+- **条件分岐の連鎖を、型付きモデルまたは明示的なディスパッチャへ置き換える**
+- **重複した分岐を 1 つの分かりやすいフローにまとめる**
+- **オーケストレーションとビジネスロジックを分離する**
+- **機能固有のロジックを、共有モジュールではなくその概念を所有するパッケージへ移す**
+- **正規のヘルパーを再利用し、独自のほぼ同一実装を作らない**
+- **型境界を明示し、下流の分岐をなくす**
+- **API を分かりやすくしていない単なるパススルーラッパーを削除する**
+- **ヘルパーを抽出する、または大きなファイルを焦点の合ったモジュールに分ける**
 
-- **Replace a chain of conditionals** with a typed model or an explicit dispatcher.
-- **Collapse duplicate branches** into a single clearer flow.
-- **Separate orchestration from business logic** so each reads on its own.
-- **Move feature-specific logic** out of a shared module into the package that owns the concept.
-- **Reuse the canonical helper** instead of a bespoke near-duplicate.
-- **Make a type boundary explicit** so downstream branching disappears.
-- **Delete a pass-through wrapper** that adds indirection without clarifying the API.
-- **Extract a helper, or split a large file** into focused modules.
+複雑さを広げる修正より、動く部品そのものを減らす修正を優先します。
 
-Prefer the remedy that removes moving pieces over one that spreads the same complexity around.
+## 変更サイズ
 
-## Change Sizing
+小さく焦点の合った変更のほうがレビューしやすく、マージも速く、デプロイも安全です。次を目安にします。
 
-Small, focused changes are easier to review, faster to merge, and safer to deploy. Target these sizes:
-
-```
-~100 lines changed   → Good. Reviewable in one sitting.
-~300 lines changed   → Acceptable if it's a single logical change.
-~1000 lines changed  → Too large. Split it.
+```text
+変更行数 ~100  -> 良い。一度でレビューできる。
+変更行数 ~300  -> 単一の論理変更なら許容。
+変更行数 ~1000 -> 大きすぎる。分割する。
 ```
 
-**Watch file size, not just diff size.** A small diff can still push a file past a healthy boundary — around 1000 *total* lines in a single file (distinct from the ~1000 *changed*-lines threshold above) is a common inspection signal, not a hard cap. When a change materially grows an already-large file, ask whether to extract helpers, subcomponents, or modules *first*, before piling more on. Decompose, then add.
+**差分サイズではなく、ファイルの総サイズにも注意してください。** 小さな差分でも、1 ファイルの総行数が健全な境界を超えることがあります。単一ファイルでおよそ 1000 行を超えるのは、厳密な上限ではなく、よくある要注意サインです。既に大きいファイルをさらに増やすなら、まずヘルパー、サブコンポーネント、モジュールへ抽出できないか検討してください。分解してから追加します。
 
-**What counts as "one change":** A single self-contained modification that addresses one thing, includes related tests, and keeps the system functional after submission. One part of a feature — not the whole feature.
+**1 つの変更の定義:** 1 つの自己完結した修正で、1 つのことを解決し、関連するテストを含み、提出後もシステムが機能し続けるものです。機能全体ではなく、その一部です。
 
-**Splitting strategies when a change is too large:**
+**大きすぎる変更を分ける方法:**
 
-| Strategy | How | When |
-|----------|-----|------|
-| **Stack** | Submit a small change, start the next one based on it | Sequential dependencies |
-| **By file group** | Separate changes for groups needing different reviewers | Cross-cutting concerns |
-| **Horizontal** | Create shared code/stubs first, then consumers | Layered architecture |
-| **Vertical** | Break into smaller full-stack slices of the feature | Feature work |
+| 方法 | やり方 | 使う場面 |
+|---|---|---|
+| **Stack** | 小さな変更を提出し、その上に次を載せる | 依存が順番にあるとき |
+| **By file group** | 別のレビュアーが必要なファイル群に分ける | 横断的な関心事 |
+| **Horizontal** | 共有コードやスタブを先に作り、その後に利用側を作る | レイヤー構成 |
+| **Vertical** | 機能の全スタックを小さな縦スライスに分ける | 機能作業 |
 
-**When large changes are acceptable:** Complete file deletions and automated refactoring where the reviewer only needs to verify intent, not every line.
+**大きな変更が許容される場面:** 完全なファイル削除、またはレビュアーが各行ではなく意図だけを確認すればよい自動リファクタリング。
 
-**Separate refactoring from feature work.** A change that refactors existing code and adds new behavior is two changes — submit them separately. Small cleanups (variable renaming) can be included at reviewer discretion.
+**リファクタリングと機能作業は分ける。** 既存コードのリファクタリングと新しい振る舞いの追加は 2 つの変更です。別々に提出してください。小さな整理（変数名の変更など）は、レビュアーの判断で含めて構いません。
 
-## Change Descriptions
+## 変更説明
 
-Every change needs a description that stands alone in version control history.
+すべての変更は、バージョン管理履歴の中で独立して読める説明を持つ必要があります。
 
-**First line:** Short, imperative, standalone. "Delete the FizzBuzz RPC" not "Deleting the FizzBuzz RPC." Must be informative enough that someone searching history can understand the change without reading the diff.
+**1 行目:** 短く、命令形で、単体で意味が通ること。「Delete the FizzBuzz RPC」はよくて、「Deleting the FizzBuzz RPC」はだめです。履歴を検索したとき、差分を見なくても何をしたか分かる程度に具体的である必要があります。
 
-**Body:** What is changing and why. Include context, decisions, and reasoning not visible in the code itself. Link to bug numbers, benchmark results, or design docs where relevant. Acknowledge approach shortcomings when they exist.
+**本文:** 何が変わるのか、なぜ変わるのか。コードだけでは分からない文脈、判断、理由を書きます。必要に応じてバグ番号、ベンチマーク結果、設計文書へリンクします。限界がある方法なら、それも認めます。
 
-**Anti-patterns:** "Fix bug," "Fix build," "Add patch," "Moving code from A to B," "Phase 1," "Add convenience functions."
+**悪い例:** "Fix bug"、"Fix build"、"Add patch"、"Moving code from A to B"、"Phase 1"、"Add convenience functions"。
 
-## Review Process
+## レビュー手順
 
-### Step 1: Understand the Context
+### Step 1: 文脈を理解する
 
-Before looking at code, understand the intent:
+コードを見る前に、意図を理解します。
 
-```
-- What is this change trying to accomplish?
-- What spec or task does it implement?
-- What is the expected behavior change?
-```
-
-### Step 2: Review the Tests First
-
-Tests reveal intent and coverage:
-
-```
-- Do tests exist for the change?
-- Do they test behavior (not implementation details)?
-- Are edge cases covered?
-- Do tests have descriptive names?
-- Would the tests catch a regression if the code changed?
+```text
+- この変更は何を達成しようとしているのか？
+- どの仕様やタスクを実装しているのか？
+- 期待される振る舞いの変化は何か？
 ```
 
-### Step 3: Review the Implementation
+### Step 2: まずテストを見る
 
-Walk through the code with the five axes in mind:
+テストは意図とカバレッジを示します。
 
-```
-For each file changed:
-1. Correctness: Does this code do what the test says it should?
-2. Readability: Can I understand this without help?
-3. Architecture: Does this fit the system?
-4. Security: Any vulnerabilities?
-5. Performance: Any bottlenecks?
-```
-
-### Step 4: Categorize Findings
-
-Label every comment with its severity so the author knows what's required vs optional:
-
-| Prefix | Meaning | Author Action |
-|--------|---------|---------------|
-| *(no prefix)* | Required change | Must address before merge |
-| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality |
-| **Nit:** | Minor, optional | Author may ignore — formatting, style preferences |
-| **Optional:** / **Consider:** | Suggestion | Worth considering but not required |
-| **FYI** | Informational only | No action needed — context for future reference |
-
-This prevents authors from treating all feedback as mandatory and wasting time on optional suggestions.
-
-**Lead with what matters.** Order findings by leverage: correctness and security first, then structural regressions and missed simplifications, then everything else. Don't bury a real issue under cosmetic nits — a few high-conviction comments beat a long list. If you have one structural problem and ten nits, the structural problem *is* the review.
-
-### Step 5: Verify the Verification
-
-Check the author's verification story:
-
-```
-- What tests were run?
-- Did the build pass?
-- Was the change tested manually?
-- Are there screenshots for UI changes?
-- Is there a before/after comparison?
+```text
+- 変更に対するテストはあるか？
+- 振る舞いをテストしているか（実装詳細ではなく）？
+- エッジケースは網羅されているか？
+- テスト名は説明的か？
+- コードが変わったとき、回帰を検出できるか？
 ```
 
-## Multi-Model Review Pattern
+### Step 3: 実装を見る
 
-Use different models for different review perspectives:
+5 つの観点を意識しながらコードをたどります。
 
-```
-Model A writes the code
-    │
-    ▼
-Model B reviews for correctness and architecture
-    │
-    ▼
-Model A addresses the feedback
-    │
-    ▼
-Human makes the final call
+```text
+変更された各ファイルについて:
+1. 正しさ: このコードはテストが求めることをしているか？
+2. 読みやすさ: 何の補助もなく理解できるか？
+3. アーキテクチャ: システムに合っているか？
+4. セキュリティ: 脆弱性はないか？
+5. パフォーマンス: ボトルネックはないか？
 ```
 
-This catches issues that a single model might miss — different models have different blind spots.
+### Step 4: 指摘を分類する
 
-**Example prompt for a review agent:**
+各コメントに重要度を付け、何が必須で何が任意か分かるようにします。
+
+| 接頭辞 | 意味 | 作者の対応 |
+|---|---|---|
+| なし | 必須の修正 | マージ前に対応が必要 |
+| **Critical:** | マージを止める | セキュリティ脆弱性、データ損失、機能破壊 |
+| **Nit:** | 軽微、任意 | 作者は無視してよい |
+| **Optional:** / **Consider:** | 提案 | 必須ではないが検討に値する |
+| **FYI** | 情報共有のみ | 対応不要、将来の文脈 |
+
+これにより、作者がすべてのフィードバックを必須だと受け取って時間を浪費するのを防ぎます。
+
+**重要なものから順に出す。** 正しさとセキュリティを先に、構造上の退化や見落とした単純化をその次に、残りを最後にします。重大な問題を些細な指摘の中に埋もれさせてはいけません。高い確信を持つコメントを少数出すほうが、長いリストより価値があります。構造上の問題が 1 つあって Nit が 10 個あるなら、構造上の問題がレビューの中心です。
+
+### Step 5: 検証の検証
+
+作者がどう検証したかを確認します。
+
+```text
+- どのテストを実行したか？
+- ビルドは通ったか？
+- 手動で確認したか？
+- UI 変更にスクリーンショットはあるか？
+- 前後比較はあるか？
 ```
-Review this code change for correctness, security, and adherence to
-our project conventions. The spec says [X]. The change should [Y].
-Flag any issues as Critical, Required, Optional, or Nit.
+
+## マルチモデルレビューの形
+
+異なるモデルを異なる観点に使います。
+
+```text
+Model A がコードを書く
+    -> Model B が正しさとアーキテクチャをレビューする
+    -> Model A がフィードバックに対応する
+    -> 人間が最終判断を下す
 ```
 
-## Dead Code Hygiene
+これにより、1 つのモデルでは見逃しがちな問題を拾えます。モデルごとに盲点が違うからです。
 
-After any refactoring or implementation change, check for orphaned code:
+**レビューエージェント向けのプロンプト例:**
 
-1. Identify code that is now unreachable or unused
-2. List it explicitly
-3. **Ask before deleting:** "Should I remove these now-unused elements: [list]?"
-
-Don't leave dead code lying around — it confuses future readers and agents. But don't silently delete things you're not sure about. When in doubt, ask.
-
+```text
+このコード変更を、正しさ、セキュリティ、そしてプロジェクト規約への適合の観点でレビューしてください。
+仕様は [X] です。変更は [Y] を実現すべきです。
+問題があれば Critical、Required、Optional、Nit のいずれかで指摘してください。
 ```
+
+## 死んだコードの整理
+
+リファクタリングや実装変更のあとには、孤立したコードを確認します。
+
+1. 使われなくなったコードを特定する
+2. 明示的に列挙する
+3. **削除前に確認する:** 「以下の使われていない要素を削除してよいですか？ [一覧]」
+
+不要なコードを放置しないでください。将来の読者やエージェントを混乱させます。ただし、よく分からないものを黙って削除してはいけません。迷ったら聞いてください。
+
+```text
 DEAD CODE IDENTIFIED:
-- formatLegacyDate() in src/utils/date.ts — replaced by formatDate()
-- OldTaskCard component in src/components/ — replaced by TaskCard
-- LEGACY_API_URL constant in src/config.ts — no remaining references
-→ Safe to remove these?
+- formatLegacyDate() in src/utils/date.ts -> formatDate() に置き換え済み
+- OldTaskCard component in src/components/ -> TaskCard に置き換え済み
+- LEGACY_API_URL constant in src/config.ts -> 参照なし
+-> これらを削除してよいですか？
 ```
 
-## Review Speed
+## レビュー速度
 
-Slow reviews block entire teams. The cost of context-switching to review is less than the waiting cost imposed on others.
+遅いレビューはチーム全体を止めます。レビューに割くコンテキスト切り替えコストは、他者に待たせるコストより小さいです。
 
-- **Respond within one business day** — this is the maximum, not the target
-- **Ideal cadence:** Respond shortly after a review request arrives, unless deep in focused coding. A typical change should complete multiple review rounds in a single day
-- **Prioritize fast individual responses** over quick final approval. Quick feedback reduces frustration even if multiple rounds are needed
-- **Large changes:** Ask the author to split them rather than reviewing one massive changeset
+- **1 営業日以内に返す** - これは最大であって、目標ではありません
+- **理想のリズム:** 深く集中していない限り、レビュー依頼が来たらすぐ返す。通常の変更なら 1 日で複数ラウンド回せるのが理想です
+- **個別の返信速度を優先** し、最終承認の速さよりフィードバックの速さを重視します。早いフィードバックは、何度かやり取りが必要でも不満を減らします
+- **大きな変更:** 1 回でレビューするのではなく、分割するよう依頼します
 
-## Handling Disagreements
+## 意見の違いの扱い
 
-When resolving review disputes, apply this hierarchy:
+レビューの対立を解くときは、次の優先順位に従います。
 
-1. **Technical facts and data** override opinions and preferences
-2. **Style guides** are the absolute authority on style matters
-3. **Software design** must be evaluated on engineering principles, not personal preference
-4. **Codebase consistency** is acceptable if it doesn't degrade overall health
+1. **技術的事実とデータ** が意見や好みより優先
+2. **スタイルガイド** はスタイルに関する絶対基準
+3. **ソフトウェア設計** は個人の好みではなく工学原則で評価する
+4. **コードベースの一貫性** は、全体の健全性を損なわないなら有効
 
-**Don't accept "I'll clean it up later."** Experience shows deferred cleanup rarely happens. Require cleanup before submission unless it's a genuine emergency. If surrounding issues can't be addressed in this change, require filing a bug with self-assignment.
+**「あとで直す」は認めない。** 経験上、後回しの整理はほとんど実現しません。レビューは品質ゲートです。マージ後ではなく、提出前に直させてください。周辺の問題をこの変更で直せないなら、自己担当のバグとして起票させます。
 
-## Honesty in Review
+## レビューでの誠実さ
 
-When reviewing code — whether written by you, another agent, or a human:
+コードをレビューするとき - 自分が書いたものでも、別のエージェントでも、人間でも - 次を守ります。
 
-- **Don't rubber-stamp.** "LGTM" without evidence of review helps no one.
-- **Don't soften real issues.** "This might be a minor concern" when it's a bug that will hit production is dishonest.
-- **Quantify problems when possible.** "This N+1 query will add ~50ms per item in the list" is better than "this could be slow."
-- **Push back on approaches with clear problems.** Sycophancy is a failure mode in reviews. If the implementation has issues, say so directly and propose alternatives.
-- **Accept override gracefully.** If the author has full context and disagrees, defer to their judgment. Comment on code, not people — reframe personal critiques to focus on the code itself.
+- **無条件の承認をしない。** 証拠のない "LGTM" は誰の役にも立ちません。
+- **本当の問題をやわらげすぎない。** 本番で問題になるバグに対して「少し気になるかも」は不誠実です。
+- **可能なら数値化する。** 「この N+1 はリスト 1 件あたり約50ms増える」のほうが、「遅くなるかもしれない」よりよいです。
+- **明らかに問題のある案には異議を唱える。** レビューでのおべっかは失敗の一種です。実装に問題があるなら、はっきり言って代替案を提案してください。
+- **上書きには穏やかに従う。** 作者が十分な文脈を持って反対するなら、その判断を尊重します。人ではなくコードにコメントし、個人批判ではなくコードの問題に焦点を当ててください。
 
-## Dependency Discipline
+## 依存関係の規律
 
-Part of code review is dependency review:
+コードレビューの一部は依存関係レビューです。
 
-**Before adding any dependency:**
-1. Does the existing stack solve this? (Often it does.)
-2. How large is the dependency? (Check bundle impact.)
-3. Is it actively maintained? (Check last commit, open issues.)
-4. Does it have known vulnerabilities? (`npm audit`)
-5. What's the license? (Must be compatible with the project.)
+**依存関係を追加する前に:**
 
-**Rule:** Prefer standard library and existing utilities over new dependencies. Every dependency is a liability.
+1. 既存のスタックで足りないか？（多くの場合は足ります）
+2. 依存の規模はどれくらいか？（バンドルへの影響を確認）
+3. 継続的にメンテされているか？（最終コミット、未解決 issue を確認）
+4. 既知の脆弱性はあるか？（`npm audit`）
+5. ライセンスは適合しているか？（プロジェクトに合う必要があります）
 
-**Upgrading an existing dependency** is a code change like any other, and the riskiest upgrades are the ones merged in bulk with a message like "bump deps." Review them with the same discipline:
+**ルール:** 新しい依存より、標準ライブラリや既存ユーティリティを優先します。依存関係はすべて負債です。
 
-1. **Read the changelog, not just the version number.** Semver is a promise the maintainer may not have kept — a "patch" can carry a behavioral change. For a major bump, read the migration notes and find what breaks.
-2. **One dependency per change.** Upgrade and merge them individually (or in small related groups). When a bulk bump breaks the build, you've lost which package did it; a single-package change makes the cause obvious and the revert clean.
-3. **Let the tests decide.** The upgrade is verified by a green suite before *and* after, not by "it installed." If coverage around the dependency's behavior is thin, that gap is the real finding — add a test first.
-4. **Mind the transitive graph.** Most installed packages are ones nobody chose directly. Review the lockfile diff, not just `package.json`; a single direct bump can pull in dozens of indirect changes.
-5. **Keep the lockfile honest.** Commit it, review its diff, and never hand-edit it. The lockfile is the thing that actually pins what ships.
+**既存依存のアップグレード** は他のコード変更と同じであり、もっとも危険なのは "bump deps" のようにまとめて入るものです。同じ規律でレビューします。
 
-For triaging `npm audit` findings and supply-chain risk (typosquatting, compromised maintainers), follow the `security-and-hardening` skill — this section covers the upgrade *workflow*, that one covers the security verdict.
+1. **バージョン番号だけでなく、変更履歴を読む。** Semver は保守者の約束ですが、必ず守られるとは限りません。patch でも挙動が変わることがあります。major では移行ノートを読み、何が壊れるかを探します。
+2. **変更は依存 1 つずつ。** 個別、または少数の関連グループでアップグレードします。まとめて bump してビルドが壊れると、どれが原因か分からなくなります。1 つずつなら原因も revert も明快です。
+3. **テストに決めさせる。** アップグレードの検証は、入れる前と後の両方で green であることです。「インストールできた」だけでは足りません。依存の振る舞いを覆うテストが薄いなら、その穴こそが本当の問題です。先にテストを書いてください。
+4. **推移的依存を意識する。** ほとんどのパッケージは誰も直接選んでいません。`package.json` だけでなく lockfile の差分を見てください。1 つの直接変更で、数十個の間接変更が起きることがあります。
+5. **lockfile は正直に保つ。** コミットし、差分を確認し、手で編集しないでください。実際に出荷される内容を固定するのが lockfile です。
 
-## The Review Checklist
+`npm audit` の指摘やサプライチェーンリスク（typosquatting、保守者の侵害など）の扱いは `security-and-hardening` に従ってください。この節はアップグレードの**手順**を扱い、向こうはセキュリティ判断を扱います。
+
+## レビューチェックリスト
 
 ```markdown
 ## Review: [PR/Change title]
 
 ### Context
-- [ ] I understand what this change does and why
+- [ ] この変更が何をし、なぜ必要かを理解している
 
 ### Correctness
-- [ ] Change matches spec/task requirements
-- [ ] Edge cases handled
-- [ ] Error paths handled
-- [ ] Tests cover the change adequately
+- [ ] 変更が仕様/タスク要件に一致している
+- [ ] エッジケースを扱っている
+- [ ] エラーパスを扱っている
+- [ ] テストが変更を十分にカバーしている
 
 ### Readability
-- [ ] Names are clear and consistent
-- [ ] Logic is straightforward
-- [ ] No unnecessary complexity
+- [ ] 名前が明確で一貫している
+- [ ] ロジックが素直である
+- [ ] 不要な複雑さがない
 
 ### Architecture
-- [ ] Follows existing patterns
-- [ ] No unnecessary coupling or dependencies
-- [ ] Appropriate abstraction level
-- [ ] Refactors reduce complexity rather than relocate it
-- [ ] No feature logic in shared modules; file stays within a healthy size
+- [ ] 既存パターンに従っている
+- [ ] 不要な結合や依存がない
+- [ ] 抽象化レベルが適切である
+- [ ] リファクタリングが複雑さを減らしている
+- [ ] 共有モジュールに機能ロジックがなく、ファイルサイズも健全である
 
 ### Security
-- [ ] No secrets in code
-- [ ] Input validated at boundaries
-- [ ] No injection vulnerabilities
-- [ ] Auth checks in place
-- [ ] External data sources treated as untrusted
+- [ ] コードに秘密情報がない
+- [ ] 境界で入力が検証されている
+- [ ] インジェクション脆弱性がない
+- [ ] 認可チェックがある
+- [ ] 外部データソースが信頼できないものとして扱われている
 
 ### Performance
-- [ ] No N+1 patterns
-- [ ] No unbounded operations
-- [ ] Pagination on list endpoints
+- [ ] N+1 パターンがない
+- [ ] 無制限操作がない
+- [ ] 一覧エンドポイントにページネーションがある
 
 ### Verification
-- [ ] Tests pass
-- [ ] Build succeeds
-- [ ] Manual verification done (if applicable)
+- [ ] テストが通る
+- [ ] ビルドが成功する
+- [ ] 必要なら手動検証を行った
 
 ### Verdict
-- [ ] **Approve** — Ready to merge
-- [ ] **Request changes** — Issues must be addressed
+- [ ] **Approve** - マージ可能
+- [ ] **Request changes** - 修正が必要
 ```
+
 ## See Also
 
-- For detailed security review guidance, see `../../references/security-checklist.md`
-- For performance review checks, see `../../references/performance-checklist.md`
+- 詳細なセキュリティレビューの指針は `../../references/security-checklist.md`
+- パフォーマンスレビューの確認項目は `../../references/performance-checklist.md`
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "It works, that's good enough" | Working code that's unreadable, insecure, or architecturally wrong creates debt that compounds. |
-| "I wrote it, so I know it's correct" | Authors are blind to their own assumptions. Every change benefits from another set of eyes. |
-| "We'll clean it up later" | Later never comes. The review is the quality gate — use it. Require cleanup before merge, not after. |
-| "AI-generated code is probably fine" | AI code needs more scrutiny, not less. It's confident and plausible, even when wrong. |
-| "The tests pass, so it's good" | Tests are necessary but not sufficient. They don't catch architecture problems, security issues, or readability concerns. |
-| "The refactor makes it cleaner" | Relocating complexity isn't reducing it. If the reader still holds the same number of concepts, the structure didn't improve — look for the version where branches disappear. |
-| "It's only a small addition to this file" | Small diffs still push files past a healthy size and bolt branches onto unrelated flows. Judge the resulting structure, not the diff size. |
-| "It's just a version bump" | A bump is a behavior change you didn't write. Read the changelog; semver doesn't guarantee no breakage. |
-| "I'll upgrade everything in one PR to save time" | A bulk bump that breaks the build hides which package did it. One dependency per change keeps the cause and the revert clean. |
+| 「動いているなら十分」 | 読みにくい、不安全、または設計が悪いコードは、積み重なる負債を生みます。 |
+| 「自分で書いたから正しい」 | 作者は自分の前提に盲目です。どんな変更も、別の目で見る価値があります。 |
+| 「あとで片付ける」 | 後日は来ません。レビューが品質ゲートです。マージ後ではなく前に直させてください。 |
+| 「AI 生成コードだからたぶん大丈夫」 | AI のコードは、より強い注意が必要です。自信満々でもっともらしくても、間違っていることがあります。 |
+| 「テストが通ったから大丈夫」 | テストは必要ですが十分ではありません。アーキテクチャ、セキュリティ、可読性の問題は見逃します。 |
+| 「リファクタリングで綺麗になる」 | 複雑さを移しただけなら、減っていません。読者が持つ概念数が同じなら改善ではありません。枝が消える版を探してください。 |
+| 「ファイルに少し追加するだけ」 | 小さな差分でも、ファイルを健全なサイズ超えにしたり、無関係なフローに分岐を足したりします。差分サイズではなく、最終構造で判断してください。 |
+| 「ただのバージョンアップ」 | bump は、あなたが書いていない振る舞い変更です。変更履歴を読んでください。semver は壊れない保証ではありません。 |
+| 「時間節約のため全部一つの PR で上げる」 | まとめて上げると、どのパッケージが原因か分からなくなります。1 つずつなら、原因も revert もきれいです。 |
 
-## Red Flags
+## レッドフラグ
 
-- PRs merged without any review
-- Review that only checks if tests pass (ignoring other axes)
-- "LGTM" without evidence of actual review
-- Security-sensitive changes without security-focused review
-- Large PRs that are "too big to review properly" (split them)
-- No regression tests with bug fix PRs
-- Review comments without severity labels — makes it unclear what's required vs optional
-- Accepting "I'll fix it later" — it never happens
-- A refactor that moves code around without reducing the number of concepts a reader must hold
-- A change that grows an already-large file instead of decomposing it
-- New conditionals scattered into unrelated code paths (a missing abstraction)
-- A bespoke helper that duplicates an existing canonical one, or feature logic placed in a shared module
-- A bulk "bump dependencies" PR with no changelog review and no per-package isolation
-- A lockfile change that's hand-edited, uncommitted, or merged without reviewing its diff
+- 何のレビューもなしに PR がマージされる
+- テストが通るかだけ見るレビュー（他の軸を無視する）
+- 実際にレビューした証拠のない "LGTM"
+- セキュリティ重要変更なのにセキュリティ観点のレビューがない
+- 「大きすぎてちゃんとレビューできない」巨大 PR（分割する）
+- バグ修正 PR に回帰テストがない
+- 重要度ラベルのないレビューコメント（必須か任意か不明）
+- 「あとで直す」を受け入れる（ほぼ起きない）
+- ある概念数を減らさずにコードを移動しただけのリファクタリング
+- 既に大きいファイルをさらに育てる変更
+- 無関係なコードパスに散らばる新しい条件分岐（抽象化不足のサイン）
+- 既存の正規ヘルパーをコピーしただけの独自ヘルパー、または共有モジュールに置かれた機能ロジック
+- 変更履歴も見ず、パッケージ単位に分けない "bump dependencies" PR
+- 手で編集された、未コミットの、または差分を見ずにマージされた lockfile
 
-## Verification
+## 検証
 
-After review is complete:
+レビュー完了後は、次を確認します。
 
-- [ ] All Critical issues are resolved
-- [ ] All Required (no-prefix) changes are resolved or explicitly deferred with justification
-- [ ] Tests pass
-- [ ] Build succeeds
-- [ ] The verification story is documented (what changed, how it was verified)
-- [ ] Dependency upgrades were reviewed against their changelog, isolated per package, and verified by a green suite with the lockfile diff reviewed
+- [ ] すべての Critical 問題が解決している
+- [ ] すべての必須（接頭辞なし）修正が解決済み、または理由付きで明示的に保留されている
+- [ ] テストが通る
+- [ ] ビルドが成功する
+- [ ] 検証ストーリーが文書化されている（何を変え、どう検証したか）
+- [ ] 依存アップグレードは変更履歴を確認し、パッケージ単位に分け、lockfile 差分をレビューしたうえで green スイートで確認されている
 
-**Presumptive blockers:** surface and propose the simpler design for each of these; escalate to Required only when the change actively makes structure worse: a refactor that relocates complexity instead of reducing it; a change that pushes a file past the size boundary with no decomposition; feature logic added to a shared module; a near-duplicate of an existing canonical helper; a silent fallback that hides an unclear invariant.
+**前提上のブロッカー:** 次のいずれかがあれば、より単純な設計を示してください。必須として扱うのは、変更が構造を悪くする場合だけです。複雑さを減らさず移動したリファクタリング、分解なしでサイズ境界を超えた変更、共有モジュールへの機能ロジック追加、既存の正規ヘルパーのほぼ重複、意図の曖昧さを隠すサイレントフォールバック。

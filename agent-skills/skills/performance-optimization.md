@@ -1,56 +1,57 @@
 ---
 name: performance-optimization
-description: Optimizes application performance across frontend, backend, queries, and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing, or when profiling reveals bottlenecks.
+description: frontend、backend、query、database 全体の performance を最適化します。性能要件があるとき、性能 regression を疑うとき、Core Web Vitals や load time を改善したいとき、N+1 query を直したいとき、profiling で bottleneck が見つかったときに使います。
 ---
 
 # Performance Optimization
 
-## Overview
+## 概要
 
-Measure before optimizing. Performance work without measurement is guessing — and guessing leads to premature optimization that adds complexity without improving what matters. Profile first, identify the actual bottleneck, fix it, measure again. Optimize only what measurements prove matters.
+最適化の前に計測します。計測なしの performance work は推測です。推測は、何にも効かないのに複雑さだけ増やす premature optimization を招きます。まず profile し、実際の bottleneck を特定し、それだけを直し、もう一度計測します。測定で効くと証明されたものだけを最適化します。
 
-## When to Use
+## 使う場面
 
-- Performance requirements exist in the spec (load time budgets, response time SLAs)
-- Users or monitoring report slow behavior
-- Core Web Vitals scores are below thresholds
-- You suspect a change introduced a regression
-- Building features that handle large datasets or high traffic
+- spec に performance 要件があるとき（load time budget、response time SLA など）
+- ユーザーや monitoring が遅さを報告したとき
+- Core Web Vitals が基準未満のとき
+- 変更が regression を入れたと疑うとき
+- 大きな dataset や高トラフィックを扱う機能を作るとき
 
-**When NOT to use:** Don't optimize before you have evidence of a problem. Premature optimization adds complexity that costs more than the performance it gains.
+**使わない場面:** 問題の証拠がないうちに最適化しないこと。premature optimization は、得られる performance より多くの複雑さを払います。
 
-## Core Web Vitals Targets
+## Core Web Vitals の目標
 
 | Metric | Good | Needs Improvement | Poor |
-|--------|------|-------------------|------|
-| **LCP** (Largest Contentful Paint) | ≤ 2.5s | ≤ 4.0s | > 4.0s |
-| **INP** (Interaction to Next Paint) | ≤ 200ms | ≤ 500ms | > 500ms |
-| **CLS** (Cumulative Layout Shift) | ≤ 0.1 | ≤ 0.25 | > 0.25 |
+|---|---|---|---|
+| **LCP**（Largest Contentful Paint） | 2.5s 以下 | 4.0s 以下 | 4.0s 超 |
+| **INP**（Interaction to Next Paint） | 200ms 以下 | 500ms 以下 | 500ms 超 |
+| **CLS**（Cumulative Layout Shift） | 0.1 以下 | 0.25 以下 | 0.25 超 |
 
-## The Optimization Workflow
+## Optimization Workflow
 
-```
-1. MEASURE  → Establish baseline with real data
-2. IDENTIFY → Find the actual bottleneck (not assumed)
-3. FIX      → Address the specific bottleneck
-4. VERIFY   → Measure again; keep or revert
-5. GUARD    → Add monitoring or tests to prevent regression
+```text
+1. MEASURE   -> 実測で baseline を作る
+2. IDENTIFY  -> 実際の bottleneck を見つける（思い込みではなく）
+3. FIX       -> その bottleneck を直す
+4. VERIFY    -> 再計測し、残すか戻すか決める
+5. GUARD     -> 回帰防止の monitoring や test を追加する
 ```
 
 ### Step 1: Measure
 
-Two complementary approaches — use both:
+補完的な 2 つの手法を使います。両方使ってください。
 
-- **Synthetic (Lighthouse, DevTools Performance tab):** Controlled conditions, reproducible. Best for CI regression detection and isolating specific issues.
-- **RUM (web-vitals library, CrUX):** Real user data in real conditions. Required to validate that a fix actually improved user experience.
+- **Synthetic（Lighthouse、DevTools Performance tab）:** 条件が一定で再現性がある。CI の regression 検出や、特定問題の切り分けに向いています。
+- **RUM（web-vitals library、CrUX）:** 実ユーザーの実環境データです。修正が本当に user experience を改善したか確認するには必須です。
 
 **Frontend:**
-```bash
-# Synthetic: Lighthouse in Chrome DevTools (or CI)
-# Chrome DevTools → Performance tab → Record
-# Chrome DevTools MCP → Performance trace
 
-# RUM: Web Vitals library in code
+```bash
+# Synthetic: Chrome DevTools の Lighthouse（または CI）
+# Chrome DevTools -> Performance tab -> Record
+# Chrome DevTools MCP -> Performance trace
+
+# RUM: code に web-vitals library
 import { onLCP, onINP, onCLS } from 'web-vitals';
 
 onLCP(console.log);
@@ -59,89 +60,90 @@ onCLS(console.log);
 ```
 
 **Backend:**
-```bash
-# Response time logging
-# Application Performance Monitoring (APM)
-# Database query logging with timing
 
-# Simple timing
+```bash
+# response time logging
+# Application Performance Monitoring (APM)
+# timing 付きの database query logging
+
+# 単純な timing
 console.time('db-query');
 const result = await db.query(...);
 console.timeEnd('db-query');
 ```
 
-### Where to Start Measuring
+### どこから計測を始めるか
 
-Use the symptom to decide what to measure first:
+症状から、まず何を計測すべきかを決めます。
 
+```text
+何が遅い？
+  First page load
+    -> Large bundle? bundle size を計測し、code splitting を確認
+    -> Slow server response? DevTools Network waterfall で TTFB を測る
+      -> DNS が長い？ 知っている origin に dns-prefetch / preconnect を追加
+      -> TCP/TLS が長い？ HTTP/2、edge deployment、keep-alive を確認
+      -> Waiting（server）が長い？ backend を profile し、query と caching を確認
+    -> Render-blocking resources? CSS/JS の blocking を network waterfall で確認
+  Interaction feels sluggish
+    -> UI が click で固まる？ main thread を profile し、long task（50ms 超）を探す
+    -> Form input が遅い？ re-render や controlled component の負荷を確認
+    -> Animation が引っかかる？ layout thrashing、forced reflow を確認
+  Page after navigation
+    -> Data loading? API response time を測り、waterfall を確認
+    -> Client rendering? component render time を profile し、N+1 fetch を確認
+  Backend / API
+    -> 単一 endpoint が遅い？ database query を profile し、index を確認
+    -> 全 endpoint が遅い？ connection pool、memory、CPU を確認
+    -> ときどき遅い？ lock contention、GC pause、external dependency を確認
 ```
-What is slow?
-├── First page load
-│   ├── Large bundle? --> Measure bundle size, check code splitting
-│   ├── Slow server response? --> Measure TTFB in DevTools Network waterfall
-│   │   ├── DNS long? --> Add dns-prefetch / preconnect for known origins
-│   │   ├── TCP/TLS long? --> Enable HTTP/2, check edge deployment, keep-alive
-│   │   └── Waiting (server) long? --> Profile backend, check queries and caching
-│   └── Render-blocking resources? --> Check network waterfall for CSS/JS blocking
-├── Interaction feels sluggish
-│   ├── UI freezes on click? --> Profile main thread, look for long tasks (>50ms)
-│   ├── Form input lag? --> Check re-renders, controlled component overhead
-│   └── Animation jank? --> Check layout thrashing, forced reflows
-├── Page after navigation
-│   ├── Data loading? --> Measure API response times, check for waterfalls
-│   └── Client rendering? --> Profile component render time, check for N+1 fetches
-└── Backend / API
-    ├── Single endpoint slow? --> Profile database queries, check indexes
-    ├── All endpoints slow? --> Check connection pool, memory, CPU
-    └── Intermittent slowness? --> Check for lock contention, GC pauses, external deps
-```
 
-### Step 2: Identify the Bottleneck
+### Step 2: ボトルネックを特定する
 
-Common bottlenecks by category:
+カテゴリごとの一般的な bottleneck です。
 
 **Frontend:**
 
-| Symptom | Likely Cause | Investigation |
-|---------|-------------|---------------|
-| Slow LCP | Large images, render-blocking resources, slow server | Check network waterfall, image sizes |
-| High CLS | Images without dimensions, late-loading content, font shifts | Check layout shift attribution |
-| Poor INP | Heavy JavaScript on main thread, large DOM updates | Check long tasks in Performance trace |
-| Slow initial load | Large bundle, many network requests | Check bundle size, code splitting |
+| 症状 | あり得る原因 | 調べ方 |
+|---|---|---|
+| LCP が遅い | 大きな画像、render-blocking resource、遅い server | network waterfall、image size を確認 |
+| CLS が大きい | サイズ未指定の画像、遅れて入る content、font shift | layout shift attribution を確認 |
+| INP が悪い | main thread 上の重い JavaScript、巨大 DOM 更新 | Performance trace で long task を確認 |
+| 初回 load が遅い | 大きな bundle、多数の network request | bundle size、code splitting を確認 |
 
 **Backend:**
 
-| Symptom | Likely Cause | Investigation |
-|---------|-------------|---------------|
-| Slow API responses | N+1 queries, missing indexes, unoptimized queries | Check database query log |
-| Memory growth | Leaked references, unbounded caches, large payloads | Heap snapshot analysis |
-| CPU spikes | Synchronous heavy computation, regex backtracking | CPU profiling |
-| High latency | Missing caching, redundant computation, network hops | Trace requests through the stack |
+| 症状 | あり得る原因 | 調べ方 |
+|---|---|---|
+| API response が遅い | N+1 query、index 不足、最適化不足の query | database query log を確認 |
+| memory が増え続ける | reference の漏れ、無制限 cache、大きな payload | heap snapshot を解析 |
+| CPU が急上昇する | 同期的な重い計算、regex backtracking | CPU profiling |
+| latency が高い | caching 不足、重複計算、network hop | stack を通して trace する |
 
-### Step 3: Fix Common Anti-Patterns
+### Step 3: よくあるアンチパターンを直す
 
-#### N+1 Queries (Backend)
+#### N+1 Query（Backend）
 
 ```typescript
-// BAD: N+1 — one query per task for the owner
+// BAD: task ごとに owner を 1 query ずつ取りに行く N+1
 const tasks = await db.tasks.findMany();
 for (const task of tasks) {
   task.owner = await db.users.findUnique({ where: { id: task.ownerId } });
 }
 
-// GOOD: Single query with join/include
+// GOOD: join / include を使って 1 回で取る
 const tasks = await db.tasks.findMany({
   include: { owner: true },
 });
 ```
 
-#### Unbounded Data Fetching
+#### 無制限のデータ取得
 
 ```typescript
-// BAD: Fetching all records
+// BAD: 全件取得
 const allTasks = await db.tasks.findMany();
 
-// GOOD: Paginated with limits
+// GOOD: limit 付き pagination
 const tasks = await db.tasks.findMany({
   take: 20,
   skip: (page - 1) * 20,
@@ -149,17 +151,17 @@ const tasks = await db.tasks.findMany({
 });
 ```
 
-#### Missing Image Optimization (Frontend)
+#### 画像最適化不足（Frontend）
 
 ```html
-<!-- BAD: No dimensions, no format optimization -->
+<!-- BAD: dimensions も format 最適化もない -->
 <img src="/hero.jpg" />
 
-<!-- GOOD: Hero / LCP image — art direction + resolution switching, high priority -->
+<!-- GOOD: Hero / LCP image - art direction + resolution switching, high priority -->
 <!--
-  Two techniques combined:
-  - Art direction (media): different crop/composition per breakpoint
-  - Resolution switching (srcset + sizes): right file size per screen density
+  2 つの技術を組み合わせる:
+  - Art direction（media）: breakpoint ごとに crop / composition を変える
+  - Resolution switching（srcset + sizes）: 画面密度に合う file size を返す
 -->
 <picture>
   <!-- Mobile: portrait crop (8:10) -->
@@ -203,7 +205,7 @@ const tasks = await db.tasks.findMany({
   />
 </picture>
 
-<!-- GOOD: Below-the-fold image — lazy loaded + async decoding -->
+<!-- GOOD: fold の下の image - lazy load + async decoding -->
 <img
   src="/content.webp"
   width="800"
@@ -214,43 +216,43 @@ const tasks = await db.tasks.findMany({
 />
 ```
 
-#### Unnecessary Re-renders (React)
+#### 不要な Re-render（React）
 
 ```tsx
-// BAD: Creates new object on every render, causing children to re-render
+// BAD: 毎回新しい object を作るので child が再レンダーされる
 function TaskList() {
   return <TaskFilters options={{ sortBy: 'date', order: 'desc' }} />;
 }
 
-// GOOD: Stable reference
+// GOOD: 安定した reference
 const DEFAULT_OPTIONS = { sortBy: 'date', order: 'desc' } as const;
 function TaskList() {
   return <TaskFilters options={DEFAULT_OPTIONS} />;
 }
 
-// Use React.memo for expensive components
+// 重い component には React.memo を使う
 const TaskItem = React.memo(function TaskItem({ task }: Props) {
   return <div>{/* expensive render */}</div>;
 });
 
-// Use useMemo for expensive computations
+// 重い計算には useMemo を使う
 function TaskStats({ tasks }: Props) {
   const stats = useMemo(() => calculateStats(tasks), [tasks]);
   return <div>{stats.completed} / {stats.total}</div>;
 }
 ```
 
-#### Large Bundle Size
+#### Bundle Size が大きい
 
 ```typescript
-// Modern bundlers (Vite, webpack 5+) handle named imports with tree-shaking automatically,
-// provided the dependency ships ESM and is marked `sideEffects: false` in package.json.
-// Profile before changing import styles — the real gains come from splitting and lazy loading.
+// Modern bundler（Vite, webpack 5+）は、dependency が ESM で package.json に `sideEffects: false` があるなら、
+// named import を tree-shaking で自動処理します。import style を変える前に profile してください。
+// 本当に効くのは split と lazy loading です。
 
-// GOOD: Dynamic import for heavy, rarely-used features
+// GOOD: 重くてまれにしか使わない機能は dynamic import
 const ChartLibrary = lazy(() => import('./ChartLibrary'));
 
-// GOOD: Route-level code splitting wrapped in Suspense
+// GOOD: route-level code splitting を Suspense で包む
 const SettingsPage = lazy(() => import('./pages/Settings'));
 
 function App() {
@@ -262,10 +264,10 @@ function App() {
 }
 ```
 
-#### Missing Caching (Backend)
+#### Caching 不足（Backend）
 
 ```typescript
-// Cache frequently-read, rarely-changed data
+// 頻繁に読むが滅多に変わらない data を cache する
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 let cachedConfig: AppConfig | null = null;
 let cacheExpiry = 0;
@@ -279,66 +281,67 @@ async function getAppConfig(): Promise<AppConfig> {
   return cachedConfig;
 }
 
-// HTTP caching headers for static assets
+// static asset 用の HTTP caching header
 app.use('/static', express.static('public', {
-  maxAge: '1y',           // Cache for 1 year
-  immutable: true,        // Never revalidate (use content hashing in filenames)
+  maxAge: '1y',           // 1 年 cache
+  immutable: true,        // 再検証しない（filename に content hash を使う）
 }));
 
-// Cache-Control for API responses
+// API response の Cache-Control
 res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
 ```
 
-### Step 4: Verify (Keep or Revert)
+### Step 4: 検証する（残すか戻すか）
 
-A fix is a hypothesis until you re-measure. This step decides whether it survives.
+fix は、再計測するまでは仮説です。この段階で残すか戻すかを決めます。
 
-**Re-measure the way you measured the baseline:** same command, same conditions, same fixed budget (wall-clock, sample count, or request count). A baseline taken on a cold cache against a result taken on a warm one measures the cache, not your change.
+**baseline を測ったのと同じ方法で再計測する:** 同じ command、同じ条件、同じ固定 budget（wall-clock、sample count、request count）。cold cache で測った baseline と warm cache で測った結果を比べると、変えたものではなく cache を測ったことになります。
 
-**Change one thing at a time.** Three optimizations landed together produce one number, and you cannot attribute it. If they must ship together, measure each in isolation first.
+**1 度に 1 つだけ変える。** 3 つの最適化をまとめて入れると 1 つの数字しか得られず、どれが効いたか分かりません。まとめて出す必要があるなら、先に 1 つずつ単独で測ります。
 
-**Beat the noise, not just the mean.** Repeat the measurement and compare the delta against run-to-run variance. A 3% gain inside ±5% variance is not a gain; it is a different sample.
+**平均だけでなく noise に勝つ。** 繰り返し計測し、delta が run-to-run variance を超えるか確認します。5% の variance の中の 3% 改善は改善ではありません。別の sample です。
 
-Then decide, strictly:
+その後、次のように厳密に判断します。
 
-| Result vs. baseline | Action |
+| baseline との結果 | 対応 |
 |---|---|
-| Past the threshold, tests green | **Keep.** Commit with the before/after numbers in the message. |
-| Within noise (no measurable change) | **Revert.** |
-| Worse | **Revert.** |
-| Improved, but a test went red | **Revert.** A regression wearing a win's clothing. |
+| threshold を超え、テストも green | **Keep.** before/after の数字を commit message に書く |
+| noise の範囲（測定可能な変化なし） | **Revert.** |
+| 悪化した | **Revert.** |
+| 改善したが test が red | **Revert.** 勝利の衣を着た regression です |
 
-**"Neutral" is a revert, not a keep.** This is the step teams skip: the change is already written, throwing it away feels wasteful, so it lands unmeasured, and the codebase accretes complexity that never bought anything. Code you keep, you maintain forever. Make it pay for itself.
+**"Neutral" は keep ではなく revert です。** チームがよく飛ばすのがこの段階です。変更はもう書いたし、捨てるのはもったいないと感じて、そのまま置いてしまう。そうすると、何も得ていないのに複雑さだけが残ります。keep した code は、ずっと保守することになります。ちゃんと元を取らせてください。
 
-**Correctness gates the metric.** The suite stays green *and* the number moves. An "optimization" that wins by dropping work the product needed (skipping a validation, caching something that must be fresh, removing an `await` that was load-bearing) is a regression, not a win.
+**正しさが metric を支配します。** suite が green であることと、数字が動くことの両方が必要です。必要な work を削ることで勝ったように見える "最適化"（validation を飛ばす、fresh である必要のある cache をキャッシュする、load-bearing な `await` を消す）は regression であって勝利ではありません。
 
-#### Log every attempt, including the reverted ones
+#### 失敗した試みも含めて、すべて記録する
 
-Reverted work leaves no trace in git history, which is exactly why the same dead idea gets tried again next quarter. Keep a short ledger so a discarded idea stays discarded:
+revert した work は git history に残りません。だからこそ、同じ死んだアイデアが次の四半期にまた試されます。短い ledger を残し、却下された案を再提案させないようにします。
 
-| Idea | Baseline → Result | Verdict | Why |
+| Idea | Baseline -> Result | Verdict | Why |
 |---|---|---|---|
-| Memoize the row component | INP 240ms → 235ms | reverted | Inside noise (±15ms). Rows weren't the bottleneck. |
-| Virtualize the list | INP 240ms → 90ms | kept | Long tasks gone from the trace. |
-| Preconnect to the API origin | LCP 2.8s → 2.8s | reverted | Already same-origin. |
+| row component を memoize する | INP 240ms -> 235ms | reverted | noise の範囲（15ms）。row は bottleneck ではなかった |
+| list を virtualize する | INP 240ms -> 90ms | kept | long task が trace から消えた |
+| API origin に preconnect する | LCP 2.8s -> 2.8s | reverted | すでに same-origin |
 
-A section in the PR description or a `PERF.md` in the repo both work. What matters is that the next person (or the next agent) reads it before proposing an experiment, and doesn't re-run one that already failed.
+PR description の一節でも、repo に `PERF.md` を置くのでも構いません。重要なのは、次の人（あるいは次の agent）がそれを読んでから experiment を提案し、すでに失敗したものを再実行しないことです。
 
 ## Performance Budget
 
-Set budgets and enforce them:
+budget を決めて強制します。
 
-```
-JavaScript bundle: < 200KB gzipped (initial load)
+```text
+JavaScript bundle: < 200KB gzipped（initial load）
 CSS: < 50KB gzipped
-Images: < 200KB per image (above the fold)
+Images: < 200KB per image（above the fold）
 Fonts: < 100KB total
-API response time: < 200ms (p95)
+API response time: < 200ms（p95）
 Time to Interactive: < 3.5s on 4G
-Lighthouse Performance score: ≥ 90
+Lighthouse Performance score: 90 以上
 ```
 
-**Enforce in CI:**
+**CI で enforce する:**
+
 ```bash
 # Bundle size check
 npx bundlesize --config bundlesize.config.json
@@ -349,48 +352,47 @@ npx lhci autorun
 
 ## See Also
 
-For detailed performance checklists, optimization commands, and anti-pattern reference, see `../../references/performance-checklist.md`.
+詳細な performance checklist、optimization command、anti-pattern の参照は `../../references/performance-checklist.md` を見てください。
 
+## よくある言い訳
 
-## Common Rationalizations
-
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "We'll optimize later" | Performance debt compounds. Fix obvious anti-patterns now, defer micro-optimizations. |
-| "It's fast on my machine" | Your machine isn't the user's. Profile on representative hardware and networks. |
-| "This optimization is obvious" | If you didn't measure, you don't know. Profile first. |
-| "Users won't notice 100ms" | Research shows 100ms delays impact conversion rates. Users notice more than you think. |
-| "The framework handles performance" | Frameworks prevent some issues but can't fix N+1 queries or oversized bundles. |
-| "It didn't help much, but it doesn't hurt" | Neutral changes are a revert. You pay maintenance on them forever and got nothing back. |
-| "We already wrote it, may as well keep it" | Sunk cost. The measurement doesn't care how long the change took to write. |
-| "The improvement is obvious, no need to re-measure" | Then re-measuring is cheap and proves it. Unmeasured wins are how neutral complexity lands. |
+| 「後で最適化する」 | performance debt は複利で増えます。明らかな anti-pattern は今直し、micro-optimization は後回しにしてください。 |
+| 「自分のマシンでは速い」 | あなたのマシンはユーザーのマシンではありません。代表的な hardware と network で profile してください。 |
+| 「この最適化は明らか」 | 計測していなければ分かっていません。まず profile してください。 |
+| 「100ms くらい誰も気にしない」 | 研究では 100ms の遅延でも conversion rate に影響します。ユーザーは思っている以上に気づきます。 |
+| 「framework が performance を面倒見てくれる」 | framework は一部の問題は防げますが、N+1 query や大きすぎる bundle は直せません。 |
+| 「あまり効かなかったけど、害もない」 | neutral 変更は revert です。そこには永遠に保守コストを払うだけで、見返りがありません。 |
+| 「もう書いたんだから、残すしかない」 | sunk cost です。計測は書くのにかかった時間を気にしません。 |
+| 「改善は明らかだから再計測は不要」 | なら再計測は安いですし、本当に証明できます。未計測の勝利が、neutral な複雑さを呼び込みます。 |
 
-## Red Flags
+## レッドフラグ
 
-- Optimization without profiling data to justify it
-- N+1 query patterns in data fetching
-- List endpoints without pagination
-- Images without dimensions, lazy loading, or responsive sizes
-- Bundle size growing without review
-- No performance monitoring in production
-- `React.memo` and `useMemo` everywhere (overusing is as bad as underusing)
-- Optimizations kept without a re-measurement that justifies them
-- Several optimizations bundled into one measurement, so no single change can be attributed
-- A "win" that required a test to be changed, skipped, or deleted
-- The same failed optimization attempted more than once because nobody recorded the first attempt
+- profiling data なしの最適化
+- data fetching における N+1 query
+- pagination のない一覧 endpoint
+- dimensions、lazy loading、responsive size のない image
+- レビューなしに増え続ける bundle size
+- production での performance monitoring がない
+- `React.memo` と `useMemo` を everywhere で使う（使いすぎも使わなさすぎもダメ）
+- 再計測なしで残した最適化
+- 複数の最適化を 1 つの計測にまとめ、個別に帰属できない
+- test を変えたり飛ばしたり消したりしないと勝てない "win"
+- 最初の失敗を記録しなかったため、同じ失敗した最適化を何度も試す
 
-## Verification
+## 検証
 
-After any performance-related change:
+performance 関連の変更のあとに確認すること。
 
-- [ ] Before and after measurements exist (specific numbers)
-- [ ] The result was re-measured the same way as the baseline (same command, same conditions)
-- [ ] The improvement exceeds run-to-run variance, not just the mean
-- [ ] Changes that didn't beat the baseline were reverted, not kept as neutral
-- [ ] Attempts are logged, kept and reverted alike, so a dead idea isn't re-run
-- [ ] The specific bottleneck is identified and addressed
-- [ ] Core Web Vitals are within "Good" thresholds
-- [ ] Bundle size hasn't increased significantly
-- [ ] No N+1 queries in new data fetching code
-- [ ] Performance budget passes in CI (if configured)
-- [ ] Existing tests still pass (optimization didn't break behavior)
+- [ ] before / after の計測がある（具体的な数字）
+- [ ] baseline と同じ方法（同じ command、同じ条件）で再計測した
+- [ ] 改善が mean だけでなく run-to-run variance を超えている
+- [ ] baseline に勝てなかった変更は、neutral のまま残さず revert した
+- [ ] 試みを kept / reverted ともに記録し、死んだアイデアを再実行しないようにした
+- [ ] 具体的な bottleneck を特定して対処した
+- [ ] Core Web Vitals が "Good" の範囲にある
+- [ ] bundle size が大きく増えていない
+- [ ] 新しい data fetching code に N+1 query がない
+- [ ] performance budget が CI で通る（設定している場合）
+- [ ] 既存テストが通る（最適化で振る舞いを壊していない）

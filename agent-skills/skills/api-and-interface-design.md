@@ -1,96 +1,96 @@
 ---
 name: api-and-interface-design
-description: Guides stable API and interface design. Use when designing APIs, module boundaries, or any public interface. Use when creating REST or GraphQL endpoints, defining type contracts between modules, or establishing boundaries between frontend and backend.
+description: 安定した API と interface の設計を支援します。API、module boundary、公開 interface を設計するときに使います。REST や GraphQL endpoint、module 間の type contract、frontend/backend の境界を作るときに使います。
 ---
 
-# API and Interface Design
+# API と Interface の設計
 
-## Overview
+## 概要
 
-Design stable, well-documented interfaces that are hard to misuse. Good interfaces make the right thing easy and the wrong thing hard. This applies to REST APIs, GraphQL schemas, module boundaries, component props, and any surface where one piece of code talks to another.
+誤用しにくい、安定した、よく文書化された interface を設計します。良い interface は、正しいことを簡単にし、間違ったことを難しくします。これは REST API、GraphQL schema、module boundary、component props など、ある code 片が別の code 片と話す surface に適用されます。
 
-## When to Use
+## 使う場面
 
-- Designing new API endpoints
-- Defining module boundaries or contracts between teams
-- Creating component prop interfaces
-- Establishing database schema that informs API shape
-- Changing existing public interfaces
+- 新しい API endpoint を設計するとき
+- module boundary や team 間の contract を定義するとき
+- component prop interface を作るとき
+- API 形状に影響する database schema を決めるとき
+- 既存の public interface を変更するとき
 
-## Core Principles
+## コア原則
 
 ### Hyrum's Law
 
-> With a sufficient number of users of an API, all observable behaviors of your system will be depended on by somebody, regardless of what you promise in the contract.
+> 十分な数の API 利用者がいると、契約で約束していなくても、システムの観測可能な振る舞いのすべてが誰かに依存されるようになる。
 
-This means: every public behavior — including undocumented quirks, error message text, timing, and ordering — becomes a de facto contract once users depend on it. Design implications:
+つまり、公開された振る舞い - 文書化されていない癖、エラーメッセージの文面、タイミング、順序を含む - は、利用者が依存し始めた瞬間に事実上の contract になります。設計上の示唆は次の通りです。
 
-- **Be intentional about what you expose.** Every observable behavior is a potential commitment.
-- **Don't leak implementation details.** If users can observe it, they will depend on it.
-- **Plan for deprecation at design time.** See `deprecation-and-migration` for how to safely remove things users depend on.
-- **Tests are not enough.** Even with perfect contract tests, Hyrum's Law means "safe" changes can break real users who depend on undocumented behavior.
+- **何を公開するかは意図的に決める。** 観測可能な振る舞いはすべて約束候補です。
+- **実装詳細を漏らさない。** 観測できれば、利用者は依存します。
+- **非推奨化は設計時から考える。** 利用者が依存するものを安全に外す方法は `deprecation-and-migration` を参照してください。
+- **テストだけでは足りない。** どれだけ contract test が完璧でも、Hyrum's Law により、"安全な" 変更が未文書の振る舞いに依存している実利用者を壊すことがあります。
 
-### The One-Version Rule
+### One-Version Rule
 
-Avoid forcing consumers to choose between multiple versions of the same dependency or API. Diamond dependency problems arise when different consumers need different versions of the same thing. Design for a world where only one version exists at a time — extend rather than fork.
+同じ dependency や API の複数 version を consumer に選ばせないようにします。Diamond dependency 問題は、異なる consumer が同じものの異なる version を必要とするときに起こります。1 度に 1 つの version だけが存在する世界を前提に設計し、fork ではなく extension を選びます。
 
 ### 1. Contract First
 
-Define the interface before implementing it. The contract is the spec — implementation follows.
+実装より先に interface を定義します。contract が spec であり、実装はその後です。
 
 ```typescript
-// Define the contract first
+// まず contract を定義する
 interface TaskAPI {
-  // Creates a task and returns the created task with server-generated fields
+  // task を作成し、server-generated fields を含む作成済み task を返す
   createTask(input: CreateTaskInput): Promise<Task>;
 
-  // Returns paginated tasks matching filters
+  // filter に一致する paginated task を返す
   listTasks(params: ListTasksParams): Promise<PaginatedResult<Task>>;
 
-  // Returns a single task or throws NotFoundError
+  // 単一 task を返すか、NotFoundError を投げる
   getTask(id: string): Promise<Task>;
 
-  // Partial update — only provided fields change
+  // partial update - 指定された field だけを変更する
   updateTask(id: string, input: UpdateTaskInput): Promise<Task>;
 
-  // Idempotent delete — succeeds even if already deleted
+  // idempotent delete - すでに削除済みでも成功する
   deleteTask(id: string): Promise<void>;
 }
 ```
 
-### 2. Consistent Error Semantics
+### 2. 一貫した Error Semantics
 
-Pick one error strategy and use it everywhere:
+1 つの error strategy を選び、全体で統一します。
 
 ```typescript
 // REST: HTTP status codes + structured error body
-// Every error response follows the same shape
+// すべての error response は同じ shape にする
 interface APIError {
   error: {
-    code: string;        // Machine-readable: "VALIDATION_ERROR"
-    message: string;     // Human-readable: "Email is required"
-    details?: unknown;   // Additional context when helpful
+    code: string;        // machine-readable: "VALIDATION_ERROR"
+    message: string;     // human-readable: "Email is required"
+    details?: unknown;   // 必要なら追加情報
   };
 }
 
-// Status code mapping
-// 400 → Client sent invalid data
-// 401 → Not authenticated
-// 403 → Authenticated but not authorized
-// 404 → Resource not found
-// 409 → Conflict (duplicate, version mismatch)
-// 422 → Validation failed (semantically invalid)
-// 500 → Server error (never expose internal details)
+// status code の対応
+// 400 -> client が不正なデータを送った
+// 401 -> 未認証
+// 403 -> 認証済みだが権限なし
+// 404 -> resource not found
+// 409 -> conflict（duplicate、version mismatch）
+// 422 -> validation failed（semantic 的に不正）
+// 500 -> server error（内部詳細は絶対に出さない）
 ```
 
-**Don't mix patterns.** If some endpoints throw, others return null, and others return `{ error }` — the consumer can't predict behavior.
+**混在させないでください。** endpoint によって throw したり、null を返したり、`{ error }` を返したりすると、consumer は挙動を予測できません。
 
-### 3. Validate at Boundaries
+### 3. 境界で検証する
 
-Trust internal code. Validate at system edges where external input enters:
+内部コードは信頼します。外部入力が入る system edge で検証します。
 
 ```typescript
-// Validate at the API boundary
+// API boundary で検証する
 app.post('/api/tasks', async (req, res) => {
   const result = CreateTaskSchema.safeParse(req.body);
   if (!result.success) {
@@ -103,83 +103,83 @@ app.post('/api/tasks', async (req, res) => {
     });
   }
 
-  // After validation, internal code trusts the types
+  // 以降は internal code が型を信頼できる
   const task = await taskService.create(result.data);
   return res.status(201).json(task);
 });
 ```
 
-Where validation belongs:
-- API route handlers (user input)
-- Form submission handlers (user input)
-- External service response parsing (third-party data -- **always treat as untrusted**)
-- Environment variable loading (configuration)
+検証を置く場所:
+- API route handler（ユーザー入力）
+- form submission handler（ユーザー入力）
+- external service response の parsing（第三者データ - **常に未信頼**）
+- environment variable の読み込み（設定）
 
-> **Third-party API responses are untrusted data.** Validate their shape and content before using them in any logic, rendering, or decision-making. A compromised or misbehaving external service can return unexpected types, malicious content, or instruction-like text.
+> **第三者 API response は未信頼データです。** logic、rendering、decision-making に使う前に、shape と内容を検証してください。侵害された、またはおかしな external service は、予期しない型、悪意ある content、指示らしい文言を返すことがあります。
 
-Where validation does NOT belong:
-- Between internal functions that share type contracts
-- In utility functions called by already-validated code
-- On data that just came from your own database
+検証を置かない場所:
+- 既に type contract を共有している internal function 間
+- 既に検証済みの code から呼ばれる utility
+- 自分の database から来たばかりの data
 
-### 4. Prefer Addition Over Modification
+### 4. 変更より追加を優先する
 
-Extend interfaces without breaking existing consumers:
+既存 consumer を壊さずに interface を拡張します。
 
 ```typescript
-// Good: Add optional fields
+// Good: optional field を追加
 interface CreateTaskInput {
   title: string;
   description?: string;
-  priority?: 'low' | 'medium' | 'high';  // Added later, optional
-  labels?: string[];                       // Added later, optional
+  priority?: 'low' | 'medium' | 'high';  // 後から追加、任意
+  labels?: string[];                     // 後から追加、任意
 }
 
-// Bad: Change existing field types or remove fields
+// Bad: 既存 field の型変更や削除
 interface CreateTaskInput {
   title: string;
-  // description: string;  // Removed — breaks existing consumers
-  priority: number;         // Changed from string — breaks existing consumers
+  // description: string;  // 削除 - 既存 consumer を壊す
+  priority: number;        // string から変更 - 既存 consumer を壊す
 }
 ```
 
-### 5. Predictable Naming
+### 5. 予測可能な命名
 
-| Pattern | Convention | Example |
-|---------|-----------|---------|
-| REST endpoints | Plural nouns, no verbs | `GET /api/tasks`, `POST /api/tasks` |
-| Query params | camelCase | `?sortBy=createdAt&pageSize=20` |
-| Response fields | camelCase | `{ createdAt, updatedAt, taskId }` |
-| Boolean fields | is/has/can prefix | `isComplete`, `hasAttachments` |
-| Enum values | UPPER_SNAKE | `"IN_PROGRESS"`, `"COMPLETED"` |
+| パターン | 規約 | 例 |
+|---|---|---|
+| REST endpoint | 複数形 noun、verb なし | `GET /api/tasks`, `POST /api/tasks` |
+| Query param | camelCase | `?sortBy=createdAt&pageSize=20` |
+| Response field | camelCase | `{ createdAt, updatedAt, taskId }` |
+| Boolean field | is/has/can prefix | `isComplete`, `hasAttachments` |
+| Enum value | UPPER_SNAKE | `"IN_PROGRESS"`, `"COMPLETED"` |
 
-### 6. Honouring an Idempotency Key
+### 6. Idempotency Key をきちんと扱う
 
-Accepting an `Idempotency-Key` is the contract. Honouring it is the implementation, and it is where the money is lost — a key the server accepts but handles carelessly is worse than no key at all, because the client now believes retrying is safe.
+`Idempotency-Key` を受け取るのは contract です。それを honour するのは implementation であり、そこが金を失う場所です。サーバーが受け取るだけで雑に扱う key は、ないより悪いです。再試行しても安全だと client が信じてしまうからです。
 
-**Derive the key from the intent, not the attempt.** The key must be stable across retries of one intent and different across distinct intents:
+**意図から key を導き、試行からは導かない。** key は 1 つの意図に対する retry では同じで、別の意図では違う必要があります。
 
 ```typescript
-crypto.randomUUID()                    // ✗ new key per attempt — every retry is a new charge
-`${userId}:${amount}`                  // ✗ two legitimate $50 charges collapse into one
-`${orderId}:${Date.now()}`             // ✗ a timestamp is randomUUID() wearing a hat
+crypto.randomUUID()                    // 笨・試行ごとに新しい key - retry ごとに別 charge になる
+`${userId}:${amount}`                  // 笨・同じ $50 の正当な charge が 1 つに潰れる
+`${orderId}:${Date.now()}`             // 笨・timestamp は randomUUID を被ったもの
 
-req.headers['idempotency-key']         // ✓ client generates once, reuses on retry
-`charge:v1:${orderId}`                 // ✓ derived from an immutable identifier
+req.headers['idempotency-key']         // 笨・client が 1 回作って retry で再利用する
+`charge:v1:${orderId}`                 // 笨・不変 ID から導く
 ```
 
-The key comes from the client or the initiating event — never from the layer doing the retrying.
+key は client か、意図を起こした event から来るべきであり、retry を担当する layer から来てはいけません。
 
-**Claim atomically. A check followed by an act is a race:**
+**チェックと実行は一緒にする。分けると race です。**
 
 ```typescript
-// ✗ TOCTOU: two concurrent retries both read "not seen", both charge
+// 笨・TOCTOU: 同時 retry が両方 "not seen" を読んで、両方 charge する
 if (!(await db.exists(key))) {
   await chargeCard(amount);
   await db.insert(key);
 }
 
-// ✓ let the unique constraint pick the winner
+// 笨・unique constraint に勝負を任せる
 try {
   await db.insert({ key, state: 'in_progress', requestHash });
 } catch (e) {
@@ -190,9 +190,9 @@ const result = await chargeCard(amount);
 await db.update({ key, state: 'succeeded', response: result });
 ```
 
-The unique constraint *is* the mechanism. A store that cannot enforce uniqueness in one operation cannot back this.
+unique constraint 自体が mechanism です。1 回で uniqueness を強制できない store では、この契約を支えられません。
 
-**Guard the payload.** Same key with a different body is a client bug, and must fail loudly rather than serving the first response to a second request:
+**payload を守る。** 同じ key で body が違うなら client bug なので、静かに最初の response を返すのではなく、はっきり失敗させます。
 
 ```typescript
 if (existing.requestHash !== hash(req.body)) {
@@ -200,38 +200,38 @@ if (existing.requestHash !== hash(req.body)) {
 }
 ```
 
-**Decide what an in-flight duplicate gets.** The first request is still running when the second arrives — the common case under retry storms:
+**in-flight duplicate の扱いを決める。** 1 回目がまだ実行中に 2 回目が来るのは、retry storm で普通に起こります。
 
-| Strategy | Response | Use when |
+| Strategy | Response | 使う場面 |
 |---|---|---|
-| Reject | `409 Conflict` | Client can retry later; simplest and safest |
-| Wait | Block for the result, bounded | Caller needs it synchronously |
-| Return pending | `202` + status URL | Long-running effects |
+| Reject | `409 Conflict` | 後で retry できる。最も単純で安全 |
+| Wait | 結果を bounded に待つ | 同期的に必要 |
+| Return pending | `202` + status URL | 長時間かかる効果 |
 
-Never let the second caller through because the first "seems stuck". A stalled attempt whose fate is unknown is exactly when duplicating costs most.
+1 回目が "詰まって見える" からといって 2 回目を通してはいけません。止まっている attempt の fate が分からないときこそ、重複コストが最も大きいです。
 
-**Every call has three outcomes, not two: success, failure, and _unknown_.** A timeout tells you nothing about whether the effect applied. Record the intent *before* calling out, so a crash between the call and the response leaves evidence something must resolve later — rather than a silently retried charge.
+**各呼び出しの outcome は 2 つではなく 3 つです。** success、failure、そして _unknown_ です。timeout は effect が適用されたか何も教えてくれません。call out する前に intent を記録しておけば、call と response の間で crash しても、「あとで解決すべき何か」が残ります。黙って再送される charge にはなりません。
 
-**Set retention from the longest retry chain**, not from disk cost. Keys must outlive every path that can re-deliver the same intent, including a dead-letter queue replayed a week later and any provider dispute window. A 24-hour key TTL behind a 7-day DLQ is a duplicate waiting to happen.
+**保有期間は最長の retry chain から決める。** disk cost ではありません。key は、同じ意図を再送できるすべての経路より長く生きる必要があります。dead-letter queue が 1 週間後に再送される場合や、provider の dispute window も含みます。24 時間の key TTL では、7 日の DLQ の後で duplicate が起きます。
 
-## REST API Patterns
+## REST API パターン
 
 ### Resource Design
 
-```
-GET    /api/tasks              → List tasks (with query params for filtering)
-POST   /api/tasks              → Create a task
-GET    /api/tasks/:id          → Get a single task
-PATCH  /api/tasks/:id          → Update a task (partial)
-DELETE /api/tasks/:id          → Delete a task
+```text
+GET    /api/tasks              -> task を一覧表示（filter は query params）
+POST   /api/tasks              -> task を作成
+GET    /api/tasks/:id          -> task 1 件を取得
+PATCH  /api/tasks/:id          -> task を部分更新
+DELETE /api/tasks/:id          -> task を削除
 
-GET    /api/tasks/:id/comments → List comments for a task (sub-resource)
-POST   /api/tasks/:id/comments → Add a comment to a task
+GET    /api/tasks/:id/comments -> task の sub-resource として comments を一覧
+POST   /api/tasks/:id/comments -> task に comment を追加
 ```
 
 ### Pagination
 
-Paginate list endpoints:
+一覧 endpoint は paginate します。
 
 ```typescript
 // Request
@@ -251,35 +251,35 @@ GET /api/tasks?page=1&pageSize=20&sortBy=createdAt&sortOrder=desc
 
 ### Filtering
 
-Use query parameters for filters:
+filter には query parameter を使います。
 
-```
+```text
 GET /api/tasks?status=in_progress&assignee=user123&createdAfter=2025-01-01
 ```
 
-### Partial Updates (PATCH)
+### Partial Updates（PATCH）
 
-Accept partial objects — only update what's provided:
+部分オブジェクトを受け取り、渡されたものだけ更新します。
 
 ```typescript
-// Only title changes, everything else preserved
+// title だけ変わり、他は維持される
 PATCH /api/tasks/123
 { "title": "Updated title" }
 ```
 
-## TypeScript Interface Patterns
+## TypeScript Interface パターン
 
-### Use Discriminated Unions for Variants
+### Discriminated Union を使う
 
 ```typescript
-// Good: Each variant is explicit
+// Good: 各 variant が明示的
 type TaskStatus =
   | { type: 'pending' }
   | { type: 'in_progress'; assignee: string; startedAt: Date }
   | { type: 'completed'; completedAt: Date; completedBy: string }
   | { type: 'cancelled'; reason: string; cancelledAt: Date };
 
-// Consumer gets type narrowing
+// Consumer は type narrowing できる
 function getStatusLabel(status: TaskStatus): string {
   switch (status.type) {
     case 'pending': return 'Pending';
@@ -290,16 +290,16 @@ function getStatusLabel(status: TaskStatus): string {
 }
 ```
 
-### Input/Output Separation
+### Input / Output を分ける
 
 ```typescript
-// Input: what the caller provides
+// Input: caller が提供するもの
 interface CreateTaskInput {
   title: string;
   description?: string;
 }
 
-// Output: what the system returns (includes server-generated fields)
+// Output: system が返すもの（server-generated fields を含む）
 interface Task {
   id: string;
   title: string;
@@ -310,58 +310,58 @@ interface Task {
 }
 ```
 
-### Use Branded Types for IDs
+### ID には Branded Type を使う
 
 ```typescript
 type TaskId = string & { readonly __brand: 'TaskId' };
 type UserId = string & { readonly __brand: 'UserId' };
 
-// Prevents accidentally passing a UserId where a TaskId is expected
+// TaskId を期待する場所に UserId を誤って渡すのを防ぐ
 function getTask(id: TaskId): Promise<Task> { ... }
 ```
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "We'll document the API later" | The types ARE the documentation. Define them first. |
-| "We don't need pagination for now" | You will the moment someone has 100+ items. Add it from the start. |
-| "PATCH is complicated, let's just use PUT" | PUT requires the full object every time. PATCH is what clients actually want. |
-| "We'll version the API when we need to" | Breaking changes without versioning break consumers. Design for extension from the start. |
-| "Nobody uses that undocumented behavior" | Hyrum's Law: if it's observable, somebody depends on it. Treat every public behavior as a commitment. |
-| "We can just maintain two versions" | Multiple versions multiply maintenance cost and create diamond dependency problems. Prefer the One-Version Rule. |
-| "Internal APIs don't need contracts" | Internal consumers are still consumers. Contracts prevent coupling and enable parallel work. |
-| "Accepting the Idempotency-Key header is enough" | The header is the contract; storing the key against the result is the implementation. A key you accept but don't honour tells the client retrying is safe when it isn't. |
-| "Our queue guarantees exactly-once delivery" | No queue does across a consumer crash — the broker's ack and your side effect are not in one transaction. Design for at-least-once with idempotent processing. |
-| "Duplicate requests are rare" | They're *correlated*. Retries spike exactly when a dependency is degraded — the moment duplicates are most likely and most expensive. |
+| 「API はあとで文書化する」 | types が文書です。先に定義してください。 |
+| 「今は pagination いらない」 | 100 件を超えた瞬間に必要になります。最初から入れてください。 |
+| 「PATCH は難しいから PUT でいい」 | PUT は毎回完全 object が必要。client が実際に欲しいのは PATCH です。 |
+| 「必要になったら versioning する」 | versioning なしの breaking change は consumer を壊します。最初から拡張前提で設計してください。 |
+| 「あの undocumented behavior を使う人はいない」 | Hyrum's Law: 観測できるなら誰かが依存します。公開振る舞いはすべて約束として扱ってください。 |
+| 「2 つの version を保守すればいい」 | 複数 version は保守コストを倍増させ、diamond dependency 問題を生みます。One-Version Rule を優先してください。 |
+| 「内部 API には contract なんていらない」 | 内部 consumer も consumer です。contract は結合を防ぎ、並列作業を可能にします。 |
+| 「Idempotency-Key ヘッダーを受け取るだけで十分」 | ヘッダーは contract であり、key を result に紐づけて保存するのが implementation です。受け取るだけで honour しない key は、retry して安全だと client に誤認させます。 |
+| 「queue は exactly-once を保証する」 | consumer crash をまたいで保証する queue はありません。broker の ack と side effect は 1 transaction ではありません。at-least-once + idempotent processing で設計してください。 |
+| 「duplicate request はまれ」 | それらは相関します。依存先が劣化したときに retry が増え、まさに duplicate が最も起きやすく、最も高くつきます。 |
 
-## Red Flags
+## レッドフラグ
 
-- Endpoints that return different shapes depending on conditions
-- Inconsistent error formats across endpoints
-- Validation scattered throughout internal code instead of at boundaries
-- Breaking changes to existing fields (type changes, removals)
-- List endpoints without pagination
-- Verbs in REST URLs (`/api/createTask`, `/api/getUsers`)
-- Third-party API responses used without validation or sanitization
-- A `SELECT` for an idempotency key followed by an `INSERT` — that's a race, not a guard
-- An idempotency key derived from a UUID, timestamp, or anything else regenerated per attempt
-- The same key accepted with a different request body, silently returning the first response
-- A key retention window shorter than the longest path that can re-deliver the request
+- 条件によって違う shape を返す endpoint
+- endpoint 間で error format が不一致
+- 検証が internal code 全体に散らばっている
+- 既存 field への破壊的変更（type change、削除）
+- pagination のない一覧 endpoint
+- REST URL に verb が入っている（`/api/createTask`、`/api/getUsers`）
+- third-party API response を検証やサニタイズなしで使っている
+- idempotency key を探してから insert する - それは guard ではなく race です
+- UUID、timestamp、または試行ごとに再生成されるもので idempotency key を作っている
+- 同じ key で別 payload が来ても、静かに最初の response を返している
+- key retention が、request を再送しうる最長経路より短い
 
-## Verification
+## 検証
 
-After designing an API:
+API を設計したあと、次を確認します。
 
-- [ ] Every endpoint has typed input and output schemas
-- [ ] Error responses follow a single consistent format
-- [ ] Validation happens at system boundaries only
-- [ ] List endpoints support pagination
-- [ ] New fields are additive and optional (backward compatible)
-- [ ] Naming follows consistent conventions across all endpoints
-- [ ] API documentation or types are committed alongside the implementation
-- [ ] State-changing endpoints either honour an idempotency key or are documented as unsafe to retry
-- [ ] The key is claimed in one atomic operation, guarded by a unique constraint
-- [ ] A reused key with a different payload fails loudly rather than replaying the wrong response
-- [ ] The in-flight-duplicate response is a deliberate choice (409, wait, or 202) rather than whatever falls out
-- [ ] Key retention outlives the longest retry path, including dead-letter replay
+- [ ] すべての endpoint に typed input / output schema がある
+- [ ] error response が 1 つの一貫した format に従っている
+- [ ] 検証は system boundary でのみ行われている
+- [ ] 一覧 endpoint は pagination に対応している
+- [ ] 新しい field は追加的で optional（後方互換）
+- [ ] 命名がすべての endpoint で一貫している
+- [ ] API documentation または types が実装と一緒にコミットされている
+- [ ] state-changing endpoint は idempotency key を honour するか、再試行 unsafe として文書化されている
+- [ ] key は unique constraint で 1 回の atomic operation で claim される
+- [ ] 異なる payload で再利用された key は、間違った response を replay せず、はっきり失敗する
+- [ ] in-flight duplicate の扱いは、409 / wait / 202 のどれかに明示的に決まっている
+- [ ] key retention は dead-letter replay を含む最長 retry path を超えている

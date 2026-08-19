@@ -1,139 +1,144 @@
 ---
 name: spec-driven-development
-description: Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying.
+description: コーディングの前に仕様を作成します。新しいプロジェクト、機能、大きな変更を始めるとき、まだ仕様がないときに使います。要件が曖昧、断片的、あるいは漠然としたアイデアしかないときにも使います。1 つの要件が複数の独立して検証できる能力にまたがる場合、まず機能の能力マップへ分解する必要があるときにも使います。
 ---
 
-# Spec-Driven Development
+# 仕様駆動開発
 
-## Overview
+## 概要
 
-Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
+コードを書く前に、構造化された仕様を作成します。仕様は、人間のエンジニアと共有する唯一の真実です。何を作るのか、なぜ作るのか、そしてどうやって完了と判断するのかを定義します。仕様なしのコードは、推測にすぎません。
 
-## When to Use
+## 使う場面
 
-- Starting a new project or feature
-- Requirements are ambiguous or incomplete
-- The change touches multiple files or modules
-- You're about to make an architectural decision
-- The task would take more than 30 minutes to implement
+- 新しいプロジェクトや機能を始めるとき
+- 要件が曖昧または不完全なとき
+- 変更が複数のファイルやモジュールにまたがるとき
+- アーキテクチャ上の判断が必要なとき
+- 実装に 30 分以上かかりそうなタスク
 
-**When NOT to use:** Single-line fixes, typo corrections, or changes where requirements are unambiguous and self-contained.
+**使わない場面:** 1 行の修正、 টাইポの修正、または要件が明確で自己完結している変更。
 
-## The Gated Workflow
+## ゲート付きワークフロー
 
-Spec-driven development has four phases, preceded by a scope check (Phase 0) that activates only when one request bundles several independently testable capabilities. Do not advance to the next phase until the current one is validated.
+仕様駆動開発には 4 つの段階があります。複数の独立して検証できる能力が 1 つの依頼にまとまっている場合のみ発動するスコープチェック（Phase 0）がその前にあります。現在の段階が検証されるまで、次の段階に進んではいけません。
 
+```text
+SPECIFY -> PLAN -> TASKS -> IMPLEMENT
+   ^        ^      ^        ^
+  Human    Human  Human    Human
+ reviews  reviews reviews reviews
 ```
-SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
-   │          │        │          │
-   ▼          ▼        ▼          ▼
- Human      Human    Human      Human
- reviews    reviews  reviews    reviews
-```
 
-### Phase 0: Scope Check
+### Phase 0: スコープチェック
 
-Most requests describe one capability. If this one does, skip this phase and go straight to Specify — Phase 0 exists for the exception, not the rule, and it puts no hierarchy on single-capability features.
+多くの依頼は 1 つの能力を表します。もしそうなら、この段階は飛ばしてすぐ Specify に進んでください。Phase 0 は例外のためのものであり、単一能力の機能に序列をつけるものではありません。
 
-**Detection.** Decompose before specifying when a single requirement bundles several independently testable capabilities:
+**見分け方。** 1 つの要件が、独立してテストできる複数の能力を束ねているなら、仕様を書く前に分解します。
 
-- The requirement names distinct capabilities with their own consumers or data (e.g. identity, billing, notifications, reporting)
-- Acceptance criteria cluster into groups that could ship and be verified separately
-- One capability could be cut or replaced without rewriting the others' requirements
+- 依頼が、独自の利用者やデータを持つ別々の能力を挙げている場合（例: identity、billing、notifications、reporting）
+- 受け入れ条件が、別々に出荷・検証できるグループにまとまっている場合
+- 1 つの能力を削ったり差し替えたりしても、他の要件を書き直さずに済む場合
 
-**Propose a capability map before writing any spec.** Small and reviewable — a module table plus a build order, not a project plan:
+**仕様を書く前に能力マップを提案してください。** 小さく、レビューしやすい形にします。プロジェクト計画ではなく、モジュール表と構築順です。
 
 ```markdown
 # Capability Map: [Initiative Name]
 
 | Module id | Responsibility | Depends on |
 |---|---|---|
-| identity | Accounts, sessions, SSO | — |
-| billing | Plans, invoices, payments | identity |
-| notifications | Email and webhook fan-out | identity |
-| reporting | Usage dashboards | billing, notifications |
+| identity | アカウント、セッション、SSO | なし |
+| billing | プラン、請求書、支払い | identity |
+| notifications | メールと webhook の配信 | identity |
+| reporting | 利用状況ダッシュボード | billing, notifications |
 
-Build order: identity → billing, notifications → reporting
+Build order: identity -> billing, notifications -> reporting
 ```
 
-- **Stable module ids.** Kebab-case, chosen once, never renamed mid-initiative. Specs, plans, and downstream commands select work by these ids instead of guessing which spec is active.
-- **Dependency direction, no cycles.** Arrows point one way. If two modules each need the other, they are one module.
-- **Interfaces live at the boundary.** The map records that `billing` depends on `identity`; the contract between them belongs in the provider module's spec (see `api-and-interface-design` for designing it).
+- **安定したモジュール ID。** kebab-case で、一度決めたらイニシアチブ中に名前を変えません。仕様、計画、下流のコマンドは、どの仕様が有効かを推測するのではなく、この ID で作業を選びます。
+- **依存方向は一方向、循環なし。** 矢印は一方向です。2 つのモジュールが互いを必要とするなら、それは 1 つのモジュールです。
+- **インターフェースは境界に置く。** マップは `billing` が `identity` に依存することを記録しますが、その間の契約は提供側モジュールの仕様に置きます（設計は `api-and-interface-design` を参照）。
 
-**The map is gated like every phase.** The human reviews module boundaries, dependency direction, and build order before any module spec is written. Getting the map wrong is expensive; reviewing ten lines is not.
+**マップも他の段階と同じくゲート付きです。** 人間は、どのモジュール境界にするか、依存方向は正しいか、構築順は妥当かを、モジュールごとの仕様を書く前に確認します。マップを間違えるコストは高いですが、10 行をレビューするコストは高くありません。
 
-**Then recurse per module.** Run Specify → Plan → Tasks → Implement for each module in dependency order. Each module gets its own spec, scoped to that module's objective, boundaries, and success criteria. Save the approved map at the project root and each module's spec alongside it, named by module id (`SPEC-identity.md`, `SPEC-billing.md`) — the map, not filename guessing, is the index of what exists.
+**その後、モジュールごとに再帰します。** 依存順に、各モジュールについて Specify -> Plan -> Tasks -> Implement を回します。各モジュールには、その目的、境界、成功条件に絞った独自の仕様があります。承認されたマップはプロジェクトルートに保存し、各モジュールの仕様はモジュール ID で名付けて同じ場所に置きます（`SPEC-identity.md`、`SPEC-billing.md` など）。何が存在するかの索引はファイル名ではなく、マップです。
 
 ### Phase 1: Specify
 
-Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
+まずは高レベルのビジョンから始めます。要件が具体的になるまで、人間に確認質問を重ねてください。
 
-**Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
+**前提はすぐに明示する。** 仕様の内容を書き始める前に、自分が想定していることを列挙します。
 
+```text
+前提としていること:
+1. これは Web アプリケーションである（ネイティブモバイルではない）
+2. 認証はセッションベースの cookie を使う（JWT ではない）
+3. データベースは PostgreSQL である（既存の Prisma スキーマに基づく）
+4. 対象は現代的なブラウザのみである（IE11 は対象外）
+-> いま修正してください。そうでなければ、この前提で進めます。
 ```
-ASSUMPTIONS I'M MAKING:
-1. This is a web application (not native mobile)
-2. Authentication uses session-based cookies (not JWT)
-3. The database is PostgreSQL (based on existing Prisma schema)
-4. We're targeting modern browsers only (no IE11)
-→ Correct me now or I'll proceed with these.
-```
 
-Don't silently fill in ambiguous requirements. The spec's entire purpose is to surface misunderstandings *before* code gets written — assumptions are the most dangerous form of misunderstanding.
+曖昧な要件を黙って補完してはいけません。仕様の目的は、コードを書く前に誤解を表に出すことです。前提は、誤解の中でも特に危険です。
 
-**Write a spec document covering these six core areas:**
+**次の 6 つの中核領域をカバーする仕様書を書いてください。**
 
-1. **Objective** — What are we building and why? Who is the user? What does success look like?
+1. **Objective**  
+   何を作るのか、なぜ作るのか。誰が使うのか。成功とは何か。
 
-2. **Commands** — Full executable commands with flags, not just tool names.
-   ```
+2. **Commands**  
+   ツール名だけでなく、フラグまで含めた実行可能なコマンドを完全に書きます。
+   ```text
    Build: npm run build
    Test: npm test -- --coverage
    Lint: npm run lint --fix
    Dev: npm run dev
    ```
 
-3. **Project Structure** — Where source code lives, where tests go, where docs belong.
+3. **Project Structure**  
+   ソースコード、テスト、ドキュメントがどこにあるかを示します。
+   ```text
+   src/            アプリケーションのソースコード
+   src/components  React コンポーネント
+   src/lib         共有ユーティリティ
+   tests/          単体・統合テスト
+   e2e/            E2E テスト
+   docs/           ドキュメント
    ```
-   src/           → Application source code
-   src/components → React components
-   src/lib        → Shared utilities
-   tests/         → Unit and integration tests
-   e2e/           → End-to-end tests
-   docs/          → Documentation
-   ```
 
-4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
+4. **Code Style**  
+   3 段落の説明より、実際のコード例 1 つのほうが優れています。命名規則、整形ルール、良い出力の例を含めます。
 
-5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
+5. **Testing Strategy**  
+   どのフレームワークを使うか、テストはどこに置くか、どの程度のカバレッジを求めるか、どのテスト層をどの関心事に使うかを示します。
 
-6. **Boundaries** — Three-tier system:
-   - **Always do:** Run tests before commits, follow naming conventions, validate inputs
-   - **Ask first:** Database schema changes, adding dependencies, changing CI config
-   - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
+6. **Boundaries**  
+   3 段階のルールです。
+   - **Always do:** コミット前にテストを実行する、命名規則に従う、入力を検証する
+   - **Ask first:** データベーススキーマ変更、依存関係の追加、CI 設定の変更
+   - **Never do:** 秘密情報をコミットする、vendor ディレクトリを編集する、許可なく失敗中のテストを削除する
 
-**Spec template:**
+**仕様テンプレート:**
 
 ```markdown
 # Spec: [Project/Feature Name]
 
 ## Objective
-[What we're building and why. User stories or acceptance criteria.]
+[何を作るのか、なぜ作るのか。ユーザーストーリーや受け入れ条件。]
 
 ## Tech Stack
-[Framework, language, key dependencies with versions]
+[フレームワーク、言語、主要依存関係とそのバージョン]
 
 ## Commands
-[Build, test, lint, dev — full commands]
+[Build, test, lint, dev - 完全なコマンド]
 
 ## Project Structure
-[Directory layout with descriptions]
+[ディレクトリ構成と説明]
 
 ## Code Style
-[Example snippet + key conventions]
+[例のコード + 主要な規約]
 
 ## Testing Strategy
-[Framework, test locations, coverage requirements, test levels]
+[フレームワーク、テスト配置、カバレッジ要件、テストレベル]
 
 ## Boundaries
 - Always: [...]
@@ -141,105 +146,106 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 - Never: [...]
 
 ## Success Criteria
-[How we'll know this is done — specific, testable conditions]
+[どうなれば完了か。具体的で検証可能な条件]
 
 ## Open Questions
-[Anything unresolved that needs human input]
+[未解決で、人間の入力が必要な項目]
 ```
 
-**Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
+**依頼文を成功条件に言い換える。** 曖昧な要件を受けたら、それを具体的な条件に変換します。
 
+```text
+要件: "ダッシュボードを速くして"
+
+成功条件への言い換え:
+- ダッシュボードの LCP が 4G 接続で 2.5 秒未満
+- 初回データ読み込みが 500ms 未満で完了
+- 読み込み中にレイアウトシフトが発生しない（CLS < 0.1）
+-> この目標でよいですか？
 ```
-REQUIREMENT: "Make the dashboard faster"
 
-REFRAMED SUCCESS CRITERIA:
-- Dashboard LCP < 2.5s on 4G connection
-- Initial data load completes in < 500ms
-- No layout shift during load (CLS < 0.1)
-→ Are these the right targets?
-```
-
-This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
+こうすることで、「速くして」の意味を推測するのではなく、明確な目標に向けて繰り返し改善できます。
 
 ### Phase 2: Plan
 
-With the validated spec, generate a technical implementation plan:
+検証済みの仕様をもとに、技術実装計画を作ります。
 
-1. Identify the major components and their dependencies
-2. Determine the implementation order (what must be built first)
-3. Note risks and mitigation strategies
-4. Identify what can be built in parallel vs. what must be sequential
-5. Define verification checkpoints between phases
+1. 主要コンポーネントと依存関係を特定する
+2. 実装順を決める（何を先に作る必要があるか）
+3. リスクとその緩和策を記す
+4. 並列に進められるものと、順番が必要なものを分ける
+5. 各段階の検証ポイントを定義する
 
-> Follow `planning-and-task-breakdown` for the dependency-graph mapping and vertical-slicing mechanics behind these steps; it is the canonical source. The bullets above are a lightweight summary; if they ever diverge, `planning-and-task-breakdown` takes precedence.
+> 依存グラフの作成と縦スライスの進め方の詳細は `planning-and-task-breakdown` に従ってください。これが正規の参照先です。上の箇条書きは簡易版であり、もし矛盾があれば `planning-and-task-breakdown` が優先されます。
 >
-> **Output convention:** Save the plan to `tasks/plan.md` and record the task list in the task list target defined by `planning-and-task-breakdown` (default `tasks/todo.md`; projects may designate an external tracker instead). Create `tasks/` if it does not exist. Downstream commands (`/build`, etc.) expect these defaults.
+> **出力の慣例:** 計画は `tasks/plan.md` に保存し、タスク一覧は `planning-and-task-breakdown` で定義されたタスクリストの保存先（既定は `tasks/todo.md`。プロジェクトが外部トラッカーを指定している場合はそちら）に記録します。`tasks/` がなければ作成してください。下流のコマンド（`/build` など）はこの既定を前提にします。
 
-The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
+計画はレビュー可能であるべきです。人間が読んで「そう、それが正しいやり方だ」と言えるか、「いや、X を変えて」と言える内容にしてください。
 
 ### Phase 3: Tasks
 
-Break the plan into discrete, implementable tasks:
+計画を、個別に実装できるタスクに分解します。
 
-- Each task should be completable in a single focused session
-- Each task has explicit acceptance criteria
-- Each task includes a verification step (test, build, manual check)
-- Tasks are ordered by dependency, not by perceived importance
-- No task should require changing more than ~5 files
+- 各タスクは 1 回の集中セッションで完了できること
+- 各タスクに明確な受け入れ条件があること
+- 各タスクに検証ステップ（テスト、ビルド、手動確認）が含まれること
+- タスクは重要度ではなく依存関係順に並ぶこと
+- 1 タスクで変更するファイルはおおむね 5 個以内であること
 
-> Follow `planning-and-task-breakdown` for the full task-sizing and dependency-ordering mechanics; it is the canonical source. The template below is a lightweight inline form; if they ever diverge, `planning-and-task-breakdown` takes precedence.
+> タスクのサイズ決定と依存順の付け方の詳細は `planning-and-task-breakdown` に従ってください。これが正規の参照先です。下のテンプレートは簡易版で、もし矛盾があれば `planning-and-task-breakdown` が優先されます。
 
-**Task template:**
+**タスクテンプレート:**
+
 ```markdown
 - [ ] Task: [Description]
-  - Acceptance: [What must be true when done]
-  - Verify: [How to confirm — test command, build, manual check]
-  - Files: [Which files will be touched]
+  - Acceptance: [完了時に満たすべき条件]
+  - Verify: [確認方法 - テストコマンド、ビルド、手動確認]
+  - Files: [変更予定のファイル]
 ```
 
 ### Phase 4: Implement
 
-Execute tasks one at a time following `skills/incremental-implementation/SKILL.md` (`incremental-implementation`) and `skills/test-driven-development/SKILL.md` (`test-driven-development`). Use `skills/context-engineering/SKILL.md` (`context-engineering`) to load the right spec sections and source files at each step rather than flooding the agent with the entire spec.
+`skills/incremental-implementation/SKILL.md` (`incremental-implementation`) と `skills/test-driven-development/SKILL.md` (`test-driven-development`) に従って、タスクを 1 つずつ実行します。`skills/context-engineering/SKILL.md` (`context-engineering`) を使って、毎回、全体の仕様を読み込むのではなく、必要な仕様部分とソースファイルだけを読み込みます。
 
-## Keeping the Spec Alive
+## 仕様を生きた文書に保つ
 
-The spec is a living document, not a one-time artifact:
+仕様は一度書いて終わりの成果物ではなく、生きた文書です。
 
-- **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
-- **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec** — The spec belongs in version control alongside the code.
-- **Reference the spec in PRs** — Link back to the spec section that each PR implements.
+- **判断が変わったら更新する** - データモデルの変更が必要だと分かったら、先に仕様を更新し、それから実装します。
+- **スコープが変わったら更新する** - 機能を追加・削除したら、仕様に反映します。
+- **仕様をコミットする** - 仕様はコードと一緒にバージョン管理します。
+- **PR では仕様を参照する** - 各 PR が実装する仕様の節へリンクします。
 
-## Common Rationalizations
+## よくある言い訳
 
-| Rationalization | Reality |
+| 言い訳 | 実際 |
 |---|---|
-| "This is simple, I don't need a spec" | Simple tasks don't need *long* specs, but they still need acceptance criteria. A two-line spec is fine. |
-| "I'll write the spec after I code it" | That's documentation, not specification. The spec's value is in forcing clarity *before* code. |
-| "The spec will slow us down" | A 15-minute spec prevents hours of rework. Waterfall in 15 minutes beats debugging in 15 hours. |
-| "Requirements will change anyway" | That's why the spec is a living document. An outdated spec is still better than no spec. |
-| "The user knows what they want" | Even clear requests have implicit assumptions. The spec surfaces those assumptions. |
-| "It's one big feature; splitting it is overhead" | If acceptance criteria cluster into independently testable groups, a monolithic spec forces every downstream task to reason over the whole contract. A ten-line capability map is the cheap alternative. |
-| "I'll decompose during planning" | Planning slices tasks within a spec. By then the oversized artifact already exists — module boundaries and dependency direction must be decided before the spec is written, not after. |
+| 「簡単だから仕様はいらない」 | 簡単な作業に長い仕様は要りませんが、受け入れ条件は必要です。2 行の仕様で十分です。 |
+| 「コードを書いてから仕様を書く」 | それはドキュメントであって、仕様ではありません。仕様の価値は、実装前に明確化を強制することです。 |
+| 「仕様を書くと遅くなる」 | 15 分の仕様で、数時間の手戻りを防げます。15 分のウォーターフォールは、15 時間のデバッグよりましです。 |
+| 「要件はどうせ変わる」 | だからこそ仕様は生きた文書です。古い仕様でも、ないよりはずっとましです。 |
+| 「ユーザーは欲しいものを分かっている」 | 明確な依頼にも、暗黙の前提はあります。仕様はそれを表に出します。 |
+| 「1 つの大きな機能だから分けるのは無駄」 | 受け入れ条件が独立して検証できるなら、単一の仕様は下流のすべてのタスクに全体契約を読ませることになります。10 行の能力マップのほうが安上がりです。 |
+| 「計画の段階で分解する」 | 計画は、仕様の中で切られたタスクを並べる工程です。その時点で大きすぎる成果物はすでに存在しています。モジュール境界と依存方向は、仕様を書く前に決めなければなりません。 |
 
-## Red Flags
+## レッドフラグ
 
-- Starting to write code without any written requirements
-- Asking "should I just start building?" before clarifying what "done" means
-- Implementing features not mentioned in any spec or task list
-- Making architectural decisions without documenting them
-- Skipping the spec because "it's obvious what to build"
-- One spec whose requirements span several independently testable capabilities
-- Module boundaries or build order decided implicitly during implementation because no capability map was approved up front
+- 書面化された要件なしでコードを書き始める
+- 「何が完了か」を明確にする前に「とりあえず作り始めていい？」と聞く
+- 仕様やタスクリストにない機能を実装する
+- 判断を文書化せずにアーキテクチャを決める
+- 「何を作るか明らかだから」と仕様を省く
+- 1 つの仕様が、独立して検証できる複数の能力にまたがっている
+- 事前に承認された能力マップがないのに、実装中にモジュール境界や構築順を暗黙に決める
 
-## Verification
+## 検証
 
-Before proceeding to implementation, confirm:
+実装に進む前に、次を確認してください。
 
-- [ ] The spec covers all six core areas
-- [ ] The human has reviewed and approved the spec
-- [ ] Success criteria are specific and testable
-- [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to a file in the repository
-- [ ] If the request bundles several independently testable capabilities, a capability map (module ids, dependency direction, build order) was approved before any module spec was written
-- [ ] Every module spec traces to a module id in the approved map
+- [ ] 仕様が 6 つの中核領域すべてをカバーしている
+- [ ] 人間が仕様をレビューし、承認している
+- [ ] 成功条件が具体的で検証可能である
+- [ ] 境界（Always / Ask First / Never）が定義されている
+- [ ] 仕様がリポジトリ内のファイルに保存されている
+- [ ] 依頼が複数の独立して検証できる能力を束ねる場合、モジュール ID、依存方向、構築順を含む能力マップが、どのモジュール仕様を書く前にも承認されている
+- [ ] すべてのモジュール仕様が、承認済みマップ上のモジュール ID に対応している
