@@ -1,25 +1,25 @@
 ---
 name: pr-report
 description: >
-  Produce a maintainer-grade PR or contribution report as HTML or Markdown. Use
-  when asked to deeply review a PR, explain a design, compare systems, or prepare
-  a merge recommendation.
+  maintainer 級の PR / contribution report を HTML または Markdown で作成します。
+  PR を深くレビューしたいとき、設計を説明したいとき、システム比較をしたいとき、
+  あるいは merge recommendation を準備したいときに使います。
 ---
 
-# PR Report Skill
+# PR レポート Skill
 
-Produce a maintainer-grade review of a PR, branch, or large contribution.
+PR、branch、または大きな contribution の maintainer 級レビューを作成します。
 
-Default posture:
+基本姿勢:
 
-- understand the change before judging it
-- explain the system as built, not just the diff
-- separate architectural problems from product-scope objections
-- make a concrete recommendation, not a vague impression
+- まず変更を理解してから判断する
+- diff だけでなく、実際に組み上がった system を説明する
+- architecture の問題と product scope の異議を切り分ける
+- あいまいな印象ではなく、具体的な recommendation を出す
 
-## When to Use
+## 使う場面
 
-Use this skill when the user asks for things like:
+次のような依頼があったときに使います:
 
 - "review this PR deeply"
 - "explain this contribution to me"
@@ -27,52 +27,52 @@ Use this skill when the user asks for things like:
 - "compare this design to similar systems"
 - "should I merge this?"
 
-## Outputs
+## 出力
 
-Common outputs:
+よくある出力:
 
 - standalone HTML report in `tmp/reports/...`
 - Markdown report in `report/` or another requested folder
 - short maintainer summary in chat
 
-If the user asks for a webpage, build a polished standalone HTML artifact with
-clear sections and readable visual hierarchy.
+ユーザーが webpage を求めたら、見出しが明確で視認性の高い、洗練された
+standalone HTML artifact を作ります。
 
-Resources bundled with this skill:
+この skill に同梱されている resources:
 
 - `references/style-guide.md` for visual direction and report presentation rules
 - `assets/html-report-starter.html` for a reusable standalone HTML/CSS starter
 
-## Workflow
+## ワークフロー
 
-### 1. Acquire and frame the target
+### 1. 対象を把握し、枠組みを作る
 
-Work from local code when possible, not just the GitHub PR page.
+可能なら GitHub の PR ページだけでなく、ローカルコードから作業します。
 
-Gather:
+集めるもの:
 
 - target branch or worktree
 - diff size and changed subsystems
 - relevant repo docs, specs, and invariants
 - contributor intent if it is documented in PR text or design docs
 
-Start by answering: what is this change *trying* to become?
+最初に答えるべき問いは、「この変更は *何になろうとしているのか*？」です。
 
-### 2. Build a mental model of the system
+### 2. system の mental model を作る
 
-Do not stop at file-by-file notes. Reconstruct the design:
+ファイルごとのメモで止まらず、設計全体を再構成します:
 
 - what new runtime or contract exists
 - which layers changed: db, shared types, server, UI, CLI, docs
 - lifecycle: install, startup, execution, UI, failure, disablement
 - trust boundary: what code runs where, under what authority
 
-For large contributions, include a tutorial-style section that teaches the
-system from first principles.
+大きな contribution では、first principles から system を教える tutorial-style の
+section を入れます。
 
-### 3. Review like a maintainer
+### 3. maintainer としてレビューする
 
-Findings come first. Order by severity.
+finding は最初に出します。severity の高い順に並べます。
 
 Prioritize:
 
@@ -83,9 +83,9 @@ Prioritize:
 - coupling that will be hard to unwind
 - missing tests or unverifiable claims
 
-Always cite concrete file references when possible.
+可能なら、必ず具体的な file reference を示します。
 
-### 4. Distinguish the objection type
+### 4. 異議の種類を区別する
 
 Be explicit about whether a concern is:
 
@@ -95,9 +95,9 @@ Be explicit about whether a concern is:
 - rollout strategy
 - documentation honesty
 
-Do not hide an architectural objection inside a scope objection.
+architecture への異議を scope への異議の中に隠さないでください。
 
-### 5. Compare to external precedents when needed
+### 5. 必要なら外部の先例と比較する
 
 If the contribution introduces a framework or platform concept, compare it to
 similar open-source systems.
@@ -108,7 +108,7 @@ When comparing:
 - focus on extension boundaries, context passing, trust model, and UI ownership
 - extract lessons, not just similarities
 
-Good comparison questions:
+比較のための良い問い:
 
 - Who owns lifecycle?
 - Who owns UI composition?
@@ -116,7 +116,7 @@ Good comparison questions:
 - Are plugins trusted code or sandboxed code?
 - Are extension points named and typed?
 
-### 6. Make the recommendation actionable
+### 6. recommendation を実行可能にする
 
 Do not stop at "merge" or "do not merge."
 
@@ -129,7 +129,7 @@ Choose one:
 
 If rejecting or narrowing, say what should be kept.
 
-Useful recommendation buckets:
+役立つ recommendation の分類:
 
 - keep the protocol/type model
 - redesign the UI boundary
@@ -137,9 +137,9 @@ Useful recommendation buckets:
 - defer third-party execution
 - ship a host-owned extension-point model first
 
-### 7. Build the artifact
+### 7. artifact を作る
 
-Suggested report structure:
+推奨する report 構成:
 
 1. Executive summary
 2. What the PR actually adds
@@ -149,18 +149,18 @@ Suggested report structure:
 6. Comparisons
 7. Recommendation
 
-For HTML reports:
+HTML report の場合:
 
 - use intentional typography and color
 - make navigation easy for long reports
 - favor strong section headings and small reference labels
 - avoid generic dashboard styling
 
-Before building from scratch, read `references/style-guide.md`.
-If a fast polished starter is helpful, begin from `assets/html-report-starter.html`
+ゼロから作る前に `references/style-guide.md` を読みます。
+素早く洗練された starter が役立つなら、`assets/html-report-starter.html` から始めます。
 and replace the placeholder content with the actual report.
 
-### 8. Verify before handoff
+### 8. 引き渡し前に検証する
 
 Check:
 
@@ -169,11 +169,11 @@ Check:
 - any requested forbidden strings are absent from generated output
 - if tests were not run, say so explicitly
 
-## Review Heuristics
+## レビューの観点
 
-### Plugin and platform work
+### プラグインと platform 作業
 
-Watch closely for:
+特に注意する点:
 
 - docs claiming sandboxing while runtime executes trusted host processes
 - module-global state used to smuggle React context
@@ -181,7 +181,7 @@ Watch closely for:
 - plugins reaching into host internals instead of using explicit APIs
 - "capabilities" that are really policy labels on top of fully trusted code
 
-### Good signs
+### 良い兆候
 
 - typed contracts shared across layers
 - explicit extension points
@@ -189,9 +189,9 @@ Watch closely for:
 - honest trust model
 - narrow first rollout with room to grow
 
-## Final Response
+## 最終応答
 
-In chat, summarize:
+chat では次を要約します:
 
 - where the report is
 - your overall call

@@ -1,45 +1,45 @@
 ---
 name: create-paperclip-bundled-skill
 description: >
-  Turn an idea, tweet, or task into a skill in the Paperclip skills catalog
-  (packages/skills-catalog). Use when asked to FIND or MAKE a skill and publish
-  it as a bundled/optional catalog skill: research prior art, reference or
-  author it, add examples, regenerate the manifest, open a PR.
+  アイデア、tweet、task を Paperclip skills catalog（packages/skills-catalog）の
+  skill に変えます。skill を FIND したり MAKE したりして、bundled / optional の
+  catalog skill として公開したいときに使います。prior art を調べ、参照または自作し、
+  例を追加し、manifest を再生成し、PR を開きます。
 ---
 
-# Create a Paperclip Bundled Skill
+# Paperclip Bundled Skill を作る
 
-Take source material — a tweet, a task description, a blog post, "make a skill
-that does X" — and land it as a skill in the Paperclip skills catalog
-(`packages/skills-catalog/`), delivered as a reviewed PR. The catalog is the
-shelf every Paperclip company browses and installs from, so the bar is: correct
-metadata, useful instructions, worked examples, and a clean validation run.
+source material — tweet、task description、blog post、"X をする skill を作って" という
+依頼 — を受け取り、Paperclip skills catalog（`packages/skills-catalog/`）の skill として、
+レビュー済み PR で着地させます。catalog はすべての Paperclip company が眺めて
+install する棚なので、求める水準は、正しい metadata、役立つ instruction、
+動作する example、きれいな validation run です。
 
-The core rule is **FIND before MAKE**: if a good skill already exists (in the
-catalog, in this repo, or published on GitHub), reference or adapt it instead
-of writing a duplicate from scratch.
+中心ルールは **FIND before MAKE** です。良い skill がすでにあるなら
+（catalog 内、repo 内、GitHub 上など）、ゼロから重複を書かず、参照または
+adapt してください。
 
-## When to use
+## 使う場面
 
 - A human sends a tweet/link/idea and asks for it to become a Paperclip skill.
 - A task asks to bundle an existing repo skill into the catalog.
 - A task asks to add an external published skill to the catalog.
 
-## When not to use
+## 使わない場面
 
 - The skill is company-private (belongs in that company's library via the
   Skills UI/API, not the shipped catalog).
 - You only need a repo-internal agent skill for working on Paperclip itself —
   that goes in `.agents/skills/` or `skills/`, with no catalog machinery.
 
-## Step 0 — Capture the source material
+## Step 0 - source material を確保する
 
-Understand exactly what the skill should teach before writing anything.
+何かを書く前に、その skill が何を教えるべきかを正確に理解します。
 
-**Tweets / X links.** Use the `xc` CLI (X API client). Paperclip engineering
-agent environments ship it preinstalled and pre-authenticated; it is not a
-tool you install or mint credentials for yourself. Check availability before
-relying on it:
+**Tweet / X link.** `xc` CLI（X API client）を使います。Paperclip engineering
+agent environment には preinstalled かつ pre-authenticated で入っています。
+自分で install したり credential を発行したりする tool ではありません。
+頼る前に使えるか確認してください:
 
 ```sh
 command -v xc && xc whoami    # on PATH and authenticated? if not, use the fallback below
@@ -52,11 +52,10 @@ xc user <username>                    # author context
 xc search '<topic keywords>' -n 30    # related discussion
 ```
 
-If `xc` is not on PATH, is unauthenticated, or the account lacks read access
-(the check above fails for any reason), delegate the
-fetch to a teammate with X/Twitter access (e.g. the Content Strategist agent)
-via a child issue: give them the URL and ask for full text of the post + thread
-+ any linked content.
+`xc` が PATH にない、認証されていない、または account に read access がない
+（上の確認が何らかの理由で失敗する）場合は、X/Twitter access を持つ teammate
+（例: Content Strategist agent）へ child issue で取得を依頼します。
+URL を渡し、post + thread + 関連コンテンツの全文を求めてください。
 
 **Other sources.** Fetch linked articles/READMEs directly. Record the source
 URL — it goes in the skill body or PR description as attribution.
@@ -66,9 +65,9 @@ Distill: what is the repeatable procedure? What inputs does it take? What does
 better commit messages"), you are authoring the procedure yourself — say so in
 the PR.
 
-## Step 1 — FIND: search for an existing skill
+## Step 1 - FIND: 既存の skill を探す
 
-Search in this order; stop when you have a clear winner.
+次の順番で探し、明確な候補が見つかったら止めます。
 
 1. **Already in the catalog?** Avoid duplicates (duplicate slugs fail the
    build):
@@ -97,7 +96,7 @@ Is the license compatible with redistribution? Then pick a path:
   credit the source with a link in the SKILL.md body.
 - **Nothing usable** → author a new local skill (Step 2B).
 
-## Step 2 — Choose kind, category, and slug
+## Step 2 - kind、category、slug を選ぶ
 
 - **kind**: default to `optional`. Use `bundled` only when the skill should
   ship to every Paperclip company by default — that needs explicit human/board
@@ -113,7 +112,7 @@ The skill lives at
 `packages/skills-catalog/catalog/<kind>/<category>/<slug>/` and its canonical
 key is `paperclipai/<kind>/<category>/<slug>`.
 
-## Step 2A — External reference path (`catalog-ref.json`)
+## Step 2A - external reference path（`catalog-ref.json`）
 
 The directory contains **only** `catalog-ref.json` (a directory with both
 `catalog-ref.json` and `SKILL.md` fails the build). The manifest builder
@@ -156,7 +155,7 @@ Rules the builder enforces:
 See `catalog/optional/research/last30days/catalog-ref.json` for the live
 example, and `examples/external-reference.md` next to this skill.
 
-## Step 2B — Author a local catalog skill
+## Step 2B - local catalog skill を作る
 
 Layout:
 
@@ -188,10 +187,10 @@ tags:
 Optional frontmatter: `defaultInstall: true` (only for skills every new
 company should get), `requires: [node, python3, ...]` for runtime deps.
 
-Body: follow `docs/guides/agent-developer/writing-a-skill.md` — "When to use"
-/ "When not to use" sections, concrete commands over prose, supporting detail
-in `references/`. If the skill came from a tweet or external source, link it
-in the body for attribution.
+本文: `docs/guides/agent-developer/writing-a-skill.md` に従います。
+「When to use」/「When not to use」 section、抽象論ではなく具体的な command、
+必要に応じて `references/` の補足 detail を使います。skill が tweet や外部 source
+由来なら、本文に link を入れて attribution してください。
 
 Trust level is derived from files, not declared: any `scripts/` file makes the
 skill `scripts_executables` (install becomes audit-gated and you must extend
@@ -199,7 +198,7 @@ the `scriptBearing` expectation in `src/shipped-catalog.test.ts`); `assets/`
 or non-markdown files make it `assets`; markdown-only skills stay
 `markdown_only`. Prefer markdown-only.
 
-## Step 3 — Write 1–2 worked examples
+## Step 3 - 1〜2 個の worked example を書く
 
 Create `examples/` inside the skill directory with one or two markdown files,
 each a complete input → application → output walkthrough (realistic input, the
@@ -209,7 +208,7 @@ installers can judge it before running it, and they keep the trust level at
 
 Name them by scenario, e.g. `examples/rewrite-release-note.md`.
 
-## Step 4 — Regenerate the manifest and update tests
+## Step 4 - manifest を再生成し、test を更新する
 
 Never hand-edit `generated/catalog.json`; it is deterministic build output.
 
@@ -234,7 +233,7 @@ The test suite also enforces the ≤300-char frontmatter description budget
 across the repo and the ≥40-char description / non-empty roles+tags rules for
 every catalog skill.
 
-## Step 5 — Open the PR
+## Step 5 - PR を開く
 
 Follow the `prepare-paperclip-pr` skill (`.agents/skills/prepare-paperclip-pr/`)
 against `paperclipai/paperclip` master. The diff should contain exactly:
@@ -249,7 +248,7 @@ whether this is a new skill / adaptation / external reference, and note the
 trust level. Reference PR #10410 (simplified-english) as the shape of a
 minimal optional-skill PR.
 
-## Gotchas
+## 落とし穴
 
 - `generated/catalog.json` staleness is a validation error — always rerun
   `build:manifest` after any file change inside the skill directory (the

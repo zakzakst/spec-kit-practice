@@ -1,91 +1,92 @@
 ---
 name: release
 description: >
-  Coordinate a full Paperclip release across engineering verification, npm,
-  GitHub, smoke testing, and announcement follow-up. Use when leadership asks
-  to ship a release, not merely to discuss versioning.
+  engineering verification、npm、GitHub、smoke testing、告知フォローアップを
+  含む Paperclip の完全なリリース作業を調整します。単に versioning を
+  話すのではなく、実際にリリースしたいときに使います。
 ---
 
-# Release Coordination Skill
+# リリース調整 Skill
 
-Run the full Paperclip maintainer release workflow, not just an npm publish.
+npm publish だけではなく、Paperclip maintainer の完全なリリースワークフローを
+実行します。
 
-This skill coordinates:
+この skill が調整するもの:
 
-- stable changelog drafting via `release-changelog`
-- canary verification and publish status from `master`
-- Docker smoke testing via `scripts/docker-onboard-smoke.sh`
-- manual stable promotion from a chosen source ref
-- GitHub Release creation
-- website / announcement follow-up tasks
-- release-content Cases dogfood: a top-level `release` case with child
-  `blog_post` and `tweet_storm` cases, all linked to the release issue/run
+- `release-changelog` による stable changelog の下書き
+- `master` からの canary 検証と publish 状態
+- `scripts/docker-onboard-smoke.sh` による Docker smoke testing
+- 選んだ source ref からの stable promotion
+- GitHub Release の作成
+- website / announcement の follow-up task
+- release-content Cases の dogfood: top-level の `release` case と子の
+  `blog_post` / `tweet_storm` case を、すべて release issue / run に紐づける
 
-## Trigger
+## トリガー
 
-Use this skill when leadership asks for:
+次のような依頼があったときに使います:
 
 - "do a release"
 - "ship the release"
 - "promote this canary to stable"
 - "cut the stable release"
 
-## Preconditions
+## 前提条件
 
-Before proceeding, verify all of the following:
+進める前に、次をすべて確認します:
 
-1. `.agents/skills/release-changelog/SKILL.md` exists and is usable.
-2. The repo working tree is clean, including untracked files.
-3. There is at least one canary or candidate commit since the last stable tag.
-4. The candidate SHA has passed the verification gate or is about to.
-5. If manifests changed, the CI-owned `pnpm-lock.yaml` refresh is already merged on `master`.
-6. npm publish rights are available through GitHub trusted publishing, or through local npm auth for emergency/manual use.
-7. If running through Paperclip, you have issue context for status updates and follow-up task creation.
+1. `.agents/skills/release-changelog/SKILL.md` が存在し、使用できること。
+2. repo の working tree が untracked files を含めて clean であること。
+3. 最後の stable tag 以降に、少なくとも1つの canary か candidate commit があること。
+4. candidate SHA が verification gate を通過済み、またはこれから通過する状態であること。
+5. manifests が変わっているなら、CI 管理の `pnpm-lock.yaml` 更新がすでに `master` に merge されていること。
+6. npm publish 権限が GitHub trusted publishing、または emergency / manual 用のローカル npm auth で使えること。
+7. Paperclip 経由で実行しているなら、status update と follow-up task 作成のための issue context があること。
 
-If any precondition fails, stop and report the blocker.
+前提条件が1つでも満たせない場合は止まり、blocker を報告します。
 
-## Inputs
+## 入力
 
-Collect these inputs up front:
+最初に次の入力を集めます:
 
-- whether the target is a canary check or a stable promotion
-- the candidate `source_ref` for stable
-- whether the stable run is dry-run or live
-- release issue / company context for website and announcement follow-up
+- 対象が canary check か stable promotion か
+- stable 用の candidate `source_ref`
+- stable 実行が dry-run か live か
+- website / announcement の follow-up に必要な release issue / company context
 
-## Step 0 — Release Model
+## Step 0 - リリースモデル
 
-Paperclip now uses a commit-driven release model:
+Paperclip は現在、commit 駆動のリリースモデルを使っています:
 
-1. every push to `master` publishes a canary automatically
-2. canaries use `YYYY.MDD.P-canary.N`
-3. stable releases use `YYYY.MDD.P`
-4. the middle slot is `MDD`, where `M` is the UTC month and `DD` is the zero-padded UTC day
-5. the stable patch slot increments when more than one stable ships on the same UTC date
-6. stable releases are manually promoted from a chosen tested commit or canary source commit
-7. only stable releases get `releases/vYYYY.MDD.P.md`, git tag `vYYYY.MDD.P`, and a GitHub Release
+1. `master` への push ごとに canary が自動 publish されます。
+2. canary は `YYYY.MDD.P-canary.N` を使います。
+3. stable release は `YYYY.MDD.P` を使います。
+4. 真ん中の slot は `MDD` で、`M` は UTC の月、`DD` はゼロ埋めした UTC の日です。
+5. 同じ UTC 日に複数の stable が出ると、stable patch slot が増えます。
+6. stable release は、選んだ検証済み commit または canary source commit から手動で promote します。
+7. `releases/vYYYY.MDD.P.md`、git tag `vYYYY.MDD.P`、GitHub Release が作られるのは stable release だけです。
 
-Critical consequences:
+重要な帰結:
 
-- do not use release branches as the default path
-- do not derive major/minor/patch bumps
-- do not create canary changelog files
-- do not create canary GitHub Releases
+- release branches を既定の path にしない
+- major / minor / patch の bump から version を導かない
+- canary changelog file を作らない
+- canary の GitHub Release を作らない
 
-## Step 1 — Choose the Candidate
+## Step 1 - 候補を選ぶ
 
-For canary validation:
+canary 検証では:
 
-- inspect the latest successful canary run on `master`
-- record the canary version and source SHA
+- `master` 上の最新の成功した canary run を確認する
+- canary version と source SHA を記録する
 
-For stable promotion:
+stable promotion では:
 
-1. choose the tested source ref
-2. confirm it is the exact SHA you want to promote
-3. resolve the target stable version with `./scripts/release.sh stable --date YYYY-MM-DD --print-version`
+1. 検証済みの source ref を選ぶ
+2. それが promote したい正確な SHA であることを確認する
+3. `./scripts/release.sh stable --date YYYY-MM-DD --print-version` で対象 stable version を解決する
 
-Useful commands:
+便利なコマンド:
 
 ```bash
 git tag --list 'v*' --sort=-version:refname | head -1
@@ -93,22 +94,22 @@ git log --oneline --no-merges
 npm view paperclipai@canary version
 ```
 
-## Step 2 — Draft the Stable Changelog
+## Step 2 - stable changelog を下書きする
 
-Stable changelog files live at:
+stable changelog のファイルは次に置きます:
 
 - `releases/vYYYY.MDD.P.md`
 
-Invoke `release-changelog` and generate or update the stable notes only.
+`release-changelog` を呼び出し、stable notes だけを生成または更新します。
 
-Rules:
+ルール:
 
-- review the draft with a human before publish
-- preserve manual edits if the file already exists
-- keep the filename stable-only
-- do not create a canary changelog file
+- publish 前に人間へ下書きをレビューしてもらう
+- 既存ファイルがあれば手動編集を保持する
+- ファイル名は stable 専用のままにする
+- canary changelog file は作らない
 
-## Step 3 — Verify the Candidate SHA
+## Step 3 - 候補 SHA を検証する
 
 Run the standard gate:
 
@@ -118,30 +119,32 @@ pnpm test:run
 pnpm build
 ```
 
-If the GitHub release workflow will run the publish, it can rerun this gate. Still report local status if you checked it.
+GitHub Release workflow が publish を担当するなら、この gate は再実行できます。
+ただし、ローカルで確認した場合はその状態も報告してください。
 
-For PRs that touch release logic, the repo also runs a canary release dry-run in CI. That is a release-specific guard, not a substitute for the standard gate.
+release logic に触る PR では、repo は CI で canary release の dry-run も走らせます。
+これはリリース固有の guard であり、標準 gate の代わりではありません。
 
-## Step 4 — Validate the Canary
+## Step 4 - canary を検証する
 
-The normal canary path is automatic from `master` via:
+通常の canary path は `master` から自動で次を通ります:
 
 - `.github/workflows/release.yml`
 
-Confirm:
+確認事項:
 
 1. verification passed
 2. npm canary publish succeeded
 3. git tag `canary/vYYYY.MDD.P-canary.N` exists
 
-Useful checks:
+便利な確認コマンド:
 
 ```bash
 npm view paperclipai@canary version
 git tag --list 'canary/v*' --sort=-version:refname | head -5
 ```
 
-## Step 5 — Smoke Test the Canary
+## Step 5 - canary を smoke test する
 
 Run:
 
@@ -149,13 +152,13 @@ Run:
 PAPERCLIPAI_VERSION=canary ./scripts/docker-onboard-smoke.sh
 ```
 
-Useful isolated variant:
+分離して試せる便利な variant:
 
 ```bash
 HOST_PORT=3232 DATA_DIR=./data/release-smoke-canary PAPERCLIPAI_VERSION=canary ./scripts/docker-onboard-smoke.sh
 ```
 
-Confirm:
+確認事項:
 
 1. install succeeds
 2. onboarding completes without crashes
@@ -163,33 +166,33 @@ Confirm:
 4. the UI loads
 5. basic company creation and dashboard load work
 
-If smoke testing fails:
+smoke testing が失敗したら:
 
-- stop the stable release
-- fix the issue on `master`
-- wait for the next automatic canary
-- rerun smoke testing
+- stable release を止める
+- `master` 上で問題を修正する
+- 次の自動 canary を待つ
+- smoke testing を再実行する
 
-## Step 6 — Preview or Publish Stable
+## Step 6 - stable をプレビューまたは publish する
 
-The normal stable path is manual `workflow_dispatch` on:
+通常の stable path は次の `workflow_dispatch` を手動で実行することです:
 
 - `.github/workflows/release.yml`
 
-Inputs:
+入力:
 
 - `source_ref`
 - `stable_date`
 - `dry_run`
 
-Before live stable:
+live stable の前に:
 
 1. resolve the target stable version with `./scripts/release.sh stable --date YYYY-MM-DD --print-version`
 2. ensure `releases/vYYYY.MDD.P.md` exists on the source ref
 3. run the stable workflow in dry-run mode first when practical
 4. then run the real stable publish
 
-The stable workflow:
+stable workflow は次を行います:
 
 - re-verifies the exact source ref
 - computes the next stable patch slot for the chosen UTC date
@@ -197,7 +200,7 @@ The stable workflow:
 - creates git tag `vYYYY.MDD.P`
 - creates or updates the GitHub Release from `releases/vYYYY.MDD.P.md`
 
-Local emergency/manual commands:
+ローカルの緊急 / 手動コマンド:
 
 ```bash
 ./scripts/release.sh stable --dry-run
@@ -206,26 +209,26 @@ git push public-gh refs/tags/vYYYY.MDD.P
 ./scripts/create-github-release.sh YYYY.MDD.P
 ```
 
-## Step 7 — Finish the Other Surfaces
+## Step 7 - 他の面を仕上げる
 
-Create or verify follow-up work for:
+次の follow-up work を作成または確認します:
 
 - website changelog publishing
 - launch post / social announcement
 - release summary in Paperclip issue context
 
-These should reference the stable release, not the canary.
+これらは canary ではなく stable release を参照する必要があります。
 
-## Step 8 — Emit Release-Content Cases
+## Step 8 - release-content Cases を発行する
 
-When Cases are enabled, every stable release-content run must materialize a
-deterministic case tree. This is part of the release dogfood path, not an
-optional artifact. If the API returns `403 Cases are disabled`, stop and report
-that the operator must enable `experimental.enableCases`.
+Cases が有効な場合、すべての stable release-content run は決定的な case tree を
+生成しなければなりません。これは release dogfood path の一部であり、任意の
+成果物ではありません。API が `403 Cases are disabled` を返したら止めて、
+operator が `experimental.enableCases` を有効にする必要があると報告します。
 
-Use the current release issue's `PAPERCLIP_COMPANY_ID`, `PAPERCLIP_API_URL`,
-`PAPERCLIP_API_KEY`, and `PAPERCLIP_RUN_ID`. Include `X-Paperclip-Run-Id` on
-all writes so the case activity feed can attribute the run back to the issue.
+現在の release issue の `PAPERCLIP_COMPANY_ID`、`PAPERCLIP_API_URL`、
+`PAPERCLIP_API_KEY`、`PAPERCLIP_RUN_ID` を使います。case activity feed が
+run を issue に紐づけられるよう、すべての write に `X-Paperclip-Run-Id` を付けます。
 
 Create or upsert the parent `release` case first:
 
@@ -259,9 +262,9 @@ POST /api/companies/:companyId/cases
 }
 ```
 
-The `fields` schema intentionally uses all generic JSON value types: strings,
-numbers, booleans, arrays, objects, and nulls. Send the complete fields object on
-each upsert because case fields replace as a whole object.
+`fields` schema は意図的に、文字列・数値・真偽値・配列・オブジェクト・null
+のすべての generic JSON value type を使っています。case fields は全体置換なので、
+upsert のたびに完全な fields object を送ります。
 
 Write the parent body document immediately after the upsert:
 
@@ -275,31 +278,31 @@ PUT /api/cases/:releaseCaseId/documents/body
 }
 ```
 
-Then create or upsert these child cases with `parentCaseId` set to the release
-case id:
+続けて、`parentCaseId` を release case id に設定した次の child case を
+作成または upsert します:
 
 - `blog_post`, key `paperclip-release:vYYYY.MDD.P:blog-post`, status
   `in_progress`, body document key `body`
 - `tweet_storm`, key `paperclip-release:vYYYY.MDD.P:tweet-storm`, status
   `in_progress`, body document key `body`
 
-Use deterministic keys exactly so rerunning the release-content flow upserts the
-same three cases instead of duplicating them. After the child body documents are
-written, list the resulting case identifiers and links in the release issue and
-in the parent acceptance issue when one exists.
+key は必ず deterministic にして、release-content flow を再実行しても同じ 3 つの
+case が upsert され、複製されないようにします。child body document を書き終えたら、
+生成された case identifier と link を release issue に載せ、親の acceptance issue が
+ある場合はそこにも載せます。
 
-## Failure Handling
+## 失敗時の扱い
 
-If the canary is bad:
+canary が悪い場合:
 
 - publish another canary, do not ship stable
 
-If stable npm publish succeeds but tag push or GitHub release creation fails:
+stable の npm publish は成功したのに、tag push や GitHub Release 作成が失敗した場合:
 
 - fix the git/GitHub issue immediately from the same release result
 - do not republish the same version
 
-If `latest` is bad after stable publish:
+stable publish 後に `latest` が壊れている場合:
 
 ```bash
 ./scripts/rollback-latest.sh <last-good-version>
@@ -307,9 +310,9 @@ If `latest` is bad after stable publish:
 
 Then fix forward with a new stable release.
 
-## Output
+## 出力
 
-When the skill completes, provide:
+skill が完了したら、次を返します:
 
 - candidate SHA and tested canary version, if relevant
 - stable version, if promoted

@@ -1,9 +1,9 @@
 ---
 name: check-pr
 description: >
-  Check a GitHub, GitLab, or Perforce PR/MR/CL for review comments, failing
-  checks, and PR-body gaps. Use when asked to inspect, fix, or prepare a change
-  for submission.
+  GitHub、GitLab、Perforce の PR / MR / CL を対象に、review comment、
+  failing check、PR 本文の不足を確認します。変更を確認・修正・提出準備したいときに
+ 使います。
 license: MIT
 compatibility: Requires git and gh (GitHub CLI), glab (GitLab CLI), or p4 (Perforce CLI) installed and authenticated.
 metadata:
@@ -12,9 +12,11 @@ metadata:
 allowed-tools: Bash(gh:*) Bash(glab:*) Bash(git:*) Bash(p4:*)
 ---
 
-# Check PR
+# PR をチェックする
 
-Analyze a pull request (GitHub), merge request (GitLab), or shelved changelist (Perforce) for review comments, status checks, and description completeness, then help address any issues found.
+pull request（GitHub）、merge request（GitLab）、または shelved changelist（Perforce）を
+対象に、review comment、status check、description の完成度を調べ、見つかった問題の
+対応を手伝います。
 
 ## Inputs
 

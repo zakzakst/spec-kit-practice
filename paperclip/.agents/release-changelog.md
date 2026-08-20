@@ -1,44 +1,45 @@
 ---
 name: release-changelog
 description: >
-  Generate the stable Paperclip release changelog at releases/vYYYY.MDD.P.md by
-  reading commits, changesets, and merged PR context since the last stable tag.
+  最後の stable tag 以降の commit、changeset、merge 済み PR の文脈を読み、
+  `releases/vYYYY.MDD.P.md` に stable Paperclip release の changelog を生成します。
 ---
 
-# Release Changelog Skill
+# リリース Changelog Skill
 
-Generate the user-facing changelog for the **stable** Paperclip release.
+**stable** Paperclip release 向けのユーザー表示用 changelog を生成します。
 
-## Versioning Model
+## バージョニングモデル
 
-Paperclip uses **calendar versioning (calver)**:
+Paperclip は **calendar versioning (calver)** を使います:
 
 - Stable releases: `YYYY.MDD.P` (e.g. `2026.318.0`)
 - Canary releases: `YYYY.MDD.P-canary.N` (e.g. `2026.318.1-canary.0`)
 - Git tags: `vYYYY.MDD.P` for stable, `canary/vYYYY.MDD.P-canary.N` for canary
 
-There are no major/minor/patch bumps. The stable version is derived from the
-intended release date (UTC) plus the next same-day stable patch slot.
+major / minor / patch の bump はありません。stable version は、予定している
+release date（UTC）に、その日の次の stable patch slot を足して決まります。
 
-Output:
+出力:
 
 - `releases/vYYYY.MDD.P.md`
 - a `release` Case, upserted by `(caseType, key)` when Cases are enabled, with a
   `body` document revision containing the changelog body
 
-Important rules:
+重要なルール:
 
-- even if there are canary releases such as `2026.318.1-canary.0`, the changelog file stays `releases/v2026.318.1.md`
-- do not derive versions from semver bump types
-- do not create canary changelog files
+- `2026.318.1-canary.0` のような canary release があっても、changelog file は
+  `releases/v2026.318.1.md` のままです
+- version を semver bump type から導かない
+- canary changelog file を作らない
 
-## Channel Process — Source Commit and File Location
+## Channel Process - source commit と file の場所
 
-Stables promote a **soaked beta**, so the changelog describes the beta's
-source commit, not the tip of `master`:
+stable は **soaked beta** を promote するため、changelog は `master` の先端ではなく、
+beta の source commit を説明します:
 
-- The release **source** is the commit the newest `beta/v<beta-version>`
-  tag points at (`{beta-src}` below). Resolve it with:
+- release の **source** は、最新の `beta/v<beta-version>` tag が指している commit
+  です（以下の `{beta-src}`）。次のように解決します:
 
   ```bash
   git fetch origin --tags
@@ -46,32 +47,31 @@ source commit, not the tip of `master`:
   git rev-parse 'beta/v{beta-version}^{commit}'
   ```
 
-- Commits on `master` after `{beta-src}` ship in the **next** release.
-  Never include them; they are input for a "what's next" section, not the
-  changelog.
-- During the soak, the file lives at `releases/beta/v{beta-version}.md`
-  on the branch `release-notes/v{beta-version}` (PR to `master`). The
-  release workflow pushes that branch with a generated skeleton when the
-  beta publishes; work on it and rewrite the skeleton in place. If the
-  branch does not exist (a beta cut before the automation), create it
-  from `origin/master` and seed the skeleton:
+- `{beta-src}` の後に `master` に入った commit は、**次** の release で出荷されます。
+  それらを changelog に含めてはいけません。これは "what's next" section の素材であり、
+  changelog ではありません。
+- soak 中は、file は `release-notes/v{beta-version}` branch 上の
+  `releases/beta/v{beta-version}.md` にあります（`master` への PR）。
+  release workflow は beta publish 時に生成済み skeleton を載せた branch を push します。
+  それをそのまま編集して skeleton を書き換えてください。branch が存在しない場合
+  （automation 前に beta を切った場合）は、`origin/master` から作成して skeleton を
+  生成します:
 
   ```bash
   ./scripts/draft-stable-notes.sh {beta-version}
   ```
 
-- The PR must merge to `master` **before** the stable is dispatched: the
-  stable preflight reads the file from `master` and fails without it.
-- Never create `releases/vYYYY.MDD.P.md` yourself on this path — after
-  the stable ships, the workflow opens a canonicalization PR that renames
-  the beta-keyed file to it.
-- **Fix path exception** (patch releases from a `candidate/release-*`
-  branch): there the notes *do* go directly on the candidate branch as
-  `releases/vYYYY.MDD.P.md`, committed alongside the cherry-picked fixes.
+- PR は stable が dispatch される **前** に `master` へ merge されていなければなりません。
+  stable preflight は file を `master` から読むため、これがないと失敗します。
+- この path で自分で `releases/vYYYY.MDD.P.md` を作らないでください。stable 出荷後に、
+  workflow が beta-keyed file をその名前へ rename する canonicalization PR を開きます。
+- **Fix path exception**（`candidate/release-*` branch からの patch release）では、
+  notes は candidate branch 上に直接 `releases/vYYYY.MDD.P.md` として置かれ、
+  cherry-pick した fix と一緒に commit されます。
 
-## Step 0 — Idempotency Check
+## Step 0 - idempotency check
 
-Before generating anything, check whether the changelog already exists:
+何かを生成する前に、changelog がすでに存在するか確認します:
 
 ```bash
 ls releases/beta/v{beta-version}.md 2>/dev/null   # soak-window home
@@ -79,18 +79,17 @@ ls releases/vYYYY.MDD.P.md 2>/dev/null            # canonicalized / fix path
 git ls-remote origin 'refs/heads/release-notes/v{beta-version}'
 ```
 
-A `release-notes/v{beta-version}` branch holding only the generated
-skeleton is the normal starting state, not a conflict — rewrite it in
-place.
+生成された skeleton だけを持つ `release-notes/v{beta-version}` branch は
+通常の開始状態であり、conflict ではありません。そのまま上書きしてください。
 
-If it exists:
+存在する場合:
 
 1. read it first
 2. present it to the reviewer
 3. ask whether to keep it, regenerate it, or update specific sections
 4. never overwrite it silently
 
-## Step 1 — Determine the Stable Range
+## Step 1 - stable の範囲を決める
 
 Find the last stable tag and the beta source commit:
 
@@ -100,21 +99,22 @@ beta_src="$(git rev-parse 'beta/v{beta-version}^{commit}')"
 git log v{last}..${beta_src} --oneline --no-merges
 ```
 
-The changelog range is always `v{last}..{beta-src}` — never `..HEAD` and
-never `..origin/master`.
+changelog の範囲は常に `v{last}..{beta-src}` です。`..HEAD` でも
+`..origin/master` でもありません。
 
-The stable version comes from one of:
+stable version は次のいずれかから決まります:
 
 - an explicit maintainer request
 - `./scripts/release.sh stable --date YYYY-MM-DD --print-version`
 - the release plan already agreed in `doc/RELEASING.md`
 
-Do not derive the changelog version from a canary tag or prerelease suffix.
-Do not derive major/minor/patch bumps from API intent — calver uses the date and same-day stable slot.
+changelog version を canary tag や prerelease suffix から導いてはいけません。
+API の意図から major / minor / patch bump を導くことも禁止です。calver では
+date と同日 stable slot を使います。
 
-## Step 2 — Gather the Raw Inputs
+## Step 2 - 生の入力を集める
 
-Collect release data from:
+release data を次から集めます:
 
 1. git commits since the last stable tag
 2. `.changeset/*.md` files

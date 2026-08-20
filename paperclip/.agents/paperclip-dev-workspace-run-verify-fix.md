@@ -1,63 +1,56 @@
 ---
 name: paperclip-dev-workspace-run-verify-fix
 description: >
-  Run, verify, reseed, and repair Paperclip isolated dev workspace services. Use
-  when asked to start or fix a managed project/worktree service and prove health,
-  login readiness, cloned data, runtime visibility, and correct port ownership.
+  Paperclip の isolated dev workspace service を起動・検証・再シード・修復します。
+  managed な project / worktree service を起動または修復し、health、login readiness、
+  clone 済みデータ、runtime visibility、正しい port ownership を証明したいときに使います。
 ---
 
 # Paperclip Dev Workspace Run / Verify / Fix
 
-This skill is for Paperclip-specific development workspaces whose service is
-started through project execution workspace runtime services, typically a
-worktree service such as `paperclip-dev`.
+この skill は、project execution workspace runtime service を通じて起動される
+Paperclip 固有の development workspace 向けです。典型例は `paperclip-dev` のような
+worktree service です。
 
-Success means all of these are true:
+成功の条件は次のすべてです:
 
-- the service was started through the normal managed runtime path, not a
-  detached workaround
-- the worktree database is a full bootstrapped isolated clone of the primary
-  instance database
-- `/api/health` returns `status: ok` and `bootstrapStatus: ready`
-- the root page returns `200` and does not show the first-admin setup gate
-- the board user can log in with their normal dev credentials
-- the app shows populated cloned data, not only a manually copied auth user
-- the main control plane shows the service as `running` / `healthy` with the
-  expected URL
-- the served workspace app also knows about that service and shows it as
-  `running` / `healthy`
-- the process that owns the service port really belongs to the target
-  workspace: `readlink /proc/<pid>/cwd` resolves inside the target worktree,
-  not a sibling workspace
+- service が detached workaround ではなく、通常の managed runtime path で
+  起動されていること
+- worktree database が primary instance database の完全な bootstrapped isolated clone
+  であること
+- `/api/health` が `status: ok` と `bootstrapStatus: ready` を返すこと
+- root page が `200` を返し、first-admin setup gate を表示しないこと
+- board user が通常の dev credential でログインできること
+- app に、手動で auth user をコピーしただけではない、十分に埋まった clone data が表示されること
+- main control plane で service が期待 URL 付きの `running` / `healthy` と見えること
+- 提供されている workspace app もその service を認識し、`running` / `healthy` と表示すること
+- service port を所有している process が本当に target workspace のものであること:
+  `readlink /proc/<pid>/cwd` が target worktree 内を指し、兄弟 workspace ではないこと
 
-If any item fails, keep fixing. Do not mark the issue done because one probe
-passed.
+どれか1つでも失敗したら、修復を続けます。1つの probe が通っただけで
+issue を done にしないでください。
 
 ## Hard rules
 
-- The master checkout `/srv/paperclip/home/paperclipai/paperclip` (the primary
-  repo with the real instance `.env`) is never a workspace repair target. Never
-  point a worktree runtime service at it, never `git worktree add` into it or
-  under `<master>/.paperclip/worktrees/`, and never edit its `.env` while
-  repairing a workspace. Managed workspaces run in their own folders, for
-  example `~/.paperclip-worktrees/instances/<slug>/…`.
-- Never trust a `running` / `healthy` runtime row or a passing `/api/health`
-  alone. The `service:paperclip-dev` port is pinned in service config, so a
-  sibling workspace's process can own the port and still answer health checks.
-  Confirm the port owner's real cwd (`readlink /proc/<pid>/cwd`) before and
-  after every repair; the runtime row's recorded `cwd` and `pid` can be
-  fabricated by port adoption.
-- Read `doc/DEVELOPING.md` before running Paperclip CLI, dev server, worktree,
-  database, build, or test commands.
-- Use the Paperclip CLI and API as the source of truth for worktree and
-  database operations. Do not use `psql`, raw embedded-Postgres commands, or
-  ad hoc row copying for the normal fix path.
-- Do not manually copy only auth rows as the final fix. That proves login, but
-  it does not prove the isolated workspace has the full bootstrapped database.
-- Prefer managed runtime start/stop routes over `pnpm dev` or detached shell
-  processes when the task is about a reusable workspace service.
-- Avoid destructive git or database actions. Preserve user changes in the
-  worktree.
+- 実 instance の `.env` を持つ primary checkout `/srv/paperclip/home/paperclipai/paperclip`
+  は workspace repair の対象にしません。そこを worktree runtime service の対象にしたり、
+  `<master>/.paperclip/worktrees/` の下に `git worktree add` したり、workspace を修復している間に
+  `.env` を編集したりしないでください。managed workspace は、たとえば
+  `~/.paperclip-worktrees/instances/<slug>/…` のような専用フォルダで動きます。
+- `running` / `healthy` の runtime row や `/api/health` の成功だけでは信じないでください。
+  `service:paperclip-dev` の port は service config で固定されているため、兄弟 workspace の
+  process が port を握っていても health check に答えられます。修復の前後で必ず
+  port owner の実際の cwd（`readlink /proc/<pid>/cwd`）を確認してください。runtime row に
+  記録された `cwd` や `pid` は port adoption により捏造されることがあります。
+- Paperclip CLI、dev server、worktree、database、build、test コマンドを実行する前に
+  `doc/DEVELOPING.md` を読んでください。
+- worktree と database の操作では、Paperclip CLI と API を source of truth にしてください。
+  通常の修復 path では `psql`、raw な embedded-Postgres コマンド、手作業の row copying を使いません。
+- 最終修復として auth row だけを手でコピーしないでください。ログインの証明にはなっても、
+  isolated workspace に完全な bootstrapped database がある証明にはなりません。
+- 再利用する workspace service の task では、`pnpm dev` や detached shell process より
+  managed runtime の start / stop route を優先します。
+- destructive な git / database 操作は避けます。worktree 内のユーザー変更は保持してください。
 - Run the smallest verification that proves the repair. Add focused tests only
   when code changed.
 - Leave an issue comment with root cause, exact fix, verification, and any
@@ -65,7 +58,7 @@ passed.
 
 ## Inputs to collect
 
-Use environment variables when available. Do not print API keys or passwords.
+環境変数が使えるならそれを使います。API key や password は出力しないでください。
 
 - `PAPERCLIP_API_URL`: main control-plane API URL
 - `PAPERCLIP_API_KEY`: agent API key
@@ -78,14 +71,14 @@ Use environment variables when available. Do not print API keys or passwords.
 - expected service URL, for example `http://paperclip-dev:40631`
 - dev credential owner, if the user supplied one; never post the password
 
-If the execution workspace id or service command id is missing, read the issue,
-project, or execution-workspace API records first. Do not guess and start an
-unmanaged server on a random port.
+execution workspace id か service command id がない場合は、まず issue、
+project、execution-workspace API record を読みます。推測して random port で
+unmanaged server を起動しないでください。
 
 ## Normal run sequence
 
-Use this when the user says to start the workspace, start it again, or fix a
-workspace that should be freshly ready.
+ユーザーが workspace を起動したい、再起動したい、あるいは fresh に ready であるべき
+workspace を修復したいと言ったときに使います。
 
 1. Confirm the latest issue comment and restate the success condition in your
    own words.
@@ -110,8 +103,8 @@ workspace that should be freshly ready.
 
 ## Managed start / stop
 
-Use the runtime-service endpoints on the main control plane. Include
-`X-Paperclip-Run-Id` so the mutation is associated with the current heartbeat.
+main control plane の runtime-service endpoint を使います。mutation が現在の heartbeat に
+紐づくように、`X-Paperclip-Run-Id` を付けます。
 
 ```sh
 curl -sS -X POST \
@@ -131,52 +124,51 @@ curl -sS -X POST \
   --data-binary '{"workspaceCommandId":"service:paperclip-dev"}'
 ```
 
-If the API returns an existing service, treat that as a candidate only. Verify
-its real `/api/health` and its port-owner identity before trusting it.
+API が既存 service を返しても、それは candidate としてのみ扱います。信じる前に
+本物の `/api/health` と port-owner identity を確認してください。
 
 ## Port conflicts and workspace identity
 
-`service:paperclip-dev` pins an explicit port in service config, so every
-workspace that realizes that service claims the same port. On start, service
-adoption will adopt whatever process already owns the port when its command
-line looks similar — and it records the *requested* cwd, not the owner's real
-cwd. Two consequences:
+`service:paperclip-dev` は service config で明示的な port を固定しているため、
+その service を実現するすべての workspace が同じ port を要求します。start 時には、
+command line が似ていると、service adoption がすでに port を握っている process を
+採用します。そして、owner の実 cwd ではなく *要求した* cwd を記録します。
+結果は2つあります:
 
 - multiple workspaces can hold `running` rows for the same port while only one
   process exists; whichever workspace URL you open, you get that one process
 - the runtime row's `cwd`, `pid`, and health can all look correct while the
   URL actually serves a sibling worktree's app
 
-Identity check — run this before trusting any existing service and again after
-every start or restart:
+identity check - 既存 service を信じる前と、start / restart のたびにこれを実行します:
 
 ```sh
 pid=$(lsof -nP -iTCP:"$SERVICE_PORT" -sTCP:LISTEN -t | head -1)
 readlink "/proc/$pid/cwd"
 ```
 
-The resolved cwd must be inside the target worktree (the dev server usually
-runs in `<worktree>/server`). Only `/proc/<pid>/cwd` is authoritative. Do not
-accept the runtime row's `cwd` field, a root `200`, or a healthy `/api/health`
-as proof of identity — a squatting sibling passes all three.
+解決された cwd は target worktree 内にある必要があります（dev server は通常
+`<worktree>/server` で動きます）。権威があるのは `/proc/<pid>/cwd` だけです。
+runtime row の `cwd` field、root の `200`、healthy な `/api/health` を
+identity の証拠として受け取らないでください。横取りした sibling ならその3つ全部に
+通ってしまいます。
 
-If the port owner is a sibling workspace's process (port squat):
+port owner が兄弟 workspace の process だった場合（port squat）:
 
-1. Decide which workspace should own the pinned port right now — normally the
-   workspace named in the issue.
-2. Identify the current owner's workspace and whether a live agent run or
-   managed runtime service is responsible for keeping it alive. Use the real
-   `/proc/<pid>/cwd`, the sibling execution-workspace records, and the owning
-   issue/run state; do not infer ownership from the target runtime row.
-3. Stop the owner first through its own managed control path: stop the sibling
-   workspace's runtime service, or stop/cancel the live run that supervises and
-   respawns it. Do not kill the sibling process directly while its supervisor
-   is still active, because it will simply come back and reclaim the port.
-4. Verify the port remains unbound for a stability wait. If it is immediately
-   rebound, find and stop the still-live supervisor instead of restarting the
-   target in a loop.
-5. Only after the conflicting owner is stopped, start or restart the target
-   service and re-run the identity check:
+1. 今この pinned port をどの workspace が持つべきかを決めます。通常は issue に
+   書かれた workspace です。
+2. 現在の owner の workspace と、それを生かし続けているのが live agent run なのか
+   managed runtime service なのかを特定します。実際の `/proc/<pid>/cwd`、兄弟
+   execution-workspace record、owner の issue/run state を使い、target runtime row から
+   ownership を推測しないでください。
+3. まず owner 側をその managed control path で止めます。兄弟 workspace の runtime
+   service を止めるか、監督して再起動している live run を stop / cancel します。
+   supervisor がまだ生きている間に sibling process を直接 kill しないでください。
+   すぐに戻ってきて port を取り返します。
+4. port が安定して unbound のままかを確認します。すぐに再び bind されるなら、
+   target をループ restart するのではなく、まだ生きている supervisor を見つけて止めます。
+5. 衝突している owner を止めたあとでのみ、target service を start または restart し、
+   identity check を再実行します:
 
 ```sh
 curl -sS -X POST \
@@ -187,39 +179,38 @@ curl -sS -X POST \
   --data-binary '{"workspaceCommandId":"service:paperclip-dev"}'
 ```
 
-6. A restart only holds if the conflicting owner stays stopped. If the port is
-   reclaimed, stop and diagnose the owner/supervisor again; do not loop target
-   restarts against it.
-7. If two workspaces genuinely need to run at the same time, they cannot share
-   a pinned port. Stop the one that is not needed (through its own workspace's
-   managed stop, or by ending the run that keeps respawning it), say in your
-   issue comment which workspace now owns the port, and escalate the
-   pinned-port collision as a product issue instead of looping restarts.
+6. restart が維持されるのは、衝突していた owner が止まり続けている場合だけです。
+   port を取り返されたら、owner / supervisor を止めて再診断し、target restart を
+   ループしないでください。
+7. 2つの workspace が本当に同時に動く必要があるなら、pinned port は共有できません。
+   不要なほうを止め（その workspace の managed stop を使うか、再起動し続ける run を終了し）、
+   issue comment で今どの workspace が port を持っているかを伝え、pinned-port collision は
+   product issue としてエスカレーションします。restart をループしてはいけません。
 
-Before declaring success, also fetch the sibling workspaces you suspect and
-compare their `runtimeServices[].port` values: more than one `running` row
-claiming the target port across workspaces is always a conflict to resolve,
-not a state to work around.
+成功と宣言する前に、疑わしい sibling workspace も取得し、それらの
+`runtimeServices[].port` を比較してください。workspace をまたいで target port を
+claim する `running` row が複数あるのは、必ず解決すべき conflict であり、
+回避すべき state ではありません。
 
-## Full database reseed
+## フル database reseed
 
-Use a full reseed when the app says setup is incomplete, login works but data
-is missing, the cloned app does not have the expected companies/issues/agents,
-or the user explicitly asks for the normal isolated-workspace database.
+アプリが setup incomplete を示す、ログインはできるが data がない、clone された app に
+期待した companies / issues / agents がない、またはユーザーが通常の
+isolated-workspace database を明示的に求めているときは、full reseed を使います。
 
 ```sh
 npx paperclipai worktree reseed --from-instance default --seed-mode full --yes
 ```
 
-After reseed, restart through the managed runtime path. A reseed can copy
-runtime-service rows whose ids no longer match the local process registry, so
-runtime adoption and reconciliation must be verified after the start.
+reseed 後は、managed runtime path で restart します。reseed によって、
+id が local process registry と一致しなくなった runtime-service row がコピーされることが
+あるため、start 後に runtime adoption と reconciliation を確認しなければなりません。
 
-Do not consider the reseed complete until the served app has both auth and
-populated product data. A one-off inserted user/account row is a diagnostic
-clue, not the final state.
+served app に auth と populated product data の両方が揃うまで reseed 完了とは
+見なしません。1回だけ挿入された user/account row は診断の手がかりであって、
+最終状態ではありません。
 
-## Core verification probes
+## 基本 verification probe
 
 Set `SERVICE_URL` to the service URL returned by the runtime API.
 
@@ -228,32 +219,31 @@ curl -sS "$SERVICE_URL/api/health" | jq
 curl -sS -I "$SERVICE_URL/" | head
 ```
 
-Expected health:
+期待する health:
 
 - `status: "ok"`
 - `bootstrapStatus: "ready"`
 - `bootstrapInviteActive: false`
 
-Failures to reject:
+却下する失敗:
 
 - `bootstrap_pending`: the instance will show the first-admin setup gate
 - `database_unreachable`: a web process is listening but its database is dead
 - a root `200` with unhealthy `/api/health`: stale process adoption bug or a
   dead embedded database behind a live Node process
 
-Check the port owner when a process is already listening:
+process がすでに listen しているときは port owner を確認します:
 
 ```sh
 lsof -nP -iTCP:"$SERVICE_PORT" -sTCP:LISTEN || true
 ```
 
-Use this only to identify and remove a stale matching Paperclip dev-runner
-process after managed stop fails. Do not kill unrelated processes.
+managed stop が失敗したあとに stale な一致する Paperclip dev-runner process を
+特定して除去するためだけに使います。無関係な process は kill しないでください。
 
-## Verify main control-plane runtime state
+## main control plane の runtime state を確認する
 
-Read the execution workspace from the main API and inspect the runtime service
-record.
+main API から execution workspace を読み取り、runtime service record を確認します。
 
 ```sh
 curl -sS \
@@ -261,21 +251,21 @@ curl -sS \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" | jq
 ```
 
-The target service should show:
+target service には次が表示されるはずです:
 
-- matching workspace command id, usually `service:paperclip-dev`
+- 一致する workspace command id。通常は `service:paperclip-dev`
 - `status: "running"`
-- healthy health fields, if present
-- the same URL you are probing
-- a local provider reference that maps to the running port owner
+- 存在する場合は healthy な health field
+- 今 probe しているのと同じ URL
+- running port owner に対応する local provider reference
 
-If the main app says running but `/api/health` is bad, stop and replace the
-stale process through the managed runtime.
+main app が running と言っているのに `/api/health` が悪いなら、managed runtime を通して
+stale process を止めて置き換えます。
 
-## Verify served workspace runtime state
+## served workspace の runtime state を確認する
 
-The cloned Paperclip app must also know about the service. Query the same
-execution workspace through the served app when agent auth is available there:
+clone された Paperclip app も、その service を把握していなければなりません。
+agent auth が使えるなら、served app 経由で同じ execution workspace を問い合わせます:
 
 ```sh
 curl -sS \
@@ -283,18 +273,17 @@ curl -sS \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" | jq
 ```
 
-The served app should agree that the service is `running` / `healthy` at the
-same URL. If the main control plane and served app disagree after a reseed,
-the cloned database may contain copied runtime-service ids that do not match
-the local process registry. Use the normal start/adoption path again and verify
-both sides. If code changed in this area, add a focused regression test.
+served app も、同じ URL の service が `running` / `healthy` であることに
+同意しているべきです。reseed 後に main control plane と served app が食い違うなら、
+clone された database に local process registry と一致しない runtime-service id が
+含まれている可能性があります。通常の start / adoption path を再度使い、両方を確認してください。
+この領域で code が変わったなら、焦点を絞った regression test を追加します。
 
-## Verify auth and populated data
+## auth と populated data を確認する
 
-Auth and data checks should use product APIs and browser/QA review, not raw DB
-queries.
+auth と data の確認には、raw DB query ではなく product API と browser / QA review を使います。
 
-Minimum API checks:
+最低限の API 確認:
 
 ```sh
 curl -sS "$SERVICE_URL/api/health" | jq '.status, .bootstrapStatus'
@@ -304,204 +293,199 @@ curl -sS "$SERVICE_URL/api/agents/me" \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" | jq
 ```
 
-Then verify at least one expected cloned product record through the API, such
-as a known project, issue key, company, or execution workspace that should
-exist in the primary instance. Pick a record relevant to the current issue
-rather than a random table count.
+続いて、primary instance にあるはずの known project、issue key、company、
+execution workspace など、少なくとも1つの期待される cloned product record を API で確認します。
+random な table count ではなく、現在の issue に関連する record を選んでください。
 
-Browser or QA check:
+browser / QA check:
 
-- open the service URL
-- confirm the first-admin setup gate is gone
-- sign in with normal dev credentials
-- confirm the board loads populated companies/projects/issues/runs
-- confirm the workspace service appears with the running URL
+- service URL を開く
+- first-admin setup gate が消えていることを確認する
+- 通常の dev credentials で sign in する
+- board に populated された companies / projects / issues / runs が読み込まれることを確認する
+- workspace service が running URL とともに表示されることを確認する
 
-If this environment cannot launch a browser, ask QA to do the visual/login
-check and still complete all API checks you can run. Report that browser
-verification was delegated and why.
+この environment で browser を起動できないなら、QA に visual / login check を依頼し、
+自分で実行できる API check はすべて済ませてください。browser verification を
+委任したことと、その理由を報告します。
 
-## Common failures and fixes
+## よくある失敗と修正
 
-### Service URL serves a different workspace (port squat)
+### Service URL が別 workspace を返す（port squat）
 
-Symptom: the workspace URL loads a working Paperclip app, but it is a sibling
-worktree's app — wrong branch, wrong data, or the UI keeps bouncing you into
-another workspace's pages.
+症状: workspace URL は動く Paperclip app を返すが、それは sibling worktree の app で、
+branch が違う、data が違う、あるいは UI が別 workspace のページへ飛ばし続ける。
 
-Likely cause: the pinned service port is owned by another workspace's process
-and start-time adoption attached that process to this workspace's runtime row.
-Health checks pass because the sibling app is genuinely healthy.
+原因候補: pinned service port を別 workspace の process が握っていて、start-time adoption が
+その process をこの workspace の runtime row に結びつけた。health check は sibling app が
+本当に healthy なので通ってしまう。
 
-Fix: follow the owner-first procedure in "Port conflicts and workspace
-identity": identify and stop the sibling service or supervising run, verify
-the port stays free, then start or restart the target service. Re-verify that
-`/proc/<pid>/cwd` of the new port owner resolves inside the target worktree.
+修正: "Port conflicts and workspace identity" の owner-first procedure に従います。
+sibling service または supervising run を特定して止め、port が空いたままであることを確認し、
+target service を start または restart します。新しい port owner の `/proc/<pid>/cwd` が
+target worktree 内を指すことを再確認してください。
 
-Verify: identity check passes, and one workspace-specific record served
-through the URL (branch, issue key, or workspace id) matches the target
-workspace.
+確認: identity check が通り、URL ിലൂടെ提供される workspace 固有 record（branch、
+issue key、workspace id のいずれか）が target workspace と一致します。
 
-### Recorded port drifts after an ad hoc start
+### ad hoc start のあとで記録された port がずれる
 
-Symptom: the runtime row and the actual listener disagree about the port, or a
-previously pinned port changed after someone started the app by hand.
+症状: runtime row と実際の listener が port について食い違っている、または誰かが
+手で app を起動したあとに、以前 pinned だった port が変わってしまった。
 
-Likely cause: an unmanaged `pnpm dev` (for example with `--bind lan`) picks its
-own port instead of using the managed pinned port.
+原因候補: unmanaged な `pnpm dev`（たとえば `--bind lan` 付き）が、managed な
+pinned port ではなく自分自身の port を使っている。
 
-Fix: stop the unmanaged process, then managed start. Verify the recorded URL
-port equals the bound port and the identity check passes.
+修正: unmanaged process を止め、そのあと managed start します。記録された URL port が
+bind された port と一致し、identity check が通ることを確認します。
 
-### Setup gate appears
+### Setup gate が出る
 
-Symptom: the page says no admin has claimed the instance.
+症状: ページに、まだ admin が instance を claim していないと表示される。
 
-Fix: run a full worktree reseed from the primary instance, then restart the
-managed service. Claiming a first admin can clear the gate, but if the user
-asked for the normal isolated workspace database, full reseed is the correct
-fix.
+修正: primary instance から full worktree reseed を実行し、そのあと managed service を
+再起動します。first admin を claim するだけでも gate は消えることがありますが、
+ユーザーが通常の isolated workspace database を求めているなら、full reseed が
+正しい修正です。
 
-Verify: `/api/health` has `bootstrapStatus: ready`, login works, and populated
-data exists.
+確認: `/api/health` に `bootstrapStatus: ready` があり、ログインが通り、
+populated data が存在します。
 
-### Login fails
+### Login が失敗する
 
-Symptom: bootstrap is ready, but the user's normal dev credentials do not work.
+症状: bootstrap は ready だが、ユーザーの通常の dev credential が通らない。
 
-Likely cause: the isolated DB has roles or bootstrap state but lacks the
-primary instance auth users/accounts.
+原因候補: isolated DB には roles や bootstrap state はあるが、primary instance の
+auth users / accounts がない。
 
-Fix: full reseed. Do not manually copy only Better Auth user/account rows as
-the final fix.
+修正: full reseed です。Better Auth の user/account row だけを手でコピーして
+最終修正にしないでください。
 
-Verify: user login through browser/QA and `/api/agents/me` with the agent key.
+確認: browser / QA で user login を行い、agent key 付きで `/api/agents/me`
+を確認します。
 
-### Login works but data is missing
+### Login は通るが data がない
 
-Symptom: user can sign in, but companies/issues/projects/runs are empty or
-clearly incomplete.
+症状: user は sign in できるが、companies / issues / projects / runs が空か、
+明らかに不完全である。
 
-Likely cause: a partial auth repair was done instead of a full cloned database.
+原因候補: full cloned database ではなく、partial auth repair だけが行われた。
 
-Fix: full reseed, managed restart, then verify representative cloned records.
+修正: full reseed を行い、managed restart し、代表的な cloned record を確認します。
 
-### Port listens but health says database unreachable
+### port は listen しているが health は database unreachable と言う
 
-Symptom: `curl -I /` returns a response, but `/api/health` reports
-`database_unreachable`.
+症状: `curl -I /` は応答するのに、`/api/health` が `database_unreachable`
+を報告する。
 
-Likely cause: stale Node/web process remained alive after embedded Postgres
-died.
+原因候補: embedded Postgres が死んだあとも stale な Node / web process が生き残っている。
 
-Fix: managed stop first. If the process survives, identify the matching
-Paperclip dev-runner process group for the target port and terminate only that
-group. Then managed start.
+修正: まず managed stop します。process が残るなら、target port に対応する
+Paperclip dev-runner process group を特定し、その group だけを終了します。
+そのあと managed start します。
 
-Verify: `/api/health` is ok after a stability wait and the runtime record is
-healthy.
+確認: 安定待ちのあとで `/api/health` が ok になり、runtime record も healthy です。
 
-### Main control plane loses track of a running service
+### main control plane が running service を見失う
 
-Symptom: the service URL works, but the main app says the service was not
-created or is stopped.
+症状: service URL は動くのに、main app は service が作られていないか、
+止まっていると言う。
 
-Likely cause: detached workaround process, stale provider ref, or service
-adoption trusted the root URL instead of health.
+原因候補: detached workaround process、stale provider ref、または service adoption が
+health ではなく root URL を信じている。
 
-Fix: shut down the unmanaged process and restart through the managed runtime.
-If code repair is needed, ensure adoption checks `/api/health`, replaces
-unhealthy adopted processes, and records the current provider ref.
+修正: unmanaged process を止め、managed runtime ിലൂടെ restart します。
+code 修復が必要なら、adoption が `/api/health` を確認し、unhealthy な adopted process を
+置き換え、現在の provider ref を記録するようにします。
 
-Verify: main runtime row and `/api/health` agree.
+確認: main runtime row と `/api/health` が一致します。
 
-### Served app loses track after full reseed
+### full reseed 後に served app が見失う
 
-Symptom: the main app sees `paperclip-dev` running, but the cloned app copied a
-runtime-service row whose id does not match the local registry.
+症状: main app では `paperclip-dev` が running なのに、clone された app は
+local registry と一致しない id の runtime-service row をコピーしている。
 
-Likely cause: normal DB clone copied persisted runtime rows from the primary
-instance into an isolated environment with different local process metadata.
+原因候補: 通常の DB clone が、primary instance から persisted runtime row を
+isolated environment にコピーしたが、local process metadata は違っている。
 
-Fix: use managed start/adoption again. If code repair is needed, adoption
-should reconcile by service identity and port, not only by copied row id.
+修正: managed start / adoption を再度使います。code 修復が必要なら、adoption は
+コピーされた row id だけでなく service identity と port で reconcile すべきです。
 
-Verify: main app and served app both show the same service as
-`running` / `healthy`.
+確認: main app と served app の両方が同じ service を `running` / `healthy`
+として示します。
 
-### Runtime start returns permission or run-FK errors in the cloned app
+### cloned app の runtime start が permission または run-FK error を返す
 
-Symptom: starting from the served app returns `403` or a mutation partially
-applies before activity logging fails.
+症状: served app から start すると `403` が返るか、activity logging が失敗する前に
+mutation が部分的に適用される。
 
-Likely causes: the cloned issue/run/agent state does not match the current
-heartbeat, or the run id is absent in the cloned database after reseed.
+原因候補: clone された issue / run / agent state が現在の heartbeat と一致しない、
+または reseed 後の cloned database に run id がない。
 
-Fix: prefer the main control-plane managed runtime path and full reseed. If
-the cloned app state itself must be repaired, use normal Paperclip issue/run
-transitions first. Do not hide the condition with raw DB edits; report the
-exact guard or missing row if it blocks the normal path.
+修正: main control plane の managed runtime path と full reseed を優先します。
+cloned app state 自体を修復する必要があるなら、まず通常の Paperclip issue / run
+transition を使ってください。raw DB edit で隠さず、通常 path を妨げている
+正確な guard や不足 row を報告します。
 
-## Recurring gotchas from past repairs
+## 過去の修復で何度も出た落とし穴
 
-Each of these has burned a previous repair; check them before deep debugging.
+これらはどれも以前の修復で問題になったものです。深掘りの前に確認してください。
 
-- Worktree instance logs live at
-  `~/.paperclip-worktrees/instances/<slug>/logs`. Read them before guessing at
-  login or startup failures.
-- Probing the service through a LAN or tailscale IP can return `403` while
-  `127.0.0.1` (or the `paperclip-dev` hostname) works. Probe loopback first
-  before concluding auth is broken.
-- Browser QA that lands on a blank company path (for example `/FOR/...`)
-  should switch to a company key that exists in the cloned data (for example
-  `/PAP/...`) before concluding the reseed failed.
-- A `409` on runtime or issue mutations usually means another live run holds
-  the ownership lock. Do not force it; wait or coordinate through the issue.
-- After a full reseed the cloned DB can contain copied runtime-service rows
-  that do not match local processes. Re-run managed start and the identity
-  check instead of trusting copied rows.
+- Worktree instance の log は `~/.paperclip-worktrees/instances/<slug>/logs` にあります。
+  ログインや起動失敗を推測する前に読んでください。
+- LAN や tailscale IP 経由で service を probe すると `403` が返るのに、
+  `127.0.0.1`（または `paperclip-dev` hostname）では動くことがあります。
+  auth が壊れたと結論づける前に loopback を先に probe してください。
+- blank な company path（たとえば `/FOR/...`）に着地した browser QA は、
+  reseed が失敗したと結論づける前に、clone された data に存在する company key
+  （たとえば `/PAP/...`）へ切り替えるべきです。
+- runtime や issue mutation で `409` が出るのは、たいてい別の live run が ownership lock を
+  持っているという意味です。強行せず、issue を通して待つか調整してください。
+- full reseed のあと、clone された DB に local process と一致しない runtime-service row が
+  含まれることがあります。コピーされた row を信じるのではなく、managed start と identity check を
+  再実行してください。
 
-## When code changes are required
+## code change が必要になる場合
 
-Make a code change only when the normal operational repair exposes a product
-bug. Examples from this failure class:
+通常の運用修復で product bug が露わになったときだけ code change を行います。
+この failure class の例:
 
-- local port owner detection used the wrong `lsof` arguments
-- service adoption trusted root `200` instead of `/api/health`
-- port-owner adoption recorded the requested cwd instead of verifying the
-  owner's real `/proc/<pid>/cwd`, so a sibling workspace's process was adopted
-- pinned service ports collided across sibling workspaces
-- unhealthy adopted services were not terminated/replaced
-- reseeded runtime-service ids were not reconciled with local process registry
+- local port owner detection が間違った `lsof` 引数を使っていた
+- service adoption が `/api/health` ではなく root の `200` を信じていた
+- port-owner adoption が owner の実際の `/proc/<pid>/cwd` を検証せず、要求された cwd を
+  記録していたため、sibling workspace の process を採用してしまった
+- pinned service port が sibling workspace 間で衝突していた
+- unhealthy な adopted service を止めたり置き換えたりしていなかった
+- reseed 済みの runtime-service id が local process registry と照合されていなかった
 
-Add focused tests in the affected service test file. For workspace runtime
-repairs, the narrow verification is usually:
+影響を受けた service test file に焦点を絞った test を追加します。workspace runtime repair の
+場合、狭い verification は通常次の通りです:
 
 ```sh
 pnpm exec vitest run server/src/__tests__/workspace-runtime.test.ts
 git diff --check
 ```
 
-Commit logical code changes and link the commit in the issue comment. If no
-tracked code changed, say so explicitly.
+論理的な code change を commit し、その commit を issue comment にリンクします。
+tracked code が変わっていないなら、そのことを明示します。
 
-## Final issue comment template
+## 最終 issue comment template
 
-Use concrete evidence, not a vague "it works".
+あいまいな "it works" ではなく、具体的な evidence を使ってください。
 
 ```md
-Fixed and verified the workspace service.
+workspace service を修復し、検証しました。
 
-Root cause:
+原因:
 - <why it broke>
 
-Fix:
+修正:
 - <normal reseed/start/repair steps>
 - <code commit if any>
 
-Verified:
-- main control plane shows <service> running/healthy at <url>
-- served workspace app shows the same service running/healthy
+確認済み:
+- main control plane で <service> が <url> で running / healthy になっている
+- served workspace app でも同じ service が running / healthy になっている
 - port owner identity: /proc/<pid>/cwd resolves inside the target worktree
 - <url>/api/health is ok with bootstrapStatus ready
 - root page returns 200 and no setup gate
@@ -509,9 +493,9 @@ Verified:
 - cloned data verified via <specific API records>
 - targeted tests: <commands>
 
-Remaining:
+残件:
 - <none, or named owner/action if blocked>
 ```
 
-Mark the issue `done` only when every success-condition item is satisfied. If
-not, mark `blocked` with a named unblock owner and the exact action needed.
+すべての success-condition item が満たされたときだけ issue を `done` にします。
+満たされていなければ、named unblock owner と必要な action を明記して `blocked` にします。

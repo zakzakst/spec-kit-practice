@@ -1,20 +1,30 @@
 ---
 name: terminal-bench-loop
 description: >
-  Run one Terminal-Bench task through a bounded Paperclip smoke/diagnosis/fix
-  loop. Use when asked to drive Terminal-Bench until it passes, rerun a
-  Terminal-Bench loop, or iterate with board-gated fixes and diagnosis.
+  1つの Terminal-Bench task を、上限付きの Paperclip smoke / diagnosis / fix loop
+  に通します。Terminal-Bench が通るまで回す、Terminal-Bench loop を再実行する、
+  board gate 付きの修正と診断を繰り返す、といった依頼に使います。
 ---
 
 # Terminal-Bench Loop
 
-A repeatable operating skill for driving one Terminal-Bench problem to a passing smoke through Paperclip, with explicit issue topology, bounded runs, board-gated product fixes, and worktree continuity.
+Paperclip を使って 1つの Terminal-Bench 問題を passing smoke に到達させるための
+repeatable な operating skill です。issue topology を明示し、run を上限付きにし、
+board gate で product fix を管理し、worktree の継続性を保ちます。
 
-This skill is **operational + diagnostic**, not engineering. It coordinates issues, artifacts, and approvals around a Terminal-Bench loop. It does not authorize code changes — every accepted product fix lands as a separate implementation child issue after a board confirmation.
+この skill は engineering ではなく、**operational + diagnostic** です。
+Terminal-Bench loop に関する issue、artifact、approval を調整します。code change を
+許可するものではありません。承認された product fix は、board confirmation の後に
+別の implementation child issue として着地します。
 
-Canonical execution model: read `doc/execution-semantics.md` before starting a loop or moving any loop issue. Every loop issue must rest in a state the doc allows: terminal (`done`/`cancelled`), explicitly live (active run / queued wake), explicitly waiting (`in_review` with participant/interaction/approval), or explicit recovery/blocker (`blocked` with `blockedByIssueIds` and a named owner).
+canonical execution model: loop を始める前、または loop issue を動かす前に
+`doc/execution-semantics.md` を読んでください。すべての loop issue は、その document が
+許す state に置く必要があります: terminal（`done` / `cancelled`）、explicitly live
+（active run / queued wake）、explicitly waiting（participant / interaction / approval を
+伴う `in_review`）、または explicit recovery / blocker（`blockedByIssueIds` と
+named owner を伴う `blocked`）です。
 
-## When to use
+## 使う場面
 
 Trigger on an assignment whose title or body matches any of:
 
@@ -25,14 +35,14 @@ Trigger on an assignment whose title or body matches any of:
 
 Also use when the user hands you an existing top-level loop issue and asks for the next iteration, diagnosis, or rerun.
 
-## When NOT to use
+## 使わない場面
 
 - The assignment is to build or change `paperclip-bench` itself (Harbor adapter, wrapper, telemetry). Use normal engineering flow on that repo.
 - The assignment is to submit a benchmark result for ranking. This skill produces smoke/non-comparable runs by design — escalate full-suite or comparable runs to BenchmarkQualityManager.
 - The assignment is a normal Paperclip product bug not surfaced by a Terminal-Bench loop. Use normal investigation.
 - You have not been granted permission to install or assign company skills, and the asker actually wants library mutation. Hand that step to an authorized skill-library owner.
 
-## Three invariants you must preserve
+## 守るべき3つの invariant
 
 Every loop iteration and every proposed product fix must hold these three invariants together. They come from `/diagnose-why-work-stopped` and the user has restated them across the liveness work:
 
@@ -40,9 +50,10 @@ Every loop iteration and every proposed product fix must hold these three invari
 2. **Only real blockers stop work.** Stops happen when something genuinely cannot proceed (board confirmation, QA, missing credentials, exhausted budget). Pseudo-stops must be detected and routed.
 3. **No infinite loops.** Iteration count, wall-clock budget, and a board gate before product fixes are applied keep the loop bounded.
 
-If a proposed iteration violates any of the three, drop it or rework it. State explicitly in the loop issue how each invariant is held this iteration.
+提案した iteration が3つのどれかに反するなら、捨てるか作り直します。loop issue に、
+その iteration で各 invariant をどう守るかを明記してください。
 
-## Inputs
+## 入力
 
 Collect these on the top-level loop issue before iteration 1. Any input that cannot be supplied is a blocker — name the unblock owner and stop.
 
@@ -57,7 +68,7 @@ Collect these on the top-level loop issue before iteration 1. Any input that can
 
 Record each input on the top-level loop issue (description or a dedicated `inputs` document). If any input changes mid-loop, note the change and the iteration it took effect.
 
-## Issue topology
+## issue topology
 
 The loop must be representable as a tree, not as prose in comments:
 
@@ -67,25 +78,25 @@ The loop must be representable as a tree, not as prose in comments:
 
 Wire dependencies with `blockedByIssueIds`, never with prose like "blocked by X". When a dependent child is `done`, the executor auto-wakes the next.
 
-## Procedure
+## 手順
 
-### 0. Read the current execution contract
+### 0. 現在の execution contract を読む
 
 Before opening or advancing a loop, read `doc/execution-semantics.md`. Use that document's terms intact when classifying loop-issue state: live path / waiting path / recovery path; post-run disposition; bounded continuation; productivity review; pause-hold; watchdog. Do not invent a new state.
 
-### 1. Open or reuse the top-level loop issue
+### 1. top-level loop issue を開くか再利用する
 
 - If an existing loop issue is supplied, read it: inputs, iteration counter, last iteration's stop reason, current Paperclip App worktree pointer, latest benchmark command.
 - If no loop issue exists, create one under the Paperclip App project (or the project the source issue points at). Title: `Terminal-Bench loop: <task-name>`. Description captures the inputs above, the iteration budget, and a link to the source issue.
 - Verify the worktree pointer still resolves. If the recorded execution workspace was discarded (worktree pruned, project changed), the loop is blocked — name the unblock owner (CodexCoder or the Paperclip App owner) and stop.
 
-### 2. Open the iteration child
+### 2. iteration child を開く
 
 - Increment the iteration counter on the loop issue.
 - Create an iteration child titled `Iteration N: <task-name>`. Its description repeats the inputs and references the loop parent. Block it on the prior iteration's terminal child (if any) so the executor cannot start two iterations in parallel.
 - If the iteration counter would exceed the budget, do not create the child. Move the loop issue to `cancelled` (budget exhausted) or `in_review` if the user must decide whether to extend the budget.
 
-### 3. Run the bounded smoke
+### 3. 上限付き smoke を実行する
 
 - The benchmark command must use the Paperclip App worktree under test. Set `PAPERCLIPAI_CMD` (or the equivalent command binding) to the CLI entrypoint inside that worktree. Never let the smoke run against the operator's current Paperclip checkout.
 - The same command block must include the runner dispatch config that makes the benchmark issue actionable. For the current Harbor wrapper, export `PAPERCLIP_HARBOR_RUNNER_CONFIG` with the intended assignee, heartbeat strategy, agent adapter, credential/home mode, and stop budget. Do not treat a bare `uvx harbor run ...` as the canonical smoke if it omits the dispatch config; record that as a harness/setup miss and rerun with the recorded config.
@@ -100,7 +111,7 @@ Before opening or advancing a loop, read `doc/execution-semantics.md`. Use that 
   - artifact paths under the latest artifact root
 - Label the iteration as **smoke / non-comparable**. Comparable runs are out of scope for this skill.
 
-### 4. Diagnose the exact stop point
+### 4. 正確な停止点を診断する
 
 Apply the `/diagnose-why-work-stopped` pattern to the iteration's run, scoped to this loop only — do not pull in unrelated forensic boilerplate. Specifically:
 
@@ -111,7 +122,7 @@ Apply the `/diagnose-why-work-stopped` pattern to the iteration's run, scoped to
 
 Record the diagnosis on the iteration child as a `diagnosis` document. Do not propose code yet.
 
-### 5. Decide the next move
+### 5. 次の動きを決める
 
 Based on the diagnosis, the iteration ends in exactly one of these terminal-for-iteration states:
 

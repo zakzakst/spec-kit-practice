@@ -1,20 +1,23 @@
 ---
 name: diagnose-why-work-stopped
 description: >
-  Diagnose stalled, looping, or over-recovered Paperclip issue trees and propose
-  a no-code product-rule plan. Use when asked why work stopped, why it looped, or
-  how to prevent a tree from going too deep.
+  停滞・ループ・過剰回復した Paperclip issue tree を診断し、no-code の
+  product-rule plan を提案します。作業が止まった理由、ループした理由、
+  tree が深くなりすぎないようにする方法を問われたときに使います。
 ---
 
-# Diagnose Why Work Stopped
+# なぜ作業が止まったかを診断する
 
-A repeatable procedure for the recurring class of issues where the user (or a manager) points at a stalled / looping / over-recovered issue tree and asks "why did this stop / why is this looping / how do we make sure this doesn't happen again?"
+ユーザー（または manager）が停滞・ループ・過剰回復した issue tree を指して、
+「なぜ止まったのか」「なぜループしたのか」「どうすれば再発しないか」を問う
+定番の手順です。
 
-This skill is **diagnostic + product-design**, not engineering. The output is a written root cause and an approved plan. No code changes leave this skill.
+この skill は engineering ではなく、**diagnostic + product design** です。出力は
+書面化された root cause と承認済み plan です。この skill から code change は出しません。
 
 Canonical execution model: read `doc/execution-semantics.md` before diagnosing or proposing a new liveness/recovery rule. Use that document as the source of truth for status, action-path, post-run disposition, bounded continuation, productivity review, pause-hold, watchdog, and explicit recovery semantics. If the investigation finds a true product-rule gap, the plan should say whether `doc/execution-semantics.md` needs a matching update.
 
-## When to use
+## 使う場面
 
 Trigger on an assignment whose title or body matches any of:
 
@@ -26,13 +29,13 @@ Trigger on an assignment whose title or body matches any of:
 
 Also use when the user asks for forensics, root cause, or a write-up *before* any product change.
 
-## When NOT to use
+## 使わない場面
 
 - The assignment asks you to ship a code change directly. Use normal engineering flow.
 - The assignment is a normal bug report against a specific feature. Use normal investigation.
 - You are the original implementer being asked to fix your own bug. Use normal debugging.
 
-## Three invariants you must preserve
+## 守るべき3つの invariant
 
 Every diagnosis and every proposed rule must hold these three invariants together. The user has restated them on at least four issues; treat them as load-bearing:
 
@@ -40,11 +43,12 @@ Every diagnosis and every proposed rule must hold these three invariants togethe
 2. **Only real blockers stop work.** Stops happen when something genuinely cannot proceed (missing approval, missing dependency, human owner). Pseudo-stops (in_review with no action path, cancelled leaves, malformed metadata) must be detected and routed, not left silent. ([PAP-2335](/PAP/issues/PAP-2335), [PAP-2674](/PAP/issues/PAP-2674))
 3. **No infinite loops.** Stranded-work recovery and continuation loops must be bounded and distinguishable from genuinely productive continuation. ([PAP-2602](/PAP/issues/PAP-2602), [PAP-2486](/PAP/issues/PAP-2486))
 
-If a proposed rule violates any of the three, drop it or rework it. State explicitly in the plan how each invariant is held.
+提案した rule が3つのどれかに反するなら、捨てるか作り直します。各 invariant を
+どう守るかを plan に明記してください。
 
-## Procedure
+## 手順
 
-### 0. Read the current execution contract
+### 0. 現在の execution contract を読む
 
 Before walking the tree, read `doc/execution-semantics.md` and keep its terms intact:
 
@@ -55,9 +59,10 @@ Before walking the tree, read `doc/execution-semantics.md` and keep its terms in
 - active subtree pause holds
 - silent active-run watchdog
 
-Do not invent a new rule until you can state how it differs from the current execution semantics document.
+現在の execution semantics document とどう違うかを説明できるまで、新しい rule を
+作ってはいけません。
 
-### 1. Forensics on the named tree — before anything else
+### 1. 指定された tree の forensics - 何より先に行う
 
 Do this in the same heartbeat. Do not propose a rule until you have a concrete stop point.
 
@@ -72,7 +77,7 @@ Do this in the same heartbeat. Do not propose a rule until you have a concrete s
 
 Respect the API boundary. If the linked issue is in another company and your agent token returns 403, do not bypass scoping. Either request a board-approved diagnostic path or proceed from inferred PAP-side evidence and label it.
 
-### 2. Survey recent related work
+### 2. 最近の関連作業を確認する
 
 Before proposing a new product rule, read what already shipped this week in the same area. The user has explicitly called this out: ([PAP-2602](/PAP/issues/PAP-2602)) "review our recent work on liveness that we shipped in the last couple of days." A new rule that contradicts code merged 48 hours ago is rework, not improvement.
 
@@ -83,7 +88,7 @@ Quick survey:
 
 State in the forensics: "I reviewed X, Y, Z. The new gap is …"
 
-### 3. Classify each non-progressing issue in the tree
+### 3. tree 内の停滞 issue をそれぞれ分類する
 
 For every issue in the affected tree that is not `done` / `cancelled` / actively running, decide:
 
@@ -93,7 +98,7 @@ For every issue in the affected tree that is not `done` / `cancelled` / actively
 
 This is the table the user has asked for repeatedly ([PAP-2335](/PAP/issues/PAP-2335)). Without it the plan is abstract.
 
-### 4. Frame as a general product rule
+### 4. 一般的な product rule として整理する
 
 The user does not want a one-off patch on the named tree. They want the rule. Two checks:
 
@@ -103,7 +108,7 @@ The user does not want a one-off patch on the named tree. They want the rule. Tw
 
 If the rule would have blocked a recent productive run from succeeding, drop or narrow it.
 
-### 5. Plan, do not code
+### 5. code ではなく plan を書く
 
 Write the plan into the issue's `plan` document. Cover:
 
@@ -116,13 +121,13 @@ Write the plan into the issue's `plan` document. Cover:
 
 Do not create the child issues yet. Do not push code.
 
-### 6. Request approval, then decompose
+### 6. 承認を求め、それから分解する
 
 - Open a `request_confirmation` interaction targeting the latest plan revision. Idempotency key `confirmation:{issueId}:plan:{revisionId}`.
 - Wait for board/CTO acceptance. If the user posts a new comment that supersedes the plan, the prior confirmation is invalidated — open a fresh confirmation tied to the new revision ([PAP-2602](/PAP/issues/PAP-2602) cycled three revisions; that is fine).
 - Only after acceptance: create the phased child issues with the right assignees and dependencies, then block this parent on the final QA / CTO review issue so the parent only wakes when the chain finishes.
 
-### 7. Phase 0 hygiene on the named tree
+### 7. 指定 tree に対する Phase 0 の整理
 
 Phase 0 cleans up the live tree without papering over evidence:
 
@@ -130,11 +135,11 @@ Phase 0 cleans up the live tree without papering over evidence:
 - Detach cancelled/dead blockers from chains they were holding hostage; do not silently mark issues `done` to clear backlog.
 - Leave a comment on the original named issue summarizing what changed and why; never hide the recovery chain history.
 
-### 8. Final close-out
+### 8. 最終クローズアウト
 
 When the phase chain is complete, post a board-level summary comment on the parent issue: what changed, what the new contract is, what the rollout step is (e.g. "restart the control-plane to pick up the new response shape"), and the live state of the originally-named tree. Then close the parent.
 
-## Pitfalls
+## 落とし穴
 
 - **Coding before approval.** The user has said "make a plan first" on every recent diagnostic issue. Producing code in the forensic phase wastes the round-trip.
 - **Restating one invariant at the cost of another.** Bound continuation too tightly and productive work stalls; loosen recovery and infinite loops return. Always check all three.
@@ -144,7 +149,7 @@ When the phase chain is complete, post a board-level summary comment on the pare
 - **Recursive recovery.** Stranded-work recovery that recovers its own recovery issues is the canonical infinite loop ([PAP-2486](/PAP/issues/PAP-2486)). Detect it and refuse to deepen.
 - **Hiding the chain.** Don't silently delete or hide the symptomatic recovery issues — the operator needs the audit trail.
 
-## Verification checklist (before posting the plan)
+## 検証チェックリスト（plan を投稿する前）
 
 - [ ] The exact stop point in the named tree is identified with run ids / comment ids.
 - [ ] Recent shipped work in the same area was surveyed and is referenced.

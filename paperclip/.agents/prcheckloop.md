@@ -1,30 +1,31 @@
 ---
 name: prcheckloop
 description: >
-  Iterate on a GitHub PR until latest-head checks are green or a precise blocker
-  is named. Use when a PR still has failing or pending checks after review fixes,
-  including after greploop.
+  GitHub PR の latest-head の checks がすべて green になるか、具体的な
+  blocker が明示されるまで反復します。review 修正後も check が失敗 / 保留の
+  ままの PR、greploop 後の PR に使います。
 ---
 
 # PRCheckloop
 
-Get a GitHub PR to a fully green check state, or exit with a concrete blocker.
+GitHub PR を完全に green な check 状態へ持っていくか、具体的な blocker を
+示して終了します。
 
-## Scope
+## 対象範囲
 
-- GitHub PRs only. If the repo is GitLab, stop and use `check-pr`.
-- Focus on checks for the latest PR head SHA, not old commits.
-- Focus on CI/status checks, not review comments or PR template cleanup.
-- If the user also wants review-comment cleanup, pair this with `check-pr`.
+- GitHub PR のみ。repo が GitLab なら止めて `check-pr` を使ってください。
+- 古い commit ではなく、最新の PR head SHA の check に注目します。
+- review comment や PR template の整理ではなく、CI / status check に注目します。
+- review comment の整理も必要なら、`check-pr` と組み合わせて使います。
 
-## Inputs
+## 入力
 
-- **PR number** (optional): If not provided, detect the PR for the current branch.
-- **Max iterations**: default `5`.
+- **PR number**（任意）: 指定がなければ現在の branch から PR を検出します。
+- **最大反復回数**: 既定値は `5`。
 
-## Workflow
+## ワークフロー
 
-### 1. Identify the PR
+### 1. PR を特定する
 
 If no PR number is provided, detect it from the current branch:
 
@@ -32,15 +33,15 @@ If no PR number is provided, detect it from the current branch:
 gh pr view --json number,headRefName,headRefOid,url,isDraft
 ```
 
-If needed, switch to the PR branch before making changes.
+必要なら、変更前に PR の branch へ切り替えます。
 
-Stop early if:
+次のいずれかなら早めに終了します:
 
 - `gh` is not authenticated
 - there is no PR for the branch
 - the repo is not hosted on GitHub
 
-### 2. Track the latest head SHA
+### 2. 最新の head SHA を追跡する
 
 Always work against the current PR head SHA:
 
@@ -50,10 +51,10 @@ HEAD_SHA=$(echo "$PR_JSON" | jq -r .headRefOid)
 PR_URL=$(echo "$PR_JSON" | jq -r .url)
 ```
 
-Ignore failing checks from older SHAs. After every push, refresh `HEAD_SHA` and
-restart the inspection loop.
+古い SHA の失敗 check は無視します。push のたびに `HEAD_SHA` を更新し、
+確認ループを最初からやり直します。
 
-### 3. Inventory checks for that SHA
+### 3. その SHA の check を洗い出す
 
 Fetch both GitHub check runs and legacy commit status contexts:
 
@@ -62,7 +63,7 @@ gh api "repos/{owner}/{repo}/commits/$HEAD_SHA/check-runs?per_page=100"
 gh api "repos/{owner}/{repo}/commits/$HEAD_SHA/status"
 ```
 
-For a compact PR-level view, this GraphQL payload is useful:
+PR 全体をコンパクトに見るには、次の GraphQL payload が便利です:
 
 ```bash
 gh api graphql -f query='
@@ -85,37 +86,37 @@ query($owner:String!, $repo:String!, $pr:Int!) {
 }' -F owner=OWNER -F repo=REPO -F pr="$PR_NUMBER"
 ```
 
-### 4. Wait for checks to actually run
+### 4. check が実際に走るまで待つ
 
-After a new push, checks can take a moment to appear. Poll every 15-30 seconds
-until one of these is true:
+新しい push の直後は check が表示されるまで少し時間がかかることがあります。
+15〜30 秒ごとに poll し、次のいずれかになるまで待ちます:
 
 - checks have appeared and every item is in a terminal state
 - checks have appeared and at least one failed
 - no checks appear after a reasonable wait, usually 2 minutes
 
-Treat these as terminal success states:
+次は最終的な成功状態として扱います:
 
 - check runs: `SUCCESS`, `NEUTRAL`, `SKIPPED`
 - status contexts: `SUCCESS`
 
-Treat these as pending:
+次は保留として扱います:
 
 - check runs: `QUEUED`, `PENDING`, `WAITING`, `REQUESTED`, `IN_PROGRESS`
 - status contexts: `PENDING`
 
-Treat these as failures:
+次は失敗として扱います:
 
 - check runs: `FAILURE`, `TIMED_OUT`, `CANCELLED`, `ACTION_REQUIRED`, `STARTUP_FAILURE`, `STALE`
 - status contexts: `FAILURE`, `ERROR`
 
-If no checks appear for the latest SHA, inspect `.github/workflows/`, workflow
-path filters, and branch protection expectations. If the missing check cannot be
-caused or fixed from the repo, escalate.
+最新 SHA に対する check が一切出てこない場合は、`.github/workflows/`、
+workflow の path filter、branch protection の期待値を確認します。足りない
+check を repo から発生させたり修正したりできない場合は、エスカレーションします。
 
-### 5. Investigate failing checks
+### 5. 失敗した check を調べる
 
-For GitHub Actions failures, inspect runs and failed logs for the current SHA:
+GitHub Actions の失敗については、現在の SHA の run と失敗 log を確認します:
 
 ```bash
 gh run list --commit "$HEAD_SHA" --json databaseId,workflowName,status,conclusion,url,headSha

@@ -1,52 +1,51 @@
 ---
 name: release-changelog-discord-message
 description: >
-  Write the Discord announcement for a stable Paperclip release from the release
-  changelog. Use when a release issue needs a copy-pasteable dotta-voice Discord
-  post or refreshed discord_announcement document.
+  release changelog から stable Paperclip release の Discord 告知文を書きます。
+  release issue に、dotta の声でそのまま貼れる Discord 投稿や、
+  更新済みの `discord_announcement` document が必要なときに使います。
 ---
 
-# Release Discord Announcement Skill
+# リリース Discord 告知 Skill
 
-Write the Discord release announcement for the **stable** Paperclip release.
+**stable** Paperclip release の Discord 告知文を書きます。
 
-This is the companion to `.agents/skills/release-changelog/SKILL.md`. That skill
-writes the changelog — during the beta soak it lives at
-`releases/beta/v{beta-version}.md` on the `release-notes/v{beta-version}`
-branch, and after the stable ships a canonicalization PR renames it to
-`releases/vYYYY.MDD.P.md` (see that skill's Channel Process section). This
-skill turns that file into
-a single copy-pasteable Discord block, in dotta's voice, and posts it as the
-`discord_announcement` document on the release issue.
+これは `.agents/skills/release-changelog/SKILL.md` の companion です。
+そちらの skill が changelog を書きます。beta soak 中は
+`release-notes/v{beta-version}` branch 上の `releases/beta/v{beta-version}.md`
+にあり、stable が出た後は canonicalization PR により
+`releases/vYYYY.MDD.P.md` に rename されます（詳細はその skill の
+Channel Process section を参照）。この skill は、その file を
+dotta の声で1つの Discord ブロックにまとめ、`discord_announcement`
+document として release issue に投稿します。
 
-## What dotta said
+## dotta のコメント
 
 > This is for discord — try to follow my format. If I have a section where I
 > think about the future, pull from recent issues we're working on etc.
 
-The Discord announcement is **not** the changelog. The changelog is exhaustive;
-the announcement is opinionated, in-voice, and built around the same handful of
-shipped highlights plus a real "what's next" + "what's on my mind" pulled from
-current Paperclip work — not invented.
+Discord 告知は changelog ではありません。changelog は網羅的ですが、
+告知は意見があり、語り口を合わせ、出荷済みの主な highlights と、
+現在の Paperclip 作業から引いてきた本物の "what's next" と
+ "what's on my mind" を中心にまとめます。創作してはいけません。
 
-## When to use
+## 使う場面
 
-- After `release-changelog` has produced the changelog (beta-keyed on the
-  `release-notes/v{beta-version}` branch during the soak, or the
-  canonicalized `releases/vYYYY.MDD.P.md` after the stable ships).
-- When the release issue (the one assigned by the release routine) asks for a
-  Discord announcement, or has a `discord_announcement` document that needs to
-  be refreshed for a new date/version.
-- Never run this in isolation. The version, date, contributor list, and
-  highlight set MUST match the matching changelog file — if the changelog has
-  been updated, refresh this too.
+- `release-changelog` が changelog を作成した後（soak 中の
+  `release-notes/v{beta-version}` 上の beta-keyed file、または stable 出荷後の
+  canonicalized `releases/vYYYY.MDD.P.md`）。
+- release routine が割り当てた release issue で Discord 告知を求められたとき、
+  または新しい日付 / version に合わせて `discord_announcement` document を更新したいとき。
+- 単独では実行しないでください。version、日付、contributor list、highlight の集合は
+  必ず対応する changelog file と一致していなければなりません。changelog を更新したら、
+  これも更新します。
 
-## Output
+## 出力
 
-A single fenced markdown code block, ready to paste into Discord. Attached as
-issue document key `discord_announcement` on the release issue, and pasted
-verbatim into a comment on that issue so the human can copy it out.
-When Cases are enabled, also upsert the social child case described below.
+Discord にそのまま貼れる、1つの fenced markdown code block を出力します。
+release issue の issue document key `discord_announcement` として添付し、
+その issue の comment にもそのまま貼り、human がコピーできるようにします。
+Cases が有効な場合は、後述の social child case も upsert します。
 
 ```bash
 PUT /api/issues/{releaseIssueId}/documents/discord_announcement
@@ -58,14 +57,15 @@ PUT /api/issues/{releaseIssueId}/documents/discord_announcement
 }
 ```
 
-If the document already exists, fetch it first and pass the current
-`baseRevisionId`. Never overwrite silently — if the version has changed since
-the document was last written, mention what changed in the issue comment.
+document がすでに存在する場合は、先に取得して現在の `baseRevisionId` を渡します。
+黙って上書きしてはいけません。最後に書かれてから version が変わっていたら、
+issue comment で何が変わったかを知らせます。
 
-## Format (follow this template)
+## フォーマット（このテンプレートに従う）
 
-Use Discord emoji shortcodes (`:paperclip:`, `:lock:`, `:brain:` …) — NOT the
-Unicode emoji. Discord renders the shortcodes; the changelog file uses prose.
+Discord の emoji shortcodes（`:paperclip:`、`:lock:`、`:brain:` など）を
+使います。Unicode emoji ではありません。Discord は shortcode を描画しますが、
+changelog file は prose を使います。
 
 ```
 :paperclip: :paperclip: :paperclip: CLIPPERS!!! v{VERSION} IS OUT :paperclip: :paperclip: :paperclip:
@@ -124,70 +124,65 @@ https://github.com/paperclipai/paperclip/blob/master/releases/v{VERSION}.md
 ||@everyone||
 ```
 
-Notes on the template:
+テンプレートの注意点:
 
-- The opening and closing `:paperclip: :paperclip: :paperclip:` bookends are
-  part of the brand — keep them.
-- Name the install channels somewhere in the post: `npx paperclipai@latest`
-  for the stable, `@beta` / `@nightly` / `@canary` for earlier access, and
-  Docker `:latest` moving **only** on stable releases.
-- The FULL RELEASE NOTES link points at `releases/v{VERSION}.md` on
-  `master` — that file exists only after the post-stable canonicalization
-  PR merges. Merge it before the announcement is posted.
-- Sections may be UPPERCASE or Title Case — dotta has used both. Pick a style
-  and stay consistent within a single post.
-- Use `||@everyone||` (Discord spoiler-wrapped) at the very end so it pings
-  exactly once when the spoiler is removed by the poster.
+- 開始と終了の `:paperclip: :paperclip: :paperclip:` bookend はブランドの一部です。
+  そのまま残してください。
+- 投稿のどこかで install channel を明記します。stable なら `npx paperclipai@latest`、
+  早期アクセスなら `@beta` / `@nightly` / `@canary`、Docker の `:latest` は
+  **stable release のときだけ**動かします。
+- FULL RELEASE NOTES のリンクは `master` 上の `releases/v{VERSION}.md` を指します。
+  その file は stable 後の canonicalization PR が merge されてからしか存在しません。
+  告知の前に merge してください。
+- section 名は UPPERCASE でも Title Case でも構いません。dotta は両方使っています。
+  1つの投稿の中ではスタイルを統一してください。
+- 最後に `||@everyone||`（Discord の spoiler で包んだ形）を置き、poster が spoiler を外したときに
+  ちょうど1回だけ ping されるようにします。
 
-## Language tips
+## 文体のヒント
 
-These are extracted from how dotta has written the last several announcements.
-Mimic this register; do not invent a "professional" tone.
+これは dotta が最近の告知で実際に使った書き方から抜き出したものです。
+この語り口を真似てください。「professional」なトーンは作らないでください。
 
-- **First person, conversational.** "I want to meet companies using Paperclip",
-  "what's on my mind", "if that's you let me know". Not "Paperclip is excited
-  to announce".
-- **ALL CAPS for excitement and asks**, especially in the opener, the section
-  headers, the "WHAT I NEED FROM YOU" section, and the closing tagline. Do not
-  ALL-CAPS feature descriptions.
-- **One emoji shortcode per highlight bullet**, picked to evoke the feature
-  (`:lock:` for secrets, `:brain:` for planning, `:mag:` for search,
-  `:cloud:` for cloud / sandbox, `:jigsaw:` for plugins, `:rewind:` for
-  history/restore, `:thread:` for threads, etc.).
-- **Highlight bullets are one sentence**, opinionated, told from the user's
-  perspective — "the cloud-secrets prereq is real now", not "added support
-  for…".
-- **Tail line after highlights** wraps the rest in a single sentence and links
-  to the full release notes ("… and a long tail of {flavor}. Read the [full
-  release notes](url).").
-- **"WHATS NEXT" is forward-looking themes**, not a literal sprint list. 3–5
-  bullets is the right size. Pull these from active goals, in-flight projects,
-  and recent issues the team is working on — do not invent themes.
-- **Highlights follow the changelog skill's delta rule**: a feature the
-  previous announcement already introduced appears only for what changed
-  this release, and does not headline twice for follow-through work.
-- **"What's on my mind"** is dotta's personal/strategic thinking — docs gaps,
-  philosophical positioning ("we're the human control plane for ai labor"),
-  invitations ("if you've ever wanted to write about how you use Paperclip,
-  hit me up"). Pull real tensions from recent issues/comments; do not invent.
-- **Press section** is optional. Only include it if there is real press in the
-  release window (a tweet, a podcast, a talk, a star milestone). No press →
-  drop the section entirely.
-- **"WHAT I NEED FROM YOU"** is optional. Use it for a single concrete ask
-  (follow the twitter, intros, beta sign-ups). No real ask → drop it.
-- **Community** is the same contributors list that's in the changelog file,
-  fenced in a triple-backtick block, comma-separated `@username, @username`.
-  Exclude bots and the specific folks on the changelog skill's canonical
-  exclusion list — same rules.
-- **The "In Summary" mission line** evolves slowly. Use the most recent
-  variant unless dotta tells you otherwise. Recent variants:
+- **一人称で会話調。** "I want to meet companies using Paperclip"、
+  "what's on my mind"、"if that's you let me know" のように書きます。
+  "Paperclip is excited to announce" ではありません。
+- **興奮やお願いは ALL CAPS。** 特に opener、section header、
+  "WHAT I NEED FROM YOU" section、closing tagline では強めに書きます。
+  ただし feature description を全部大文字にはしません。
+- **highlight bullet 1 つにつき emoji shortcode 1 つ。** 機能を連想させるものを選びます。
+  例: secrets は `:lock:`、planning は `:brain:`、search は `:mag:`、
+  cloud / sandbox は `:cloud:`、plugins は `:jigsaw:`、history / restore は
+  `:rewind:`、threads は `:thread:`。
+- **highlight bullet は1文。** 意見をはっきりさせ、ユーザー視点で書きます。
+  "added support for…" ではなく、"the cloud-secrets prereq is real now" のように書きます。
+- **highlights の後の tail line** は残りを1文にまとめ、full release notes への
+  link を付けます（"… and a long tail of {flavor}. Read the [full release notes](url)."）。
+- **"WHATS NEXT" は将来のテーマ。** 実際の sprint list ではありません。
+  3〜5 bullet が適切です。active goal、進行中の project、チームが取り組んでいる
+  recent issue から引きます。創作しないでください。
+- **Highlights は changelog skill の delta rule に従う。** 前回の告知で既に紹介した
+  feature は、今回変わった点だけを載せ、継続作業を二度 headline にしません。
+- **"What's on my mind"** は dotta の個人的 / 戦略的な考えです。
+  docs のギャップ、哲学的な位置づけ（"we're the human control plane for ai labor"）、
+  招待文（"if you've ever wanted to write about how you use Paperclip, hit me up"）などです。
+  recent issue / comment から実際の tension を拾い、創作しません。
+- **Press section** は任意です。release window に本物の press（tweet、podcast、talk、
+  star milestone など）があるときだけ入れます。なければ section ごと削除します。
+- **"WHAT I NEED FROM YOU"** も任意です。1つだけ具体的なお願い（twitter を follow して、
+  紹介して、beta signup して、など）に使います。 real ask がなければ削除します。
+- **Community** は changelog file と同じ contributor list を triple-backtick block に入れ、
+  `@username, @username` のようにカンマ区切りにします。bot と changelog skill の
+  canonical exclusion list にある人は除外します。
+- **"In Summary" の mission line** はゆっくり変化します。dotta が別の指示を出していない限り、
+  最新の文言を使います。最近の例:
   - "PAPERCLIP IS THE AI ORCHESTRATOR FOR HUMANS TO ACCOMPLISH 100x MORE WORK"
   - "PAPERCLIP WILL BE THE DEFAULT AGENT-MANAGEMENT TOOL FOR EVERY COMPANY"
   - "Paperclip will be _the_ control plane for AI agents in **every** company."
-- **Closing tagline** is always `ITS TIME TO CLIP :paperclip: :paperclip:
-  :paperclip:`. Keep it.
+- **closing tagline** は常に `ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:` です。
+  そのまま残します。
 
-## Workflow
+## ワークフロー
 
 1. Read the matching changelog produced by `release-changelog` — the
    beta-keyed file during the soak, `releases/vYYYY.MDD.P.md` once
@@ -196,21 +191,19 @@ Mimic this register; do not invent a "professional" tone.
 2. Resolve the parent `release` case with key `paperclip-release:vYYYY.MDD.P`.
    If it does not exist and Cases are enabled, create it using the schema in
    `.agents/skills/release-changelog/SKILL.md` before creating child cases.
-3. Read the **release issue thread** (the one assigned to you that ran the
-   release routine) — comments + linked issues + recent issues in the company
-   are the source for `WHATS NEXT` and `What's on my mind`. Commits already
-   on `origin/master` **after** the beta source commit are prime "what's
-   next" material: they are literally the next release's content. Pull real
-   themes, not invented ones.
+3. **release issue thread**（release routine を実行した、あなたに割り当てられた issue）
+   を読みます。`WHATS NEXT` と `What's on my mind` の素材は、comment、linked issue、
+   company 内の recent issue です。beta source commit の **後** にすでに `origin/master`
+   にある commit は、次回 release の中身そのものなので、"what's next" の有力な素材です。
+   作り話ではなく実際のテーマを拾ってください。
 4. Re-read the three verbatim examples below — they're the canonical voice.
 5. Draft the announcement using the template above.
-6. PUT it as the `discord_announcement` document on the release issue (see
-   "Output" above). If updating, send the latest `baseRevisionId`.
+6. release issue の `discord_announcement` document として PUT します（上の
+   "Output" を参照）。更新する場合は最新の `baseRevisionId` を送ります。
 7. Upsert the `tweet_storm` child case with `parentCaseId` set to the release
    case id, then PUT its `body` document to the announcement body.
-8. Post a comment on the release issue that includes the announcement inside a
-   single fenced markdown code block, so dotta can copy-paste it into Discord
-   without opening the document.
+8. release issue に comment を投稿し、告知文を1つの fenced markdown code block に
+   入れます。そうすると dotta は document を開かずに Discord へコピーできます。
 
 ## Tweet Storm Case Schema
 
@@ -260,13 +253,12 @@ PUT /api/cases/:tweetStormCaseId/documents/body
 If updating an existing document, fetch the case and pass the latest
 `baseRevisionId`.
 
-Do not publish to Discord. This skill only prepares the artifact.
+Discord には投稿しません。この skill は artifact の準備だけを行います。
 
-## Verbatim previous examples
+## 以前の例（原文そのまま）
 
-Three previous Discord announcements from dotta, included **verbatim** as the
-ground-truth examples for voice, structure, and emoji usage. When in doubt,
-match these.
+dotta による過去3件の Discord 告知を、voice・構成・emoji 使用の
+ground-truth として **原文そのまま** で載せています。迷ったらこれに合わせます。
 
 ### Example 1 — v2026.403.0
 

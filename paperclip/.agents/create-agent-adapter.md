@@ -1,18 +1,21 @@
 ---
 name: create-agent-adapter
 description: >
-  Create or modify Paperclip agent adapters across server, UI, and CLI surfaces.
-  Use when adding support for a new CLI agent, API agent, custom process, or
-  adapter package.
+  server、UI、CLI にまたがる Paperclip agent adapter を作成または変更します。
+  新しい CLI agent、API agent、カスタム process、adapter package を追加するときに
+  使います。
 ---
 
-# Creating a Paperclip Agent Adapter
+# Paperclip Agent Adapter の作成
 
-An adapter bridges Paperclip's orchestration layer to a specific AI agent runtime (Claude Code, Codex CLI, a custom process, an HTTP endpoint, etc.). Each adapter is a self-contained package that provides implementations for **three consumers**: the server, the UI, and the CLI.
+adapter は、Paperclip の orchestration layer を特定の AI agent runtime
+（Claude Code、Codex CLI、カスタム process、HTTP endpoint など）につなぎます。
+各 adapter は self-contained な package で、**3つの consumer** である server、
+UI、CLI 向けの実装を提供します。
 
 ---
 
-## 1. Architecture Overview
+## 1. アーキテクチャ概要
 
 ```
 packages/adapters/<name>/
@@ -33,7 +36,7 @@ packages/adapters/<name>/
   tsconfig.json
 ```
 
-Three separate registries consume adapter modules:
+adapter module は、次の3つの registry から消費されます:
 
 | Registry | Location | Interface |
 |----------|----------|-----------|
@@ -43,9 +46,11 @@ Three separate registries consume adapter modules:
 
 ---
 
-## 2. Shared Types (`@paperclipai/adapter-utils`)
+## 2. 共有型（`@paperclipai/adapter-utils`）
 
-All adapter interfaces live in `packages/adapter-utils/src/types.ts`. Import from `@paperclipai/adapter-utils` (types) or `@paperclipai/adapter-utils/server-utils` (runtime helpers).
+すべての adapter interface は `packages/adapter-utils/src/types.ts` にあります。
+`@paperclipai/adapter-utils`（型）または `@paperclipai/adapter-utils/server-utils`
+（runtime helper）から import します。
 
 ### Core Interfaces
 
@@ -118,9 +123,10 @@ interface CLIAdapterModule {
 
 ---
 
-## 2.1 Adapter Environment Test Contract
+## 2.1 Adapter Environment Test の契約
 
-Every server adapter must implement `testEnvironment(...)`. This powers the board UI "Test environment" button in agent configuration.
+すべての server adapter は `testEnvironment(...)` を実装する必要があります。
+これは agent 設定画面の board UI にある "Test environment" ボタンの動作に使われます。
 
 ```ts
 type AdapterEnvironmentCheckLevel = "info" | "warn" | "error";
@@ -148,21 +154,23 @@ interface AdapterEnvironmentTestContext {
 }
 ```
 
-Guidelines:
+ガイドライン:
 
 - Return structured diagnostics, never throw for expected findings.
 - Use `error` for invalid/unusable runtime setup (bad cwd, missing command, invalid URL).
 - Use `warn` for non-blocking but important situations.
 - Use `info` for successful checks and context.
 
-Severity policy is product-critical: warnings are not save blockers.
-Example: for `claude_local`, detected `ANTHROPIC_API_KEY` must be a `warn`, not an `error`, because Claude can still run (it just uses API-key auth instead of subscription auth).
+severity policy は product-critical です。warning は save blocker ではありません。
+例: `claude_local` で `ANTHROPIC_API_KEY` が見つかった場合は、Claude は
+まだ実行できるので `error` ではなく `warn` にします（subscription auth の代わりに
+API-key auth を使うだけです）。
 
 ---
 
-## 3. Step-by-Step: Creating a New Adapter
+## 3. 新しい adapter を作る手順
 
-### 3.1 Create the Package
+### 3.1 package を作成する
 
 ```
 packages/adapters/<name>/
@@ -180,7 +188,7 @@ packages/adapters/<name>/
     cli/format-event.ts
 ```
 
-**package.json** — must use the four-export convention:
+**package.json** — four-export convention を使います:
 
 ```json
 {
@@ -204,9 +212,10 @@ packages/adapters/<name>/
 }
 ```
 
-### 3.2 Root `index.ts` — Adapter Metadata
+### 3.2 ルートの `index.ts` - adapter metadata
 
-This file is imported by **all three** consumers (server, UI, CLI). Keep it dependency-free (no Node APIs, no React).
+この file は **3つすべて** の consumer（server、UI、CLI）から import されます。
+dependency-free に保ってください（Node API も React も使わない）。
 
 ```ts
 export const type = "my_agent";        // snake_case, globally unique
@@ -222,15 +231,19 @@ export const agentConfigurationDoc = `# my_agent agent configuration
 `;
 ```
 
-**Required exports:**
-- `type` — the adapter type key, stored in `agents.adapter_type`
-- `label` — human-readable name for the UI
-- `models` — available model options for the agent creation form
-- `agentConfigurationDoc` — markdown describing all `adapterConfig` fields (used by LLM agents configuring other agents)
+**必須 export:**
+- `type` — `agents.adapter_type` に保存される adapter type key
+- `label` — UI 向けの人間が読める名前
+- `models` — agent 作成フォームで選べる model option
+- `agentConfigurationDoc` — すべての `adapterConfig` field を説明する markdown
+  （他の agent を設定する LLM agent が使います）
 
-**Writing `agentConfigurationDoc` as routing logic:**
+**`agentConfigurationDoc` を routing logic として書く:**
 
-The `agentConfigurationDoc` is read by LLM agents (including Paperclip agents that create other agents). Write it as **routing logic**, not marketing copy. Include concrete "use when" and "don't use when" guidance so an LLM can decide whether this adapter is appropriate for a given task.
+`agentConfigurationDoc` は、他の agent を作る Paperclip agents を含む LLM agents に
+読まれます。marketing copy ではなく、**routing logic** として書いてください。
+具体的な "use when" と "don't use when" を入れ、LLM がこの adapter が特定の task に
+適切かどうか判断できるようにします。
 
 ```ts
 export const agentConfigurationDoc = `# my_agent agent configuration
@@ -253,15 +266,17 @@ Core fields:
 `;
 ```
 
-Adding explicit negative cases improves adapter selection accuracy. One concrete anti-pattern is worth more than three paragraphs of description.
+明示的な否定条件を加えると、adapter 選択の精度が上がります。具体的な anti-pattern
+1つは、説明文3段落より価値があります。
 
-### 3.3 Server Module
+### 3.3 server module
 
-#### `server/execute.ts` — The Core
+#### `server/execute.ts` - 中核
 
-This is the most important file. It receives an `AdapterExecutionContext` and must return an `AdapterExecutionResult`.
+これは最も重要な file です。`AdapterExecutionContext` を受け取り、
+`AdapterExecutionResult` を返さなければなりません。
 
-**Required behavior:**
+**必須の動作:**
 
 1. **Read config** — extract typed values from `ctx.config` using helpers (`asString`, `asNumber`, `asBoolean`, `asStringArray`, `parseObject` from `@paperclipai/adapter-utils/server-utils`)
 2. **Build environment** — call `buildPaperclipEnv(agent)` then layer in `PAPERCLIP_RUN_ID`, context vars (`PAPERCLIP_TASK_ID`, `PAPERCLIP_WAKE_REASON`, `PAPERCLIP_WAKE_COMMENT_ID`, `PAPERCLIP_APPROVAL_ID`, `PAPERCLIP_APPROVAL_STATUS`, `PAPERCLIP_LINKED_ISSUE_IDS`), user env overrides, and auth token
@@ -289,31 +304,36 @@ This is the most important file. It receives an `AdapterExecutionContext` and mu
 | `PAPERCLIP_LINKED_ISSUE_IDS` | `context.issueIds` (comma-separated) |
 | `PAPERCLIP_API_KEY` | `authToken` (if no explicit key in config) |
 
-#### `server/parse.ts` — Output Parser
+#### `server/parse.ts` - output parser
 
-Parse the agent's stdout format into structured data. Must handle:
+agent の stdout format を structured data に parse します。次を扱える必要があります:
 
-- **Session identification** — extract session/thread ID from init events
-- **Usage tracking** — extract token counts (input, output, cached)
-- **Cost tracking** — extract cost if available
-- **Summary extraction** — pull the agent's final text response
-- **Error detection** — identify error states, extract error messages
-- **Unknown session detection** — export an `is<Agent>UnknownSessionError()` function for retry logic
+- **Session identification** — init event から session / thread ID を抽出します
+- **Usage tracking** — token count（input / output / cached）を抽出します
+- **Cost tracking** — 利用可能なら cost を抽出します
+- **Summary extraction** — agent の最終テキスト応答を取り出します
+- **Error detection** — error state を判定し、error message を抽出します
+- **Unknown session detection** — retry logic 用に `is<Agent>UnknownSessionError()`
+  function を export します
 
-**Treat agent output as untrusted.** The stdout you're parsing comes from an LLM-driven process that may have executed arbitrary tool calls, fetched external content, or been influenced by prompt injection in the files it read. Parse defensively:
-- Never `eval()` or dynamically execute anything from output
-- Use safe extraction helpers (`asString`, `asNumber`, `parseJson`) — they return fallbacks on unexpected types
-- Validate session IDs and other structured data before passing them through
-- If output contains URLs, file paths, or commands, do not act on them in the adapter — just record them
+**agent の出力は untrusted として扱ってください。** 解析する stdout は、任意の tool call を
+実行し、外部コンテンツを取得し、読んだ file の prompt injection の影響を受けている
+可能性がある LLM 駆動 process から来ます。防御的に parse します:
+- output から来たものを `eval()` したり、動的に実行したりしないでください
+- safe extraction helper（`asString`、`asNumber`、`parseJson`）を使ってください。
+  想定外の type では fallback を返します
+- session ID やその他の structured data は、通す前に validate してください
+- output に URL、file path、command が含まれていても、adapter では action せず、
+  記録だけに留めてください
 
-#### `server/index.ts` — Server Exports
+#### `server/index.ts` - server の export
 
 ```ts
 export { execute } from "./execute.js";
 export { testEnvironment } from "./test.js";
 export { parseMyAgentOutput, isMyAgentUnknownSessionError } from "./parse.js";
 
-// Session codec — required for session persistence
+// Session codec — session persistence に必要です
 export const sessionCodec: AdapterSessionCodec = {
   deserialize(raw) { /* raw DB JSON -> typed params or null */ },
   serialize(params) { /* typed params -> JSON for DB storage */ },
@@ -321,27 +341,28 @@ export const sessionCodec: AdapterSessionCodec = {
 };
 ```
 
-#### `server/test.ts` — Environment Diagnostics
+#### `server/test.ts` - environment diagnostics
 
-Implement adapter-specific preflight checks used by the UI test button.
+UI のテストボタンで使われる、adapter 固有の preflight check を実装します。
 
-Minimum expectations:
+最低限の期待値:
 
-1. Validate required config primitives (paths, commands, URLs, auth assumptions)
-2. Return check objects with deterministic `code` values
-3. Map severity consistently (`info` / `warn` / `error`)
-4. Compute final status:
-   - `fail` if any `error`
-   - `warn` if no errors and at least one warning
-   - `pass` otherwise
+1. 必須の config primitive（path、command、URL、auth 前提）を validate します
+2. 決定論的な `code` 値を持つ check object を返します
+3. severity を一貫して割り当てます（`info` / `warn` / `error`）
+4. 最終 status を計算します:
+   - 1つでも `error` があれば `fail`
+   - `error` はなく、warning が 1つ以上あれば `warn`
+   - それ以外は `pass`
 
-This operation should be lightweight and side-effect free.
+この操作は軽量で、side effect がないことが必要です。
 
-### 3.4 UI Module
+### 3.4 UI module
 
-#### `ui/parse-stdout.ts` — Transcript Parser
+#### `ui/parse-stdout.ts` - transcript parser
 
-Converts individual stdout lines into `TranscriptEntry[]` for the run detail viewer. Must handle the agent's streaming output format and produce entries of these kinds:
+個々の stdout line を、run detail viewer 用の `TranscriptEntry[]` に変換します。
+agent の streaming output format を扱い、次の kind の entry を生成できる必要があります:
 
 - `init` — model/session initialization
 - `assistant` — agent text responses
@@ -359,9 +380,10 @@ export function parseMyAgentStdoutLine(line: string, ts: string): TranscriptEntr
 }
 ```
 
-#### `ui/build-config.ts` — Config Builder
+#### `ui/build-config.ts` - config builder
 
-Converts the UI form's `CreateConfigValues` into the `adapterConfig` JSON blob stored on the agent.
+UI form の `CreateConfigValues` を、agent に保存される `adapterConfig` JSON blob に
+変換します。
 
 ```ts
 export function buildMyAgentConfig(v: CreateConfigValues): Record<string, unknown> {
@@ -376,24 +398,28 @@ export function buildMyAgentConfig(v: CreateConfigValues): Record<string, unknow
 }
 ```
 
-#### UI Config Fields Component
+#### UI config fields component
 
-Create `ui/src/adapters/<name>/config-fields.tsx` with a React component implementing `AdapterConfigFieldsProps`. This renders adapter-specific form fields in the agent creation/edit form.
+`ui/src/adapters/<name>/config-fields.tsx` に、`AdapterConfigFieldsProps` を
+実装する React component を作成します。これは agent の作成 / 編集 form に
+adapter 固有の field を表示します。
 
-Use the shared primitives from `ui/src/components/agent-config-primitives`:
-- `Field` — labeled form field wrapper
-- `ToggleField` — boolean toggle with label and hint
-- `DraftInput` — text input with draft/commit behavior
-- `DraftNumberInput` — number input with draft/commit behavior
-- `help` — standard hint text for common fields
+`ui/src/components/agent-config-primitives` の共有 primitive を使います:
+- `Field` — ラベル付き form field wrapper
+- `ToggleField` — label と hint 付きの boolean toggle
+- `DraftInput` — draft / commit 振る舞いを持つ text input
+- `DraftNumberInput` — draft / commit 振る舞いを持つ number input
+- `help` — 一般的な field 用の標準 hint text
 
-The component must support both `create` mode (using `values`/`set`) and `edit` mode (using `config`/`eff`/`mark`).
+component は `create` mode（`values` / `set` を使う）と `edit` mode（`config` /
+`eff` / `mark` を使う）の両方をサポートしなければなりません。
 
-### 3.5 CLI Module
+### 3.5 CLI module
 
-#### `cli/format-event.ts` — Terminal Formatter
+#### `cli/format-event.ts` - terminal formatter
 
-Pretty-prints stdout lines for `paperclipai run --watch`. Use `picocolors` for coloring.
+`paperclipai run --watch` 用に stdout line を見やすく整形します。色付けには
+`picocolors` を使います。
 
 ```ts
 import pc from "picocolors";
@@ -407,11 +433,11 @@ export function printMyAgentStreamEvent(raw: string, debug: boolean): void {
 
 ---
 
-## 4. Registration Checklist
+## 4. 登録チェックリスト
 
-After creating the adapter package, register it in all three consumers:
+adapter package を作成したら、3つすべての consumer に登録します:
 
-### 4.1 Server Registry (`server/src/adapters/registry.ts`)
+### 4.1 server の登録（`server/src/adapters/registry.ts`）
 
 ```ts
 import { execute as myExecute, sessionCodec as mySessionCodec } from "@paperclipai/adapter-my-agent/server";
@@ -432,7 +458,7 @@ const adaptersByType = new Map<string, ServerAdapterModule>(
 );
 ```
 
-### 4.2 UI Registry (`ui/src/adapters/registry.ts`)
+### 4.2 UI の登録（`ui/src/adapters/registry.ts`）
 
 ```ts
 import { myAgentUIAdapter } from "./my-agent";
@@ -459,7 +485,7 @@ export const myAgentUIAdapter: UIAdapterModule = {
 };
 ```
 
-### 4.3 CLI Registry (`cli/src/adapters/registry.ts`)
+### 4.3 CLI の登録（`cli/src/adapters/registry.ts`）
 
 ```ts
 import { printMyAgentStreamEvent } from "@paperclipai/adapter-my-agent/cli";
@@ -474,23 +500,37 @@ const myAgentCLIAdapter: CLIAdapterModule = {
 
 ---
 
-## 5. Session Management — Designing for Long Runs
+## 5. セッション管理 - 長時間実行を前提に設計する
 
-Sessions allow agents to maintain conversation context across runs. The system is **codec-based** — each adapter defines how to serialize/deserialize its session state.
+session によって、agent は run をまたいで conversation context を維持できます。
+この system は **codec-based** です。各 adapter が session state の
+serialize / deserialize 方法を定義します。
 
-**Design for long runs from the start.** Treat session reuse as the default primitive, not an optimization to add later. An agent working on an issue may be woken dozens of times — for the initial assignment, approval callbacks, re-assignments, manual nudges. Each wake should resume the existing conversation so the agent retains full context about what it has already done, what files it has read, and what decisions it has made. Starting fresh each time wastes tokens on re-reading the same files and risks contradictory decisions.
+**最初から長時間実行を前提に設計してください。** session reuse は後で足す
+optimization ではなく、既定の primitive として扱います。issue に取り組む agent は、
+最初の割り当て、approval callback、再割り当て、手動の促しなどで何十回も wake される
+可能性があります。各 wake では既存の conversation を再開し、すでに何をしたか、
+どの file を読んだか、どんな決定をしたかを agent が保持できるようにします。
+毎回最初から始めると、同じ file の再読みに token を無駄にし、矛盾した決定の
+リスクが高まります。
 
-**Key concepts:**
-- `sessionParams` is an opaque `Record<string, unknown>` stored in the DB per task
-- The adapter's `sessionCodec.serialize()` converts execution result data to storable params
-- `sessionCodec.deserialize()` converts stored params back for the next run
-- `sessionCodec.getDisplayId()` extracts a human-readable session ID for the UI
-- **cwd-aware resume**: if the session was created in a different cwd than the current config, skip resuming (prevents cross-project session contamination)
-- **Unknown session retry**: if resume fails with a "session not found" error, retry with a fresh session and return `clearSession: true` so Paperclip wipes the stale session
+**重要な概念:**
+- `sessionParams` は task ごとに DB に保存される不透明な `Record<string, unknown>` です
+- adapter の `sessionCodec.serialize()` は execution result data を保存可能な params に変換します
+- `sessionCodec.deserialize()` は保存された params を次の run 用に戻します
+- `sessionCodec.getDisplayId()` は UI 用の人間が読める session ID を取り出します
+- **cwd-aware resume**: session が現在の config とは異なる cwd で作られた場合は
+  resume しない（プロジェクトをまたいだ session 汚染を防ぐため）
+- **Unknown session retry**: resume が "session not found" エラーで失敗したら、
+  fresh session で再試行し、Paperclip が stale session を消すよう `clearSession: true` を返す
 
-If the agent runtime supports any form of context compaction or conversation compression (e.g. Claude Code's automatic context management, or Codex's `previous_response_id` chaining), lean on it. Adapters that support session resume get compaction for free — the agent runtime handles context window management internally across resumes.
+agent runtime が何らかの context compaction や conversation compression
+（例: Claude Code の automatic context management、Codex の `previous_response_id`
+ chaining）をサポートしているなら、それを使います。session resume をサポートする
+adapter は compaction を自動で得られます。agent runtime が resume をまたいで
+context window 管理を内部で扱ってくれるからです。
 
-**Pattern** (from both claude-local and codex-local):
+**pattern**（claude-local と codex-local の両方から）:
 
 ```ts
 const canResumeSession =
@@ -509,9 +549,9 @@ if (sessionId && !proc.timedOut && exitCode !== 0 && isUnknownSessionError(outpu
 
 ---
 
-## 6. Server-Utils Helpers
+## 6. Server-Utils helpers
 
-Import from `@paperclipai/adapter-utils/server-utils`:
+`@paperclipai/adapter-utils/server-utils` から import します:
 
 | Helper | Purpose |
 |--------|---------|
@@ -531,43 +571,57 @@ Import from `@paperclipai/adapter-utils/server-utils`:
 
 ---
 
-## 7. Conventions and Patterns
+## 7. 規約とパターン
 
-### Naming
+### 命名
 - Adapter type: `snake_case` (e.g. `claude_local`, `codex_local`)
 - Package name: `@paperclipai/adapter-<kebab-name>`
 - Package directory: `packages/adapters/<kebab-name>/`
 
-### Config Parsing
-- Never trust `config` values directly — always use `asString`, `asNumber`, etc.
-- Provide sensible defaults for every optional field
-- Document all fields in `agentConfigurationDoc`
+### config の parse
+- `config` 値を直接信じないでください。必ず `asString`、`asNumber` などを使います。
+- 任意 field にはすべて妥当な default を用意します。
+- すべての field を `agentConfigurationDoc` に記載します。
 
-### Prompt Templates
-- Support `promptTemplate` for every run
-- Use `renderTemplate()` with the standard variable set
-- Default prompt should use `DEFAULT_PAPERCLIP_AGENT_PROMPT_TEMPLATE` from `@paperclipai/adapter-utils/server-utils` so local adapters share Paperclip's execution contract: act in the same heartbeat, avoid planning-only exits unless requested, leave durable progress and a next action, use child issues instead of polling, mark blockers with owner/action, and respect governance boundaries.
+### prompt templates
+- すべての run で `promptTemplate` をサポートします
+- 標準の variable set とともに `renderTemplate()` を使います
+- default prompt には `@paperclipai/adapter-utils/server-utils` の
+  `DEFAULT_PAPERCLIP_AGENT_PROMPT_TEMPLATE` を使い、local adapter が Paperclip の
+  execution contract を共有するようにします。つまり、同じ heartbeat で行動し、
+  要求されていない限り plan-only の終了を避け、持続的な進捗と次の action を残し、
+  polling ではなく child issue を使い、blocker には owner / action を付け、
+  governance boundary を尊重します。
 
-### Error Handling
-- Differentiate timeout vs process error vs parse failure
-- Always populate `errorMessage` on failure
-- Include raw stdout/stderr in `resultJson` when parsing fails
-- Handle the agent CLI not being installed (command not found)
+### error handling
+- timeout、process error、parse failure を区別します
+- failure では常に `errorMessage` を入れます
+- parse に失敗したときは raw stdout/stderr を `resultJson` に含めます
+- agent CLI が入っていない場合（command not found）を処理します
 
-### Logging
-- Call `onLog("stdout", ...)` and `onLog("stderr", ...)` for all process output — this feeds the real-time run viewer
-- Call `onMeta(...)` before spawning to record invocation details
-- Use `redactEnvForLogs()` when including env in meta
+### logging
+- すべての process output に対して `onLog("stdout", ...)` と `onLog("stderr", ...)` を呼び、
+  real-time run viewer に流します
+- spawn 前に `onMeta(...)` を呼んで invocation details を記録します
+- meta に env を含めるときは `redactEnvForLogs()` を使います
 
-### Paperclip Skills Injection
+### Paperclip Skills の注入
 
-Paperclip ships shared skills (in the repo's top-level `skills/` directory) that agents need at runtime — things like the `paperclip` API skill and the `paperclip-create-agent` workflow skill. Each adapter is responsible for making these skills discoverable by its agent runtime **without polluting the agent's working directory**.
+Paperclip は、runtime 中に agent が必要とする共有 skill を
+（repo のトップレベル `skills/` ディレクトリに）同梱しています。
+たとえば `paperclip` API skill や `paperclip-create-agent` workflow skill です。
+各 adapter は、agent の working directory を汚さずに、これらの skill を
+agent runtime から見つけられるようにする責任があります。
 
-**The constraint:** never copy or symlink skills into the agent's `cwd`. The cwd is the user's project checkout — writing `.claude/skills/` or any other files into it would contaminate the repo with Paperclip internals, break git status, and potentially leak into commits.
+**制約:** skill を agent の `cwd` に copy したり symlink したりしないでください。
+cwd はユーザーの project checkout です。そこへ `.claude/skills/` や他の file を
+書き込むと、repo を Paperclip internals で汚し、git status を壊し、commit に
+入り込む危険があります。
 
-**The pattern:** create a clean, isolated location for skills and tell the agent runtime to look there.
+**pattern:** skill 用に clean で isolated な場所を作り、agent runtime にそこを
+見るよう伝えます。
 
-**How claude-local does it:**
+**claude-local のやり方:**
 
 1. At execution time, create a fresh tmpdir: `mkdtemp("paperclip-skills-")`
 2. Inside it, create `.claude/skills/` (the directory structure Claude Code expects)
@@ -600,9 +654,12 @@ args.push("--add-dir", skillsDir);
 // In finally: fs.rm(skillsDir, { recursive: true, force: true })
 ```
 
-**How codex-local does it:**
+**codex-local のやり方:**
 
-Codex has a global personal skills directory (`$CODEX_HOME/skills` or `~/.codex/skills`). The adapter symlinks Paperclip skills there if they don't already exist. This is acceptable because it's the agent tool's own config directory, not the user's project.
+Codex には、グローバルな personal skills directory
+（`$CODEX_HOME/skills` または `~/.codex/skills`）があります。adapter は、
+Paperclip skill がまだ存在しない場合にそこへ symlink します。これは agent tool
+自身の config directory であり、ユーザーの project ではないため許容されます。
 
 ```ts
 // From codex-local execute.ts
@@ -618,99 +675,136 @@ async function ensureCodexSkillsInjected(onLog) {
 }
 ```
 
-**For a new adapter:** figure out how your agent runtime discovers skills/plugins, then choose the cleanest injection path:
+**新しい adapter では:** agent runtime が skills / plugins をどう見つけるかを調べ、
+いちばん clean な注入 path を選びます:
 
-1. **Best: tmpdir + flag** (like claude-local) — if the runtime supports an "additional directory" flag, create a tmpdir, symlink skills in, pass the flag, clean up after. Zero side effects.
-2. **Acceptable: global config dir** (like codex-local) — if the runtime has a global skills/plugins directory separate from the project, symlink there. Skip existing entries to avoid overwriting user customizations.
-3. **Acceptable: env var** — if the runtime reads a skills/plugin path from an environment variable, point it at the repo's `skills/` directory directly.
-4. **Last resort: prompt injection** — if the runtime has no plugin system, include skill content in the prompt template itself. This uses tokens but avoids filesystem side effects entirely.
+1. **最善: tmpdir + flag**（claude-local と同様）- runtime が "追加ディレクトリ" flag を
+   サポートしているなら、tmpdir を作り、skill を symlink し、flag を渡して、後始末します。
+   副作用はありません。
+2. **許容: global config dir**（codex-local と同様）- runtime に project とは別の
+   global skills/plugins directory があるなら、そこへ symlink します。既存 entry は飛ばし、
+   ユーザーの custom 設定を上書きしないようにします。
+3. **許容: env var** - runtime が environment variable から skills/plugin path を読むなら、
+   repo の `skills/` ディレクトリを直接指します。
+4. **最後の手段: prompt injection** - runtime に plugin system がないなら、
+   skill の内容を prompt template 自体に含めます。token は消費しますが、filesystem への
+   副作用は避けられます。
 
-**Skills as loaded procedures, not prompt bloat.** The Paperclip skills (like `paperclip` and `paperclip-create-agent`) are designed as on-demand procedures: the agent sees skill metadata (name + description) in its context, but only loads the full SKILL.md content when it decides to invoke a skill. This keeps the base prompt small. When writing `agentConfigurationDoc` or prompt templates for your adapter, do not inline skill content — let the agent runtime's skill discovery do the work. The descriptions in each SKILL.md frontmatter act as routing logic: they tell the agent when to load the full skill, not what the skill contains.
+**skill は prompt の膨らみではなく、読み込まれる procedure として扱います。**
+Paperclip skill（`paperclip` や `paperclip-create-agent` など）は on-demand の
+procedure として設計されています。agent は context の中で skill metadata
+（name + description）を見るだけで、skill を使うと決めたときにのみ完全な
+SKILL.md を読み込みます。これにより base prompt を小さく保てます。
+adapter 用の `agentConfigurationDoc` や prompt template を書くときは、skill content を
+inline しないでください。agent runtime の skill discovery に任せます。
+各 SKILL.md の frontmatter にある description は routing logic として働きます。
+skill の中身ではなく、いつ full skill を読むべきかを agent に伝えます。
 
-**Explicit vs. fuzzy skill invocation.** For production workflows where reliability matters (e.g. an agent that must always call the Paperclip API to report status), use explicit instructions in the prompt template: "Use the paperclip skill to report your progress." Fuzzy routing (letting the model decide based on description matching) is fine for exploratory tasks but unreliable for mandatory procedures.
-
----
-
-## 8. Security Considerations
-
-Adapters sit at the boundary between Paperclip's orchestration layer and arbitrary agent execution. This is a high-risk surface.
-
-### Treat Agent Output as Untrusted
-
-The agent process runs LLM-driven code that reads external files, fetches URLs, and executes tools. Its output may be influenced by prompt injection from the content it processes. The adapter's parse layer is a trust boundary — validate everything, execute nothing.
-
-### Secret Injection via Environment, Not Prompts
-
-Never put secrets (API keys, tokens) into prompt templates or config fields that flow through the LLM. Instead, inject them as environment variables that the agent's tools can read directly:
-
-- `PAPERCLIP_API_KEY` is injected by the server into the process environment, not the prompt
-- User-provided secrets in `config.env` are passed as env vars, redacted in `onMeta` logs
-- The `redactEnvForLogs()` helper automatically masks any key matching `/(key|token|secret|password|authorization|cookie)/i`
-
-This follows the "sidecar injection" pattern: the model never sees the real secret value, but the tools it invokes can read it from the environment.
-
-### Network Access
-
-If your agent runtime supports network access controls (sandboxing, allowlists), configure them in the adapter:
-
-- Prefer minimal allowlists over open internet access. An agent that only needs to call the Paperclip API and GitHub should not have access to arbitrary hosts.
-- Skills + network = amplified risk. A skill that teaches the agent to make HTTP requests combined with unrestricted network access creates an exfiltration path. Constrain one or the other.
-- If the runtime supports layered policies (org-level defaults + per-request overrides), wire the org-level policy into the adapter config and let per-agent config narrow further.
-
-### Process Isolation
-
-- CLI-based adapters inherit the server's user permissions. The `cwd` and `env` config determine what the agent process can access on the filesystem.
-- `dangerouslySkipPermissions` / `dangerouslyBypassApprovalsAndSandbox` flags exist for development convenience but must be documented as dangerous in `agentConfigurationDoc`. Production deployments should not use them.
-- Timeout and grace period (`timeoutSec`, `graceSec`) are safety rails — always enforce them. A runaway agent process without a timeout can consume unbounded resources.
+**明示的な skill 呼び出しと、あいまいな呼び出し。** 信頼性が重要な production
+workflow（たとえば、status を報告するために必ず Paperclip API を呼ぶ必要がある agent）
+では、prompt template に明示的な指示を書きます:
+"Use the paperclip skill to report your progress."  description の一致に任せる
+fuzzy routing は探索的な task には十分ですが、必須手順には不安定です。
 
 ---
 
-## 9. TranscriptEntry Kinds Reference
+## 8. セキュリティ上の考慮事項
 
-The UI run viewer displays these entry kinds:
+adapter は Paperclip の orchestration layer と任意の agent execution の境界にあります。
+これは high-risk な surface です。
 
-| Kind | Fields | Usage |
+### agent output は untrusted として扱う
+
+agent process は、外部 file を読み、URL を取得し、tool を実行する LLM 駆動 code を
+走らせます。その出力は、処理した content からの prompt injection の影響を受ける
+可能性があります。adapter の parse layer は trust boundary です。すべてを検証し、
+何も実行しないでください。
+
+### secret は prompt ではなく environment で注入する
+
+secret（API key、token）を、LLM を通る prompt template や config field に
+入れないでください。代わりに、agent の tool が直接読める environment variable として
+注入します:
+
+- `PAPERCLIP_API_KEY` は prompt ではなく server が process environment に注入します
+- `config.env` の user-provided secret は env var として渡し、`onMeta` logs では redaction します
+- `redactEnvForLogs()` helper は `/(key|token|secret|password|authorization|cookie)/i`
+  に一致する key を自動で mask します
+
+これは "sidecar injection" pattern に従っています。model は real secret value を
+見ませんが、呼び出した tool は environment から読めます。
+
+### network access
+
+agent runtime が network access control（sandboxing、allowlist）をサポートしているなら、
+adapter で設定します:
+
+- open internet access よりも最小限の allowlist を優先します。Paperclip API と GitHub
+  だけ呼べればよい agent に、任意の host へのアクセス権は不要です。
+- Skills + network はリスクを増幅します。HTTP request を教える skill と無制限の
+  network access を組み合わせると、exfiltration の経路になります。どちらかを制限してください。
+- runtime が layered policy（org-level defaults + per-request overrides）をサポートしているなら、
+  org-level policy を adapter config に組み込み、per-agent config でさらに絞り込みます。
+
+### process isolation
+
+- CLI ベースの adapter は server の user permission を継承します。`cwd` と `env`
+  config が、agent process が filesystem 上で何にアクセスできるかを決めます。
+- `dangerouslySkipPermissions` / `dangerouslyBypassApprovalsAndSandbox` flag は
+  開発の便宜のために存在しますが、`agentConfigurationDoc` で危険だと明記する必要があります。
+  production deployment では使わないでください。
+- timeout と grace period（`timeoutSec`、`graceSec`）は safety rail です。必ず適用してください。
+  timeout のない runaway agent process は無制限に resource を消費できます。
+
+---
+
+## 9. TranscriptEntry kind の参考
+
+UI run viewer は次の entry kind を表示します:
+
+| Kind | Fields | 用途 |
 |------|--------|-------|
-| `init` | `model`, `sessionId` | Agent initialization |
-| `assistant` | `text` | Agent text response |
-| `thinking` | `text` | Agent reasoning/thinking |
-| `user` | `text` | User message |
-| `tool_call` | `name`, `input` | Tool invocation |
-| `tool_result` | `toolUseId`, `content`, `isError` | Tool result |
-| `result` | `text`, `inputTokens`, `outputTokens`, `cachedTokens`, `costUsd`, `subtype`, `isError`, `errors` | Final result with usage |
-| `stderr` | `text` | Stderr output |
-| `system` | `text` | System messages |
-| `stdout` | `text` | Raw stdout fallback |
+| `init` | `model`, `sessionId` | agent 初期化 |
+| `assistant` | `text` | agent のテキスト応答 |
+| `thinking` | `text` | agent の reasoning / thinking |
+| `user` | `text` | user メッセージ |
+| `tool_call` | `name`, `input` | tool 呼び出し |
+| `tool_result` | `toolUseId`, `content`, `isError` | tool の結果 |
+| `result` | `text`, `inputTokens`, `outputTokens`, `cachedTokens`, `costUsd`, `subtype`, `isError`, `errors` | usage を含む最終結果 |
+| `stderr` | `text` | stderr 出力 |
+| `system` | `text` | system メッセージ |
+| `stdout` | `text` | raw stdout の fallback |
 
 ---
 
-## 10. Testing
+## 10. テスト
 
-Create tests in `server/src/__tests__/<adapter-name>-adapter.test.ts`. Test:
+`server/src/__tests__/<adapter-name>-adapter.test.ts` に test を作成します。テストするのは:
 
-1. **Output parsing** — feed sample stdout through your parser, verify structured output
-2. **Unknown session detection** — verify the `is<Agent>UnknownSessionError` function
-3. **Config building** — verify `buildConfig` produces correct adapterConfig from form values
-4. **Session codec** — verify serialize/deserialize round-trips
+1. **Output parsing** — サンプル stdout を parser に通し、structured output を確認します
+2. **Unknown session detection** — `is<Agent>UnknownSessionError` function を確認します
+3. **Config building** — `buildConfig` が form values から正しい adapterConfig を作ることを確認します
+4. **Session codec** — serialize / deserialize の往復を確認します
 
 ---
 
-## 11. Minimal Adapter Checklist
+## 11. 最小 adapter チェックリスト
 
-- [ ] `packages/adapters/<name>/package.json` with four exports (`.`, `./server`, `./ui`, `./cli`)
-- [ ] Root `index.ts` with `type`, `label`, `models`, `agentConfigurationDoc`
-- [ ] `server/execute.ts` implementing `AdapterExecutionContext -> AdapterExecutionResult`
-- [ ] `server/test.ts` implementing `AdapterEnvironmentTestContext -> AdapterEnvironmentTestResult`
-- [ ] `server/parse.ts` with output parser and unknown-session detector
-- [ ] `server/index.ts` exporting `execute`, `testEnvironment`, `sessionCodec`, parse helpers
-- [ ] `ui/parse-stdout.ts` with `StdoutLineParser` for the run viewer
-- [ ] `ui/build-config.ts` with `CreateConfigValues -> adapterConfig` builder
-- [ ] `ui/src/adapters/<name>/config-fields.tsx` React component for agent form
-- [ ] `ui/src/adapters/<name>/index.ts` assembling the `UIAdapterModule`
-- [ ] `cli/format-event.ts` with terminal formatter
-- [ ] `cli/index.ts` exporting the formatter
-- [ ] Registered in `server/src/adapters/registry.ts`
-- [ ] Registered in `ui/src/adapters/registry.ts`
-- [ ] Registered in `cli/src/adapters/registry.ts`
-- [ ] Added to workspace in root `pnpm-workspace.yaml` (if not already covered by glob)
-- [ ] Tests for parsing, session codec, and config building
+- [ ] `packages/adapters/<name>/package.json` に four exports（`.`, `./server`, `./ui`, `./cli`）がある
+- [ ] Root の `index.ts` に `type`、`label`、`models`、`agentConfigurationDoc` がある
+- [ ] `server/execute.ts` が `AdapterExecutionContext -> AdapterExecutionResult` を実装している
+- [ ] `server/test.ts` が `AdapterEnvironmentTestContext -> AdapterEnvironmentTestResult` を実装している
+- [ ] `server/parse.ts` に output parser と unknown-session detector がある
+- [ ] `server/index.ts` が `execute`、`testEnvironment`、`sessionCodec`、parse helper を export している
+- [ ] `ui/parse-stdout.ts` に run viewer 用の `StdoutLineParser` がある
+- [ ] `ui/build-config.ts` に `CreateConfigValues -> adapterConfig` builder がある
+- [ ] `ui/src/adapters/<name>/config-fields.tsx` に agent form 用 React component がある
+- [ ] `ui/src/adapters/<name>/index.ts` で `UIAdapterModule` を組み立てている
+- [ ] `cli/format-event.ts` に terminal formatter がある
+- [ ] `cli/index.ts` が formatter を export している
+- [ ] `server/src/adapters/registry.ts` に登録されている
+- [ ] `ui/src/adapters/registry.ts` に登録されている
+- [ ] `cli/src/adapters/registry.ts` に登録されている
+- [ ] root の `pnpm-workspace.yaml` で workspace に追加されている
+  （glob ですでに含まれていない場合）
+- [ ] parsing、session codec、config building のテストがある

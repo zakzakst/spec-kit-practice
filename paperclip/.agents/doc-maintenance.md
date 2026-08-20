@@ -1,123 +1,122 @@
 ---
 name: doc-maintenance
 description: >
-  Audit README, SPEC, and PRODUCT docs against recent git history for drift and
-  make minimal PR-ready edits. Use when asked to review docs for accuracy, after
-  major feature merges, or on a schedule.
+  README、SPEC、PRODUCT 文書を recent git history と突き合わせて drift を監査し、
+  最小限の PR 対応編集を行います。文書の正確性確認、主要機能のマージ後、
+  または定期監査のときに使います。
 ---
 
 # Doc Maintenance Skill
 
-Detect documentation drift and fix it via PR — no rewrites, no churn.
+文書の drift を検出し、PR で最小修正します。書き直しも無駄な変更も行いません。
 
-## When to Use
+## 使う場面
 
-- Periodic doc review (e.g. weekly or after releases)
-- After major feature merges
-- When asked "are our docs up to date?"
-- When asked to audit README / SPEC / PRODUCT accuracy
+- 定期的な文書レビュー（例: 毎週、またはリリース後）
+- 主要機能のマージ後
+- 「文書は最新ですか？」と聞かれたとき
+- README / SPEC / PRODUCT の正確性監査を求められたとき
 
-## Target Documents
+## 対象文書
 
-| Document | Path | What matters |
+| 文書 | パス | 重要な点 |
 |----------|------|-------------|
-| README | `README.md` | Features table, roadmap, quickstart, "what is" accuracy, "works with" table |
-| SPEC | `doc/SPEC.md` | No false "not supported" claims, major model/schema accuracy |
-| PRODUCT | `doc/PRODUCT.md` | Core concepts, feature list, principles accuracy |
+| README | `README.md` | 機能表、ロードマップ、クイックスタート、「what is」の正確さ、「works with」表 |
+| SPEC | `doc/SPEC.md` | 「未対応」といった誤記がないこと、主要モデル / schema の正確さ |
+| PRODUCT | `doc/PRODUCT.md` | 中核概念、機能一覧、原則の正確さ |
 
-Out of scope: DEVELOPING.md, DATABASE.md, CLI.md, doc/plans/, skill files,
-release notes. These are dev-facing or ephemeral — lower risk of user-facing
-confusion.
+対象外: DEVELOPING.md、DATABASE.md、CLI.md、doc/plans/、skill ファイル、
+release notes。これらは開発者向けまたは一時的なものなので、ユーザー向け混乱の
+リスクは低めです。
 
-## Workflow
+## ワークフロー
 
-### Step 1 — Detect what changed
+### Step 1 - 何が変わったかを検出する
 
-Find the last review cursor:
+最後のレビューカーソルを見つけます:
 
 ```bash
-# Read the last-reviewed commit SHA
+# 最後にレビューした commit SHA を読む
 CURSOR_FILE=".doc-review-cursor"
 if [ -f "$CURSOR_FILE" ]; then
   LAST_SHA=$(cat "$CURSOR_FILE" | head -1)
 else
-  # First run: look back 60 days
+  # 初回実行: 60 日前までさかのぼる
   LAST_SHA=$(git log --format="%H" --after="60 days ago" --reverse | head -1)
 fi
 ```
 
-Then gather commits since the cursor:
+続けて、カーソル以降の commit を集めます:
 
 ```bash
 git log "$LAST_SHA"..HEAD --oneline --no-merges
 ```
 
-### Step 2 — Classify changes
+### Step 2 - 変更を分類する
 
-Scan commit messages and changed files. Categorize into:
+commit メッセージと変更ファイルを確認し、次のように分類します:
 
-- **Feature** — new capabilities (keywords: `feat`, `add`, `implement`, `support`)
-- **Breaking** — removed/renamed things (keywords: `remove`, `breaking`, `drop`, `rename`)
-- **Structural** — new directories, config changes, new adapters, new CLI commands
+- **Feature** - 新機能（キーワード: `feat`、`add`、`implement`、`support`）
+- **Breaking** - 削除 / 変更 / 名前変更されたもの（キーワード: `remove`、`breaking`、`drop`、`rename`）
+- **Structural** - 新しいディレクトリ、config 変更、新しい adapter、新しい CLI コマンド
 
-**Ignore:** refactors, test-only changes, CI config, dependency bumps, doc-only
-changes, style/formatting commits. These don't affect doc accuracy.
+**無視するもの:** refactor、テストのみの変更、CI 設定、依存関係更新、
+文書のみの変更、style / format commit。これらは文書の正確性に影響しません。
 
-For borderline cases, check the actual diff — a commit titled "refactor: X"
-that adds a new public API is a feature.
+境界があいまいな場合は実際の diff を確認します。たとえば "refactor: X" という
+タイトルでも新しい public API を追加しているなら、それは feature です。
 
-### Step 3 — Build a change summary
+### Step 3 - 変更サマリーを作る
 
-Produce a concise list like:
+次のような簡潔な一覧を作ります:
 
 ```
-Since last review (<sha>, <date>):
+前回レビュー以降（<sha>, <date>）:
 - FEATURE: Plugin system merged (runtime, SDK, CLI, slots, event bridge)
 - FEATURE: Project archiving added
 - BREAKING: Removed legacy webhook adapter
 - STRUCTURAL: New .agents/skills/ directory convention
 ```
 
-If there are no notable changes, skip to Step 7 (update cursor and exit).
+目立った変更がなければ、Step 7（カーソル更新して終了）へ進みます。
 
-### Step 4 — Audit each target doc
+### Step 4 - 各対象文書を監査する
 
 For each target document, read it fully and cross-reference against the change
 summary. Check for:
 
-1. **False negatives** — major shipped features not mentioned at all
-2. **False positives** — features listed as "coming soon" / "roadmap" / "planned"
-   / "not supported" / "TBD" that already shipped
-3. **Quickstart accuracy** — install commands, prereqs, and startup instructions
-   still correct (README only)
-4. **Feature table accuracy** — does the features section reflect current
-   capabilities? (README only)
-5. **Works-with accuracy** — are supported adapters/integrations listed correctly?
+1. **False negative** - すでに出荷済みの主要機能がまったく触れられていない
+2. **False positive** - すでに出荷済みなのに "coming soon" / "roadmap" / "planned"
+   / "not supported" / "TBD" と書かれている機能
+3. **Quickstart の正確さ** - install コマンド、前提条件、起動手順が
+   まだ正しいか（README のみ）
+4. **機能表の正確さ** - features セクションが現在の機能を反映しているか
+   （README のみ）
+5. **works-with の正確さ** - 対応 adapter / integration が正しく列挙されているか
 
-Use `references/audit-checklist.md` as the structured checklist.
-Use `references/section-map.md` to know where to look for each feature area.
+構造化されたチェックリストとして `references/audit-checklist.md` を使います。
+各機能領域をどこで見るかは `references/section-map.md` を参照します。
 
-### Step 5 — Create branch and apply minimal edits
+### Step 5 - ブランチを作り、最小編集を行う
 
 ```bash
-# Create a branch for the doc updates
+# 文書更新用のブランチを作る
 BRANCH="docs/maintenance-$(date +%Y%m%d)"
 git checkout -b "$BRANCH"
 ```
 
-Apply **only** the edits needed to fix drift. Rules:
+drift を直すために必要な編集だけを行います。ルール:
 
-- **Minimal patches only.** Fix inaccuracies, don't rewrite sections.
-- **Preserve voice and style.** Match the existing tone of each document.
-- **No cosmetic changes.** Don't fix typos, reformat tables, or reorganize
-  sections unless they're part of a factual fix.
-- **No new sections.** If a feature needs a whole new section, note it in the
-  PR description as a follow-up — don't add it in a maintenance pass.
-- **Roadmap items:** Move shipped features out of Roadmap. Add a brief mention
-  in the appropriate existing section if there isn't one already. Don't add
-  long descriptions.
+- **最小パッチのみ。** 誤りを直し、章を丸ごと書き直さない。
+- **文体とトーンを維持する。** 各文書の既存トーンに合わせる。
+- **見た目だけの変更はしない。** 誤字修正、表の再整形、章の再編成は、
+  事実修正の一部でない限り行わない。
+- **新しい章は追加しない。** 機能に新しい章が必要なら、メンテナンスで
+  はなく follow-up として PR 説明に書く。
+- **Roadmap 項目:** 出荷済み機能は Roadmap から外す。既存の適切な章に短く
+  触れ、長い説明は追加しない。
 
-### Step 6 — Open a PR
+### Step 6 - PR を開く
 
 Commit the changes and open a PR:
 
@@ -135,8 +134,7 @@ gh pr create \
   --title "docs: periodic documentation accuracy update" \
   --body "$(cat <<'EOF'
 ## Summary
-Automated doc maintenance pass. Fixes documentation drift detected since
-last review.
+自動文書メンテナンス実施。前回レビュー以降に検出された文書 drift を修正。
 
 ### Changes
 - [list each fix]
@@ -145,39 +143,39 @@ last review.
 - [list notable code changes that triggered doc updates]
 
 ## Review notes
-- Only factual accuracy fixes — no style/cosmetic changes
-- Preserves existing voice and structure
-- Larger doc additions (new sections, tutorials) noted as follow-ups
+- 事実の正確性修正のみ - 文体 / 見た目の変更なし
+- 既存の文体と構造を維持
+- 大きな文書追加（新しい章、チュートリアル）は follow-up として記載
 
 🤖 Generated by doc-maintenance skill
 EOF
 )"
 ```
 
-### Step 7 — Update the cursor
+### Step 7 - カーソルを更新する
 
-After a successful audit (whether or not edits were needed), update the cursor:
+監査が成功したら（編集が必要だったかどうかにかかわらず）、カーソルを更新します:
 
 ```bash
 git rev-parse HEAD > .doc-review-cursor
 ```
 
-If edits were made, this is already committed in the PR branch. If no edits
-were needed, commit the cursor update to the current branch.
+編集があった場合は、それはすでに PR ブランチに commit されています。編集が不要
+だった場合は、カーソル更新を現在のブランチに commit します。
 
 ## Change Classification Rules
 
-| Signal | Category | Doc update needed? |
+| シグナル | 分類 | 文書更新が必要か? |
 |--------|----------|-------------------|
-| `feat:`, `add`, `implement`, `support` in message | Feature | Yes if user-facing |
-| `remove`, `drop`, `breaking`, `!:` in message | Breaking | Yes |
-| New top-level directory or config file | Structural | Maybe |
-| `fix:`, `bugfix` | Fix | No (unless it changes behavior described in docs) |
-| `refactor:`, `chore:`, `ci:`, `test:` | Maintenance | No |
-| `docs:` | Doc change | No (already handled) |
-| Dependency bumps only | Maintenance | No |
+| メッセージに `feat:`, `add`, `implement`, `support` がある | Feature | ユーザー向けなら必要 |
+| メッセージに `remove`, `drop`, `breaking`, `!:` がある | Breaking | 必要 |
+| 新しいトップレベルディレクトリまたは config ファイル | Structural | 場合による |
+| `fix:`, `bugfix` | Fix | いいえ（文書に書かれた挙動が変わる場合を除く） |
+| `refactor:`, `chore:`, `ci:`, `test:` | Maintenance | いいえ |
+| `docs:` | Doc change | いいえ（すでに対象内） |
+| 依存関係の bump のみ | Maintenance | いいえ |
 
-## Patch Style Guide
+## パッチスタイルガイド
 
 - Fix the fact, not the prose
 - If removing a roadmap item, don't leave a gap — remove the bullet cleanly
