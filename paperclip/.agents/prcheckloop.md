@@ -8,8 +8,7 @@ description: >
 
 # PRCheckloop
 
-GitHub PR を完全に green な check 状態へ持っていくか、具体的な blocker を
-示して終了します。
+GitHub PR を完全に green な check 状態へ持っていくか、具体的な blocker を示して終了します。
 
 ## 対象範囲
 
@@ -27,7 +26,7 @@ GitHub PR を完全に green な check 状態へ持っていくか、具体的�
 
 ### 1. PR を特定する
 
-If no PR number is provided, detect it from the current branch:
+PR number が与えられていない場合は、現在の branch から検出します:
 
 ```bash
 gh pr view --json number,headRefName,headRefOid,url,isDraft
@@ -37,13 +36,13 @@ gh pr view --json number,headRefName,headRefOid,url,isDraft
 
 次のいずれかなら早めに終了します:
 
-- `gh` is not authenticated
-- there is no PR for the branch
-- the repo is not hosted on GitHub
+- `gh` が認証されていない
+- その branch に PR がない
+- repo が GitHub でホストされていない
 
 ### 2. 最新の head SHA を追跡する
 
-Always work against the current PR head SHA:
+常に現在の PR head SHA を対象にします:
 
 ```bash
 PR_JSON=$(gh pr view "$PR_NUMBER" --json number,headRefName,headRefOid,url)
@@ -51,8 +50,7 @@ HEAD_SHA=$(echo "$PR_JSON" | jq -r .headRefOid)
 PR_URL=$(echo "$PR_JSON" | jq -r .url)
 ```
 
-古い SHA の失敗 check は無視します。push のたびに `HEAD_SHA` を更新し、
-確認ループを最初からやり直します。
+古い SHA の失敗 check は無視します。push のたびに `HEAD_SHA` を更新し、確認ループを最初からやり直します。
 
 ### 3. その SHA の check を洗い出す
 

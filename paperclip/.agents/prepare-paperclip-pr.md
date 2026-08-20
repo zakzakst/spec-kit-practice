@@ -1,85 +1,56 @@
 ---
 name: prepare-paperclip-pr
-description: Prepare a Paperclip branch for PR with commits, template body, and checks.
+description: Paperclip のブランチを、コミット・PR 本文テンプレート・チェックまで含めて PR 用に整えます。
 ---
-# Prepare Paperclip PR
+# Paperclip PR を準備する
 
-The standard Paperclip procedure for turning branch work into a reviewed,
-green pull request against `paperclipai/paperclip` master. Apply it once per
-PR (if a task splits a branch into several PRs, run the whole procedure for
-each one).
+`paperclipai/paperclip` の `master` に対して、レビュー済みで green な pull request にブランチ作業を変換するための標準手順です。1つの PR につき1回実行します。タスクが1つのブランチを複数 PR に分ける場合は、それぞれに対してこの手順を最初から最後まで実行してください。
 
-## 0. Preconditions — worktree safety
+## 0. 前提条件 - worktree の安全性
 
-* Do all PR work in a **git worktree** on a dedicated branch. The main
-  `~/paperclip` checkout typically runs the live Paperclip server — never
-  check out branches there. If you are already on a worktree/branch, verify it
-  (`git rev-parse --git-dir`, `git branch --show-current`) and proceed.
-* If the main checkout is unexpectedly off `master`, fix that first without
-  losing work (usually: move that branch's work into a worktree).
-* Confirm which remote/ref you are targeting (normally `master` on the
-  `paperclipai/paperclip` repo; the task may name a specific remote such as
-  `origin` or `public-gh`).
+* すべての PR 作業は、専用ブランチの **git worktree** で行ってください。メインの `~/paperclip` checkout は通常、ライブの Paperclip サーバーを動かしています。そこでブランチを checkout しないでください。すでに worktree / branch 上にいる場合は、`git rev-parse --git-dir` と `git branch --show-current` で確認してから進めてください。
+* もしメイン checkout が意図せず `master` 以外を指していたら、まずそれを解消してください。作業を失わないようにしながら行います（通常は、その branch の作業を worktree へ移します）。
+* どの remote / ref を対象にするか確認してください。通常は `paperclipai/paperclip` リポジトリの `master` ですが、タスクによっては `origin` や `public-gh` のような特定 remote を指定されることがあります。
 
-## 1. Commit everything — lose no work
+## 1. すべてコミットする - 作業を失わない
 
-* Make **logical commits** of all uncommitted changes before anything else.
-  Do not stash and forget; do not leave files behind. If commits are missing,
-  make them.
-* Commit messages must end with exactly:
+* まず、未コミット変更をすべて **論理的なコミット** にしてください。stash して忘れないこと。ファイルを取り残さないこと。コミットが足りなければ作成してください。
+* コミットメッセージの末尾には、必ず次の文字列を入れてください:
   `Co-Authored-By: Paperclip <noreply@paperclip.ing>`
 
-## 2. Get changes cleanly on top of master
+## 2. 変更をきれいに master の上へ載せる
 
-* Fetch the target remote and rebase (or otherwise replay) your branch on top
-  of the target master so the PR has no merge conflicts.
-* Re-verify after rebase: build/tests relevant to the change still pass at
-  whatever depth the task warrants.
+* 対象 remote を fetch し、ブランチを対象の master の上へ rebase（または同等の再適用）してください。PR に merge conflict が残らないようにします。
+* rebase 後に再確認します。変更内容に応じて必要な build / test を再実行し、期待どおり通ることを確認してください。
 
-## 3. Guardrails checklist (every PR)
+## 3. ガードレールのチェックリスト（すべての PR）
 
-* **Never commit `pnpm-lock.yaml`** — the repo has actions that manage it.
-  If it is already in a commit, rewrite/drop that change before pushing.
-* **Never change `.github/workflows/*`** unless the underlying commit was
-  explicitly about that and the task calls it out.
-* **No design screenshots / wireframe images** committed to the repo unless
-  they are genuinely part of the work product.
-* **Migrations**: numbered incrementally with no conflicts against master. If
-  master moved and took your number, renumber on top. Make migrations
-  **idempotent** so users who already applied the old number are safe.
-* **Greptile file limit**: keep each PR under **100 changed files**; if a PR
-  exceeds that, split it into two.
+* **`pnpm-lock.yaml` を絶対に commit しないこと** - この repo ではそれを管理する Actions があります。すでに commit に入っている場合は、push 前にその変更を rewrite / drop してください。
+* **`.github/workflows/*` は変更しないこと** - その commit 自体がワークフロー変更を明示的に扱っており、タスクでもそれを求めている場合を除きます。
+* **デザインのスクリーンショットや wireframe 画像を repo に commit しないこと** - それが本当に成果物の一部である場合を除きます。
+* **migration**: master と衝突しないように、番号を順番に増やしてください。master が進んで番号を先に取られていたら、上に載せて番号を振り直します。migration は **idempotent** にして、すでに古い番号を適用済みのユーザーが安全であるようにしてください。
+* **Greptile の file 上限**: 1つの PR あたり **100 changed files** 未満にしてください。それを超える場合は、2つに分割してください。
 
-## 4. Open the PR
+## 4. PR を開く
 
-* Follow `CONTRIBUTING.md` (repo root,
-  https://github.com/paperclipai/paperclip/blob/master/CONTRIBUTING.md) for
-  the PR title, message format, and issue description.
-* Push the branch and open the PR with `gh`.
-* Record the PR URL immediately — every report must include URLs to every PR.
+* PR の title、message format、issue description は `CONTRIBUTING.md`（repo ルート、https://github.com/paperclipai/paperclip/blob/master/CONTRIBUTING.md）に従ってください。
+* branch を push して、`gh` で PR を開きます。
+* PR の URL はすぐに記録してください。すべての report には、作成した PR の URL を必ず含める必要があります。
 
-## 5. Review loops
+## 5. レビューの反復
 
-* Run the **/greploop** company skill: trigger Greptile review, address its
-  comments, push, and repeat until Greptile gives **5/5 with zero unresolved
-  comments** (max 20 turns). Do not stop early while turns remain.
-* Then run the **/prcheckloop** company skill and address any verification /
-  CI failures you can.
-* RUN GREPTILE UNTIL IT GETS TO 5/5 - DO NOT STOP UNTIL GREPTILE IS 5/5, all
-  tests pass, all verification checks pass, and there are no merge conflicts.
+* **/greploop** company skill を実行します。Greptile review を起動し、コメントに対応し、push し、Greptile が **5/5 かつ unresolved comment なし** になるまで繰り返します（最大 20 回）。turn が残っている間は途中で止めないでください。
+* そのあと **/prcheckloop** company skill を実行し、verification / CI の失敗があれば対応します。
+* GREPTILE が 5/5 になるまで、すべての test と verification check が通るまで、merge conflict がなくなるまで、絶対に止めないでください。
 
-## 6. Report back and hand off
+## 6. 報告して引き継ぐ
 
-* Comment on the driving task: what you did, the PR URL(s), the worktree path
-  (use `~` for home), Greptile score, and check status.
-* Create a `pull_request` work product for each opened PR (plus `branch` /
-  `commit` work products where the branch or a commit is itself the handoff).
-* If the task requires follow-up per PR (e.g. sub-issues per PR), create them
-  as the task directs and link them.
+* driving task にコメントします。何をしたか、PR URL、worktree path（home は `~` を使う）、Greptile score、check status を含めてください。
+* 開いた PR ごとに `pull_request` work product を作成します。branch や commit 自体が引き継ぎ対象なら、それぞれ `branch` / `commit` work product も作ります。
+* タスクが PR ごとの follow-up を必要とする場合（たとえば PR ごとの sub-issue など）は、タスクの指示どおりに作成し、リンクしてください。
 
-## Hard rules
+## ハードルール
 
-* **YOU DO NOT MERGE THE PR YOURSELF. NEVER MERGE THE PR YOURSELF.**
-* Never lose work: no orphaned stashes, no dropped files, no force-pushes
-  that discard commits.
-* Always post the URLs to every pull request you created.
+* **PR を自分で merge しないこと。絶対に自分で merge しないでください。**
+* 作業を失わないこと。stash の取り残し、ファイルの取り落とし、commit を捨てる force-push は禁止です。
+* 作成した pull request の URL は必ずすべて投稿してください。

@@ -10,42 +10,24 @@ description: >
 
 **stable** Paperclip release の Discord 告知文を書きます。
 
-これは `.agents/skills/release-changelog/SKILL.md` の companion です。
-そちらの skill が changelog を書きます。beta soak 中は
-`release-notes/v{beta-version}` branch 上の `releases/beta/v{beta-version}.md`
-にあり、stable が出た後は canonicalization PR により
-`releases/vYYYY.MDD.P.md` に rename されます（詳細はその skill の
-Channel Process section を参照）。この skill は、その file を
-dotta の声で1つの Discord ブロックにまとめ、`discord_announcement`
-document として release issue に投稿します。
+これは `.agents/skills/release-changelog/SKILL.md` の companion です。そちらの skill が changelog を書きます。beta soak 中は `release-notes/v{beta-version}` branch 上の `releases/beta/v{beta-version}.md` にあり、stable が出た後は canonicalization PR により `releases/vYYYY.MDD.P.md` に rename されます（詳細はその skill の Channel Process section を参照）。この skill は、その file を dotta の声で1つの Discord ブロックにまとめ、`discord_announcement` document として release issue に投稿します。
 
 ## dotta のコメント
 
 > This is for discord — try to follow my format. If I have a section where I
 > think about the future, pull from recent issues we're working on etc.
 
-Discord 告知は changelog ではありません。changelog は網羅的ですが、
-告知は意見があり、語り口を合わせ、出荷済みの主な highlights と、
-現在の Paperclip 作業から引いてきた本物の "what's next" と
- "what's on my mind" を中心にまとめます。創作してはいけません。
+Discord 告知は changelog ではありません。changelog は網羅的ですが、告知は意見があり、語り口を合わせ、出荷済みの主な highlights と、現在の Paperclip 作業から引いてきた本物の "what's next" と "what's on my mind" を中心にまとめます。創作してはいけません。
 
 ## 使う場面
 
-- `release-changelog` が changelog を作成した後（soak 中の
-  `release-notes/v{beta-version}` 上の beta-keyed file、または stable 出荷後の
-  canonicalized `releases/vYYYY.MDD.P.md`）。
-- release routine が割り当てた release issue で Discord 告知を求められたとき、
-  または新しい日付 / version に合わせて `discord_announcement` document を更新したいとき。
-- 単独では実行しないでください。version、日付、contributor list、highlight の集合は
-  必ず対応する changelog file と一致していなければなりません。changelog を更新したら、
-  これも更新します。
+- `release-changelog` が changelog を作成した後（soak 中の `release-notes/v{beta-version}` 上の beta-keyed file、または stable 出荷後の canonicalized `releases/vYYYY.MDD.P.md`）。
+- release routine が割り当てた release issue で Discord 告知を求められたとき、または新しい日付 / version に合わせて `discord_announcement` document を更新したいとき。
+- 単独では実行しないでください。version、日付、contributor list、highlight の集合は必ず対応する changelog file と一致していなければなりません。changelog を更新したら、これも更新します。
 
 ## 出力
 
-Discord にそのまま貼れる、1つの fenced markdown code block を出力します。
-release issue の issue document key `discord_announcement` として添付し、
-その issue の comment にもそのまま貼り、human がコピーできるようにします。
-Cases が有効な場合は、後述の social child case も upsert します。
+Discord にそのまま貼れる、1つの fenced markdown code block を出力します。release issue の issue document key `discord_announcement` として添付し、その issue の comment にもそのまま貼り、human がコピーできるようにします。Cases が有効な場合は、後述の social child case も upsert します。
 
 ```bash
 PUT /api/issues/{releaseIssueId}/documents/discord_announcement
@@ -57,15 +39,11 @@ PUT /api/issues/{releaseIssueId}/documents/discord_announcement
 }
 ```
 
-document がすでに存在する場合は、先に取得して現在の `baseRevisionId` を渡します。
-黙って上書きしてはいけません。最後に書かれてから version が変わっていたら、
-issue comment で何が変わったかを知らせます。
+document がすでに存在する場合は、先に取得して現在の `baseRevisionId` を渡します。黙って上書きしてはいけません。最後に書かれてから version が変わっていたら、issue comment で何が変わったかを知らせます。
 
 ## フォーマット（このテンプレートに従う）
 
-Discord の emoji shortcodes（`:paperclip:`、`:lock:`、`:brain:` など）を
-使います。Unicode emoji ではありません。Discord は shortcode を描画しますが、
-changelog file は prose を使います。
+Discord の emoji shortcodes（`:paperclip:`、`:lock:`、`:brain:` など）を使います。Unicode emoji ではありません。Discord は shortcode を描画しますが、changelog file は prose を使います。
 
 ```
 :paperclip: :paperclip: :paperclip: CLIPPERS!!! v{VERSION} IS OUT :paperclip: :paperclip: :paperclip:
@@ -80,7 +58,7 @@ OFFICIAL TWITTER: https://x.com/papercliping - follow it, report any others
 
 ... and a long tail of {flavor of the rest}. Read the [full release notes](<github link>).
 
-## WHATS NEXT (:motorway:  Roadmap)
+## WHATS NEXT (:motorway: Roadmap)
 
 * **Theme A** - one-line forward-looking blurb
 * **Theme B** - …
@@ -102,7 +80,7 @@ TELL ME if you're using Paperclip in your business - I want to meet you
 
 ## Community
 
-Thank you to everyone who contributed to this release!
+この release に貢献してくれたすべての人に感謝します。
 
 ```
 @username1, @username2, @username3
@@ -110,10 +88,9 @@ Thank you to everyone who contributed to this release!
 
 ## In Summary
 
-PAPERCLIP IS THE AI ORCHESTRATOR FOR HUMANS TO ACCOMPLISH 100x MORE WORK
+PAPERCLIP は、人間が 100 倍の仕事をこなすための AI オーケストレーターです。
 
-Every single person will be managing a team of a dozen, or a hundred, or a
-thousand agents and Paperclip will be the default tool to manage it all.
+誰もが、12人、100人、あるいは1000人の agent からなるチームを管理するようになり、Paperclip はそのすべてを管理する既定のツールになります。
 
 ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:
 

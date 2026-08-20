@@ -1,61 +1,60 @@
 ---
 name: paperclip-create-plugin
 description: >
-  Create and develop external Paperclip plugins with the CLI-first workflow. Use
-  when scaffolding a plugin, iterating on a local plugin, installing it into
-  Paperclip, or updating plugin authoring docs.
+  CLI-first のワークフローで外部 Paperclip plugin を作成・開発します。
+  plugin の scaffold、ローカル plugin の反復、Paperclip への install、plugin authoring docs の更新に使います。
 ---
 
-# Create and develop a Paperclip plugin
+# Paperclip plugin を作成して開発する
 
-Use this skill when the task is to create, scaffold, or iterate on a Paperclip plugin against a local Paperclip instance.
+Paperclip のローカル instance に対して plugin を作成・scaffold・反復するときに使う skill です。
 
-## 1. Default: build the plugin OUTSIDE Paperclip core
+## 1. 既定: plugin は Paperclip core の外で作る
 
-Plugins are their own packages. Unless the task **explicitly** asks for a bundled in-repo example, do not add plugin source under `packages/plugins/` in this repo.
+plugin はそれぞれ独立した package です。タスクが **明示的に** in-repo の bundled example を求めていない限り、この repo の `packages/plugins/` 配下に plugin source を追加しないでください。
 
-- Scaffold the plugin into a directory outside the Paperclip checkout (e.g. `~/dev/paperclip-plugins/<name>`).
-- Install it into the running Paperclip instance by local absolute path.
-- Edit code in the external package; let Paperclip pick up rebuilt output.
+- plugin は Paperclip checkout の外側の directory（例: `~/dev/paperclip-plugins/<name>`）に scaffold します。
+- local absolute path で running Paperclip instance に install します。
+- code は外部 package 側を編集し、Paperclip に rebuild 済み output を拾わせます。
 
-Only edit Paperclip core itself when the user asks to surface a plugin as a bundled example (`server/src/routes/plugins.ts`, in-repo example lists, docs).
+Paperclip core 自体を編集するのは、user が plugin を bundled example として見せたいと明示した場合だけです（`server/src/routes/plugins.ts`、in-repo example list、docs など）。
 
-## 2. Ground rules
+## 2. 基本ルール
 
-Reference docs when you need detail:
+必要なときは次の docs を参照してください:
 
 1. `doc/plugins/PLUGIN_AUTHORING_GUIDE.md`
 2. `packages/plugins/sdk/README.md`
-3. `doc/plugins/PLUGIN_SPEC.md` — future-looking context only
+3. `doc/plugins/PLUGIN_SPEC.md` - 将来の context としてのみ
 
-Current runtime assumptions:
+現在の runtime 前提:
 
-- plugin workers are trusted code
-- plugin UI is trusted same-origin host code
-- worker APIs are capability-gated
-- plugin UI is not sandboxed by manifest capabilities
-- no host-provided shared plugin UI component kit yet
-- `ctx.assets` is not supported in the current runtime
+- plugin workers は trusted code
+- plugin UI は trusted same-origin host code
+- worker API は capability-gated
+- plugin UI は manifest capabilities で sandbox されていない
+- host が提供する shared plugin UI component kit はまだない
+- `ctx.assets` は現在の runtime ではサポートされていない
 
-## 3. CLI-first scaffold workflow
+## 3. CLI-first の scaffold ワークフロー
 
-Use `paperclipai plugin init`. Do not invoke the scaffold package node entrypoint by hand unless the CLI command is unavailable in the environment.
+`paperclipai plugin init` を使います。CLI command が使えない環境でない限り、scaffold package の node entrypoint を手で呼ばないでください。
 
 ```bash
 paperclipai plugin init @acme/my-plugin --output ~/dev/paperclip-plugins
 ```
 
-Useful flags (all optional):
+便利な flags（すべて任意）:
 
-- `--output <dir>` — parent directory; the command creates `<dir>/<unscoped-name>/`. Defaults to the current directory.
-- `--template <default|connector|workspace|environment>` — starter template.
-- `--category <connector|workspace|automation|ui|environment>` — manifest category.
-- `--display-name <name>`, `--description <text>`, `--author <name>` — manifest metadata.
-- `--sdk-path <path>` — snapshot the local SDK from a Paperclip checkout into `.paperclip-sdk/` (useful when developing against an unreleased SDK).
+- `--output <dir>` - 親 directory。command は `<dir>/<unscoped-name>/` を作成します。既定は current directory。
+- `--template <default|connector|workspace|environment>` - starter template。
+- `--category <connector|workspace|automation|ui|environment>` - manifest category。
+- `--display-name <name>`、`--description <text>`、`--author <name>` - manifest metadata。
+- `--sdk-path <path>` - local SDK を Paperclip checkout から `.paperclip-sdk/` に snapshot します（未公開 SDK を使って開発するときに便利です）。
 
-On success the command prints the exact next commands (`cd`, `pnpm install`, `pnpm dev`, `paperclipai plugin install <abs-path>`). Run them in order.
+成功すると command は次に実行すべき正確な command（`cd`、`pnpm install`、`pnpm dev`、`paperclipai plugin install <abs-path>`）を出力します。順番に実行してください。
 
-If `paperclipai` is not on PATH in your environment, fall back to:
+もし `paperclipai` が PATH 上にない場合は、次に fallback します:
 
 ```bash
 pnpm --filter @paperclipai/create-paperclip-plugin build
@@ -64,89 +63,17 @@ node packages/plugins/create-paperclip-plugin/dist/index.js @acme/my-plugin \
   --sdk-path /absolute/path/to/paperclip/packages/plugins/sdk
 ```
 
-## 4. Local install + rebuild loop
+## 4. local install + rebuild loop
 
-In the scaffolded plugin folder:
+scaffold 済みの plugin folder で:
 
 ```bash
 pnpm install
-pnpm dev            # esbuild --watch: rebuilds dist/manifest.js, dist/worker.js, dist/ui/
+pnpm dev            # esbuild --watch: dist/manifest.js, dist/worker.js, dist/ui/ を再build
 paperclipai plugin install /absolute/path/to/my-plugin
 ```
 
 Notes:
 
-- `paperclipai plugin install` auto-detects local paths (absolute, `./`, `../`, `~`, or an existing relative folder) and forwards `isLocalPath: true` to the server. Pass `--local` to force local mode if the heuristic is ambiguous.
-- Paths are resolved to absolute paths before being sent to the server.
-- The server watches built outputs (`dist/`) for local-path plugins and restarts the plugin worker on rebuild — you do not need to reinstall after every edit.
-- UI hot reload via the SDK dev server (`pnpm dev:ui`, port `4177`) is optional and template-dependent; only mention it if the template wires `devUiUrl` and you verified it works end to end.
-- `--version` only applies to npm package installs. Combining it with a local path is an error.
-
-After install, inspect with:
-
-```bash
-paperclipai plugin list
-paperclipai plugin inspect <plugin-key>
-```
-
-## 5. After scaffolding, sanity-check the package
-
-Open and confirm:
-
-- `src/manifest.ts` — declared capabilities and slots
-- `src/worker.ts` — worker entry
-- `src/ui/index.tsx` — UI entry (if applicable)
-- `tests/plugin.spec.ts` — placeholder test
-- `package.json` — `paperclipPlugin` block points at `dist/manifest.js`, `dist/worker.js`, `dist/ui/`
-
-Make sure the plugin:
-
-- declares only supported capabilities
-- does not use `ctx.assets`
-- does not import host UI component stubs
-- keeps UI self-contained
-- uses `routePath` only on `page` slots
-
-## 6. Verification (run before declaring success)
-
-From the plugin folder:
-
-```bash
-pnpm typecheck
-pnpm test
-pnpm build
-```
-
-If the plugin is already running under `pnpm dev`, you can keep the watcher up and run `pnpm typecheck` and `pnpm test` in a separate shell.
-
-If you changed Paperclip SDK/host/plugin runtime code in addition to the plugin, also run the relevant Paperclip workspace checks.
-
-## 7. Success checklist (report this back)
-
-When you finish a local plugin task, report:
-
-- **Scaffold path** — absolute path of the created plugin folder.
-- **Commands run** — the exact `paperclipai plugin init`, `pnpm install`, `pnpm dev`, `paperclipai plugin install <path>` invocations (and any verification commands).
-- **Install status** — output of `paperclipai plugin list` / `plugin inspect` (plugin key, version, status). Note if `status` is anything other than `ready` and include `lastError`.
-- **Tests / build result** — `pnpm typecheck`, `pnpm test`, `pnpm build` pass/fail with the failing output if any.
-- **Reload limitations** — call out anything that did not hot-reload (e.g. manifest changes required a reinstall, UI dev server was not wired, etc.).
-
-If any item is missing, mark it as such — do not silently skip.
-
-## 8. When NOT to edit Paperclip core
-
-Do not add the plugin under `packages/plugins/` or update bundled-example wiring unless the user explicitly asks for a bundled example. Local-path installs are the supported development model; npm packages are the production deployment path.
-
-If the user does ask for a bundled example, also update:
-
-- `server/src/routes/plugins.ts` example list
-- any docs that enumerate in-repo example plugins
-
-## 9. Documentation expectations
-
-When authoring or updating plugin docs:
-
-- distinguish current implementation from future spec ideas
-- be explicit about the trusted-code model
-- do not promise host UI components or asset APIs
-- prefer local-path development + npm-package deployment guidance over repo-local workflows
+- `paperclipai plugin install` は local path（absolute、`./`、`../`、`~`、または既存の relative folder）を自動検出し、`isLocalPath: true` を server に渡します。heuristic が曖昧なら `--local` で local mode を強制できます。
+- path は server に送る前に absolute path に解決されます。

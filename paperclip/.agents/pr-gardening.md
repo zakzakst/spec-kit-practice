@@ -5,51 +5,37 @@ description: >
   見つけ、それぞれの目的と merge-ready かどうかの確度を報告し、
   ready でないものは `/prepare-paperclip-pr` で自動的に green に戻します。
   ただし merge はしません。
-compatibility: Requires Node.js 20+, gh authenticated for GitHub read access, and Paperclip run credentials.
+compatibility: Node.js 20 以上、GitHub 読み取りアクセスで認証済みの gh、Paperclip run credentials が必要です。
 allowed-tools: Bash(node:*) Bash(gh:*) Bash(curl:*)
 ---
 
 # PR Gardening
 
-最近の window（既定 14 日）で active な Paperclip issue に参照されている、
-**この Paperclip instance が開いた** pull request を能動的に世話します。
-candidate の発見と ready 判定は script で行い、LLM の分析ではありません。
-この workflow 中の GitHub access は read-only です。
+最近の window（既定 14 日）で active な Paperclip issue に参照されている、**この Paperclip instance が開いた** pull request を能動的に世話します。candidate の発見と ready 判定は script で行い、LLM の分析ではありません。この workflow 中の GitHub access は read-only です。
 
 ## 対象範囲 - 自分たちの PR のみ
 
-既定では、この workflow は instance の GitHub identity（`gh` の認証済み login、
-例: `cryppadotta`）が author の pull request だけを世話します。community contribution
-と dependabot PR は Stage A で author login により機械的に除外され、
-`droppedCommunityPullRequests` に入ります。手で再追加しないでください。
-scope を広げるのは、呼び出し側が明示的に `--authors` または `--include-community`
-を渡したときだけです。
+既定では、この workflow は instance の GitHub identity（`gh` の認証済み login、例: `cryppadotta`）が author の pull request だけを世話します。community contribution と dependabot PR は Stage A で author login により機械的に除外され、`droppedCommunityPullRequests` に入ります。手で再追加しないでください。scope を広げるのは、呼び出し側が明示的に `--authors` または `--include-community` を渡したときだけです。
 
 ## 厳格なガードレール
 
 - **pull request を merge、approve、close しないこと。**
 - **他人や agent に merge、approve、close するよう指示しないこと。**
-- **community PR に対して gardening、comment、`/prepare-paperclip-pr` 実行をしないこと。**
-  Stage A の author allowlist に入っている PR だけが対象です。
-- mutating な `gh` command や GitHub API request は使わないこと。
-  script は `gh pr view` と read-only の `gh api` GET request だけを使います。
+- **community PR に対して gardening、comment、`/prepare-paperclip-pr` 実行をしないこと。** Stage A の author allowlist に入っている PR だけが対象です。
+- mutating な `gh` command や GitHub API request は使わないこと。script は `gh pr view` と read-only の `gh api` GET request だけを使います。
 - draft pull request は report-only です。draft に gardening comment を投稿しません。
 - comment は既存の originating issue のみに行います。pull request ごとに gardening issue を
   新規作成しないでください。
-- `--dry-run` は gardening comment、prepare task、inbox archive を含むすべての
-  Paperclip mutation を抑止します。discovery と GitHub inspection はどの mode でも read-only のままです。
+- `--dry-run` は gardening comment、prepare task、inbox archive を含むすべての Paperclip mutation を抑止します。discovery と GitHub inspection はどの mode でも read-only のままです。
 
 ## 入力
 
-- `--days <N>`: activity window。既定 `14`。mention された issue の activity と PR 自身の
-  `updatedAt` の両方に適用され、window 内に activity がない open PR は stale として落とします。
-- `--authors <logins>`: 対象にする PR の GitHub login をカンマ区切りで指定します。
-  既定は `gh` の認証済み user です。
+- `--days <N>`: activity window。既定 `14`。mention された issue の activity と PR 自身の `updatedAt` の両方に適用され、window 内に activity がない open PR は stale として落とします。
+- `--authors <logins>`: 対象にする PR の GitHub login をカンマ区切りで指定します。既定は `gh` の認証済み user です。
 - `--include-community`: author filter を完全に無効化します。明示的な呼び出しがある場合のみ。
 - `--repo <owner/repo>`: GitHub repository。既定は `gh repo view` で検出します。
 - `--dry-run`: comment 投稿、prepare task 作成、inbox archive を行わずに discovery / verify / report だけを行います。
-- `--archive-inbox`: GitHub が candidate PR を現在の head で merged と確認した後、Stage D で
-  responsible user の inbox から originating issue を archive します。
+- `--archive-inbox`: GitHub が candidate PR を現在の head で merged と確認した後、Stage D で responsible user の inbox から originating issue を archive します。
 - `--cooldown-hours <N>`: repeat-gardening の cooldown。既定 `48`。
 - `--max-rounds <N>`: PR ごとの gardening round の最大回数。既定 `3`。
 
@@ -57,14 +43,7 @@ scope を広げるのは、呼び出し側が明示的に `--authors` または 
 
 ## Stage A - candidate を見つける
 
-extract-search path を実行します。これは各 result page を走査し、PR URL を正規化し、
-PR number を重複排除し、参照された issue をすべて記録し、issue work product を
-確認して origin を特定し、GitHub 上で merged / closed とされた PR を落とし、
-author が allowlist 外（community contribution）の PR を `droppedCommunityPullRequests`
-に入れ、open PR でも自分自身の `updatedAt` が window 外なら
-`droppedStalePullRequests` に落とします。1 issue あたりの extract match cap を超えた
-issue（通常は大量の PR URL を列挙する digest や QA issue）は、run を止める代わりに
-`source.truncatedIssues` に記録し、report に注記します。
+extract-search path を実行します。これは各 result page を走査し、PR URL を正規化し、PR number を重複排除し、参照された issue をすべて記録し、issue work product を確認して origin を特定し、GitHub 上で merged / closed とされた PR を落とし、author が allowlist 外（community contribution）の PR を `droppedCommunityPullRequests` に入れ、open PR でも自分自身の `updatedAt` が window 外なら `droppedStalePullRequests` に落とします。1 issue あたりの extract match cap を超えた issue（通常は大量の PR URL を列挙する digest や QA issue）は、run を止める代わりに `source.truncatedIssues` に記録し、report に注記します。
 
 ```bash
 node .agents/skills/pr-gardening/scripts/find-candidates.mjs \
@@ -73,10 +52,7 @@ node .agents/skills/pr-gardening/scripts/find-candidates.mjs \
   --output "$RUN_DIR/candidates.json"
 ```
 
-script は `GET /api/companies/:companyId/search/extract` を `kind=url`、`scope=all`、
-`updatedWithin=<N>d` で呼び出し、`--authors` または `--include-community` で上書きされない限り、
-author allowlist を `gh api user` から解決します。full issue-list fetching や
-LLM scanning に置き換えないでください。
+script は `GET /api/companies/:companyId/search/extract` を `kind=url`、`scope=all`、`updatedWithin=<N>d` で呼び出し、`--authors` または `--include-community` で上書きされない限り、author allowlist を `gh api user` から解決します。full issue-list fetching や LLM scanning に置き換えないでください。
 
 ## Stage B - 現在の head の ready 状態を確認する
 
@@ -89,15 +65,13 @@ node .agents/skills/pr-gardening/scripts/check-readiness.mjs \
 
 candidate ごとに、script は current head SHA を再取得し、次を記録します:
 
-- open/draft state and mergeability/conflicts;
-- `statusCheckRollup` check-run and legacy status inventory;
-- a completed Greptile check-run on the exact head, clean only for `success` or `neutral`;
-- `reviewDecision`;
-- commits behind the base branch.
+- open/draft state と mergeability/conflicts
+- `statusCheckRollup` の check-run と legacy status inventory
+- exact head 上で完了した Greptile check-run。`success` または `neutral` の場合のみ clean とみなします
+- `reviewDecision`
+- base branch との差分コミット数
 
-判定は `ready`、`needs_gardening`、draft の場合は `report_only` です。wake 後や PR が
-修正されたという主張の後は、必ずこの stage を再実行してください。issue comment を
-ready の証拠として信じてはいけません。
+判定は `ready`、`needs_gardening`、draft の場合は `report_only` です。wake 後や PR が修正されたという主張の後は、必ずこの stage を再実行してください。issue comment を ready の証拠として信じてはいけません。
 
 ## follow-up の Create-PR task 重複排除
 
@@ -111,11 +85,7 @@ branch ごとに1つずつ、順番に処理します:
 3. If an equivalent open task exists, reuse it: add a concise comment with the current PR/head/reason context and link it from the gardening issue or blocker list. Do not create another task.
 4. Only if no equivalent open task exists, create exactly one follow-up task for that branch.
 
-follow-up task 作成を並列にばらまかないでください。create-PR または prepare-PR task に対して
-同時に `POST /api/companies/:companyId/issues` を投げてはいけません。P1 の issue-create
-idempotency support が使えるようになったら、すべての create-PR follow-up task 作成に
-`idempotencyKey: "pr-gardening:create-pr:{branch}"` を、すべての prepare-PR task に
-`idempotencyKey: "pr-gardening:prepare-pr:{owner/repo}#{number}"` を含めます。
+follow-up task 作成を並列にばらまかないでください。create-PR または prepare-PR task に対して同時に `POST /api/companies/:companyId/issues` を投げてはいけません。P1 の issue-create idempotency support が使えるようになったら、すべての create-PR follow-up task 作成に `idempotencyKey: "pr-gardening:create-pr:{branch}"` を、すべての prepare-PR task に `idempotencyKey: "pr-gardening:prepare-pr:{owner/repo}#{number}"` を含めます。
 
 ## Stage C - `/prepare-paperclip-pr` で自分たちの PR を ready にする
 

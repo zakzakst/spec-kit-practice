@@ -230,7 +230,7 @@ operator が `experimental.enableCases` を有効にする必要があると報�
 `PAPERCLIP_API_KEY`、`PAPERCLIP_RUN_ID` を使います。case activity feed が
 run を issue に紐づけられるよう、すべての write に `X-Paperclip-Run-Id` を付けます。
 
-Create or upsert the parent `release` case first:
+まず親となる `release` case を作成または upsert します:
 
 ```http
 POST /api/companies/:companyId/cases
@@ -263,10 +263,10 @@ POST /api/companies/:companyId/cases
 ```
 
 `fields` schema は意図的に、文字列・数値・真偽値・配列・オブジェクト・null
-のすべての generic JSON value type を使っています。case fields は全体置換なので、
-upsert のたびに完全な fields object を送ります。
+のすべての汎用 JSON value type を使っています。case fields は全体置換なので、
+upsert のたびに完全な fields object を送ってください。
 
-Write the parent body document immediately after the upsert:
+upsert の直後に、親の body document を書き込みます:
 
 ```http
 PUT /api/cases/:releaseCaseId/documents/body
@@ -278,7 +278,7 @@ PUT /api/cases/:releaseCaseId/documents/body
 }
 ```
 
-続けて、`parentCaseId` を release case id に設定した次の child case を
+続けて、`parentCaseId` を release case id に設定した child case を
 作成または upsert します:
 
 - `blog_post`, key `paperclip-release:vYYYY.MDD.P:blog-post`, status
@@ -286,21 +286,21 @@ PUT /api/cases/:releaseCaseId/documents/body
 - `tweet_storm`, key `paperclip-release:vYYYY.MDD.P:tweet-storm`, status
   `in_progress`, body document key `body`
 
-key は必ず deterministic にして、release-content flow を再実行しても同じ 3 つの
-case が upsert され、複製されないようにします。child body document を書き終えたら、
+key は必ず deterministic にし、release-content flow を再実行しても同じ 3 つの
+case が upsert されて複製されないようにします。child body document を書き終えたら、
 生成された case identifier と link を release issue に載せ、親の acceptance issue が
 ある場合はそこにも載せます。
 
 ## 失敗時の扱い
 
-canary が悪い場合:
+canary に問題がある場合:
 
-- publish another canary, do not ship stable
+- 別の canary を publish し、stable は ship しない
 
 stable の npm publish は成功したのに、tag push や GitHub Release 作成が失敗した場合:
 
-- fix the git/GitHub issue immediately from the same release result
-- do not republish the same version
+- 同じ release 結果の文脈から、git / GitHub の問題をすぐに修正する
+- 同じ version を再 publish しない
 
 stable publish 後に `latest` が壊れている場合:
 
@@ -308,19 +308,18 @@ stable publish 後に `latest` が壊れている場合:
 ./scripts/rollback-latest.sh <last-good-version>
 ```
 
-Then fix forward with a new stable release.
+そのあと、新しい stable release で forward fix します。
 
 ## 出力
 
 skill が完了したら、次を返します:
 
-- candidate SHA and tested canary version, if relevant
-- stable version, if promoted
+- relevant なら candidate SHA と検証済み canary version
+- promote した場合は stable version
 - verification status
 - npm status
 - smoke-test status
 - git tag / GitHub Release status
 - website / announcement follow-up status
-- release-content case tree links: parent `release` case plus `blog_post` and
-  `tweet_storm` children
-- rollback recommendation if anything is still partially complete
+- release-content case tree の link: 親 `release` case と `blog_post` / `tweet_storm` child
+- まだ一部しか完了していないものがあれば rollback recommendation

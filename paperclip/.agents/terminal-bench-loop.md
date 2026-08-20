@@ -8,39 +8,29 @@ description: >
 
 # Terminal-Bench Loop
 
-Paperclip を使って 1つの Terminal-Bench 問題を passing smoke に到達させるための
-repeatable な operating skill です。issue topology を明示し、run を上限付きにし、
-board gate で product fix を管理し、worktree の継続性を保ちます。
+Paperclip を使って 1つの Terminal-Bench 問題を passing smoke に到達させるための、再現可能な operating skill です。issue topology を明示し、run を上限付きにし、board gate で product fix を管理し、worktree の継続性を保ちます。
 
-この skill は engineering ではなく、**operational + diagnostic** です。
-Terminal-Bench loop に関する issue、artifact、approval を調整します。code change を
-許可するものではありません。承認された product fix は、board confirmation の後に
-別の implementation child issue として着地します。
+この skill は engineering ではなく、**operational + diagnostic** です。Terminal-Bench loop に関する issue、artifact、approval を調整します。code change を許可するものではありません。承認された product fix は、board confirmation の後に別の implementation child issue として着地します。
 
-canonical execution model: loop を始める前、または loop issue を動かす前に
-`doc/execution-semantics.md` を読んでください。すべての loop issue は、その document が
-許す state に置く必要があります: terminal（`done` / `cancelled`）、explicitly live
-（active run / queued wake）、explicitly waiting（participant / interaction / approval を
-伴う `in_review`）、または explicit recovery / blocker（`blockedByIssueIds` と
-named owner を伴う `blocked`）です。
+canonical execution model: loop を始める前、または loop issue を動かす前に `doc/execution-semantics.md` を読んでください。すべての loop issue は、その document が許す state に置く必要があります: terminal（`done` / `cancelled`）、explicitly live（active run / queued wake）、explicitly waiting（participant / interaction / approval を伴う `in_review`）、または explicit recovery / blocker（`blockedByIssueIds` と named owner を伴う `blocked`）です。
 
 ## 使う場面
 
-Trigger on an assignment whose title or body matches any of:
+次のいずれかの title または body に一致する assignment で使います:
 
 - "run Terminal-Bench in a loop", "loop \<task-name\> through Paperclip"
 - "drive Terminal-Bench fix-git", "iterate on Terminal-Bench until it passes"
 - "Terminal-Bench smoke loop", "bench loop", "smoke loop on \<task-name\>"
-- An attached link to a Terminal-Bench loop parent issue, plus a request to do another iteration
+- Terminal-Bench loop の parent issue へのリンクが添えられ、さらに次の iteration を求められているもの
 
-Also use when the user hands you an existing top-level loop issue and asks for the next iteration, diagnosis, or rerun.
+また、既存の top-level loop issue を渡され、次の iteration、diagnosis、rerun を求められたときにも使います。
 
 ## 使わない場面
 
-- The assignment is to build or change `paperclip-bench` itself (Harbor adapter, wrapper, telemetry). Use normal engineering flow on that repo.
-- The assignment is to submit a benchmark result for ranking. This skill produces smoke/non-comparable runs by design — escalate full-suite or comparable runs to BenchmarkQualityManager.
-- The assignment is a normal Paperclip product bug not surfaced by a Terminal-Bench loop. Use normal investigation.
-- You have not been granted permission to install or assign company skills, and the asker actually wants library mutation. Hand that step to an authorized skill-library owner.
+- assignment が `paperclip-bench` 自体（Harbor adapter、wrapper、telemetry）の作成や変更である場合。そちらは通常の engineering flow で進めます。
+- assignment がランキング用の benchmark result 提出である場合。この skill は設計上 smoke / non-comparable run を出すものであり、full-suite や comparable run は BenchmarkQualityManager にエスカレーションします。
+- assignment が Terminal-Bench loop から表面化していない通常の Paperclip product bug である場合。通常の investigation を使います。
+- company skill の install や assign の権限がなく、相手が実際には library mutation を求めている場合。その step は権限のある skill-library owner に任せます。
 
 ## 守るべき3つの invariant
 

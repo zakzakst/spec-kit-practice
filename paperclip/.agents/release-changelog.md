@@ -313,18 +313,18 @@ PUT /api/cases/:releaseCaseId/documents/body
 }
 ```
 
-If updating an existing body document, fetch the case first and pass the latest
-`baseRevisionId`. On `409 stale_base_revision`, refetch, merge intentionally,
-and retry once.
+既存の body document を更新する場合は、先に case を取得して最新の
+`baseRevisionId` を渡します。`409 stale_base_revision` が返ったら、再取得して
+意図的に merge し、1回だけ retry します。
 
-## Step 6 — Review Before Release
+## Step 6 — 公開前レビュー
 
-Before handing it off:
+引き渡す前に次を確認します:
 
-1. confirm the H1 heading is `# Paperclip {version}` (e.g. `# Paperclip v2026.618.0`) with the stable version only
-2. confirm there is no `-canary` language in the title or filename
-3. confirm any breaking changes have an upgrade path
-4. confirm the `release` case exists or explain why Cases were unavailable
-5. present the draft for human sign-off
+1. H1 見出しが `# Paperclip {version}`（例: `# Paperclip v2026.618.0`）になっており、stable version のみが入っていること
+2. title と filename に `-canary` が含まれていないこと
+3. breaking change がある場合は upgrade path が用意されていること
+4. `release` case が存在するか、あるいは Cases を使えなかった理由を説明できること
+5. 下書きを human に sign-off してもらうこと
 
-This skill never publishes anything. It only prepares the stable changelog artifact.
+この skill は何も publish しません。stable changelog artifact を準備するだけです。
