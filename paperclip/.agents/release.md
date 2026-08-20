@@ -111,7 +111,7 @@ stable changelog のファイルは次に置きます:
 
 ## Step 3 - 候補 SHA を検証する
 
-Run the standard gate:
+標準 gate を実行します:
 
 ```bash
 pnpm -r typecheck
@@ -187,10 +187,10 @@ smoke testing が失敗したら:
 
 live stable の前に:
 
-1. resolve the target stable version with `./scripts/release.sh stable --date YYYY-MM-DD --print-version`
-2. ensure `releases/vYYYY.MDD.P.md` exists on the source ref
-3. run the stable workflow in dry-run mode first when practical
-4. then run the real stable publish
+  1. `./scripts/release.sh stable --date YYYY-MM-DD --print-version` で対象 stable version を解決する
+  2. source ref に `releases/vYYYY.MDD.P.md` が存在することを確認する
+  3. 可能なら最初に stable workflow を dry-run mode で実行する
+  4. その後、本番の stable publish を実行する
 
 stable workflow は次を行います:
 

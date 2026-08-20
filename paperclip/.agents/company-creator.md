@@ -10,7 +10,7 @@ description: >
 
 Agent Companies specification に準拠した agent company package を作成します。
 
-Spec references:
+参照仕様:
 
 - Normative spec: `docs/companies/companies-spec.md` (read this before generating files)
 - Web spec: https://agentcompanies.io/specification
@@ -18,13 +18,13 @@ Spec references:
 
 ## 2つのモード
 
-### Mode 1: ゼロから company を作る
+### モード 1: ゼロから company を作る
 
-The user describes what they want. Interview them to flesh out the vision, then generate the package.
+ユーザーが希望する内容を説明します。ヒアリングで vision を具体化し、その後 package を生成します。
 
-### Mode 2: repo から company を作る
+### モード 2: repo から company を作る
 
-The user provides a git repo URL, local path, or tweet. Analyze the repo, then create a company that wraps it.
+ユーザーが git repo URL、ローカルパス、または tweet を指定します。repo を分析し、それを包む company を作成します。
 
 See [references/from-repo-guide.md](references/from-repo-guide.md) for detailed repo analysis steps.
 
@@ -32,7 +32,7 @@ See [references/from-repo-guide.md](references/from-repo-guide.md) for detailed 
 
 ### Step 1: 文脈を集める
 
-Determine which mode applies:
+どちらの mode に該当するかを判断します:
 
 - **From scratch**: What kind of company or team? What domain? What should the agents do?
 - **From repo**: Clone/read the repo. Scan for existing skills, agent configs, README, source structure.
@@ -45,7 +45,7 @@ Determine which mode applies:
 **ゼロから company を作る場合** は、次を聞きます:
 
 - Company purpose and domain (1-2 sentences is fine)
-- What agents they need - propose a hiring plan based on what they described
+- どの agent が必要か。説明に基づいて採用計画を提案します。
 - Whether this is a full company (needs a CEO) or a team/department (no CEO required)
 - Any specific skills the agents should have
 - How work flows through the organization (see "Workflow" below)
@@ -54,60 +54,53 @@ Determine which mode applies:
 **repo から company を作る場合** は、分析を示したうえで次を確認します:
 
 - Confirm the agents you plan to create and their roles
-- Whether to reference or vendor any discovered skills (default: reference)
-- Any additional agents or skills beyond what the repo provides
-- Company name and any customization
-- Confirm the workflow you inferred from the repo (see "Workflow" below)
+- 見つかった skills を参照するか、vendor 化するか（既定は reference）
+- repo が示すもの以外に、追加で必要な agent や skill があるか
+- company 名とカスタマイズ内容
+- repo から推論した workflow を確認します（下の「Workflow」を参照）
 
-**Workflow — この company では work がどう流れるか?**
+**Workflow - この company では work がどう流れるか?**
 
-company は、skills を持つ agent の一覧ではありません。アイデアを work product に
-変える組織です。各 agent が次を理解できるように workflow を把握する必要があります:
+company は、skills を持つ agent の一覧ではありません。アイデアを work product に変える組織です。各 agent が次を理解できるように workflow を把握する必要があります:
 
-- Who gives them work and in what form (a task, a branch, a question, a review request)
-- What they do with it
-- Who they hand off to when they're done, and what that handoff looks like
-- What "done" means for their role
+- 誰からどんな形で work を受け取るか（task、branch、質問、review request など）
+- 受け取った work で何をするか
+- 終わったら誰に handoff するか、その handoff がどう見えるか
+- その role にとって「done」とは何か
 
-**すべての company が pipeline とは限りません。** 文脈から適切な workflow pattern を
-推論してください:
+**すべての company が pipeline とは限りません。** 文脈から適切な workflow pattern を推論してください:
 
-- **Pipeline** — sequential stages, each agent hands off to the next. Use when the repo/domain has a clear linear process (e.g. plan → build → review → ship → QA, or content ideation → draft → edit → publish).
-- **Hub-and-spoke** — a manager delegates to specialists who report back independently. Use when agents do different kinds of work that don't feed into each other (e.g. a CEO who dispatches to a researcher, a marketer, and an analyst).
-- **Collaborative** — agents work together on the same things as peers. Use for small teams where everyone contributes to the same output (e.g. a design studio, a brainstorming team).
-- **On-demand** — agents are summoned as needed with no fixed flow. Use when agents are more like a toolbox of specialists the user calls directly.
+- **Pipeline** - 順番に進む stage です。各 agent が次へ handoff します。repo / domain に明確な直線的プロセスがあるときに使います（例: plan → build → review → ship → QA、または content ideation → draft → edit → publish）。
+- **Hub-and-spoke** - manager が specialists に委任し、それぞれが独立に結果を返します。agents の work が互いに依存しないときに使います（例: CEO が researcher、marketer、analyst に配分する）。
+- **Collaborative** - agent 同士が peer として同じ成果物に取り組みます。小さな team で全員が同じ output に貢献する場合に使います（例: design studio、brainstorming team）。
+- **On-demand** - 固定の flow はなく、必要に応じて agent を呼び出します。ユーザーが直接呼び出す specialist の道具箱のような場合に使います。
 
-ゼロから company を作る場合は、説明に基づいて workflow pattern を提案し、
-それでよいか確認します。
+ゼロから company を作る場合は、説明に基づいて workflow pattern を提案し、それでよいか確認します。
 
-repo から company を作る場合は、repo の構造から pattern を推論します。skills に
-明確な順次依存（たとえば `plan-ceo-review → plan-eng-review → review → ship → qa`）が
-あれば、それは pipeline です。skills が独立した能力なら、hub-and-spoke か
-on-demand の可能性が高くなります。ヒアリングでは、その推論を伝えてユーザーに
-確認または修正してもらいます。
+repo から company を作る場合は、repo の構造から pattern を推論します。skills に明確な順次依存（たとえば `plan-ceo-review → plan-eng-review → review → ship → qa`）があれば、それは pipeline です。skills が独立した能力なら、hub-and-spoke か on-demand の可能性が高くなります。ヒアリングでは、その推論を伝えてユーザーに確認または修正してもらいます。
 
 **ヒアリングの基本原則:**
 
-- Propose a concrete hiring plan. Don't ask open-ended "what agents do you want?" - suggest specific agents based on context and let the user adjust.
-- Keep it lean. Most users are new to agent companies. A few agents (3-5) is typical for a startup. Don't suggest 10+ agents unless the scope demands it.
-- From-scratch companies should start with a CEO who manages everyone. Teams/departments don't need one.
-- Ask 2-3 focused questions per round, not 10.
+- 具体的な採用計画を提案してください。漠然と「どんな agent が欲しいですか？」と聞かず、文脈に合う具体案を出して調整してもらいます。
+- できるだけ軽く保ちます。多くのユーザーは agent company に不慣れです。スタートアップなら数人（3〜5人）が標準です。必要性がない限り 10 人超は提案しません。
+- ゼロから作る company は、全員を管理する CEO から始めます。team / department には CEO は不要です。
+- 1 回の round では、10 個ではなく 2〜3 個の焦点を絞った質問をします。
 
 ### Step 3: spec を読む
 
-Before generating any files, read the normative spec:
+ファイルを生成する前に normative spec を読みます:
 
 ```
 docs/companies/companies-spec.md
 ```
 
-Also read the quick reference: [references/companies-spec.md](references/companies-spec.md)
+quick reference も読みます: [references/companies-spec.md](references/companies-spec.md)
 
-And the example: [references/example-company.md](references/example-company.md)
+例も読みます: [references/example-company.md](references/example-company.md)
 
 ### Step 4: package を生成する
 
-Create the directory structure and all files. Follow the spec's conventions exactly.
+ディレクトリ構造とすべてのファイルを作成します。spec の規約に正確に従います。
 
 **ディレクトリ構成:**
 
@@ -154,7 +147,7 @@ Each AGENTS.md body should include not just what the agent does, but how they fi
 3. **Who you hand off to** — "When your plan is locked, hand off to the Staff Engineer for implementation" or "When review passes, hand off to the Release Engineer to ship"
 4. **What triggers you** — "You are activated when a new feature idea needs product-level thinking" or "You are activated when a branch is ready for pre-landing review"
 
-This turns a collection of agents into an organization that actually works together. Without workflow context, agents operate in isolation — they do their job but don't know what happens before or after them.
+これにより、agent の集合が実際に協調して動く組織になります。workflow context がなければ agent は孤立して動き、作業の前後に何が起きるかを理解できません。
 
 生成する working agent には、簡潔な execution contract を必ず入れます:
 
@@ -166,7 +159,7 @@ This turns a collection of agents into an organization that actually works toget
 
 ### Step 5: 出力先を確認する
 
-Ask the user where to write the package. Common options:
+package の書き込み先をユーザーに確認します。よくある選択肢:
 
 - A subdirectory in the current repo
 - A new directory the user specifies
@@ -174,24 +167,20 @@ Ask the user where to write the package. Common options:
 
 ### Step 6: README.md と LICENSE を書く
 
-**README.md** — すべての company package に README を付けます。GitHub で見る人にとって
-読みやすい導入文にします。次を含めます:
+**README.md** — すべての company package に README を付けます。GitHub で見る人にとって読みやすい導入文にします。次を含めます:
 
-- Company name and what it does
-- The workflow / how the company operates
-- Org chart as a markdown list or table showing agents, titles, reporting structure, and skills
-- Brief description of each agent's role
-- Citations and references: link to the source repo (if from-repo), link to the Agent Companies spec (https://agentcompanies.io/specification), and link to Paperclip (https://github.com/paperclipai/paperclip)
-- A "Getting Started" section explaining how to import: `paperclipai company import --from <path>`
+- company 名と何をするか
+- workflow / company の動き方
+- agent、title、報告ライン、skill を示す markdown の list か table の org chart
+- 各 agent の role の短い説明
+- 引用と参照: source repo へのリンク（repo 由来の場合）、Agent Companies spec へのリンク（https://agentcompanies.io/specification）、Paperclip へのリンク（https://github.com/paperclipai/paperclip）
+- import 方法を説明する "Getting Started" section: `paperclipai company import --from <path>`
 
-**LICENSE** — LICENSE file を含めます。著作権者は company を作るユーザーであり、
-元 repo の author ではありません（skill を作ったのは彼らですが、company を作るのは
-ユーザーです）。source repo と同じ license type を使うか（repo 由来の場合）、
-ユーザーに確認します（ゼロからの場合）。不明なら MIT を既定にします。
+**LICENSE** — LICENSE file を含めます。著作権者は company を作るユーザーであり、元 repo の author ではありません（skill を作ったのは彼らですが、company を作るのはユーザーです）。source repo と同じ license type を使うか（repo 由来の場合）、ユーザーに確認します（ゼロからの場合）。不明なら MIT を既定にします。
 
 ### Step 7: file を書いて要約する
 
-Write all files, then give a brief summary:
+すべての file を書き出したうえで、簡潔に要約します:
 
 - Company name and what it does
 - Agent roster with roles and reporting structure
@@ -199,15 +188,15 @@ Write all files, then give a brief summary:
 - Projects and tasks if any
 - The output path
 
-## .paperclip.yaml Guidelines
+## .paperclip.yaml ガイドライン
 
-The `.paperclip.yaml` file is the Paperclip vendor extension. It configures adapters and env inputs per agent.
+`.paperclip.yaml` file は Paperclip の vendor extension です。agent ごとの adapter と env input を設定します。
 
-### Adapter Rules
+### Adapter ルール
 
-**Do not specify an adapter unless the repo or user context warrants it.** If you don't know what adapter the user wants, omit the adapter block entirely — Paperclip will use its default. Specifying an unknown adapter type causes an import error.
+**repo やユーザー文脈が要求しない限り、adapter を指定しないでください。** ユーザーが望む adapter が分からないなら、adapter block を完全に省略します。Paperclip は既定値を使います。未知の adapter type を指定すると import error になります。
 
-Paperclip's supported adapter types (these are the ONLY valid values):
+Paperclip がサポートする adapter type（これだけが有効値です）:
 - `claude_local` — Claude Code CLI
 - `codex_local` — Codex CLI
 - `opencode_local` — OpenCode CLI
@@ -216,19 +205,19 @@ Paperclip's supported adapter types (these are the ONLY valid values):
 - `gemini_local` — Gemini CLI
 - `openclaw_gateway` — OpenClaw gateway
 
-Only set an adapter when:
-- The repo or its skills clearly target a specific runtime (e.g. gstack is built for Claude Code, so `claude_local` is appropriate)
-- The user explicitly requests a specific adapter
-- The agent's role requires a specific runtime capability
+adapter を設定するのは次のときだけです:
+- repo かその skills が特定の runtime を明確に対象としているとき（例: gstack は Claude Code 向けなので `claude_local` が適切）
+- ユーザーが特定の adapter を明示的に求めたとき
+- agent の role に特定の runtime capability が必要なとき
 
-### Env Inputs Rules
+### Env Input ルール
 
-**Do not add boilerplate env variables.** Only add env inputs that the agent actually needs based on its skills or role:
-- `GH_TOKEN` for agents that push code, create PRs, or interact with GitHub
-- API keys only when a skill explicitly requires them
-- Never set `ANTHROPIC_API_KEY` as a default empty env variable — the runtime handles this
+**定型的な env variable は追加しないでください。** agent の skill や role に基づいて、本当に必要な env input だけを追加します:
+- `GH_TOKEN` は、コードを push したり PR を作成したり GitHub とやり取りしたりする agent 用
+- API key は、skill が明示的に必要とするときだけ
+- `ANTHROPIC_API_KEY` を既定の空 env variable として設定しないでください。runtime がこれを扱います
 
-Example with adapter (only when warranted):
+adapter を含む例（必要な場合のみ）:
 ```yaml
 schema: paperclip/v1
 agents:
@@ -244,7 +233,7 @@ agents:
           requirement: optional
 ```
 
-Example — only agents with actual overrides appear:
+例 - 実際に override が必要な agent だけを表示:
 ```yaml
 schema: paperclip/v1
 agents:
@@ -256,11 +245,11 @@ agents:
           requirement: optional
 ```
 
-In this example, only `release-engineer` appears because it needs `GH_TOKEN`. The other agents (ceo, cto, etc.) have no overrides, so they are omitted entirely from `.paperclip.yaml`.
+この例では、`GH_TOKEN` が必要なのは `release-engineer` だけなのでそれだけが現れます。ほかの agent（ceo、cto など）には override がないため、`.paperclip.yaml` からは完全に省略されます。
 
-## External Skill References
+## 外部 skill 参照
 
-When referencing skills from a GitHub repo, always use the references pattern:
+GitHub repo の skills を参照するときは、必ず references パターンを使います:
 
 ```yaml
 metadata:
@@ -280,4 +269,4 @@ Get the commit SHA with:
 git ls-remote https://github.com/owner/repo HEAD
 ```
 
-Do NOT copy external skill content into the package unless the user explicitly asks.
+ユーザーが明示的に求めない限り、外部 skill の内容を package にコピーしないでください。

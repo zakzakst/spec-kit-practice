@@ -5,7 +5,7 @@ description: >
   plugin の scaffold、ローカル plugin の反復、Paperclip への install、plugin authoring docs の更新に使います。
 ---
 
-# Paperclip plugin を作成して開発する
+# Paperclip plugin を作成・開発する
 
 Paperclip のローカル instance に対して plugin を作成・scaffold・反復するときに使う skill です。
 
@@ -73,7 +73,7 @@ pnpm dev            # esbuild --watch: dist/manifest.js, dist/worker.js, dist/ui
 paperclipai plugin install /absolute/path/to/my-plugin
 ```
 
-Notes:
+備考:
 
 - `paperclipai plugin install` は local path（absolute、`./`、`../`、`~`、または既存の relative folder）を自動検出し、`isLocalPath: true` を server に渡します。heuristic が曖昧なら `--local` で local mode を強制できます。
 - path は server に送る前に absolute path に解決されます。

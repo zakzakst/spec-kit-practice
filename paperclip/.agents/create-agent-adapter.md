@@ -52,7 +52,7 @@ adapter module は、次の3つの registry から消費されます:
 `@paperclipai/adapter-utils`（型）または `@paperclipai/adapter-utils/server-utils`
 （runtime helper）から import します。
 
-### Core Interfaces
+### 中核インターフェース
 
 ```ts
 // The execute function signature — every adapter must implement this
@@ -91,7 +91,7 @@ interface AdapterSessionCodec {
 }
 ```
 
-### Module Interfaces
+### モジュールインターフェース
 
 ```ts
 // Server — registered in server/src/adapters/registry.ts
@@ -583,7 +583,7 @@ if (sessionId && !proc.timedOut && exitCode !== 0 && isUnknownSessionError(outpu
 - 任意 field にはすべて妥当な default を用意します。
 - すべての field を `agentConfigurationDoc` に記載します。
 
-### prompt templates
+### prompt template
 - すべての run で `promptTemplate` をサポートします
 - 標準の variable set とともに `renderTemplate()` を使います
 - default prompt には `@paperclipai/adapter-utils/server-utils` の

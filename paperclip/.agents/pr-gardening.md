@@ -212,7 +212,7 @@ Markdown body で `gardening-report` issue document を作成 / 更新し、arti
 
 ## Verification
 
-Run focused script tests:
+焦点を絞った script test を実行します:
 
 ```bash
 node --test .agents/skills/pr-gardening/scripts/pr-gardening.test.mjs

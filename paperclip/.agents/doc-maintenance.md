@@ -6,7 +6,7 @@ description: >
   または定期監査のときに使います。
 ---
 
-# Doc Maintenance Skill
+# 文書メンテナンス Skill
 
 文書の drift を検出し、PR で最小修正します。書き直しも無駄な変更も行いません。
 
@@ -82,8 +82,7 @@ commit メッセージと変更ファイルを確認し、次のように分類�
 
 ### Step 4 - 各対象文書を監査する
 
-For each target document, read it fully and cross-reference against the change
-summary. Check for:
+各対象文書を最後まで読み、変更サマリーと突き合わせます。次を確認します:
 
 1. **False negative** - すでに出荷済みの主要機能がまったく触れられていない
 2. **False positive** - すでに出荷済みなのに "coming soon" / "roadmap" / "planned"
@@ -118,7 +117,7 @@ drift を直すために必要な編集だけを行います。ルール:
 
 ### Step 6 - PR を開く
 
-Commit the changes and open a PR:
+変更をコミットして PR を開きます:
 
 ```bash
 git add README.md doc/SPEC.md doc/PRODUCT.md .doc-review-cursor

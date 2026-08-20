@@ -34,7 +34,7 @@ canonical execution model: loop を始める前、または loop issue を動か
 
 ## 守るべき3つの invariant
 
-Every loop iteration and every proposed product fix must hold these three invariants together. They come from `/diagnose-why-work-stopped` and the user has restated them across the liveness work:
+すべての loop iteration と提案する product fix は、次の3つの invariant を同時に満たす必要があります。これらは `/diagnose-why-work-stopped` に由来し、ユーザーは liveness work で繰り返し示しています:
 
 1. **Productive work continues.** Each loop issue must always have a clear next action owner — agent, board, user, or named blocker. No silent `in_review` with nothing waiting on it.
 2. **Only real blockers stop work.** Stops happen when something genuinely cannot proceed (board confirmation, QA, missing credentials, exhausted budget). Pseudo-stops must be detected and routed.
@@ -72,7 +72,7 @@ Wire dependencies with `blockedByIssueIds`, never with prose like "blocked by X"
 
 ### 0. 現在の execution contract を読む
 
-Before opening or advancing a loop, read `doc/execution-semantics.md`. Use that document's terms intact when classifying loop-issue state: live path / waiting path / recovery path; post-run disposition; bounded continuation; productivity review; pause-hold; watchdog. Do not invent a new state.
+loop を開くか進める前に `doc/execution-semantics.md` を読みます。loop issue の state を分類するときは、この文書の用語をそのまま使います: live path / waiting path / recovery path、post-run disposition、bounded continuation、productivity review、pause-hold、watchdog。新しい state を作ってはいけません。
 
 ### 1. top-level loop issue を開くか再利用する
 
@@ -124,7 +124,7 @@ Based on the diagnosis, the iteration ends in exactly one of these terminal-for-
 
 ### 6. Request board confirmation before any product fix
 
-When the iteration ends in **product fix proposed**:
+iteration が **product fix proposed** で終了した場合:
 
 - Update the iteration child's `plan` document with the proposed contract, the three-invariant check, the affected Paperclip surfaces, and the phased subtasks (implementation, QA, CTO review, rerun) — but do not create those subtasks.
 - Open the `request_confirmation` interaction on the **iteration child** (the same issue that owns the `plan` document), targeting the latest plan revision. Idempotency key: `confirmation:{iterationIssueId}:plan:{revisionId}`. Set `continuationPolicy` to `wake_assignee`.
@@ -143,7 +143,7 @@ After implementation and QA complete (or immediately, in the **non-product failu
 
 ### 8. Pass: QA, CTO review, close
 
-When the smoke passes:
+smoke が pass した場合:
 
 - Create QA and CTO review children if they are not already in the dependency chain (CTO review blocked by QA, so the chain wakes in order). Move the loop parent to `blocked` with `blockedByIssueIds` set to the QA / CTO review chain, and post a comment that names QA and CTO as the unblock owners and links the children. The loop parent stays `blocked` — not `in_review` — because the typed waiter lives on the children, not on the parent.
 - If you instead want the loop parent itself to sit in `in_review` during this phase (for example because a board user has explicitly volunteered to drive the review), put a typed waiter directly on the parent — execution-policy participant, `request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction, approval, or named human owner — and do not rely on the child chain alone. Do not combine `in_review` on the parent with QA/CTO children acting as the blocker; that is the ambiguous review shape this skill exists to prevent.
@@ -151,7 +151,7 @@ When the smoke passes:
 - CTO reviews the technical scope of any product fixes that landed during the loop.
 - On QA + CTO acceptance, close the loop issue with a board-level summary comment: task name, iteration count, stop reason (pass), worktree pointer, link to the final artifact root, and the list of accepted product fixes (each with its implementation issue id).
 
-### 9. Stop rules
+### 9. 停止ルール
 
 The loop **must** stop, with state explicitly recorded on the loop issue, when any of these is true:
 
@@ -196,7 +196,7 @@ If a loop issue does not fit one of these on exit, the heartbeat is not done. Fi
 - **Skill-library mutation.** This skill never installs, edits, or assigns company skills as part of a loop iteration. Library changes go to an authorized skill-library owner via a separate issue.
 - **Hiding the chain.** Do not silently delete or hide failed iteration children, retracted proposals, or rejected confirmations. The audit trail is the loop's evidence.
 
-## Verification checklist (before exiting a heartbeat that touched the loop)
+## 検証チェックリスト（loop に触れた heartbeat を終了する前）
 
 - [ ] All inputs are recorded on the top-level loop issue, including the exact benchmark command, `PAPERCLIPAI_CMD` binding, and dispatch runner config.
 - [ ] Iteration counter is up to date and within budget.
@@ -211,7 +211,7 @@ If a loop issue does not fit one of these on exit, the heartbeat is not done. Fi
 
 ## Deterministic smoke
 
-Run this smoke after installing or changing the skill, before treating it as operational for a live Terminal-Bench loop:
+skill を install または変更した後、live Terminal-Bench loop で operational とみなす前に、この smoke を実行します:
 
 ```sh
 pnpm smoke:terminal-bench-loop-skill

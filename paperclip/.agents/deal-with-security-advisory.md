@@ -14,7 +14,7 @@ advisory が公開されるまで、この process のすべては confidential 
 
 ***
 
-## Context
+## コンテキスト
 
 GitHub Security Advisory 経由で security vulnerability が報告されています:
 
@@ -172,9 +172,9 @@ gh release create v{{patchedVersion}} \
   --title "v{{patchedVersion}} — Security Release" \
   --notes "## Security Release
 
-This release fixes a critical security vulnerability.
+この release では重大な security vulnerability を修正しています。
 
-### What was fixed
+### 修正内容
 {{briefDescription}} (e.g., Remote code execution via DNS rebinding in \`local_trusted\` mode)
 
 ### Advisory
@@ -183,8 +183,8 @@ https://github.com/paperclipai/paperclip/security/advisories/{{ghsaId}}
 ### Credit
 Thanks to @{{reporterHandle}} for responsibly disclosing this vulnerability.
 
-### Action required
-All users running versions prior to {{patchedVersion}} should upgrade immediately."
+### 必須対応
+{{patchedVersion}} より前の version を実行しているすべてのユーザーは、直ちに upgrade してください。"
 ```
 
 ## Step 7: 公開後の確認

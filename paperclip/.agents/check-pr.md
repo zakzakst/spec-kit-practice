@@ -261,7 +261,7 @@ For each issue found, categorize as:
 
 ### 7. Report findings
 
-Present a summary table:
+サマリー表を提示します:
 
 | Area | Issue | Status | Action Needed |
 |------|-------|--------|---------------|
@@ -272,7 +272,7 @@ Present a summary table:
 
 ### 8. Fix issues (if requested)
 
-If there are actionable items:
+対応可能な項目がある場合:
 
 1. Switch to the PR/MR's branch (git) or ensure files are open in the correct CL (Perforce) if not already.
 2. Ask the user if they want to fix the issues.
@@ -327,7 +327,7 @@ query($cursor: String) {
 
 If `hasNextPage` is true, repeat with `-f cursor=ENDCURSOR` to get remaining threads.
 
-Then resolve threads that have been addressed or are informational:
+対応済みまたは情報提供のみの thread を解決します:
 
 ```bash
 gh api graphql -f query='
@@ -356,7 +356,7 @@ glab api --method PUT \
   --field resolved=true
 ```
 
-Repeat for each unresolved discussion ID.
+未解決の discussion ID ごとに繰り返します。
 
 ### 10. Multiple PRs/MRs/CLs
 
@@ -367,7 +367,7 @@ If checking a chain of PRs/MRs/CLs, process them sequentially.
 p4 changes -s pending -u $P4USER -c $P4CLIENT -l
 ```
 
-## Output format
+## 出力形式
 
 Summarize:
 - PR/MR/CL title or description and current state

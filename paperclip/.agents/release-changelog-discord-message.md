@@ -184,8 +184,7 @@ https://github.com/paperclipai/paperclip/blob/master/releases/v{VERSION}.md
 
 ## Tweet Storm Case Schema
 
-Use this child case for the Discord/social announcement thread. The key must be
-stable so retries update the same child case:
+この child case を Discord / social announcement thread に使います。retry で同じ child case が更新されるよう、key は安定させます:
 
 ```http
 POST /api/companies/:companyId/cases
@@ -444,4 +443,4 @@ Before handing off:
 7. Document `discord_announcement` is updated on the release issue, and the
    announcement is also posted in a comment inside a fenced code block.
 
-This skill never posts to Discord. It only prepares the announcement artifact.
+この skill は Discord へ投稿しません。announcement artifact の準備だけを行います。

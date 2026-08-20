@@ -3,7 +3,7 @@ name: garden-inbox
 description: Paperclip ユーザーの Mine inbox をスキャンし、取り消し可能な archive 候補を分類し、checkbox confirmation を求め、承認された項目だけを archive します。issue、branch、workspace を変更せずに inbox を整理・剪定・清掃したいときに使います。
 ---
 
-# Garden Inbox
+# Inbox の整理
 
 すべての段階で bundled script を使います。ワークフローの順序は厳密に `scan` → `confirm` → `apply` です。
 
@@ -15,7 +15,7 @@ description: Paperclip ユーザーの Mine inbox をスキャンし、取り消
 - inbox の archive 状態はユーザーごとの表示状態です。元の issue は変わらず、取り消し可能です。
 - issue status の変更、branch の削除、workspace の掃除、issue の削除を inbox archive の代わりに使ってはいけません。
 
-## Inputs
+## 入力
 
 `PAPERCLIP_API_URL` と `PAPERCLIP_API_KEY` が必要です。script は URL 末尾の `/api` を取り除きます。対象ユーザーは run JWT payload の `responsible_user_id` から解決します。`--user-id <uuid>` は明示的な対象上書きにのみ使ってください。
 
@@ -68,7 +68,7 @@ node .agents/skills/garden-inbox/scripts/garden-inbox.mjs confirm \
   --dry-run
 ```
 
-## 3. Apply accepted selections
+## 3. 承認済み選択を apply する
 
 interaction が解決して wake された後は、wake payload から resolved interaction ID を取り出して次を実行します:
 
@@ -91,7 +91,7 @@ node .agents/skills/garden-inbox/scripts/garden-inbox.mjs apply \
   --dry-run
 ```
 
-## Verify the bundled logic
+## bundled logic を検証する
 
 分類や selection safety を変えた後は、依存なしの Node テストを実行します:
 

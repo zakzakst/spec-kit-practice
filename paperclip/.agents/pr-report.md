@@ -31,9 +31,9 @@ PR、branch、または大きな contribution の maintainer 級レビューを�
 
 よくある出力:
 
-- standalone HTML report in `tmp/reports/...`
-- Markdown report in `report/` or another requested folder
-- short maintainer summary in chat
+- `tmp/reports/...` の単独 HTML レポート
+- `report/` または指定されたフォルダーの Markdown レポート
+- チャットでの短い maintainer 向け要約
 
 ユーザーが webpage を求めたら、見出しが明確で視認性の高い、洗練された
 standalone HTML artifact を作ります。
@@ -51,10 +51,10 @@ standalone HTML artifact を作ります。
 
 集めるもの:
 
-- target branch or worktree
-- diff size and changed subsystems
-- relevant repo docs, specs, and invariants
-- contributor intent if it is documented in PR text or design docs
+- 対象 branch または worktree
+- diff の規模と変更された subsystem
+- 関連する repo docs、spec、invariant
+- PR 本文または design doc に記載された contributor の意図
 
 最初に答えるべき問いは、「この変更は *何になろうとしているのか*？」です。
 
@@ -87,7 +87,7 @@ Prioritize:
 
 ### 4. 異議の種類を区別する
 
-Be explicit about whether a concern is:
+懸念が次のどれに当たるかを明確にします:
 
 - product direction
 - architecture
@@ -99,8 +99,7 @@ architecture への異議を scope への異議の中に隠さないでくださ
 
 ### 5. 必要なら外部の先例と比較する
 
-If the contribution introduces a framework or platform concept, compare it to
-similar open-source systems.
+contribution が framework または platform の概念を導入する場合は、類似する open-source system と比較します。
 
 When comparing:
 
@@ -158,7 +157,7 @@ HTML report の場合:
 
 ゼロから作る前に `references/style-guide.md` を読みます。
 素早く洗練された starter が役立つなら、`assets/html-report-starter.html` から始めます。
-and replace the placeholder content with the actual report.
+placeholder の内容を実際の report に置き換えます。
 
 ### 8. 引き渡し前に検証する
 
@@ -198,4 +197,4 @@ chat では次を要約します:
 - the top one or two reasons
 - whether verification or tests were skipped
 
-Keep the chat summary shorter than the report itself.
+チャットの要約は report 本体より短くします。

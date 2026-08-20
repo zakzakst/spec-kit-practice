@@ -54,7 +54,7 @@ PR_URL=$(echo "$PR_JSON" | jq -r .url)
 
 ### 3. その SHA の check を洗い出す
 
-Fetch both GitHub check runs and legacy commit status contexts:
+GitHub check run と legacy commit status context の両方を取得します:
 
 ```bash
 gh api "repos/{owner}/{repo}/commits/$HEAD_SHA/check-runs?per_page=100"
@@ -122,19 +122,19 @@ gh run view <RUN_ID> --json databaseId,name,workflowName,status,conclusion,jobs,
 gh run view <RUN_ID> --log-failed
 ```
 
-For each failing check, classify it:
+失敗した各 check を分類します:
 
 | Failure type | Action |
 |---|---|
-| Code/test regression | Reproduce locally, fix, and verify |
-| Lint/type/build mismatch | Run the matching local command from the workflow and fix it |
-| Flake or transient infra issue | Rerun once if evidence supports flakiness |
-| External service/status app failure | Escalate with the details URL and owner guess |
-| Missing secret/permission/branch protection issue | Escalate immediately |
+| コード / test regression | ローカルで再現し、修正して検証する |
+| lint / type / build の不一致 | workflow と一致するローカル command を実行して修正する |
+| flaky または一時的な infra issue | flaky である証拠があれば1回だけ再実行する |
+| 外部 service / status app の失敗 | details URL と担当者の候補を添えてエスカレーションする |
+| secret / permission / branch protection の不足 | 直ちにエスカレーションする |
 
-Only rerun a failed job once without code changes. Do not loop on reruns.
+コード変更なしで失敗 job を再実行するのは1回だけにします。再実行をループさせてはいけません。
 
-### 6. Fix actionable failures
+### 6. 対応可能な失敗を修正する
 
 If the failure is actionable from the checked-out code:
 
@@ -148,7 +148,7 @@ If the failure is actionable from the checked-out code:
 Do not stop at a local fix. The loop is only complete when the remote PR checks
 for the new head SHA are green.
 
-### 7. Push and repeat
+### 7. push して繰り返す
 
 After each fix:
 
@@ -157,15 +157,15 @@ git push
 sleep 5
 ```
 
-Then refresh the PR metadata, get the new `HEAD_SHA`, and restart from Step 3.
+その後 PR metadata を更新し、新しい `HEAD_SHA` を取得して Step 3 から再開します。
 
-Exit the loop only when:
+次のいずれかになった場合だけ loop を終了します:
 
 - all checks for the latest head SHA are green, or
 - a blocker remains after reasonable repair effort, or
 - the max iteration count is reached
 
-### 8. Escalate blockers precisely
+### 8. blocker を正確にエスカレーションする
 
 If you cannot get the PR green, report:
 

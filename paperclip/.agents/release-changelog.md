@@ -33,7 +33,7 @@ release date（UTC）に、その日の次の stable patch slot を足して決�
 - version を semver bump type から導かない
 - canary changelog file を作らない
 
-## Channel Process - source commit と file の場所
+## Channel Process - source commit とファイルの場所
 
 stable は **soaked beta** を promote するため、changelog は `master` の先端ではなく、
 beta の source commit を説明します:
@@ -69,7 +69,7 @@ beta の source commit を説明します:
   notes は candidate branch 上に直接 `releases/vYYYY.MDD.P.md` として置かれ、
   cherry-pick した fix と一緒に commit されます。
 
-## Step 0 - idempotency check
+## Step 0 - idempotency の確認
 
 何かを生成する前に、changelog がすでに存在するか確認します:
 
@@ -84,14 +84,14 @@ git ls-remote origin 'refs/heads/release-notes/v{beta-version}'
 
 存在する場合:
 
-1. read it first
-2. present it to the reviewer
-3. ask whether to keep it, regenerate it, or update specific sections
-4. never overwrite it silently
+1. 最初に読みます
+2. reviewer に提示します
+3. 保持、再生成、特定 section の更新のどれを行うか確認します
+4. 決して黙って上書きしません
 
 ## Step 1 - stable の範囲を決める
 
-Find the last stable tag and the beta source commit:
+最後の stable tag と beta source commit を確認します:
 
 ```bash
 git tag --list 'v*' --sort=-version:refname | head -1
@@ -129,7 +129,7 @@ ls .changeset/*.md | grep -v README.md
 gh pr list --state merged --search "merged:>={last-tag-date}" --json number,title,body,labels
 ```
 
-## Step 3 — Detect Breaking Changes
+## Step 3 — Breaking Change を検出する
 
 Look for:
 
@@ -147,12 +147,11 @@ git diff v{last}..{beta-src} -- server/src/routes/ server/src/api/
 git log v{last}..{beta-src} --format="%s" | rg -n 'BREAKING CHANGE|BREAKING:|^[a-z]+!:' || true
 ```
 
-If breaking changes are detected, flag them prominently — they must appear in the
-Breaking Changes section with an upgrade path.
+breaking change を検出した場合は目立つ形で示します。Breaking Changes section に upgrade path とともに必ず記載します。
 
-## Step 4 — Categorize for Users
+## Step 4 — ユーザー向けに分類する
 
-Use these stable changelog sections:
+stable changelog では次の section を使います:
 
 - `Breaking Changes`
 - `Highlights`
@@ -196,7 +195,7 @@ Rules:
   parenthetical — do not guess.
 - Core maintainer commits that don't have an external PR can omit the parenthetical.
 
-## Step 5 — Write the File
+## Step 5 — ファイルを書く
 
 The **file path** is the beta-keyed one from the Channel Process section
 (`releases/beta/v{beta-version}.md`), but the **content** is titled with
@@ -257,12 +256,12 @@ List contributors in alphabetical order by GitHub username (case-insensitive).
 
 If there are no contributors left after exclusions, then just skip this section and don't mention it.
 
-## Step 5b — Upsert The Release Case
+## Step 5b — Release Case を upsert する
 
 After writing `releases/vYYYY.MDD.P.md`, emit or refresh the top-level release
 case when the run has Paperclip API context. Use `skills/paperclip/references/cases.md`
 as the API contract. If the API returns `403 Cases are disabled`, report that
-Cases must be enabled and continue with the changelog file only.
+Cases を有効にする必要があることを報告し、changelog file の処理だけを続けます。
 
 Request:
 
@@ -296,12 +295,12 @@ POST /api/companies/:companyId/cases
 }
 ```
 
-This fields schema deliberately exercises every generic field value type:
+この fields schema は、汎用 field value の全種類を意図的に使用します:
 string, number, boolean, array, object, and null. Keep the keys stable across
 runs and send the full object on every upsert because fields are replaced, not
 deep-merged.
 
-Then write the changelog into the case body document:
+続けて changelog を case body document に書き込みます:
 
 ```http
 PUT /api/cases/:releaseCaseId/documents/body

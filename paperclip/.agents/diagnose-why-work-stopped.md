@@ -15,11 +15,11 @@ description: >
 この skill は engineering ではなく、**diagnostic + product design** です。出力は
 書面化された root cause と承認済み plan です。この skill から code change は出しません。
 
-Canonical execution model: read `doc/execution-semantics.md` before diagnosing or proposing a new liveness/recovery rule. Use that document as the source of truth for status, action-path, post-run disposition, bounded continuation, productivity review, pause-hold, watchdog, and explicit recovery semantics. If the investigation finds a true product-rule gap, the plan should say whether `doc/execution-semantics.md` needs a matching update.
+標準実行モデル: 新しい liveness / recovery rule を診断または提案する前に `doc/execution-semantics.md` を読みます。この文書を status、action-path、post-run disposition、bounded continuation、productivity review、pause-hold、watchdog、explicit recovery semantics の source of truth とします。調査で本当の product-rule gap が見つかった場合は、`doc/execution-semantics.md` に対応する更新が必要か plan に明記します。
 
 ## 使う場面
 
-Trigger on an assignment whose title or body matches any of:
+title または body が次のいずれかに一致する assignment で起動します:
 
 - "why did this work stop", "why did this stall", "why did this just stop"
 - "infinite loop", "looping", "spinning", "going too deep", "recovery went too deep"
@@ -27,7 +27,7 @@ Trigger on an assignment whose title or body matches any of:
 - "approach it from a product perspective", "general product principle / rule"
 - An attached link to a specific stalled / looping / over-recovered issue tree
 
-Also use when the user asks for forensics, root cause, or a write-up *before* any product change.
+product change の前に forensics、root cause、または書面化を求められた場合にも使います。
 
 ## 使わない場面
 
@@ -37,7 +37,7 @@ Also use when the user asks for forensics, root cause, or a write-up *before* an
 
 ## 守るべき3つの invariant
 
-Every diagnosis and every proposed rule must hold these three invariants together. The user has restated them on at least four issues; treat them as load-bearing:
+すべての diagnosis と提案 rule は、次の3つの invariant を同時に満たす必要があります。ユーザーは少なくとも4つの issue でこれらを繰り返し示しているため、基盤となる条件として扱います:
 
 1. **Productive work continues.** Agents that have a clear next action must keep working without needing the user to wake them. ([PAP-2674](/PAP/issues/PAP-2674), [PAP-2708](/PAP/issues/PAP-2708))
 2. **Only real blockers stop work.** Stops happen when something genuinely cannot proceed (missing approval, missing dependency, human owner). Pseudo-stops (in_review with no action path, cancelled leaves, malformed metadata) must be detected and routed, not left silent. ([PAP-2335](/PAP/issues/PAP-2335), [PAP-2674](/PAP/issues/PAP-2674))
@@ -50,7 +50,7 @@ Every diagnosis and every proposed rule must hold these three invariants togethe
 
 ### 0. 現在の execution contract を読む
 
-Before walking the tree, read `doc/execution-semantics.md` and keep its terms intact:
+tree をたどる前に `doc/execution-semantics.md` を読み、用語をそのまま使います:
 
 - live path / waiting path / recovery path
 - post-run disposition: terminal, explicitly live, explicitly waiting, invalid
@@ -64,18 +64,18 @@ Before walking the tree, read `doc/execution-semantics.md` and keep its terms in
 
 ### 1. 指定された tree の forensics - 何より先に行う
 
-Do this in the same heartbeat. Do not propose a rule until you have a concrete stop point.
+これを同じ heartbeat で行います。具体的な停止点を特定するまで rule を提案してはいけません。
 
-- Open the linked issue (and its blocker chain, parents, recovery siblings, recent runs).
-- Walk the tree node-by-node and find the exact issue + state combination that stops the world. Common shapes seen in the company so far:
+- リンクされた issue（blocker chain、parent、recovery sibling、recent run を含む）を開きます。
+- tree を node ごとにたどり、全体を停止させている正確な issue + state の組み合わせを見つけます。これまで company で見られた典型例:
   - `in_review` with no typed execution participant, no active run, no pending interaction, no recovery issue ([PAP-2335](/PAP/issues/PAP-2335), [PAP-2674](/PAP/issues/PAP-2674)).
   - `in_progress` after a successful run with no future action path queued ([PAP-2674](/PAP/issues/PAP-2674)).
   - Blocker chain whose leaf is `cancelled` / malformed / cross-company-inaccessible ([PAP-2602](/PAP/issues/PAP-2602)).
   - `issue.continuation_recovery` waking the same issue >N times after successful runs ([PAP-2602](/PAP/issues/PAP-2602)).
   - Stranded-work recovery treating its own recovery issues as more recoverable source work ([PAP-2486](/PAP/issues/PAP-2486)).
-- Quote the evidence: run ids, comment timestamps, status transitions. "Inferred" is acceptable only when an API boundary blocks direct evidence — say so explicitly and mark the claim provisional ([PAP-2631](/PAP/issues/PAP-2631)).
+- run id、comment timestamp、status transition などの証拠を引用します。API boundary により直接の証拠を取得できない場合に限り「推測」を許可し、そのことを明示して主張を provisional とします（[PAP-2631](/PAP/issues/PAP-2631)）。
 
-Respect the API boundary. If the linked issue is in another company and your agent token returns 403, do not bypass scoping. Either request a board-approved diagnostic path or proceed from inferred PAP-side evidence and label it.
+API boundary を尊重します。リンク先 issue が別 company にあり agent token が 403 を返す場合、scope を迂回してはいけません。board 承認済みの diagnostic path を依頼するか、PAP 側で推測できる証拠だけで進め、その旨を明記します。
 
 ### 2. 最近の関連作業を確認する
 
