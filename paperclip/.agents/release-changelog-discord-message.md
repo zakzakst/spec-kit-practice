@@ -17,7 +17,7 @@ description: >
 > This is for discord — try to follow my format. If I have a section where I
 > think about the future, pull from recent issues we're working on etc.
 
-Discord 告知は changelog ではありません。changelog は網羅的ですが、告知は意見があり、語り口を合わせ、出荷済みの主な highlights と、現在の Paperclip 作業から引いてきた本物の "what's next" と "what's on my mind" を中心にまとめます。創作してはいけません。
+Discord 告知は changelog ではありません。changelog は網羅的ですが、告知には意見があり、dotta の語り口に合わせ、出荷済みの主な highlights と、現在の Paperclip の作業から引いてきた本物の "what's next" と "what's on my mind" を中心にまとめます。創作してはいけません。
 
 ## 使う場面
 
@@ -27,7 +27,7 @@ Discord 告知は changelog ではありません。changelog は網羅的です
 
 ## 出力
 
-Discord にそのまま貼れる、1つの fenced markdown code block を出力します。release issue の issue document key `discord_announcement` として添付し、その issue の comment にもそのまま貼り、human がコピーできるようにします。Cases が有効な場合は、後述の social child case も upsert します。
+Discord にそのまま貼れる、1つの fenced Markdown code block を出力します。release issue の issue document key `discord_announcement` として添付し、その issue の comment にもそのまま貼り、人間がコピーできるようにします。Cases が有効な場合は、後述の social child case も upsert します。
 
 ```bash
 PUT /api/issues/{releaseIssueId}/documents/discord_announcement
@@ -46,55 +46,55 @@ document がすでに存在する場合は、先に取得して現在の `baseRe
 Discord の emoji shortcodes（`:paperclip:`、`:lock:`、`:brain:` など）を使います。Unicode emoji ではありません。Discord は shortcode を描画しますが、changelog file は prose を使います。
 
 ```
-:paperclip: :paperclip: :paperclip: CLIPPERS!!! v{VERSION} IS OUT :paperclip: :paperclip: :paperclip:
+:paperclip: :paperclip: :paperclip: CLIPPERS!!! v{VERSION} がリリースされました :paperclip: :paperclip: :paperclip:
 
-OFFICIAL TWITTER: https://x.com/papercliping - follow it, report any others
+公式 Twitter: https://x.com/papercliping - これをフォローし、ほかのアカウントを見つけたら報告してください
 
 ## Highlights
 
-:emoji: **Feature Name** - one-sentence description in dotta's voice.
-:emoji: **Feature Name** - …
-:emoji: **Feature Name** - …
+:emoji: **機能名** - dotta の語り口による1文の説明。
+:emoji: **機能名** - …
+:emoji: **機能名** - …
 
-... and a long tail of {flavor of the rest}. Read the [full release notes](<github link>).
+…そして、{残りの内容を表す表現} など、たくさんの改善があります。[完全なリリースノート](<github link>) を読んでください。
 
 ## WHATS NEXT (:motorway: Roadmap)
 
-* **Theme A** - one-line forward-looking blurb
-* **Theme B** - …
-* **Theme C** - …
+* **テーマ A** - 将来を見据えた短い説明
+* **テーマ B** - …
+* **テーマ C** - …
 
 ## What's on my mind
 
-* **Topic** - what's bugging dotta / what's queued / open questions
-* **Topic** - …
+* **トピック** - dotta が気にしていること / キューに入っていること / 未解決の質問
+* **トピック** - …
 
-## PRESS                              (optional — only if there is real press)
+## PRESS                              （任意 - 実際の press がある場合のみ）
 
-* **Outlet / Person** - what happened ([link](<x.com link>))
+* **媒体 / 人物** - 起きたこと（[リンク](<x.com link>)）
 
-## WHAT I NEED FROM YOU               (optional — only if there's a real ask)
+## WHAT I NEED FROM YOU               （任意 - 実際にお願いしたいことがある場合のみ）
 
-FOLLOW THE TWITTER: https://x.com/papercliping - that's the only official one
-TELL ME if you're using Paperclip in your business - I want to meet you
+TWITTER をフォローしてください: https://x.com/papercliping - 公式アカウントはこれだけです
+Paperclip をビジネスで使っているなら教えてください - お会いしたいです
 
 ## Community
 
-この release に貢献してくれたすべての人に感謝します。
+このリリースに貢献してくれたすべての人に感謝します。
 
 ```
 @username1, @username2, @username3
 ```
 
-## In Summary
+## まとめ
 
 PAPERCLIP は、人間が 100 倍の仕事をこなすための AI オーケストレーターです。
 
 誰もが、12人、100人、あるいは1000人の agent からなるチームを管理するようになり、Paperclip はそのすべてを管理する既定のツールになります。
 
-ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:
+クリップする時間です :paperclip: :paperclip: :paperclip:
 
-FULL RELEASE NOTES
+完全なリリースノート
 
 https://github.com/paperclipai/paperclip/blob/master/releases/v{VERSION}.md
 
@@ -161,26 +161,19 @@ https://github.com/paperclipai/paperclip/blob/master/releases/v{VERSION}.md
 
 ## ワークフロー
 
-1. Read the matching changelog produced by `release-changelog` — the
-   beta-keyed file during the soak, `releases/vYYYY.MDD.P.md` once
-   canonicalized. Use the version and contributor list from that file —
-   never re-derive them.
-2. Resolve the parent `release` case with key `paperclip-release:vYYYY.MDD.P`.
-   If it does not exist and Cases are enabled, create it using the schema in
-   `.agents/skills/release-changelog/SKILL.md` before creating child cases.
+1. `release-changelog` が生成した対応する changelog を読みます。soak 中は beta-keyed file、canonicalization 後は `releases/vYYYY.MDD.P.md` です。その file の version と contributor list を使用し、決して再導出しません。
+2. key が `paperclip-release:vYYYY.MDD.P` の親 `release` case を解決します。存在せず Cases が有効な場合は、child case を作成する前に `.agents/skills/release-changelog/SKILL.md` の schema を使って作成します。
 3. **release issue thread**（release routine を実行した、あなたに割り当てられた issue）
    を読みます。`WHATS NEXT` と `What's on my mind` の素材は、comment、linked issue、
    company 内の recent issue です。beta source commit の **後** にすでに `origin/master`
    にある commit は、次回 release の中身そのものなので、"what's next" の有力な素材です。
    作り話ではなく実際のテーマを拾ってください。
-4. Re-read the three verbatim examples below — they're the canonical voice.
-5. Draft the announcement using the template above.
+4. 後述の3つの verbatim example を読み直します。これらが canonical voice です。
+5. 上記のテンプレートを使って告知文を下書きします。
 6. release issue の `discord_announcement` document として PUT します（上の
    "Output" を参照）。更新する場合は最新の `baseRevisionId` を送ります。
-7. Upsert the `tweet_storm` child case with `parentCaseId` set to the release
-   case id, then PUT its `body` document to the announcement body.
-8. release issue に comment を投稿し、告知文を1つの fenced markdown code block に
-   入れます。そうすると dotta は document を開かずに Discord へコピーできます。
+7. `parentCaseId` に release case id を設定した `tweet_storm` child case を upsert し、その `body` document に告知本文を PUT します。
+8. release issue に comment を投稿し、告知文を1つの fenced Markdown code block に入れます。そうすると dotta は document を開かずに Discord へコピーできます。
 
 ## Tweet Storm Case Schema
 
@@ -214,7 +207,7 @@ POST /api/companies/:companyId/cases
 }
 ```
 
-Then write the body document:
+次に body document を作成します:
 
 ```http
 PUT /api/cases/:tweetStormCaseId/documents/body
@@ -226,8 +219,7 @@ PUT /api/cases/:tweetStormCaseId/documents/body
 }
 ```
 
-If updating an existing document, fetch the case and pass the latest
-`baseRevisionId`.
+既存の document を更新する場合は case を取得し、最新の `baseRevisionId` を渡します。
 
 Discord には投稿しません。この skill は artifact の準備だけを行います。
 
@@ -239,44 +231,44 @@ ground-truth として **原文そのまま** で載せています。迷った�
 ### Example 1 — v2026.403.0
 
 ```
-CLIPPERS! v2026.403.0 has dropped!! :paperclip: :paperclip: :paperclip:
+CLIPPERS! v2026.403.0 がリリースされました!! :paperclip: :paperclip: :paperclip:
 
-## Highlights
+## ハイライト
 
-:inbox_tray:  **Inbox overhaul** - there is a new "mine" tab that has mail-client like keyboard shortcuts. It's my new default view for managing work
-:thumbsup:  **Feedback and evals** - you can now vote :thumbsup: / :thumbsdown: on your agent's responses. If you choose to share your traces with me, I'll use it to make Paperclip better. In either case you can export locally for your own org's learning
-:page_with_curl:  **Document revisions** - you can now restore old versions of your documents
-:ping_pong:  **Telemetry** - this version has anonymized telemetry that helps me better understand the basic uses of Paperclip (adapters and so on) - if you hate that, just it disable with `DO_NOT_TRACK=1` or `PAPERCLIP_TELEMETRY_DISABLED=1` environment variables
-:construction_worker: **Execution Workspaces (experimental)** - Paperclip is not a "code review" tool, but I have been finding worktrees are important for certain projects. Enable it in experimental settings
-:loop:  **Routine variables** - sometimes you need to customize a routine and the new variables feature makes that easy
+:inbox_tray:  **Inbox の刷新** - メールクライアントのようなキーボードショートカットを備えた新しい「自分のもの」タブができました。仕事を管理するための、私の新しい既定ビューです
+:thumbsup:  **フィードバックと評価** - エージェントの回答に :thumbsup: / :thumbsdown: で投票できるようになりました。トレースを私と共有することを選べば、Paperclip の改善に活用します。どちらの場合でも、組織独自の学習のためにローカルへエクスポートできます
+:page_with_curl:  **ドキュメントのリビジョン** - ドキュメントの古いバージョンを復元できるようになりました
+:ping_pong:  **テレメトリー** - このバージョンには匿名化されたテレメトリーがあり、Paperclip の基本的な使われ方（adapter など）をよりよく理解できます。気に入らなければ、`DO_NOT_TRACK=1` または `PAPERCLIP_TELEMETRY_DISABLED=1` の環境変数で無効にしてください
+:construction_worker: **Execution Workspace（experimental）** - Paperclip は「コードレビュー」ツールではありませんが、特定のプロジェクトでは worktree が重要だと分かってきました。experimental settings で有効にしてください
+:loop:  **Routine variables** - routine をカスタマイズしたいことがありますが、新しい variables 機能で簡単にできます
 
-PLUS **tons** of improvements aound adapters, bugfixes, qol
+さらに adapter 周りの **大量の** 改善、バグ修正、QOL 改善があります
 
-## COMMUNITY
+## コミュニティ
 
-HUGE THANKS to the contributors with commits in this release:
+このリリースに commit を提供してくれた貢献者に心から感謝します:
 
 ```
 @aronprins, @bittoby, @edimuj, @HenkDz, @kevmok, @mvanhorn, @radiusred, @remdev, @statxc, @vanductai
 ```
 
-## WHATS NEXT (ROADMAP)
+## 次に来るもの（ROADMAP）
 
-* **Multi-human users** -- you've been asking for it, we have a draft and will have this shortly
-* **Sandbox execution** - the other half of cloud deployment: run your agents in a sandbox across any provider
+* **複数人ユーザー** -- 要望をもらっていた機能です。draft があり、まもなく提供します
+* **Sandbox execution** - cloud deployment のもう半分です。任意の provider 上の sandbox でエージェントを実行します
 
-PLUS: just dealing with the excellent PRs we have sitting in our inbox.
+さらに、受信箱に届いている素晴らしい PR に取り組みます。
 
-**What's also on my mind (coming soonish)**
+**私が考えていること（近いうちに）**
 
-* MAXIMIZER MODE - for when you've got a dream and tokens to burn
-* Artifacts, work products, and deployments
+* MAXIMIZER MODE - 夢があり、使える token がたくさんあるときのために
+* Artifact、成果物、deployment
 * CEO Chat
-* Stronger agent defaults
+* より強力な agent の既定値
 
 ## PRESS
 
-I've been doing my part to spread the word about Paperclip
+Paperclip を広めるために、私もできることをやっています
 
 * We talked to the incredible [Andrew Warner of Mixergy Fame](https://x.com/dotta/status/2039087507514507407)
 * We gave a tutorial with the [inimitable Greg Isenberg](https://x.com/dotta/status/2037279902445994345)
@@ -284,7 +276,7 @@ I've been doing my part to spread the word about Paperclip
 * We crossed [40k stars (46k now!)](https://x.com/dotta/status/2038638188227387613)
 * ... and a couple others that will be released in a few days
 
-## SUCCESS STORIES
+## 成功事例
 
 * [Nevo made $76k in march](https://x.com/dotta/status/2039406772859920758) after using Paperclip to automate his marketing
 * [Lewis Jackson](https://x.com/WhatSayLew/status/2039810227394978158) said 34 agents were already operating his trading firm through Paperclip and called it his "holy s***" AI moment.
@@ -292,15 +284,15 @@ I've been doing my part to spread the word about Paperclip
 * [Sam Woods](https://x.com/samwoods/status/2039039305960587755) said he knows several people who moved from OpenClaw to Paperclip, often with Hermes in the stack, and that they love it.
 * [Josh Galt](https://x.com/JoshGalt/status/2039386307219095557) called Paperclip the coolest agent tooling he has used and said it is finally something that just works.
 
-## IN SUMMARY
+## まとめ
 
-I know there are still some rough edges, but
+まだ荒削りな部分があることは分かっていますが、
 
-Paperclip will be *the* control plane for AI agents in **every** company.
+Paperclip は **すべての** 会社における AI agent の *control plane* になります。
 
-and I think we're moving at a pretty good clip :paperclip: :paperclip: :paperclip:
+そして、かなりいいペースで進められていると思います :paperclip: :paperclip: :paperclip:
 
-FULL RELEASE NOTES HERE
+完全なリリースノートはこちら
 
 https://github.com/paperclipai/paperclip/releases/tag/v2026.403.0
 
@@ -310,55 +302,55 @@ https://github.com/paperclipai/paperclip/releases/tag/v2026.403.0
 ### Example 2 — v2026.416.0
 
 ```
-:paperclip: :paperclip: :paperclip: CLIPPERS!!! v2026.416.0 IS OUT :paperclip: :paperclip: :paperclip:
+:paperclip: :paperclip: :paperclip: CLIPPERS!!! v2026.416.0 がリリースされました :paperclip: :paperclip: :paperclip:
 
-## Highlights
+## ハイライト
 
-This release has *tons* of quality of life improvements around speed, performance, and workflow. You should notice that comment threads feel faster and your agents stay on task longer
+このリリースには、速度、パフォーマンス、workflow に関する *大量の* QOL 改善があります。comment thread が速く感じられ、エージェントがより長くタスクに集中できることに気づくはずです
 
-:thread: Issue chat threads now are a conversation more than comments
-:police_officer: Execution policies like **Reviewer** and **Approver** are now first-class in the harness (e.g. enforce that QA *must* review a task)
-:no_smoking: Blocker dependencies - first-class "wake on blocker resolved" which means now you can have "task graphs" that depend on one another and it's enforced by Paperclip
-:woman_feeding_baby: Parent-child tasks - better support for sub-tasks all around, which makes it much easier to organize your work
+:thread: Issue chat thread が、単なる comment ではなく会話になりました
+:police_officer: **Reviewer** や **Approver** のような execution policy が harness の first-class 機能になりました（たとえば、QA が *必ず* task をレビューするよう強制できます）
+:no_smoking: Blocker dependency - first-class の「blocker 解消時に wake」が追加され、互いに依存する「task graph」を作り、Paperclip に強制させられるようになりました
+:woman_feeding_baby: Parent-child task - sub-task のサポートが全体的に改善され、仕事を整理しやすくなりました
 
-And then a million fixes around ux, details, keyboard shortcuts, bug fixes, security fixes, etc. Really you should read the [full release notes here](https://github.com/paperclipai/paperclip/releases/tag/v2026.416.0)
+さらに、UX、細部、キーボードショートカット、バグ修正、セキュリティ修正など、無数の修正があります。本当に [完全なリリースノート](https://github.com/paperclipai/paperclip/releases/tag/v2026.416.0) を読んでください
 
-## COMMUNITY
+## コミュニティ
 
-INCREDIBLE INCREDIBLE WORK BY folks with commits and reports in this release:
+このリリースに commit や報告を寄せてくれた皆さんの、信じられないほど素晴らしい仕事に感謝します:
 
 ```
 @AllenHyang, @antonio-mello-ai, @aronprins, @chrisschwer, @cleanunicorn, @DanielSousa, @davison, @ergonaworks, @HearthCore, @HenkDz, @KhairulA, @kimnamu, @Lempkey, @marysomething99-prog, @mvanhorn, @officialasishkumar, @plind-dm, @shoaib050326, @sparkeros, @wbelt, @offset, @sagilayani, @mattdonnelly10, @peaktwilight, @YuvalElbar6
 ```
 
-## WHATS NEXT (:motorway:  Roadmap)
+## 次に来るもの（:motorway: Roadmap）
 
-* **Multi-human users** - in the last stages of testing, Paperclip is better with teams
-* **Memory Infrastructure** - your agents will remember everything about yoru business
-* **Sandbox execution** - run your agents anywhere
+* **複数人ユーザー** - テストの最終段階です。チームで使うと Paperclip はさらに便利になります
+* **Memory Infrastructure** - エージェントがあなたの business のすべてを記憶します
+* **Sandbox execution** - どこでもエージェントを実行できます
 
-## What's on my mind
+## 私が考えていること
 
-* I want to meet with companies who are using Paperclip in their business - if that's you let me know
-* We need more Paperclip tutorials, defaults, and education - thanks to @aronprins for his work in this area already!
-* We still need to get better at reviewing your PRs and we're improving our process every day
-* "Zero-human company" language has to go - we're the human control plane for ai labor
-* We're adding better support for *knowledge (wikis & files)*, *artifacts*, and *work product* in Paperclip soon.
+* Paperclip を business で使っている会社と会いたいです - あなたの会社がそうなら教えてください
+* Paperclip の tutorial、既定値、教育がもっと必要です - この分野ですでに取り組んでいる @aronprins に感謝します!
+* 皆さんの PR をレビューする方法はまだ改善が必要で、毎日プロセスを改善しています
+* 「Zero-human company」という言葉はやめなければなりません - 私たちは AI labor のための human control plane です
+* Paperclip では近いうちに、*knowledge（wiki と file）*、*artifact*、*work product* のサポートを強化します。
 
 ## PRESS
 
-* **AI Engineer Europe Tutorial** - I gave a tutorial for AIE. If someone is looking for a basics ABC of Paperclip [you can send them this](https://x.com/dotta/status/2044575580264316931)
-* **AI Club Chicago** - JB gave a talk on Paperclip [at AI Tinkerers in Chicago](https://x.com/developwithJB/status/2044281068778316268) !
+* **AI Engineer Europe Tutorial** - AIE の tutorial を行いました。Paperclip の基本を知りたい人がいたら、[これを送ってください](https://x.com/dotta/status/2044575580264316931)
+* **AI Club Chicago** - JB が [シカゴの AI Tinkerers](https://x.com/developwithJB/status/2044281068778316268) で Paperclip について講演しました!
 
-## IN SUMMARY
+## まとめ
 
-PAPERCLIP WILL BE THE DEFAULT AGENT-MANAGEMENT TOOL FOR EVERY COMPANY
+PAPERCLIP はすべての会社における既定の agent-management tool になります
 
-If there's anything I can do to help you and your company use Paperclip, hit me up. Until then, enjoy the new release
+あなたやあなたの会社が Paperclip を使うために私にできることがあれば、声をかけてください。それまでは、新しいリリースを楽しんでください
 
-ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:
+クリップする時間です :paperclip: :paperclip: :paperclip:
 
-FULL RELEASE NOTES
+完全なリリースノート
 
 https://github.com/paperclipai/paperclip/releases/tag/v2026.416.0
 
@@ -368,79 +360,74 @@ https://github.com/paperclipai/paperclip/releases/tag/v2026.416.0
 ### Example 3 — v2026.427.0
 
 ```
-:paperclip: :paperclip: :paperclip: CLIPPERS!!! v2026.427.0 IS OUT :paperclip: :paperclip: :paperclip:
+:paperclip: :paperclip: :paperclip: CLIPPERS!!! v2026.427.0 がリリースされました :paperclip: :paperclip: :paperclip:
 
-THIS IS THE OFFICIAL TWITTER FOLLOW IT: https://x.com/papercliping
+これは公式 Twitter です。フォローしてください: https://x.com/papercliping
 
-## Highlights
+## ハイライト
 
-:man_feeding_baby: **MULTI USER** - you can now invite multiple users to your instance
-:factory_worker:  **HARDER WORKING** - robosut liveness continuations and lifecycle recovery means your instance tries harder before involving you
-:white_check_mark:  **SUBISSUE CHECKLISTS** - subissues have better ordering which allows for long-run planning
-:thread: **Rich Thread UX** - now your agents can ask you questions, ask for approvals, suggest tasks and you can approve or refine them right in your task threads
-:cloud:  **BETA: Sandbox Providers** - Cloud sandboxing is in beta - the API ships in this release and we'll be adding more providers
-... and *tons* of other improvements and bugfixes.
+:man_feeding_baby: **複数ユーザー** - instance に複数のユーザーを招待できるようになりました
+:factory_worker:  **さらに粘り強く** - robosut の liveness continuation と lifecycle recovery により、instance はあなたに助けを求める前により長く自力で動き続けます
+:white_check_mark:  **SUBISSUE CHECKLIST** - subissue の順序付けが改善され、長期的な計画を立てられるようになりました
+:thread: **Rich Thread UX** - エージェントが質問や承認依頼をしたり、task を提案したりできるようになり、task thread 内で承認や修正ができます
+:cloud:  **BETA: Sandbox Provider** - Cloud sandboxing は beta です。このリリースで API が提供され、今後さらに provider を追加します
+…そして、*大量の* その他の改善とバグ修正があります。
 
-## Community
+## コミュニティ
 
-Thank you to everyone who contributed to this release!
+このリリースに貢献してくれたすべての人に感謝します!
 
 ```
 @akhater, @aronprins, @GodsBoy, @LeonSGP43, @neerazz, @NoronhaH, @rbarinov, @rvanduiven, @SgtPooki, @superbiche
 ```
 
-## WHATS NEXT (:motorway:  Roadmap)
+## 次に来るもの（:motorway: Roadmap）
 
-* **Longer-range planning and execution** - Paperclip will support longer and longer tasks and work until it's done
-* **Secrets Service v2** - an important prereq for Paperclip cloud
-* **Artifacts, memory, and knowledge**
-* **Conference Room** aka CEO/Agent Chat
+* **より長期の計画と実行** - Paperclip は、より長い task を完了するまで実行できるようになります
+* **Secrets Service v2** - Paperclip cloud にとって重要な prereq です
+* **Artifact、memory、knowledge**
+* **Conference Room**、別名 CEO/Agent Chat
 
-## What's on my mind
+## 私が考えていること
 
-* **Documentation & Blog posts** - I've fallen behind on the docs but aron has done a good job here - we'll be setting up Clips to help maintain these
-* **Paperclip Cloud** - will be a critical unlock for us, but even the shared team story needs developed more - *where should the work be done* and *where are the outputs stored* and *how do we surface them to users*? Each of these questions are a core Paperclip service that needs developed
-* **Paperclip Bench** - In the vein of SWE-Bench I've started an internal benchmark for Paperclip - we have to be able to measure that our changes are improving the system and not regressing
-* **Paperclip Connections Store** - connecting to Github, Slack, Google Docs, and the hundreds of other services we use every day should be easy, secure, and configurable per agent and team
+* **Documentation と Blog post** - docs の対応が遅れてしまっていますが、ここでは aron がよく頑張ってくれています - 維持管理を助けるために Clips を準備します
+* **Paperclip Cloud** - 私たちにとって重要な unlock になりますが、shared team の体験もさらに発展させる必要があります - *作業はどこで行うべきか*、*出力はどこに保存するのか*、*ユーザーにどう見せるのか*。これらはすべて、開発が必要な Paperclip の中核 service に関する問いです
+* **Paperclip Bench** - SWE-Bench に倣い、Paperclip の内部 benchmark を始めました - 変更によってシステムが改善し、regression が起きていないことを測定できなければなりません
+* **Paperclip Connections Store** - Github、Slack、Google Docs、そして日々使う何百もの service への接続は、簡単で、安全で、agent と team ごとに設定可能であるべきです
 
 ## Press
 
-I met with the [Wisemen about Paperclip](https://x.com/dotta/status/2045146539534827998)
+[Wisemen と Paperclip について話しました](https://x.com/dotta/status/2045146539534827998)
 
-## WHAT I NEED FROM YOU
+## あなたにお願いしたいこと
 
-FOLLOW THIS TWITTER ACCOUNT: https://x.com/papercliping - that's the only official one, report any others
+この Twitter アカウントをフォローしてください: https://x.com/papercliping - 公式アカウントはこれだけです。ほかのアカウントを見つけたら報告してください
 
-## In Summary
+## まとめ
 
-PAPERCLIP IS THE AI ORCHESTRATOR FOR HUMANS TO ACCOMPLISH 100x MORE WORK
+PAPERCLIP は、人間が 100 倍の仕事をこなすための AI オーケストレーターです
 
-Every single person will be managing a team of a dozen, or a hundred, or a thousand agents and Paperclip will be the default tool to manage it all.
+誰もが、12人、100人、あるいは1000人の agent からなるチームを管理するようになり、Paperclip はそのすべてを管理する既定のツールになります。
 
-ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:
+クリップする時間です :paperclip: :paperclip: :paperclip:
 
-FULL RELEASE NOTES
+完全なリリースノート
 
 https://github.com/paperclipai/paperclip/blob/master/releases/v2026.427.0.md
 
 ||@everyone||
 ```
 
-## Review checklist
+## レビュー・チェックリスト
 
-Before handing off:
+引き渡す前に確認します:
 
-1. Version + date match the matching `releases/vYYYY.MDD.P.md` exactly.
-2. Contributor list matches the changelog (same exclusions: bots and the
-   changelog skill's canonical excluded-folks list).
-3. Highlights are a subset of the changelog Highlights — same shipped features,
-   not invented or pre-alpha work.
-4. `WHATS NEXT` and `What's on my mind` are pulled from real recent issues /
-   active goals — not invented themes.
-5. Section style (UPPERCASE vs Title Case) is internally consistent.
-6. Closing tagline is `ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:`
-   and `||@everyone||` is the very last line.
-7. Document `discord_announcement` is updated on the release issue, and the
-   announcement is also posted in a comment inside a fenced code block.
+1. Version と date が対応する `releases/vYYYY.MDD.P.md` と完全に一致している。
+2. Contributor list が changelog と一致している（除外対象は bot と changelog skill の canonical excluded-folks list で同じ）。
+3. Highlights が changelog の Highlights のサブセットになっている。出荷済みの同じ機能であり、創作や pre-alpha の作業ではない。
+4. `WHATS NEXT` と `What's on my mind` が実際の最近の issue / active goal から引用されている。創作したテーマではない。
+5. Section style（UPPERCASE と Title Case）が投稿内で一貫している。
+6. Closing tagline が `ITS TIME TO CLIP :paperclip: :paperclip: :paperclip:` で、`||@everyone||` が最終行になっている。
+7. release issue の document `discord_announcement` が更新され、告知文も fenced code block 内の comment として投稿されている。
 
 この skill は Discord へ投稿しません。announcement artifact の準備だけを行います。

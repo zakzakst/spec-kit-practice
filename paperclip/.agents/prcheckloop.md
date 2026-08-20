@@ -8,7 +8,7 @@ description: >
 
 # PRCheckloop
 
-GitHub PR を完全に green な check 状態へ持っていくか、具体的な blocker を示して終了します。
+GitHub PR の check をすべて green の状態にするか、具体的な blocker を示して終了します。
 
 ## 対象範囲
 
@@ -84,14 +84,14 @@ query($owner:String!, $repo:String!, $pr:Int!) {
 }' -F owner=OWNER -F repo=REPO -F pr="$PR_NUMBER"
 ```
 
-### 4. check が実際に走るまで待つ
+### 4. check が実際に実行されるまで待つ
 
 新しい push の直後は check が表示されるまで少し時間がかかることがあります。
 15〜30 秒ごとに poll し、次のいずれかになるまで待ちます:
 
-- checks have appeared and every item is in a terminal state
-- checks have appeared and at least one failed
-- no checks appear after a reasonable wait, usually 2 minutes
+- check が表示され、すべての項目が最終状態になった
+- check が表示され、少なくとも1つが失敗した
+- 通常は2分程度の妥当な待機時間を過ぎても check が表示されない
 
 次は最終的な成功状態として扱います:
 
@@ -124,9 +124,9 @@ gh run view <RUN_ID> --log-failed
 
 失敗した各 check を分類します:
 
-| Failure type | Action |
+| 失敗の種類 | 対応 |
 |---|---|
-| コード / test regression | ローカルで再現し、修正して検証する |
+| コード / test の regression | ローカルで再現し、修正して検証する |
 | lint / type / build の不一致 | workflow と一致するローカル command を実行して修正する |
 | flaky または一時的な infra issue | flaky である証拠があれば1回だけ再実行する |
 | 外部 service / status app の失敗 | details URL と担当者の候補を添えてエスカレーションする |
@@ -136,70 +136,68 @@ gh run view <RUN_ID> --log-failed
 
 ### 6. 対応可能な失敗を修正する
 
-If the failure is actionable from the checked-out code:
+チェックアウトしたコードから対応できる失敗の場合:
 
-1. Read the workflow or failing command to identify the real gate.
-2. Reproduce locally where reasonable.
-3. Make the smallest correct fix.
-4. Run focused verification first, then broader verification if needed.
-5. Commit in a logical commit.
-6. Push before re-checking the PR.
+1. workflow または失敗した command を読み、実際の gate を特定する。
+2. 可能であればローカルで再現する。
+3. 正しい最小限の修正を行う。
+4. まず対象を絞った検証を実行し、必要に応じてより広い検証を行う。
+5. 論理的にまとまった commit を作成する。
+6. PR を再確認する前に push する。
 
 Do not stop at a local fix. The loop is only complete when the remote PR checks
 for the new head SHA are green.
 
 ### 7. push して繰り返す
 
-After each fix:
+修正するたびに:
 
 ```bash
 git push
 sleep 5
 ```
 
-その後 PR metadata を更新し、新しい `HEAD_SHA` を取得して Step 3 から再開します。
+その後 PR metadata を更新し、新しい `HEAD_SHA` を取得して手順3から再開します。
 
 次のいずれかになった場合だけ loop を終了します:
 
-- all checks for the latest head SHA are green, or
-- a blocker remains after reasonable repair effort, or
-- the max iteration count is reached
+- 最新の head SHA に対するすべての check が green になった
+- 妥当な修正を試みても blocker が残っている
+- 最大反復回数に達した
 
 ### 8. blocker を正確にエスカレーションする
 
-If you cannot get the PR green, report:
+PR を green にできない場合は、次を報告します:
 
 - PR URL
-- latest head SHA
-- exact failing or missing check names
-- details URLs
-- what you already tried
-- why it is blocked
-- who should likely unblock it
-- the next concrete action
+- 最新の head SHA
+- 失敗または欠落している check の正確な名前
+- details URL
+- すでに試したこと
+- blocker となっている理由
+- blocker を解消すべき担当者またはチーム
+- 次に行う具体的なアクション
 
-Good blocker examples:
+適切な blocker の例:
 
-- external status app outage
-- missing GitHub secret or permission
-- required check name mismatch in branch protection
-- persistent flake after one rerun
-- failure needs credentials or infrastructure access you do not have
+- 外部 status app の障害
+- GitHub secret または permission の不足
+- branch protection における required check 名の不一致
+- 1回再実行しても継続する flaky failure
+- 保有していない認証情報またはインフラへのアクセスが必要な失敗
 
 ## Output
 
-When the skill completes, report:
+スキルの完了時に、次を報告します:
 
-- PR URL and branch
-- final head SHA
-- green/pending/failing check summary
-- fixes made and verification run
-- whether changes were pushed
-- blocker summary if not fully green
+- PR URL と branch
+- 最終的な head SHA
+- green / pending / failing となった check の概要
+- 実施した修正と検証内容
+- 変更を push したかどうか
+- 完全に green でない場合は blocker の概要
 
 ## Notes
 
-- This skill is intentionally narrower than `check-pr`: it is a repair loop for
-  PR checks.
-- This skill complements `greploop`: Greptile can be perfect while CI is still
-  red.
+- このスキルは意図的に `check-pr` より対象を絞っています。PR check の修復ループです。
+- このスキルは `greploop` を補完します。Greptile が完全に問題なくても、CI が red のままの場合があります。

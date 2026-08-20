@@ -1,14 +1,14 @@
 ---
 name: doc-maintenance
 description: >
-  README、SPEC、PRODUCT 文書を recent git history と突き合わせて drift を監査し、
-  最小限の PR 対応編集を行います。文書の正確性確認、主要機能のマージ後、
+  README、SPEC、PRODUCT 文書を直近の git 履歴と突き合わせて差分を監査し、
+    最小限の PR 対応編集を行います。文書の正確性確認、主要機能のマージ後、
   または定期監査のときに使います。
 ---
 
 # 文書メンテナンス Skill
 
-文書の drift を検出し、PR で最小修正します。書き直しも無駄な変更も行いません。
+文書の差分を検出し、PR で最小修正します。書き直しも無駄な変更も行いません。
 
 ## 使う場面
 
@@ -56,15 +56,15 @@ git log "$LAST_SHA"..HEAD --oneline --no-merges
 
 commit メッセージと変更ファイルを確認し、次のように分類します:
 
-- **Feature** - 新機能（キーワード: `feat`、`add`、`implement`、`support`）
-- **Breaking** - 削除 / 変更 / 名前変更されたもの（キーワード: `remove`、`breaking`、`drop`、`rename`）
-- **Structural** - 新しいディレクトリ、config 変更、新しい adapter、新しい CLI コマンド
+- **機能（Feature）** - 新機能（キーワード: `feat`、`add`、`implement`、`support`）
+- **破壊的変更（Breaking）** - 削除 / 変更 / 名前変更されたもの（キーワード: `remove`、`breaking`、`drop`、`rename`）
+- **構造変更（Structural）** - 新しいディレクトリ、config 変更、新しい adapter、新しい CLI コマンド
 
 **無視するもの:** refactor、テストのみの変更、CI 設定、依存関係更新、
 文書のみの変更、style / format commit。これらは文書の正確性に影響しません。
 
 境界があいまいな場合は実際の diff を確認します。たとえば "refactor: X" という
-タイトルでも新しい public API を追加しているなら、それは feature です。
+タイトルでも新しい public API を追加しているなら、それは機能追加です。
 
 ### Step 3 - 変更サマリーを作る
 
@@ -72,10 +72,10 @@ commit メッセージと変更ファイルを確認し、次のように分類�
 
 ```
 前回レビュー以降（<sha>, <date>）:
-- FEATURE: Plugin system merged (runtime, SDK, CLI, slots, event bridge)
-- FEATURE: Project archiving added
-- BREAKING: Removed legacy webhook adapter
-- STRUCTURAL: New .agents/skills/ directory convention
+- 機能: プラグインシステムを統合（runtime、SDK、CLI、slots、event bridge）
+- 機能: プロジェクトのアーカイブ機能を追加
+- 破壊的変更: 従来の webhook adapter を削除
+- 構造変更: `.agents/skills/` ディレクトリ規約を追加
 ```
 
 目立った変更がなければ、Step 7（カーソル更新して終了）へ進みます。
@@ -84,12 +84,12 @@ commit メッセージと変更ファイルを確認し、次のように分類�
 
 各対象文書を最後まで読み、変更サマリーと突き合わせます。次を確認します:
 
-1. **False negative** - すでに出荷済みの主要機能がまったく触れられていない
-2. **False positive** - すでに出荷済みなのに "coming soon" / "roadmap" / "planned"
+1. **見落とし（False negative）** - すでに出荷済みの主要機能がまったく触れられていない
+2. **誤検出（False positive）** - すでに出荷済みなのに "coming soon" / "roadmap" / "planned"
    / "not supported" / "TBD" と書かれている機能
-3. **Quickstart の正確さ** - install コマンド、前提条件、起動手順が
+3. **クイックスタートの正確さ（Quickstart）** - install コマンド、前提条件、起動手順が
    まだ正しいか（README のみ）
-4. **機能表の正確さ** - features セクションが現在の機能を反映しているか
+4. **機能表の正確さ** - 機能（features）セクションが現在の機能を反映しているか
    （README のみ）
 5. **works-with の正確さ** - 対応 adapter / integration が正しく列挙されているか
 
@@ -99,12 +99,12 @@ commit メッセージと変更ファイルを確認し、次のように分類�
 ### Step 5 - ブランチを作り、最小編集を行う
 
 ```bash
-# 文書更新用のブランチを作る
+# 文書更新用のブランチを作成する
 BRANCH="docs/maintenance-$(date +%Y%m%d)"
 git checkout -b "$BRANCH"
 ```
 
-drift を直すために必要な編集だけを行います。ルール:
+差分を修正するために必要な編集だけを行います。ルール:
 
 - **最小パッチのみ。** 誤りを直し、章を丸ごと書き直さない。
 - **文体とトーンを維持する。** 各文書の既存トーンに合わせる。
@@ -112,7 +112,7 @@ drift を直すために必要な編集だけを行います。ルール:
   事実修正の一部でない限り行わない。
 - **新しい章は追加しない。** 機能に新しい章が必要なら、メンテナンスで
   はなく follow-up として PR 説明に書く。
-- **Roadmap 項目:** 出荷済み機能は Roadmap から外す。既存の適切な章に短く
+- **ロードマップ項目:** 出荷済み機能はロードマップから外す。既存の適切な章に短く
   触れ、長い説明は追加しない。
 
 ### Step 6 - PR を開く
@@ -123,7 +123,7 @@ drift を直すために必要な編集だけを行います。ルール:
 git add README.md doc/SPEC.md doc/PRODUCT.md .doc-review-cursor
 git commit -m "docs: update documentation for accuracy
 
-- [list each fix briefly]
+ - [list each fix briefly]
 
 Co-Authored-By: Paperclip <noreply@paperclip.ing>"
 
@@ -133,7 +133,7 @@ gh pr create \
   --title "docs: periodic documentation accuracy update" \
   --body "$(cat <<'EOF'
 ## Summary
-自動文書メンテナンス実施。前回レビュー以降に検出された文書 drift を修正。
+自動文書メンテナンス実施。前回レビュー以降に検出された文書の差分を修正。
 
 ### Changes
 - [list each fix]
@@ -162,35 +162,35 @@ git rev-parse HEAD > .doc-review-cursor
 編集があった場合は、それはすでに PR ブランチに commit されています。編集が不要
 だった場合は、カーソル更新を現在のブランチに commit します。
 
-## Change Classification Rules
+## 変更分類ルール
 
 | シグナル | 分類 | 文書更新が必要か? |
 |--------|----------|-------------------|
-| メッセージに `feat:`, `add`, `implement`, `support` がある | Feature | ユーザー向けなら必要 |
-| メッセージに `remove`, `drop`, `breaking`, `!:` がある | Breaking | 必要 |
-| 新しいトップレベルディレクトリまたは config ファイル | Structural | 場合による |
-| `fix:`, `bugfix` | Fix | いいえ（文書に書かれた挙動が変わる場合を除く） |
-| `refactor:`, `chore:`, `ci:`, `test:` | Maintenance | いいえ |
-| `docs:` | Doc change | いいえ（すでに対象内） |
-| 依存関係の bump のみ | Maintenance | いいえ |
+| メッセージに `feat:`, `add`, `implement`, `support` がある | 機能（Feature） | ユーザー向けなら必要 |
+| メッセージに `remove`, `drop`, `breaking`, `!:` がある | 破壊的変更（Breaking） | 必要 |
+| 新しいトップレベルディレクトリまたは config ファイル | 構造変更（Structural） | 場合による |
+| `fix:`, `bugfix` | 修正（Fix） | いいえ（文書に書かれた挙動が変わる場合を除く） |
+| `refactor:`, `chore:`, `ci:`, `test:` | 保守（Maintenance） | いいえ |
+| `docs:` | 文書変更（Doc change） | いいえ（すでに対象内） |
+| 依存関係の更新のみ | 保守（Maintenance） | いいえ |
 
 ## パッチスタイルガイド
 
-- Fix the fact, not the prose
-- If removing a roadmap item, don't leave a gap — remove the bullet cleanly
-- If adding a feature mention, match the format of surrounding entries
-  (e.g. if features are in a table, add a table row)
-- Keep README changes especially minimal — it shouldn't churn often
-- For SPEC/PRODUCT, prefer updating existing statements over adding new ones
-  (e.g. change "not supported in V1" to "supported via X" rather than adding
-  a new section)
+- 文章ではなく事実を修正する
+- ロードマップ項目を削除する場合は空白を残さず、箇条書きをきれいに削除する
+- 機能への言及を追加する場合は、周囲の項目の形式に合わせる
+  （例: 機能が表形式なら、表の行を追加する）
+- README の変更は特に最小限にする。頻繁に大きく変更されるべきではない
+- SPEC / PRODUCT では、新しい記述を追加するより既存の記述を更新する
+  （例: 新しい章を追加するのではなく、"not supported in V1" を
+  "X 経由でサポート" に変更する）
 
 ## Output
 
-When the skill completes, report:
+スキルの完了時に、次の内容を報告します:
 
-- How many commits were scanned
-- How many notable changes were found
-- How many doc edits were made (and to which files)
-- PR link (if edits were made)
-- Any follow-up items that need larger doc work
+- スキャンしたコミット数
+- 見つかった注目すべき変更の数
+- 実施した文書編集の数（および対象ファイル）
+- PR リンク（編集を行った場合）
+- より大規模な文書作業が必要なフォローアップ項目

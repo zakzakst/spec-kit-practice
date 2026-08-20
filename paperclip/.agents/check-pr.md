@@ -15,12 +15,12 @@ allowed-tools: Bash(gh:*) Bash(glab:*) Bash(git:*) Bash(p4:*)
 # PR をチェックする
 
 pull request（GitHub）、merge request（GitLab）、または shelved changelist（Perforce）を
-対象に、review comment、status check、description の完成度を調べ、見つかった問題の
+対象に、レビューコメント、ステータスチェック、説明文の完成度を調べ、見つかった問題への
 対応を手伝います。
 
 ## 入力
 
-- **PR/MR/CL number**（任意）: 指定がなければ、現在の branch の PR/MR、または p4 の既定 pending changelist を検出します。
+- **PR/MR/CL 番号**（任意）: 指定がなければ、現在のブランチの PR/MR、または p4 の既定の保留中 changelist を検出します。
 
 ## 手順
 
@@ -29,11 +29,11 @@ pull request（GitHub）、merge request（GitLab）、または shelved changel
 まず、`.p4config` ファイルや `P4CLIENT` / `P4PORT` 環境変数を見て、ユーザーが Perforce depot で作業しているか確認します:
 
 ```bash
-# Check for Perforce environment
+# Perforce 環境を確認する
 if p4 info >/dev/null 2>&1; then
   VCS="perforce"
 else
-  # Fall back to git remote detection
+  # git のリモート検出にフォールバックする
   REMOTE_URL=$(git remote get-url origin)
   if echo "$REMOTE_URL" | grep -qi "gitlab"; then
     VCS="gitlab"
@@ -61,14 +61,14 @@ glab mr view --output json | jq '.iid'
 
 **Perforce:**
 ```bash
-# List pending changelists for the current user/client
+# 現在のユーザー／クライアントの保留中 changelist を一覧表示する
 p4 changes -s pending -u $P4USER -c $P4CLIENT
 ```
 
-プラットフォームごとの主要な field の違い:
+プラットフォームごとの主要なフィールドの違い:
 - GitHub: `number`, `headRefName`, `headRefOid`
 - GitLab: `iid`, `source_branch`, `sha`
-- Perforce: changelist number (CL), `shelved` files for in-review CLs
+- Perforce: changelist 番号（CL）、レビュー中 CL の `shelved` ファイル
 
 ### 2. PR/MR/CL の詳細を取得する
 
@@ -80,12 +80,12 @@ gh api "repos/$OWNER_REPO/pulls/<PR_NUMBER>/comments"
 gh api --paginate "repos/$OWNER_REPO/issues/<PR_NUMBER>/comments?per_page=100"
 ```
 
-GitHub の PR は issue でもあるため、一般的な PR コメントは issue comments endpoint にあります。Greptile は、毎回新しい review や comment を作る代わりに、一般コメント1件を更新することがあります。PR が問題ないと判断する前に、`updated_at` で並べた最新の Greptile 作成 general comment を、"Prompt to fix all with AI" section を含めて必ず確認してください。
+GitHub の PR は issue でもあるため、一般的な PR コメントは issue comments endpoint にあります。Greptile は、毎回新しいレビューやコメントを作る代わりに、一般コメント 1 件を更新することがあります。PR が問題ないと判断する前に、`updated_at` で並べた最新の Greptile 作成一般コメントを、"Prompt to fix all with AI" セクションを含めて必ず確認してください。
 
 **GitLab:**
 ```bash
 glab mr view <MR_IID> --output json
-# Fetch discussions (inline diff comments are type "DiffNote"; general comments have null type)
+# discussion を取得する（インライン差分コメントの type は "DiffNote"、一般コメントの type は null）
 glab api "projects/:fullpath/merge_requests/<MR_IID>/discussions"
 ```
 
@@ -93,28 +93,28 @@ GitLab では必要に応じて discussion を paginate してください（`?p
 
 **Perforce:**
 ```bash
-# Get changelist description, files, and status
+# changelist の説明、ファイル、ステータスを取得する
 p4 describe -s <CL_NUMBER>
 
-# Get shelved files (for in-review CLs)
+# shelved ファイルを取得する（レビュー中 CL 用）
 p4 describe -S <CL_NUMBER>
 
-# Get the diff of the shelved changelist
+# shelved changelist の差分を取得する
 p4 diff2 //...@=<CL_NUMBER> //...@=<CL_NUMBER>
 
-# List review comments (if using p4 review workflow)
+# レビューコメントを一覧表示する（p4 review ワークフローを使用する場合）
 p4 review -c <CL_NUMBER>
 ```
 
-Perforce CL の主要 field:
+Perforce CL の主要フィールド:
 - `Change`: changelist number
 - `Status`: `pending`, `submitted`, `shelved`
-- `Description`: the CL description / commit message
-- `Files`: list of files in the CL
+- `Description`: CL の説明／コミットメッセージ
+- `Files`: CL に含まれるファイルの一覧
 
 ### 3. 保留中の check を待つ
 
-分析する前に、すべての status check が完了していることを確認します。GitHub で `PENDING` / `IN_PROGRESS`、GitLab で `running` / `pending` の check があれば、すべてが終端状態になるまで 30 秒ごとに poll します。
+分析する前に、すべてのステータスチェックが完了していることを確認します。GitHub で `PENDING` / `IN_PROGRESS`、GitLab で `running` / `pending` のチェックがあれば、すべてが終端状態になるまで 30 秒ごとにポーリングします。
 
 **GitHub:** `gh pr view` の `statusCheckRollup` を poll します。
 
@@ -122,31 +122,31 @@ Perforce CL の主要 field:
 ```bash
 glab api "projects/:fullpath/merge_requests/<MR_IID>/pipelines"
 ```
-Pipeline statuses: `running`, `pending`, `success`, `failed`, `canceled`, `skipped`. Poll until no pipeline has `running` or `pending` status.
+パイプラインのステータス: `running`, `pending`, `success`, `failed`, `canceled`, `skipped`。`running` または `pending` のパイプラインがなくなるまでポーリングします。
 
-**Perforce:** Perforce doesn't have built-in CI checks natively. If the team uses a review tool (Swarm, etc.) or an external CI triggered by shelve events, check the relevant system. Otherwise, proceed to analysis immediately.
+**Perforce:** Perforce には標準の CI チェック機能がありません。チームがレビュー ツール（Swarm など）や shelve イベントで起動する外部 CI を使用している場合は、該当するシステムを確認します。それ以外の場合は、すぐに分析へ進みます。
 
 ### 4. 現在の head に対する新しい Greptile review を要求する
 
-GitHub PR では、既存の Greptile review、comment、summary を、PR の現在の `headRefOid` に結びついていない限り current とみなさないでください。これは既存 PR に新しい commit を push した直後に特に重要です。古い commit に対する Greptile review は stale であり、PR に Greptile comment や過去の review が残っていても無効です。
+GitHub PR では、既存の Greptile レビュー、コメント、サマリーを、PR の現在の `headRefOid` に結びついていない限り最新とはみなさないでください。これは既存 PR に新しいコミットを push した直後に特に重要です。古いコミットに対する Greptile レビューは古いものであり、PR に Greptile コメントや過去のレビューが残っていても無効です。
 
-Greptile gate の直前に、current head SHA を取得します:
+Greptile の判定直前に、現在の head SHA を取得します:
 
 ```bash
 HEAD_SHA=$(gh pr view <PR_NUMBER> --json headRefOid -q .headRefOid)
 ```
 
-その commit の check-run を調べ、完了済みの Greptile run を要求します:
+そのコミットの check-run を調べ、完了済みの Greptile run を要求します:
 
 ```bash
 OWNER_REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 GREPTILE_CHECKS=$(gh api "repos/$OWNER_REPO/commits/$HEAD_SHA/check-runs?per_page=100" \
   --jq '[.check_runs[] | select(.name | test("greptile"; "i"))]')
 
-# run が有効な fresh pass とみなされるのは、完了していて、かつ clean に終わっている場合だけです。
+# run が有効な最新の合格結果とみなされるのは、完了していて、かつ正常終了している場合だけです。
 # GitHub check-run の conclusion: success, neutral, skipped, failure, timed_out,
 # cancelled, action_required, stale。success / neutral だけを clean とみなし、
-# それ以外（特に failure と action_required）はすべて block します。
+# それ以外（特に failure と action_required）はすべてブロックします。
 FRESH_GREPTILE_COMPLETED=$(echo "$GREPTILE_CHECKS" \
   | jq '[.[] | select(.status == "completed")] | length')
 FRESH_GREPTILE_CLEAN=$(echo "$GREPTILE_CHECKS" \
@@ -157,27 +157,27 @@ FRESH_GREPTILE_BLOCKING=$(echo "$GREPTILE_CHECKS" \
 if [ "$FRESH_GREPTILE_COMPLETED" = "0" ]; then
   echo "Blocked: current PR head $HEAD_SHA に結びついた完了済み Greptile review/check がありません。"
   echo "PR check を done にする前に、この head に対する新しい Greptile review を依頼してください。"
-  echo "Suggested trigger: gh pr comment <PR_NUMBER> --body \"@greptile review\""
+  echo "推奨トリガー: gh pr comment <PR_NUMBER> --body \"@greptile review\""
   exit 1
 fi
 
 if [ "$FRESH_GREPTILE_BLOCKING" != "0" ] || [ "$FRESH_GREPTILE_CLEAN" = "0" ]; then
-  echo "Blocked: Greptile は head $HEAD_SHA で完了しましたが、clean に終わっていません。"
+  echo "ブロック: Greptile は head $HEAD_SHA で完了しましたが、正常終了していません。"
   echo "(conclusion が failure/action_required/timed_out/cancelled/stale だったか、clean run が存在しません。)"
   echo "指摘に対応して push し、新しい head で success / clean に終わるまで Greptile を再実行してください。"
   exit 1
 fi
 ```
 
-current head に対する Greptile check が存在するが still pending / in progress の場合は、古い review material に進まず、`greploop` と同じ polling pattern で待ちます。reasonable wait の後でも current head に対する Greptile check が出てこない場合は、`HEAD_SHA` に対する新しい Greptile review 待ちとして PR を blocked にし、そこで止めます。current head SHA に結びつけられない PR comment、PR review、Greptile summary から check complete だとみなしてはいけません。
+現在の head に対する Greptile チェックが存在するものの `still pending` / `in progress` の場合は、古いレビュー資料に進まず、`greploop` と同じポーリングパターンで待ちます。妥当な待機時間の後でも現在の head に対する Greptile チェックが出てこない場合は、`HEAD_SHA` に対する新しい Greptile レビュー待ちとして PR をブロックし、そこで停止します。現在の head SHA に結びつけられない PR コメント、PR レビュー、Greptile サマリーからチェック完了とはみなしてはいけません。
 
-Greptile integration がある GitLab 環境でも、MR の current head SHA に対して同じ freshness rule を適用します:
+Greptile 統合がある GitLab 環境でも、MR の現在の head SHA に対して同じ最新性ルールを適用します:
 
 ```bash
-# 1. Get the MR's current head SHA
+# 1. MR の現在の head SHA を取得する
 MR_SHA=$(glab mr view <MR_IID> --output json | jq -r '.sha // .diff_refs.head_sha')
 
-# 2. Find the latest pipeline for that EXACT sha, then the Greptile job within it.
+# 2. その正確な SHA の最新パイプラインを探し、その中の Greptile ジョブを取得する
 LATEST_PIPELINE_ID=$(glab api "projects/:fullpath/merge_requests/<MR_IID>/pipelines" \
   | jq -r --arg sha "$MR_SHA" '[.[] | select(.sha == $sha)] | sort_by(.id) | last | .id // empty')
 
@@ -194,8 +194,8 @@ GREPTILE_JOB_SUCCESS=$(echo "$GREPTILE_JOBS" \
 GREPTILE_JOB_BLOCKING=$(echo "$GREPTILE_JOBS" \
   | jq '[.[] | select(.status != "success")] | length')
 
-# 3. If Greptile integrates via MR notes instead of a CI job, require the newest
-#    Greptile note to reference the current head sha and report a clean review.
+# 3. Greptile が CI ジョブではなく MR ノートと統合されている場合は、最新の Greptile ノートが
+#    現在の head SHA を参照し、問題のないレビューを報告していることを要求する
 GREPTILE_NOTES=$(glab api "projects/:fullpath/merge_requests/<MR_IID>/discussions?per_page=100" \
   | jq --arg sha "$MR_SHA" '[.[].notes[]
       | select(.author.username | test("greptile"; "i"))]
@@ -216,59 +216,59 @@ if [ "$GREPTILE_JOB_BLOCKING" != "0" ]; then
 fi
 ```
 
-Block completion if, for `MR_SHA`, there is (a) no Greptile job or note at all (missing), (b) the newest Greptile job/note is tied to a different sha (stale), or (c) the Greptile job status is not `success`. A completed Greptile result for a different SHA is stale and must block completion.
+`MR_SHA` について、(a) Greptile ジョブまたはノートがまったくない（欠落）、(b) 最新の Greptile ジョブ／ノートが別の SHA に紐づいている（古い）、または (c) Greptile ジョブのステータスが `success` ではない場合は完了をブロックします。別の SHA に対する完了済み Greptile 結果も古いため、完了をブロックする必要があります。
 
-For Perforce installations with Greptile integration, apply the same rule using the CL's current shelved-revision identity and the Greptile webhook/review artifact tied to it; a Greptile result for an earlier shelf is stale and must block completion.
+Greptile 統合がある Perforce 環境では、CL の現在の shelved revision 識別子と、それに紐づく Greptile webhook／レビュー成果物を使って同じルールを適用します。以前の shelf に対する Greptile 結果は古いため、完了をブロックする必要があります。
 
 ### 5. Analyze the PR/MR
 
-Once all checks are complete, evaluate these areas:
+すべてのチェックが完了したら、次の項目を評価します:
 
 #### A. Status Checks
 
-- Are all CI checks passing?
-- If any are failing, identify which ones and the failure reason.
+- すべての CI チェックに合格しているか
+- 失敗しているものがあれば、対象と失敗理由を特定する
 
 #### B. PR/MR Description
 
-- Is the description complete and follows team conventions?
-- Are all required sections filled in?
-- Are there TODOs or placeholders that need updating?
+- 説明文が完全で、チームの規約に従っているか
+- 必須セクションがすべて記入されているか
+- 更新が必要な TODO やプレースホルダーがないか
 
 #### C. Review Comments
 
-- Inline code review comments that need addressing
-- Look for bot review comments (e.g. from `greptile-apps[bot]` on GitHub, or the Greptile bot user on GitLab, linters, etc.)
-- Human reviewer comments
+- 対応が必要なインラインコードレビューコメント
+- ボットのレビューコメント（GitHub の `greptile-apps[bot]`、GitLab の Greptile ボットユーザー、リンターなど）を確認する
+- 人間のレビュアーによるコメント
 - **Perforce:** review comments from `p4 review` or external review tools
 
 #### D. General Comments
 
-- Discussion comments on the PR/MR
-- For GitHub, check the issue comments endpoint and use `updated_at` to catch bot comments edited in place. Greptile's latest edited summary can contain actionable items even when there are no new inline comments.
-- Bot comments (deploy previews, etc.) - usually informational
+- PR/MR のディスカッションコメント
+- GitHub では issue comments endpoint を確認し、`updated_at` を使ってボットがその場で編集したコメントも見つける。新しいインラインコメントがなくても、Greptile が編集した最新サマリーに対応事項が含まれている場合がある
+- ボットコメント（デプロイプレビューなど）。通常は情報提供のみ
 - **Perforce:** CL description should include a clear summary, affected files rationale, and testing notes
 
 ### 6. Categorize issues
 
-For each issue found, categorize as:
+見つかった各問題を次のように分類します:
 
-| Category | Meaning |
+| 分類 | 意味 |
 |---|---|
-| **Actionable** | Code changes, test improvements, or fixes needed |
-| **Informational** | Verification notes, questions, or FYIs that don't require changes |
-| **Already addressed** | Issues that appear to be resolved by subsequent commits |
+| **対応が必要** | コード変更、テスト改善、または修正が必要 |
+| **情報提供** | 変更を必要としない確認事項、質問、参考情報 |
+| **対応済み** | 後続のコミットで解決済みと思われる問題 |
 
 ### 7. Report findings
 
 サマリー表を提示します:
 
-| Area | Issue | Status | Action Needed |
+| 領域 | 問題 | 状態 | 必要な対応 |
 |------|-------|--------|---------------|
-| Status Checks | CI build failing | Failing | Fix type error in `src/api.ts` |
-| Review | "Add null check" - @reviewer | Actionable | Add guard clause |
-| Description | TODO placeholder in test plan | Actionable | Fill in test plan |
-| Review | "Looks good" - @teammate | Informational | None |
+| ステータスチェック | CI ビルド失敗 | 失敗 | `src/api.ts` の型エラーを修正 |
+| レビュー | 「null チェックを追加」- @reviewer | 対応が必要 | ガード節を追加 |
+| 説明 | テスト計画に TODO プレースホルダーがある | 対応が必要 | テスト計画を記入 |
+| レビュー | 「問題ありません」- @teammate | 情報提供 | なし |
 
 ### 8. Fix issues (if requested)
 
@@ -294,16 +294,16 @@ p4 shelve -f -c <CL_NUMBER>
 
 ### 9. Resolve review threads
 
-After addressing comments, resolve the corresponding review threads.
+コメントに対応したら、対応するレビュースレッドを解決します。
 
-**Perforce** - Perforce does not have a native "resolve thread" concept. Instead, mark comments as addressed by updating the CL description or by responding in the review tool being used (Swarm, etc.). If using `p4 review`:
+**Perforce** - Perforce にはネイティブな「スレッド解決」の概念がありません。代わりに、CL の説明を更新するか、使用中のレビュー ツール（Swarm など）で返信してコメントに対応済みの印を付けます。`p4 review` を使用する場合:
 
 ```bash
-# Mark files as reviewed after addressing feedback
+# フィードバックに対応した後、ファイルをレビュー済みとして記録する
 p4 review -c <CL_NUMBER>
 ```
 
-**GitHub** - fetch unresolved thread IDs (paginate if needed - see [the GraphQL reference](references/graphql-queries.md)):
+**GitHub** - 未解決スレッドの ID を取得する（必要に応じてページネーションする。[GraphQL リファレンス](references/graphql-queries.md)を参照）:
 
 ```bash
 gh api graphql -f query='
@@ -325,9 +325,9 @@ query($cursor: String) {
 }'
 ```
 
-If `hasNextPage` is true, repeat with `-f cursor=ENDCURSOR` to get remaining threads.
+`hasNextPage` が true の場合は、`-f cursor=ENDCURSOR` を指定して残りのスレッドを取得する操作を繰り返します。
 
-対応済みまたは情報提供のみの thread を解決します:
+対応済みまたは情報提供のみのスレッドを解決します:
 
 ```bash
 gh api graphql -f query='
@@ -338,17 +338,17 @@ mutation {
 }'
 ```
 
-Batch multiple resolutions into a single mutation using aliases (`t1`, `t2`, etc.).
+エイリアス（`t1`、`t2` など）を使い、複数の解決処理を 1 つの mutation にまとめます。
 
-**GitLab** - fetch unresolved discussions (see [the GitLab API reference](references/gitlab-api.md)):
+**GitLab** - 未解決のディスカッションを取得する（[GitLab API リファレンス](references/gitlab-api.md)を参照）:
 
 ```bash
 glab api "projects/:fullpath/merge_requests/<MR_IID>/discussions?per_page=100"
 ```
 
-Filter for discussions where `"resolved": false`. Collect each discussion's `id`.
+`"resolved": false` であるディスカッションを絞り込み、各ディスカッションの `id` を収集します。
 
-Resolve each discussion individually (GitLab has no batch resolution):
+各ディスカッションを個別に解決します（GitLab には一括解決機能がありません）:
 
 ```bash
 glab api --method PUT \
@@ -360,7 +360,7 @@ glab api --method PUT \
 
 ### 10. Multiple PRs/MRs/CLs
 
-If checking a chain of PRs/MRs/CLs, process them sequentially.
+PR/MR/CL のチェーンを確認する場合は、順番に処理します。
 
 **Perforce** - to check multiple changelists at once:
 ```bash
@@ -369,11 +369,11 @@ p4 changes -s pending -u $P4USER -c $P4CLIENT -l
 
 ## 出力形式
 
-Summarize:
-- PR/MR/CL title or description and current state
-- Platform detected (GitHub / GitLab / Perforce)
-- Status checks summary (passing/failing/pending) - or N/A for Perforce
-- Total issues found
-- Actionable items with descriptions
-- Items that can be ignored with reasons
-- Recommended next steps
+次の内容を要約します:
+- PR/MR/CL のタイトルまたは説明と現在の状態
+- 検出したプラットフォーム（GitHub / GitLab / Perforce）
+- ステータスチェックの概要（合格／失敗／保留）。Perforce の場合は N/A
+- 見つかった問題の総数
+- 説明付きの対応事項
+- 無視できる項目とその理由
+- 推奨する次のステップ

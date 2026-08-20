@@ -2,20 +2,20 @@
 name: release-changelog
 description: >
   最後の stable tag 以降の commit、changeset、merge 済み PR の文脈を読み、
-  `releases/vYYYY.MDD.P.md` に stable Paperclip release の changelog を生成します。
+  `releases/vYYYY.MDD.P.md` に Paperclip の stable リリース用 changelog を生成します。
 ---
 
 # リリース Changelog Skill
 
-**stable** Paperclip release 向けのユーザー表示用 changelog を生成します。
+**stable** Paperclip リリース向けのユーザー表示用 changelog を生成します。
 
 ## バージョニングモデル
 
 Paperclip は **calendar versioning (calver)** を使います:
 
-- Stable releases: `YYYY.MDD.P` (e.g. `2026.318.0`)
-- Canary releases: `YYYY.MDD.P-canary.N` (e.g. `2026.318.1-canary.0`)
-- Git tags: `vYYYY.MDD.P` for stable, `canary/vYYYY.MDD.P-canary.N` for canary
+- Stable リリース: `YYYY.MDD.P`（例: `2026.318.0`）
+- Canary リリース: `YYYY.MDD.P-canary.N`（例: `2026.318.1-canary.0`）
+- Git タグ: stable は `vYYYY.MDD.P`、canary は `canary/vYYYY.MDD.P-canary.N`
 
 major / minor / patch の bump はありません。stable version は、予定している
 release date（UTC）に、その日の次の stable patch slot を足して決まります。
@@ -23,17 +23,17 @@ release date（UTC）に、その日の次の stable patch slot を足して決�
 出力:
 
 - `releases/vYYYY.MDD.P.md`
-- a `release` Case, upserted by `(caseType, key)` when Cases are enabled, with a
-  `body` document revision containing the changelog body
+- Cases が有効な場合は、`(caseType, key)` で upsert され、changelog 本文を含む
+  `body` ドキュメントリビジョンを持つ `release` Case
 
 重要なルール:
 
-- `2026.318.1-canary.0` のような canary release があっても、changelog file は
+- `2026.318.1-canary.0` のような canary リリースがあっても、changelog ファイルは
   `releases/v2026.318.1.md` のままです
-- version を semver bump type から導かない
-- canary changelog file を作らない
+- version を semver の bump type から導かない
+- canary 用の changelog ファイルを作らない
 
-## Channel Process - source commit とファイルの場所
+## チャネル処理 - source commit とファイルの場所
 
 stable は **soaked beta** を promote するため、changelog は `master` の先端ではなく、
 beta の source commit を説明します:
@@ -43,7 +43,7 @@ beta の source commit を説明します:
 
   ```bash
   git fetch origin --tags
-  npm view paperclipai dist-tags   # the beta dist-tag names the version
+  npm view paperclipai dist-tags   # beta の dist-tag から version を取得
   git rev-parse 'beta/v{beta-version}^{commit}'
   ```
 
@@ -69,18 +69,18 @@ beta の source commit を説明します:
   notes は candidate branch 上に直接 `releases/vYYYY.MDD.P.md` として置かれ、
   cherry-pick した fix と一緒に commit されます。
 
-## Step 0 - idempotency の確認
+## Step 0 - 冪等性の確認
 
 何かを生成する前に、changelog がすでに存在するか確認します:
 
 ```bash
-ls releases/beta/v{beta-version}.md 2>/dev/null   # soak-window home
+  ls releases/beta/v{beta-version}.md 2>/dev/null   # soak window の配置先
 ls releases/vYYYY.MDD.P.md 2>/dev/null            # canonicalized / fix path
 git ls-remote origin 'refs/heads/release-notes/v{beta-version}'
 ```
 
 生成された skeleton だけを持つ `release-notes/v{beta-version}` branch は
-通常の開始状態であり、conflict ではありません。そのまま上書きしてください。
+通常の開始状態であり、競合ではありません。そのまま上書きしてください。
 
 存在する場合:
 
@@ -89,7 +89,7 @@ git ls-remote origin 'refs/heads/release-notes/v{beta-version}'
 3. 保持、再生成、特定 section の更新のどれを行うか確認します
 4. 決して黙って上書きしません
 
-## Step 1 - stable の範囲を決める
+## Step 1 - stable の対象範囲を決める
 
 最後の stable tag と beta source commit を確認します:
 
@@ -104,23 +104,23 @@ changelog の範囲は常に `v{last}..{beta-src}` です。`..HEAD` でも
 
 stable version は次のいずれかから決まります:
 
-- an explicit maintainer request
+- 明示的なメンテナーからの依頼
 - `./scripts/release.sh stable --date YYYY-MM-DD --print-version`
-- the release plan already agreed in `doc/RELEASING.md`
+- `doc/RELEASING.md` で合意済みのリリース計画
 
 changelog version を canary tag や prerelease suffix から導いてはいけません。
 API の意図から major / minor / patch bump を導くことも禁止です。calver では
 date と同日 stable slot を使います。
 
-## Step 2 - 生の入力を集める
+## Step 2 - 生の入力データを集める
 
-release data を次から集めます:
+リリースデータを次から集めます:
 
-1. git commits since the last stable tag
-2. `.changeset/*.md` files
-3. merged PRs via `gh` when available
+1. 最後の stable tag 以降の Git commit
+2. `.changeset/*.md` ファイル
+3. 利用可能であれば `gh` 経由の merge 済み PR
 
-Useful commands:
+便利なコマンド:
 
 ```bash
 git log v{last}..{beta-src} --oneline --no-merges
@@ -131,12 +131,12 @@ gh pr list --state merged --search "merged:>={last-tag-date}" --json number,titl
 
 ## Step 3 — Breaking Change を検出する
 
-Look for:
+次を確認します:
 
-- destructive migrations
-- removed or changed API fields/endpoints
-- renamed or removed config keys
-- `BREAKING:` or `BREAKING CHANGE:` commit signals
+- 破壊的なマイグレーション
+- 削除または変更された API フィールド／エンドポイント
+- 名前が変更または削除された設定キー
+- `BREAKING:` または `BREAKING CHANGE:` という commit シグナル
 
 Key commands:
 
@@ -147,7 +147,7 @@ git diff v{last}..{beta-src} -- server/src/routes/ server/src/api/
 git log v{last}..{beta-src} --format="%s" | rg -n 'BREAKING CHANGE|BREAKING:|^[a-z]+!:' || true
 ```
 
-breaking change を検出した場合は目立つ形で示します。Breaking Changes section に upgrade path とともに必ず記載します。
+breaking change を検出した場合は目立つ形で示します。Breaking Changes セクションに、アップグレード手順とともに必ず記載します。
 
 ## Step 4 — ユーザー向けに分類する
 
@@ -157,57 +157,54 @@ stable changelog では次の section を使います:
 - `Highlights`
 - `Improvements`
 - `Fixes`
-- `Upgrade Guide` when needed
+- 必要に応じて `Upgrade Guide`
 
-Exclude purely internal refactors, CI changes, and docs-only work unless they materially affect users.
+ユーザーに実質的な影響がない限り、内部のみのリファクタリング、CI の変更、ドキュメントのみの変更は除外します。
 
-Guidelines:
+ガイドライン:
 
-- group related commits into one user-facing entry
-- write from the user perspective
-- keep highlights short and concrete
-- spell out upgrade actions for breaking changes
-- **describe deltas, not repeats**: read the previous stable's notes
-  (`releases/v<last-stable>.md`) before writing. When they already
-  introduced a feature, this release's entry covers only what changed —
-  a default flip, a hardening, a completion — phrased against the prior
-  release ("last release introduced X; this release makes it the
-  default"), never re-describing the feature as if it debuted. A theme
-  that headlined the previous release does not headline again for
-  follow-through work; demote it to Improvements.
+- 関連する commit を 1 つのユーザー向け項目にまとめる
+- ユーザーの視点で書く
+- Highlights は短く具体的にする
+- breaking change の場合はアップグレード時の対応を明記する
+- **繰り返しではなく差分を記述する**: 作成前に前回の stable の notes を読む
+  (`releases/v<last-stable>.md`) を作成前に読みます。前回のリリースですでに
+  その機能がすでに導入されている場合、このリリースでは変更点のみを扱います。
+  たとえば、デフォルト値の変更、堅牢化、完成などです。前回のリリースを基準に
+  （「前回のリリースで X を導入し、今回のリリースでデフォルトにする」など）
+  表現し、初登場の機能であるかのように再説明してはいけません。前回のリリースで
+  主役だったテーマの継続作業は再び Highlights にせず、Improvements に降格します。
 
-### Inline PR and contributor attribution
+### PR と貢献者のインライン表記
 
-When a bullet item clearly maps to a merged pull request, add inline attribution at the
-end of the entry in this format:
+箇条書きの項目が merge 済み pull request に明確に対応する場合は、次の形式で項目末尾に
+帰属情報を追加します:
 
 ```
 - **Feature name** — Description. ([#123](https://github.com/paperclipai/paperclip/pull/123), @contributor1, @contributor2)
 ```
 
-Rules:
+ルール:
 
-- Only add a PR link when you can confidently trace the bullet to a specific merged PR.
-  Use merge commit messages (`Merge pull request #N from user/branch`) to map PRs.
-- List the contributor(s) who authored the PR. Use GitHub usernames, not real names or emails.
-- If multiple PRs contributed to a single bullet, list them all: `([#10](url), [#12](url), @user1, @user2)`.
-- If you cannot determine the PR number or contributor with confidence, omit the attribution
-  parenthetical — do not guess.
-- Core maintainer commits that don't have an external PR can omit the parenthetical.
+- その箇条書きを特定の merge 済み PR に確実に対応付けられる場合のみ、PR リンクを追加します。
+  PR の対応付けには merge commit のメッセージ（`Merge pull request #N from user/branch`）を使います。
+- PR を作成した貢献者を記載します。実名やメールアドレスではなく GitHub username を使います。
+- 1 つの項目に複数の PR が関係する場合は、すべて記載します: `([#10](url), [#12](url), @user1, @user2)`。
+- PR 番号や貢献者を確実に特定できない場合は、推測せず帰属情報の括弧を省略します。
+- 外部 PR のないコアメンテナーの commit は、括弧内の帰属情報を省略できます。
 
 ## Step 5 — ファイルを書く
 
-The **file path** is the beta-keyed one from the Channel Process section
-(`releases/beta/v{beta-version}.md`), but the **content** is titled with
-the planned stable version. Resolve it with
+**ファイルパス**は「チャネル処理」セクションに記載した beta 用のもの
+（`releases/beta/v{beta-version}.md`）ですが、**内容**には予定された stable version を
+タイトルとして記載します。次のコマンドで解決します:
 `./scripts/release.sh stable --date {planned-promotion-date} --print-version`
-(promotion is normally the beta publish date plus the 3-day soak). If the
-promotion date slips, the version re-resolves at dispatch — the beta-keyed
-filename makes that harmless; refresh the title when it happens.
+（promotion は通常、beta 公開日の 3 日後です）。promotion 日がずれた場合、dispatch 時に
+version が再解決されます。beta 用のファイル名なので影響はありませんが、その際はタイトルを更新します。
 
-The opening line of the changelog must be an H1 of the format `# Paperclip {version}`
-(no braces), e.g. `# Paperclip v2026.618.0`. Always include the `Paperclip ` prefix and
-the `v` on the version.
+changelog の冒頭行は `# Paperclip {version}` 形式の H1
+（波括弧なし。例: `# Paperclip v2026.618.0`）にします。必ず `Paperclip ` prefix と
+version の `v` を含めます。
 
 Template:
 
@@ -228,40 +225,39 @@ Template:
 
 ## Contributors
 
-Thank you to everyone who contributed to this release!
+このリリースに貢献してくださった皆さんに感謝します！
 
 @username1, @username2, @username3
 ```
 
 Omit empty sections except `Highlights`, `Improvements`, and `Fixes`, which should usually exist.
 
-The `Contributors` section should always be included. List every person who authored
-commits in the release range, @-mentioning them by their **GitHub username** (not their
-real name or email). To find GitHub usernames:
+`Contributors` セクションは常に含めます。リリース範囲内の commit を作成した全員を、
+実名やメールアドレスではなく **GitHub username** で @メンションします。GitHub username の
+調べ方:
 
-1. Extract usernames from merge commit messages: `git log v{last}..{beta-src} --oneline --merges` — the branch prefix (e.g. `from username/branch`) gives the GitHub username.
-2. For noreply emails like `user@users.noreply.github.com`, the username is the part before `@`.
-3. For contributors whose username is ambiguous, check `gh api users/{guess}` or the PR page.
+1. merge commit メッセージから username を抽出します: `git log v{last}..{beta-src} --oneline --merges`。ブランチの prefix（例: `from username/branch`）から GitHub username がわかります。
+2. `user@users.noreply.github.com` のような noreply メールでは、`@` より前の部分が username です。
+3. username が曖昧な貢献者については、`gh api users/{guess}` または PR ページで確認します。
 
-**Never expose contributor email addresses.** Use `@username` only.
+**貢献者のメールアドレスは決して公開しません。** `@username` のみを使います。
 
-Exclude bot accounts (e.g. `lockfile-bot`, `dependabot`) from the list.
-Exclude specific folks from the list — the Contributors section credits
-community contributors only. The canonical exclusion list (keep it here;
-the Discord skill defers to it):
+bot アカウント（例: `lockfile-bot`、`dependabot`）は一覧から除外します。
+特定の人物も一覧から除外します。Contributors セクションではコミュニティの貢献者のみを
+クレジットします。正規の除外リスト（ここで管理し、Discord skill もこれを参照します）:
 `cryppadotta`, `forgottendev`, `devinfoley`, `sockmonster`, `scotttong`,
 `nguyenm7`, `nickyleach`, `tonio-alucema`
 
-List contributors in alphabetical order by GitHub username (case-insensitive).
+貢献者は GitHub username のアルファベット順（大文字小文字を区別しない）で並べます。
 
-If there are no contributors left after exclusions, then just skip this section and don't mention it.
+除外後に貢献者が残らない場合は、このセクションを省略し、言及もしません。
 
 ## Step 5b — Release Case を upsert する
 
-After writing `releases/vYYYY.MDD.P.md`, emit or refresh the top-level release
-case when the run has Paperclip API context. Use `skills/paperclip/references/cases.md`
-as the API contract. If the API returns `403 Cases are disabled`, report that
-Cases を有効にする必要があることを報告し、changelog file の処理だけを続けます。
+`releases/vYYYY.MDD.P.md` を書き込んだ後、実行環境に Paperclip API のコンテキストがある場合は、
+トップレベルの release case を作成または更新します。API の契約には `skills/paperclip/references/cases.md`
+を使用します。API が `403 Cases are disabled` を返した場合は、Cases を有効にする必要があることを
+報告し、changelog ファイルの処理だけを続けます。
 
 Request:
 
@@ -296,9 +292,8 @@ POST /api/companies/:companyId/cases
 ```
 
 この fields schema は、汎用 field value の全種類を意図的に使用します:
-string, number, boolean, array, object, and null. Keep the keys stable across
-runs and send the full object on every upsert because fields are replaced, not
-deep-merged.
+string、number、boolean、array、object、null のすべてを意図的に使用します。fields は deep merge
+ではなく置き換えられるため、実行間でキーを変えず、upsert のたびにオブジェクト全体を送信します。
 
 続けて changelog を case body document に書き込みます:
 
@@ -321,9 +316,9 @@ PUT /api/cases/:releaseCaseId/documents/body
 引き渡す前に次を確認します:
 
 1. H1 見出しが `# Paperclip {version}`（例: `# Paperclip v2026.618.0`）になっており、stable version のみが入っていること
-2. title と filename に `-canary` が含まれていないこと
+2. title とファイル名に `-canary` が含まれていないこと
 3. breaking change がある場合は upgrade path が用意されていること
 4. `release` case が存在するか、あるいは Cases を使えなかった理由を説明できること
-5. 下書きを human に sign-off してもらうこと
+5. 下書きについて人間の sign-off を得ること
 
 この skill は何も publish しません。stable changelog artifact を準備するだけです。

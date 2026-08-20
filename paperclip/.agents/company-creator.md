@@ -26,7 +26,7 @@ Agent Companies specification に準拠した agent company package を作成し
 
 ユーザーが git repo URL、ローカルパス、または tweet を指定します。repo を分析し、それを包む company を作成します。
 
-See [references/from-repo-guide.md](references/from-repo-guide.md) for detailed repo analysis steps.
+[references/from-repo-guide.md](references/from-repo-guide.md) に詳しい repo 分析手順があります。
 
 ## 手順
 
@@ -34,8 +34,8 @@ See [references/from-repo-guide.md](references/from-repo-guide.md) for detailed 
 
 どちらの mode に該当するかを判断します:
 
-- **From scratch**: What kind of company or team? What domain? What should the agents do?
-- **From repo**: Clone/read the repo. Scan for existing skills, agent configs, README, source structure.
+- **ゼロから作成**: どのような company または team か。分野は何か。agent に何をさせるか。
+- **repo から作成**: repo を clone / 読み込みします。既存の skill、agent 設定、README、ソース構成を確認します。
 
 ### Step 2: ヒアリングする（AskUserQuestion を使う）
 
@@ -44,12 +44,12 @@ See [references/from-repo-guide.md](references/from-repo-guide.md) for detailed 
 
 **ゼロから company を作る場合** は、次を聞きます:
 
-- Company purpose and domain (1-2 sentences is fine)
+- company の目的と分野（1〜2 文で構いません）
 - どの agent が必要か。説明に基づいて採用計画を提案します。
-- Whether this is a full company (needs a CEO) or a team/department (no CEO required)
-- Any specific skills the agents should have
-- How work flows through the organization (see "Workflow" below)
-- Whether they want projects and starter tasks
+- 完全な company（CEO が必要）か、team / department（CEO は不要）か
+- agent に必要な特定の skill
+- 組織内で work がどのように流れるか（下の「Workflow」を参照）
+- project と開始時の task が必要か
 
 **repo から company を作る場合** は、分析を示したうえで次を確認します:
 
@@ -110,52 +110,52 @@ quick reference も読みます: [references/companies-spec.md](references/compa
 ├── agents/
 │   └── <slug>/AGENTS.md
 ├── teams/
-│   └── <slug>/TEAM.md        (if teams are needed)
+│   └── <slug>/TEAM.md        （team が必要な場合）
 ├── projects/
-│   └── <slug>/PROJECT.md     (if projects are needed)
+│   └── <slug>/PROJECT.md     （project が必要な場合）
 ├── tasks/
-│   └── <slug>/TASK.md        (if tasks are needed)
+│   └── <slug>/TASK.md        （task が必要な場合）
 ├── skills/
-│   └── <slug>/SKILL.md       (if custom skills are needed)
+│   └── <slug>/SKILL.md       （custom skill が必要な場合）
 └── .paperclip.yaml            (Paperclip vendor extension)
 ```
 
 **ルール:**
 
-- Slugs must be URL-safe, lowercase, hyphenated
-- COMPANY.md gets `schema: agentcompanies/v1` - other files inherit it
-- Agent instructions go in the AGENTS.md body, not in .paperclip.yaml
-- Skills referenced by shortname in AGENTS.md resolve to `skills/<shortname>/SKILL.md`
-- For external skills, use `sources` with `usage: referenced` (see spec section 12)
-- Do not export secrets, machine-local paths, or database IDs
-- Omit empty/default fields
-- For companies generated from a repo, add a references footer at the bottom of COMPANY.md body:
+- slug は URL-safe、lowercase、ハイフン区切りにする
+- COMPANY.md に `schema: agentcompanies/v1` を設定し、ほかの file はそれを継承する
+- agent の指示は .paperclip.yaml ではなく AGENTS.md の本文に記載する
+- AGENTS.md で shortname により参照した skill は `skills/<shortname>/SKILL.md` に解決される
+- 外部 skill には `sources` と `usage: referenced` を使う（spec section 12 を参照）
+- secret、マシン固有の path、database ID を出力しない
+- 空の field や既定値の field は省略する
+- repo から生成した company では、COMPANY.md 本文の末尾に次の references footer を追加する:
   `Generated from [repo-name](repo-url) with the company-creator skill from [Paperclip](https://github.com/paperclipai/paperclip)`
 
 **報告構造:**
 
-- Every agent except the CEO should have `reportsTo` set to their manager's slug
-- The CEO has `reportsTo: null`
-- For teams without a CEO, the top-level agent has `reportsTo: null`
+- CEO 以外のすべての agent には、manager の slug を `reportsTo` に設定する
+- CEO の `reportsTo` は `null` にする
+- CEO のいない team では、最上位 agent の `reportsTo` を `null` にする
 
 **workflow を意識した agent instruction を書く:**
 
-Each AGENTS.md body should include not just what the agent does, but how they fit into the organization's workflow. Include:
+各 AGENTS.md の本文には、agent の仕事内容だけでなく、組織の workflow にどう組み込まれるかも記載します。次を含めます:
 
-1. **Where work comes from** — "You receive feature ideas from the user" or "You pick up tasks assigned to you by the CTO"
-2. **What you produce** — "You produce a technical plan with architecture diagrams" or "You produce a reviewed, approved branch ready for shipping"
-3. **Who you hand off to** — "When your plan is locked, hand off to the Staff Engineer for implementation" or "When review passes, hand off to the Release Engineer to ship"
-4. **What triggers you** — "You are activated when a new feature idea needs product-level thinking" or "You are activated when a branch is ready for pre-landing review"
+1. **work の受け取り元** — 「ユーザーから feature idea を受け取る」または「CTO が割り当てた task に着手する」
+2. **成果物** — 「architecture diagram 付きの technical plan を作成する」または「ship の準備が整った review 済み・承認済みの branch を作成する」
+3. **handoff 先** — 「plan が確定したら Staff Engineer に implementation を引き継ぐ」または「review に合格したら Release Engineer に ship を引き継ぐ」
+4. **起動条件** — 「新しい feature idea に product-level の検討が必要になったときに起動する」または「branch が pre-landing review の準備ができたときに起動する」
 
 これにより、agent の集合が実際に協調して動く組織になります。workflow context がなければ agent は孤立して動き、作業の前後に何が起きるかを理解できません。
 
 生成する working agent には、簡潔な execution contract を必ず入れます:
 
-- Start actionable work in the same heartbeat and do not stop at a plan unless planning was requested.
-- Leave durable progress in comments, documents, or work products with the next action.
-- Use child issues for long or parallel delegated work instead of polling agents, sessions, or processes.
-- Mark blocked work with the unblock owner and action.
-- Respect budget, pause/cancel, approval gates, and company boundaries.
+- 同じ heartbeat で実行可能な work を開始し、planning を求められていない限り plan だけで止めない。
+- 次の action とともに、comment、document、work product のいずれかに持続的な進捗を残す。
+- 長期または並列の委任 work には、agent、session、process の polling ではなく child issue を使う。
+- blocked な work には、unblock の担当者と action を記載する。
+- budget、pause / cancel、approval gate、company の境界を尊重する。
 
 ### Step 5: 出力先を確認する
 
@@ -174,7 +174,7 @@ package の書き込み先をユーザーに確認します。よくある選択
 - agent、title、報告ライン、skill を示す markdown の list か table の org chart
 - 各 agent の role の短い説明
 - 引用と参照: source repo へのリンク（repo 由来の場合）、Agent Companies spec へのリンク（https://agentcompanies.io/specification）、Paperclip へのリンク（https://github.com/paperclipai/paperclip）
-- import 方法を説明する "Getting Started" section: `paperclipai company import --from <path>`
+- import 方法を説明する「Getting Started」section: `paperclipai company import --from <path>`
 
 **LICENSE** — LICENSE file を含めます。著作権者は company を作るユーザーであり、元 repo の author ではありません（skill を作ったのは彼らですが、company を作るのはユーザーです）。source repo と同じ license type を使うか（repo 由来の場合）、ユーザーに確認します（ゼロからの場合）。不明なら MIT を既定にします。
 
@@ -182,11 +182,11 @@ package の書き込み先をユーザーに確認します。よくある選択
 
 すべての file を書き出したうえで、簡潔に要約します:
 
-- Company name and what it does
-- Agent roster with roles and reporting structure
-- Skills (custom + referenced)
-- Projects and tasks if any
-- The output path
+- company 名とその役割
+- role と報告構造を含む agent 一覧
+- skill（custom + referenced）
+- project と task（存在する場合）
+- 出力先 path
 
 ## .paperclip.yaml ガイドライン
 
@@ -263,7 +263,7 @@ metadata:
       usage: referenced
 ```
 
-Get the commit SHA with:
+次のコマンドで commit SHA を取得します:
 
 ```bash
 git ls-remote https://github.com/owner/repo HEAD

@@ -9,7 +9,7 @@ compatibility: Node.js 20 以上、GitHub 読み取りアクセスで認証済�
 allowed-tools: Bash(node:*) Bash(gh:*) Bash(curl:*)
 ---
 
-# PR Gardening
+# PR の整理
 
 最近の window（既定 14 日）で active な Paperclip issue に参照されている、**この Paperclip instance が開いた** pull request を能動的に世話します。candidate の発見と ready 判定は script で行い、LLM の分析ではありません。この workflow 中の GitHub access は read-only です。
 
@@ -80,10 +80,10 @@ gardening の結果、branch に単一の pull request を作る follow-up task 
 
 branch ごとに1つずつ、順番に処理します:
 
-1. Search open Paperclip issues for the exact branch name with statuses `backlog`, `todo`, `in_progress`, `in_review`, and `blocked`.
-2. Inspect matching issue titles, descriptions, and recent comments for an equivalent open "create PR from this branch" task for the same branch.
-3. If an equivalent open task exists, reuse it: add a concise comment with the current PR/head/reason context and link it from the gardening issue or blocker list. Do not create another task.
-4. Only if no equivalent open task exists, create exactly one follow-up task for that branch.
+1. `backlog`、`todo`、`in_progress`、`in_review`、`blocked` の status を持つ open Paperclip issue から、branch 名が完全一致するものを検索します。
+2. 一致した issue の title、description、最近の comment を確認し、同じ branch 用の同等な open「この branch から PR を作成する」task がないか調べます。
+3. 同等の open task があれば再利用します。現在の PR、head、理由の context を簡潔な comment に記載し、gardening issue または blocker list からリンクします。別の task は作成しません。
+4. 同等の open task がない場合に限り、その branch 用の follow-up task を1つだけ作成します。
 
 follow-up task 作成を並列にばらまかないでください。create-PR または prepare-PR task に対して同時に `POST /api/companies/:companyId/issues` を投げてはいけません。P1 の issue-create idempotency support が使えるようになったら、すべての create-PR follow-up task 作成に `idempotencyKey: "pr-gardening:create-pr:{branch}"` を、すべての prepare-PR task に `idempotencyKey: "pr-gardening:prepare-pr:{owner/repo}#{number}"` を含めます。
 
@@ -95,7 +95,7 @@ follow-up task 作成を並列にばらまかないでください。create-PR �
 なので、報告するだけではなく、`/prepare-paperclip-pr` skill を使って実際に merge-ready にします。
 PR は1つずつ処理します:
 
-1. **Cooldown and rounds.** Locate the `originatingIssue` from `candidates.json` (selection priority: issue carrying the exact PR URL as a `pull_request` work product; then issue whose comment mentions the PR; then most recently active mentioning issue). Fetch its comments and search for the marker:
+1. **Cooldown と round。** `candidates.json` から `originatingIssue` を特定します（選択優先順位は、正確な PR URL を `pull_request` work product として持つ issue、PR に言及する comment がある issue、最後に最も最近 active だった言及 issue の順）。その comment を取得し、次の marker を検索します:
 
    ```text
    <!-- pr-gardening:<owner/repo>#<number> -->
@@ -106,21 +106,20 @@ PR は1つずつ処理します:
    `not converging; recommend close or human decision` と報告します。
    これは human の判断材料であり、PR を閉じろという指示ではありません。
 
-2. **重複排除。** PR number / branch を open Paperclip issues から探します。
+2. **重複排除。** open Paperclip issues から PR number / branch を探します。
    同等の open prepare-PR task がすでにあるなら、新しく作らず concise な status comment を
-   付けて再利用します（上の deduplication section を参照）。
+  付けて再利用します（上の重複排除セクションを参照）。
 
 3. **prepare skill を実行する。** PR ごとに1つ、coder agent（できれば CodexCoder）に割り当てた
-   focused child task を作り、その PR に対して `/prepare-paperclip-pr` を実行するよう指示します。
+  対象を絞った child task を作り、その PR に対して `/prepare-paperclip-pr` を実行するよう指示します。
    PR URL、branch、current head SHA、`readiness.json` から得た machine-detected な
    `reasons[]` を含めます。gardener であるあなたがすでにその PR の branch を worktree で
    checkout しているなら、delegation せず直接 `/prepare-paperclip-pr` を実行しても構いません。
    どちらの場合でも、prepare work が PR を merge、approve、close してはいけません。
 
 4. **marker comment を残す。** originating issue に、上の marker、current head SHA、
-   コピーした `reasons[]`、round counter、prepare task への link を comment します。
-   `POST /api/issues/:issueId/comments` に `X-Paperclip-Run-Id` を付けて送ります。
-   issue が terminal の場合は `resume: true` を含め、comment が live continuation を作るようにします。
+  コピーした `reasons[]`、round counter、prepare task への link を comment します。
+  issue が terminal の場合は `resume: true` を含め、comment によって live continuation が作られるようにします。
 
 Suggested body:
 
@@ -141,13 +140,13 @@ Gardening round 1/3. Re-verification is required after changes; do not merge bas
 `--dry-run` は `--archive-inbox` と一緒でも inbox mutation を常に抑止します。
 flag がなければ、何も archive しません。
 
-Stage D は、以前に監視していた candidate が merged に移行したときに適用します。
+Stage D は、以前に監視していた candidate が merged に移行したときに適用されます。
 この stage の直前に Stage B を再実行し、その verification で記録した同じ current head SHA について
 GitHub が `state: merged` を返すことを要求します。新しい Stage A discovery は、
 すでに merged / closed だった PR を意図的に落とします。
 
 条件を満たす candidate ごとに、`POST /api/issues/:issueId/inbox-archive` と空の JSON body で
-responsible user の inbox から `originatingIssue` を archive します。`userId` は渡しません。
+responsible user の inbox から originating issue を archive します。`userId` は渡しません。
 Paperclip API が gardener の run context から responsible user を解決し、その user の
 inbox-agent policy を強制します。GitHub access は read-only のままです。
 
@@ -181,9 +180,9 @@ scheduled または manual rerun が fallback です。
 wake のたびに、まず Stage B を再実行します。PR が active gardening から終了するのは、
 次のいずれかが機械的に観測されたときだけです:
 
-- verified `ready` at the current head;
-- merged or closed externally;
-- maximum rounds reached, reported as not converging.
+- 現在の head で `ready` が検証された;
+- 外部で merged または closed になった;
+- 最大 round 数に達し、収束しない状態として報告された。
 
 terminal issue に gardening issue を blocked のままにしないでください。
 agent や長時間セッションを poll しないでください。
@@ -199,9 +198,9 @@ node .agents/skills/pr-gardening/scripts/render-report.mjs \
 report には scope（authors + window）を記載し、すべての open PR について、
 author、PR description から取った1行の purpose summary、readiness confidence bucket を示します:
 
-- **High:** current-head checks green, no conflicts, Greptile clean, base fresh, originating issue terminal.
-- **Medium:** otherwise green but base stale, review not complete, or originating issue active.
-- **Low:** failing/pending checks, missing Greptile, draft/just-fixed-unverified state, or no identifiable origin.
+- **High:** current head の check が green、conflict なし、Greptile clean、base が最新、originating issue が terminal。
+- **Medium:** その他は green だが base が古い、review が未完了、または originating issue が active。
+- **Low:** check が failing/pending、Greptile がない、draft / 修正直後で未検証、または origin を特定できない。
 
 PR の生成された purpose line が空または役に立たないなら、report を公開するときに
 PR title と diff summary から1文で説明を書きます。

@@ -8,11 +8,11 @@ description: >
 
 # Terminal-Bench Loop
 
-Paperclip を使って 1つの Terminal-Bench 問題を passing smoke に到達させるための、再現可能な operating skill です。issue topology を明示し、run を上限付きにし、board gate で product fix を管理し、worktree の継続性を保ちます。
+Paperclip を使って 1つの Terminal-Bench 問題を smoke pass に到達させるための、再現可能な運用 skill です。issue topology を明示し、run に上限を設け、board gate で product fix を管理し、worktree の継続性を保ちます。
 
-この skill は engineering ではなく、**operational + diagnostic** です。Terminal-Bench loop に関する issue、artifact、approval を調整します。code change を許可するものではありません。承認された product fix は、board confirmation の後に別の implementation child issue として着地します。
+この skill は engineering ではなく、**運用 + 診断** のためのものです。Terminal-Bench loop に関する issue、artifact、approval を調整します。コード変更を許可するものではありません。承認された product fix は、board confirmation の後に別の implementation child issue として着地します。
 
-canonical execution model: loop を始める前、または loop issue を動かす前に `doc/execution-semantics.md` を読んでください。すべての loop issue は、その document が許す state に置く必要があります: terminal（`done` / `cancelled`）、explicitly live（active run / queued wake）、explicitly waiting（participant / interaction / approval を伴う `in_review`）、または explicit recovery / blocker（`blockedByIssueIds` と named owner を伴う `blocked`）です。
+正規の実行モデル: loop を始める前、または loop issue を動かす前に `doc/execution-semantics.md` を読んでください。すべての loop issue は、その document が許す state に置く必要があります: terminal（`done` / `cancelled`）、明示的な live（active run / queued wake）、明示的な waiting（participant / interaction / approval を伴う `in_review`）、または明示的な recovery / blocker（`blockedByIssueIds` と named owner を伴う `blocked`）です。
 
 ## 使う場面
 
@@ -32,41 +32,41 @@ canonical execution model: loop を始める前、または loop issue を動か
 - assignment が Terminal-Bench loop から表面化していない通常の Paperclip product bug である場合。通常の investigation を使います。
 - company skill の install や assign の権限がなく、相手が実際には library mutation を求めている場合。その step は権限のある skill-library owner に任せます。
 
-## 守るべき3つの invariant
+## 守るべき3つの不変条件
 
-すべての loop iteration と提案する product fix は、次の3つの invariant を同時に満たす必要があります。これらは `/diagnose-why-work-stopped` に由来し、ユーザーは liveness work で繰り返し示しています:
+すべての loop iteration と提案する product fix は、次の3つの不変条件を同時に満たす必要があります。これらは `/diagnose-why-work-stopped` に由来し、ユーザーは liveness work で繰り返し示しています:
 
-1. **Productive work continues.** Each loop issue must always have a clear next action owner — agent, board, user, or named blocker. No silent `in_review` with nothing waiting on it.
-2. **Only real blockers stop work.** Stops happen when something genuinely cannot proceed (board confirmation, QA, missing credentials, exhausted budget). Pseudo-stops must be detected and routed.
-3. **No infinite loops.** Iteration count, wall-clock budget, and a board gate before product fixes are applied keep the loop bounded.
+1. **生産的な作業を継続する。** 各 loop issue には常に、agent、board、user、または名前付き blocker のいずれかによる明確な次のアクション担当者が必要です。待機対象がないまま `in_review` にする、暗黙の停止は禁止です。
+2. **実際の blocker だけが作業を停止させる。** 停止は、何かが本当に進行不能な場合（board confirmation、QA、認証情報不足、予算枯渇）に発生します。見かけ上の停止は検出して適切な経路へ送ります。
+3. **無限ループを作らない。** iteration 数、実時間予算、product fix 適用前の board gate によって loop を上限内に保ちます。
 
 提案した iteration が3つのどれかに反するなら、捨てるか作り直します。loop issue に、
 その iteration で各 invariant をどう守るかを明記してください。
 
 ## 入力
 
-Collect these on the top-level loop issue before iteration 1. Any input that cannot be supplied is a blocker — name the unblock owner and stop.
+iteration 1 の前に、これらを top-level loop issue に記録します。提供できない入力がある場合は blocker とし、解除担当者を明記して停止します。
 
-- **Source issue.** The Paperclip issue that asked for the loop. The loop parent links back to it.
-- **Terminal-Bench task name.** Single-task identifier (e.g. `terminal-bench/fix-git`). Multi-task suites are out of scope for this skill.
-- **Iteration budget.** Maximum number of iterations before the loop must stop without further fixes (typical: 3–5). Also record a per-iteration wall-clock cap.
-- **Paperclip App worktree issue.** The implementation-side issue under the Paperclip App project whose execution workspace owns the isolated worktree. First iteration creates it; later iterations reuse it via `inheritExecutionWorkspaceFromIssueId` or equivalent.
-- **Benchmark command.** The exact `paperclip-bench` invocation, including the `PAPERCLIPAI_CMD` (or equivalent) binding pinned to the Paperclip App worktree under test. Record verbatim on the loop issue.
-- **Dispatch runner config.** The exact Harbor/Paperclip runner dispatch config required for the smoke to actually start a Paperclip heartbeat. For the current Harbor wrapper, record the `PAPERCLIP_HARBOR_RUNNER_CONFIG` JSON (or equivalent config file) verbatim enough to preserve: `assignee`, `heartbeat_strategy`, `agent_adapter` / `agent_adapters`, `reuse_host_home` when local credentials are intentionally needed, and the stop budget. A bare Harbor command that creates `BEN-1` as unassigned `todo` with zero heartbeat-enabled agents is a harness/setup failure, not a valid product diagnosis.
-- **Latest artifact root.** Filesystem or storage path under which `paperclip-bench` writes run artifacts (manifest, `results.jsonl`, Harbor raw job folders, redacted telemetry). Each iteration appends; nothing is overwritten.
-- **Approval policy.** Who must accept a proposed product fix before implementation (default: board via `request_confirmation`; CTO if delegated; never the loop driver alone).
+- **Source issue。** loop を依頼した Paperclip issue。loop parent からこの issue にリンクします。
+- **Terminal-Bench task name。** 単一 task の識別子（例: `terminal-bench/fix-git`）。複数 task の suite はこの skill の対象外です。
+- **Iteration budget。** 追加の fix なしで loop を停止するまでの iteration 最大数（通常は 3～5）。iteration ごとの実時間上限も記録します。
+- **Paperclip App worktree issue。** 分離 worktree を所有する execution workspace を持つ、Paperclip App project 配下の実装側 issue。初回 iteration で作成し、後続 iteration では `inheritExecutionWorkspaceFromIssueId` または同等の仕組みで再利用します。
+- **Benchmark command。** テスト対象の Paperclip App worktree に固定した `PAPERCLIPAI_CMD`（または同等の command binding）を含む、正確な `paperclip-bench` 呼び出し。loop issue にそのまま記録します。
+- **Dispatch runner config。** smoke で Paperclip heartbeat を実際に開始するために必要な Harbor/Paperclip runner dispatch 設定。現在の Harbor wrapper では、`assignee`、`heartbeat_strategy`、`agent_adapter` / `agent_adapters`、ローカル認証情報が意図的に必要な場合の `reuse_host_home`、停止予算を保持できる形で `PAPERCLIP_HARBOR_RUNNER_CONFIG` JSON（または同等の設定ファイル）を記録します。`BEN-1` を未割り当ての `todo` として作成し、heartbeat 対応 agent が 0 のままになる Harbor コマンド単体は harness/setup failure であり、有効な product diagnosis ではありません。
+- **Latest artifact root。** `paperclip-bench` が run artifact（manifest、`results.jsonl`、Harbor raw job folder、redacted telemetry）を書き込む filesystem または storage のパス。iteration ごとに追記し、上書きはしません。
+- **Approval policy。** 実装前に提案された product fix を承認する必要がある者（デフォルトは `request_confirmation` 経由の board、委任された場合は CTO。loop driver 単独での承認は不可）。
 
-Record each input on the top-level loop issue (description or a dedicated `inputs` document). If any input changes mid-loop, note the change and the iteration it took effect.
+各入力を top-level loop issue（description または専用の `inputs` document）に記録します。loop の途中で入力が変わった場合は、変更内容と適用された iteration を記録します。
 
 ## issue topology
 
-The loop must be representable as a tree, not as prose in comments:
+loop はコメント内の文章ではなく、ツリーとして表現できなければなりません:
 
-- **Top-level loop issue.** Long-lived. Holds inputs, iteration counter, current state, links to every iteration child, and the product-rule history. Rests in `in_progress` while an iteration is running, `in_review` only when a typed waiter sits directly on the loop parent (execution-policy participant, `request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction, approval, or named human owner), `blocked` with `blockedByIssueIds` while a child issue is the gating work (iteration child holding the fix-proposal `request_confirmation`, or implementation, QA, or CTO review children), `done` on pass, or `cancelled` on board-rejection / budget exhaustion.
-- **Iteration child issues.** One per iteration. Each carries: a bounded run issue (smoke), a diagnosis issue (applies `/diagnose-why-work-stopped`), a fix-proposal document with a `request_confirmation` interaction, and — only after acceptance — implementation, QA, CTO review, and rerun children. Iteration children are blocked by their predecessors so the executor wakes them in order.
-- **Paperclip App implementation issue.** The first iteration creates a fresh Paperclip App child whose project policy spawns an isolated worktree. Every later iteration's implementation/rerun child references that same execution workspace via `inheritExecutionWorkspaceFromIssueId` so the same worktree is amended and tested.
+- **Top-level loop issue。** 長期間存続します。入力、iteration counter、現在の state、すべての iteration child へのリンク、product rule の履歴を保持します。iteration 実行中は `in_progress`、loop parent に typed waiter（execution-policy participant、`request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction、approval、または named human owner）が直接存在する場合のみ `in_review`、child issue が gating work の場合（fix-proposal の `request_confirmation` を持つ iteration child、または implementation、QA、CTO review child）は `blockedByIssueIds` 付きの `blocked`、pass 時は `done`、board rejection / budget exhaustion 時は `cancelled` にします。
+- **Iteration child issue。** iteration ごとに 1 つ作成します。それぞれに、上限付きの run issue（smoke）、diagnosis issue（`/diagnose-why-work-stopped` を適用）、`request_confirmation` interaction 付きの fix-proposal document、そして承認後に限り implementation、QA、CTO review、rerun child を持たせます。executor が順番どおりに起動できるよう、iteration child は前の iteration に依存させます。
+- **Paperclip App implementation issue。** 初回 iteration では、project policy により分離 worktree が作成される新しい Paperclip App child を作ります。後続 iteration の implementation/rerun child は `inheritExecutionWorkspaceFromIssueId` 経由で同じ execution workspace を参照し、同じ worktree を修正してテストします。
 
-Wire dependencies with `blockedByIssueIds`, never with prose like "blocked by X". When a dependent child is `done`, the executor auto-wakes the next.
+依存関係は「blocked by X」のような文章ではなく、`blockedByIssueIds` で接続します。依存先の child が `done` になると、executor が次の child を自動的に起動します。
 
 ## 手順
 
@@ -76,138 +76,138 @@ loop を開くか進める前に `doc/execution-semantics.md` を読みます。
 
 ### 1. top-level loop issue を開くか再利用する
 
-- If an existing loop issue is supplied, read it: inputs, iteration counter, last iteration's stop reason, current Paperclip App worktree pointer, latest benchmark command.
-- If no loop issue exists, create one under the Paperclip App project (or the project the source issue points at). Title: `Terminal-Bench loop: <task-name>`. Description captures the inputs above, the iteration budget, and a link to the source issue.
-- Verify the worktree pointer still resolves. If the recorded execution workspace was discarded (worktree pruned, project changed), the loop is blocked — name the unblock owner (CodexCoder or the Paperclip App owner) and stop.
+- 既存の loop issue が渡された場合は、inputs、iteration counter、前回 iteration の stop reason、現在の Paperclip App worktree pointer、最新の benchmark command を読みます。
+- loop issue がない場合は、Paperclip App project（または source issue が指す project）配下に作成します。タイトルは `Terminal-Bench loop: <task-name>` とし、description に上記の入力、iteration budget、source issue へのリンクを記録します。
+- worktree pointer が引き続き解決できることを確認します。記録された execution workspace が破棄されている場合（worktree の prune、project の変更など）は、解除担当者（CodexCoder または Paperclip App owner）を明記して loop を blocked にし、停止します。
 
 ### 2. iteration child を開く
 
-- Increment the iteration counter on the loop issue.
-- Create an iteration child titled `Iteration N: <task-name>`. Its description repeats the inputs and references the loop parent. Block it on the prior iteration's terminal child (if any) so the executor cannot start two iterations in parallel.
-- If the iteration counter would exceed the budget, do not create the child. Move the loop issue to `cancelled` (budget exhausted) or `in_review` if the user must decide whether to extend the budget.
+- loop issue の iteration counter を増やします。
+- `Iteration N: <task-name>` というタイトルの iteration child を作成します。description には入力を再掲し、loop parent を参照します。executor が 2 つの iteration を並行して開始できないよう、前回 iteration の terminal child（存在する場合）に依存させます。
+- iteration counter が budget を超える場合は child を作成しません。loop issue を `cancelled`（budget exhausted）にするか、budget 延長の判断をユーザーに求める場合は `in_review` にします。
 
 ### 3. 上限付き smoke を実行する
 
-- The benchmark command must use the Paperclip App worktree under test. Set `PAPERCLIPAI_CMD` (or the equivalent command binding) to the CLI entrypoint inside that worktree. Never let the smoke run against the operator's current Paperclip checkout.
-- The same command block must include the runner dispatch config that makes the benchmark issue actionable. For the current Harbor wrapper, export `PAPERCLIP_HARBOR_RUNNER_CONFIG` with the intended assignee, heartbeat strategy, agent adapter, credential/home mode, and stop budget. Do not treat a bare `uvx harbor run ...` as the canonical smoke if it omits the dispatch config; record that as a harness/setup miss and rerun with the recorded config.
-- Bound the run by wall-clock and by Paperclip's run-budget controls. If the smoke would exceed the per-iteration cap, kill it and record the truncation reason.
-- Capture, in the iteration child or a dedicated `run` document:
-  - Paperclip run id and heartbeat run ids
-  - benchmark run id, manifest, `results.jsonl` row, Harbor raw job folder
-  - dispatch config used (`PAPERCLIP_HARBOR_RUNNER_CONFIG` or equivalent), including assignee and adapter type
-  - the exact stop reason reported by the harness (pass, harness fail, verifier fail, timeout, agent gave up, infrastructure error)
-  - heartbeat-enabled and heartbeat-observed agent counts when Paperclip telemetry exports them
-  - failure taxonomy bucket (task/model, Paperclip product, harness/setup, verifier/infrastructure, security, unclear)
-  - artifact paths under the latest artifact root
-- Label the iteration as **smoke / non-comparable**. Comparable runs are out of scope for this skill.
+- benchmark command はテスト対象の Paperclip App worktree を使わなければなりません。`PAPERCLIPAI_CMD`（または同等の command binding）を、その worktree 内の CLI entrypoint に設定します。operator の現在の Paperclip checkout に対して smoke を実行してはいけません。
+- 同じ command block に、benchmark issue を実行可能にする runner dispatch config も含めます。現在の Harbor wrapper では、意図した assignee、heartbeat strategy、agent adapter、credential/home mode、stop budget を含む `PAPERCLIP_HARBOR_RUNNER_CONFIG` を export します。dispatch config を省略した `uvx harbor run ...` 単体を canonical smoke として扱わず、harness/setup miss として記録し、記録済み config で再実行します。
+- wall-clock と Paperclip の run-budget controls の両方で run に上限を設けます。smoke が iteration ごとの上限を超えそうな場合は kill し、打ち切り理由を記録します。
+- iteration child または専用の `run` document に次を記録します:
+  - Paperclip run id と heartbeat run ids
+  - benchmark run id、manifest、`results.jsonl` の行、Harbor raw job folder
+  - 使用した dispatch config（`PAPERCLIP_HARBOR_RUNNER_CONFIG` または同等のもの）。assignee と adapter type を含めます
+  - harness が報告した正確な stop reason（pass、harness fail、verifier fail、timeout、agent gave up、infrastructure error）
+  - Paperclip telemetry が出力する場合は、heartbeat-enabled agent 数と heartbeat-observed agent 数
+  - failure taxonomy bucket（task/model、Paperclip product、harness/setup、verifier/infrastructure、security、unclear）
+  - latest artifact root 配下の artifact path
+- iteration には **smoke / non-comparable** のラベルを付けます。comparable run はこの skill の対象外です。
 
 ### 4. 正確な停止点を診断する
 
-Apply the `/diagnose-why-work-stopped` pattern to the iteration's run, scoped to this loop only — do not pull in unrelated forensic boilerplate. Specifically:
+この loop の範囲だけを対象として、iteration の run に `/diagnose-why-work-stopped` パターンを適用します。無関係な forensic boilerplate は持ち込まないでください。具体的には:
 
-- Walk the Paperclip issue tree the smoke produced under the Paperclip App worktree, node by node, and find the exact `(issue, status)` combination that stopped progress. Quote evidence: run ids, comment timestamps, status transitions.
-- Classify every non-progressing issue in that subtree as **truly needs human/board intervention**, **agent-actionable but not currently routed**, or **already covered**.
-- State whether the failure is task/model, Paperclip product, harness/setup, verifier/infrastructure, security, or unclear. Be explicit when evidence is inferred (e.g. cross-company API boundary blocks direct reads).
-- If the failure is a Paperclip product gap, frame the fix as a **general product rule** stated as a contract, and check it against the three invariants above. If the rule would have blocked a recent productive run, narrow it.
+- Paperclip App worktree 配下で smoke が生成した Paperclip issue tree を node ごとにたどり、進行を停止させた正確な `(issue, status)` の組み合わせを見つけます。run id、comment timestamp、status transition の証拠を引用します。
+- subtree 内の進行していない issue をすべて、**本当に human/board の介入が必要**、**agent が実行可能だが現在 route されていない**、**すでに対応済み** のいずれかに分類します。
+- failure が task/model、Paperclip product、harness/setup、verifier/infrastructure、security、unclear のどれかを明示します。証拠から推論した場合（例: cross-company API boundary により直接読み取れない場合）は、そのことも明記します。
+- failure が Paperclip product gap の場合は、fix を contract として表現した **一般的な product rule** とし、上記 3 つの不変条件で確認します。その rule が最近の productive run を妨げていた場合は、適用範囲を狭めます。
 
-Record the diagnosis on the iteration child as a `diagnosis` document. Do not propose code yet.
+診断結果を iteration child 上の `diagnosis` document に記録します。ここではまだコードを提案しません。
 
 ### 5. 次の動きを決める
 
-Based on the diagnosis, the iteration ends in exactly one of these terminal-for-iteration states:
+diagnosis に基づき、iteration は次の iteration 用 terminal state のいずれか 1 つで終了します:
 
-- **Pass.** Smoke verifier reports pass. Move the iteration child and the loop parent toward QA/CTO review (Step 8).
-- **Product fix proposed.** A Paperclip product gap was identified. Write the fix proposal as a `plan` document on the iteration child, then go to Step 6.
-- **Non-product failure with retry.** Failure is harness/setup/infrastructure or model flakiness, the iteration budget is not exhausted, and the loop driver believes a rerun without code changes has signal (e.g. transient infra). Record the rationale on the iteration child and go to Step 7 with no implementation step.
-- **Real blocker.** Named external blocker (credentials, quota, third-party outage, security review). Move the loop issue to `blocked`, set `blockedByIssueIds` to the blocker issue (creating one if needed), and name the unblock owner. Stop.
-- **Budget or board stop.** Iteration budget reached, or the board has rejected the next fix proposal. Move the loop issue to `cancelled` with a comment that summarizes the run history and the reason for stopping.
+- **Pass。** Smoke verifier が pass を報告した場合。iteration child と loop parent を QA/CTO review に進めます（Step 8）。
+- **Product fix proposed。** Paperclip product gap が特定された場合。fix proposal を iteration child 上の `plan` document に書き、Step 6 に進みます。
+- **Non-product failure with retry。** failure が harness/setup/infrastructure または model flakiness で、iteration budget が尽きておらず、コード変更なしの rerun に意味があると loop driver が判断する場合（例: 一時的な infra 障害）。iteration child に理由を記録し、implementation step なしで Step 7 に進みます。
+- **Real blocker。** 名前付きの外部 blocker（credentials、quota、third-party outage、security review）がある場合。loop issue を `blocked` に移し、`blockedByIssueIds` に blocker issue を設定し（必要なら作成）、解除担当者を明記します。停止します。
+- **Budget or board stop。** iteration budget に達した場合、または board が次の fix proposal を拒否した場合。run history と停止理由を要約した comment を付け、loop issue を `cancelled` に移します。
 
-### 6. Request board confirmation before any product fix
+### 6. product fix 前に board confirmation を要求する
 
 iteration が **product fix proposed** で終了した場合:
 
-- Update the iteration child's `plan` document with the proposed contract, the three-invariant check, the affected Paperclip surfaces, and the phased subtasks (implementation, QA, CTO review, rerun) — but do not create those subtasks.
-- Open the `request_confirmation` interaction on the **iteration child** (the same issue that owns the `plan` document), targeting the latest plan revision. Idempotency key: `confirmation:{iterationIssueId}:plan:{revisionId}`. Set `continuationPolicy` to `wake_assignee`.
-- Move the **iteration child** to `in_review`. The typed waiter — the `request_confirmation` interaction — sits directly on it, so its `in_review` is healthy. Comment links the plan document and names the pending confirmation.
-- Move the **loop parent** to `blocked` with `blockedByIssueIds: [iterationChildId]` and a comment naming the board (or whichever approver the approval policy designates) as the unblock owner. Do not move the loop parent to `in_review` here: the typed waiter lives on the iteration child, not on the parent, so the parent's wait path is the child blocker. This matches the topology rule that the loop parent only sits in `in_review` when a typed waiter is attached directly to the parent.
-- Wait for acceptance. If the board posts a superseding comment that changes the plan, revise the document, then open a fresh confirmation tied to the new revision on the iteration child — the prior one is invalidated. The loop parent's `blockedByIssueIds` already points at the iteration child, so it does not need to change.
-- On rejection, end the loop per the **Budget or board stop** rule; do not silently retry the same proposal.
-- On acceptance, create the implementation, QA, CTO review, and rerun child issues with `blockedByIssueIds` wired in order, and update the loop parent's `blockedByIssueIds` to point at the new gating child (typically the implementation child) so the parent stays `blocked` against real downstream work. The implementation child must inherit the Paperclip App execution workspace (`inheritExecutionWorkspaceFromIssueId` to the worktree-owning issue) so the fix lands in the same isolated worktree the smoke ran against.
+- iteration child の `plan` document を、提案する contract、3 つの不変条件の確認、影響を受ける Paperclip surface、段階的な subtask（implementation、QA、CTO review、rerun）で更新します。ただし、これらの subtask はまだ作成しません。
+- **iteration child**（`plan` document を所有する同じ issue）に `request_confirmation` interaction を開き、最新の plan revision を対象にします。Idempotency key は `confirmation:{iterationIssueId}:plan:{revisionId}`。`continuationPolicy` は `wake_assignee` に設定します。
+- **iteration child** を `in_review` に移します。typed waiter である `request_confirmation` interaction が直接存在するため、この `in_review` は正常です。comment から plan document にリンクし、保留中の confirmation を明記します。
+- **loop parent** を `blockedByIssueIds: [iterationChildId]` 付きの `blocked` に移し、board（または approval policy が指定する approver）を解除担当者として明記した comment を投稿します。ここで loop parent を `in_review` にしてはいけません。typed waiter は parent ではなく iteration child に存在するため、parent の wait path は child blocker です。これは typed waiter が parent に直接付いている場合のみ loop parent を `in_review` にする topology rule に一致します。
+- 承認を待ちます。board が plan を変更する superseding comment を投稿した場合は document を修正し、iteration child 上で新しい revision に紐づく新しい confirmation を開きます。以前の confirmation は無効になります。loop parent の `blockedByIssueIds` はすでに iteration child を指しているため、変更は不要です。
+- 拒否された場合は **Budget or board stop** のルールに従って loop を終了します。同じ proposal を黙って再試行してはいけません。
+- 承認された場合は、`blockedByIssueIds` を順番どおりに接続した implementation、QA、CTO review、rerun child issue を作成します。loop parent の `blockedByIssueIds` は新しい gating child（通常は implementation child）を指すように更新し、実際の downstream work に対して parent を `blocked` に保ちます。implementation child は Paperclip App execution workspace を継承し（worktree-owning issue への `inheritExecutionWorkspaceFromIssueId`）、smoke を実行したのと同じ分離 worktree に fix を適用しなければなりません。
 
-### 7. Rerun against the same worktree
+### 7. 同じ worktree に対して rerun する
 
-After implementation and QA complete (or immediately, in the **non-product failure with retry** case), the rerun child runs the same `paperclip-bench` invocation with `PAPERCLIPAI_CMD` still pinned to the Paperclip App worktree under test.
+implementation と QA が完了した後（または **non-product failure with retry** の場合は直ちに）、rerun child が同じ `paperclip-bench` invocation を実行します。このときも `PAPERCLIPAI_CMD` はテスト対象の Paperclip App worktree に固定します。
 
-- The rerun must use the same worktree the fix landed in. If the workspace was reset between iterations, the loop is invalid — open a blocker on the loop issue and stop.
-- On completion, the rerun child becomes the next iteration's run record. If the smoke now passes, jump to Step 8. Otherwise return to Step 4 with a new iteration child (subject to the iteration budget).
+- rerun は fix を適用したのと同じ worktree を使わなければなりません。iteration 間に workspace が reset されていた場合、loop は無効です。loop issue に blocker を開いて停止します。
+- 完了時、rerun child が次の iteration の run record になります。smoke が pass した場合は Step 8 に進みます。それ以外は iteration budget の範囲内で新しい iteration child を作成し、Step 4 に戻ります。
 
 ### 8. Pass: QA, CTO review, close
 
 smoke が pass した場合:
 
-- Create QA and CTO review children if they are not already in the dependency chain (CTO review blocked by QA, so the chain wakes in order). Move the loop parent to `blocked` with `blockedByIssueIds` set to the QA / CTO review chain, and post a comment that names QA and CTO as the unblock owners and links the children. The loop parent stays `blocked` — not `in_review` — because the typed waiter lives on the children, not on the parent.
-- If you instead want the loop parent itself to sit in `in_review` during this phase (for example because a board user has explicitly volunteered to drive the review), put a typed waiter directly on the parent — execution-policy participant, `request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction, approval, or named human owner — and do not rely on the child chain alone. Do not combine `in_review` on the parent with QA/CTO children acting as the blocker; that is the ambiguous review shape this skill exists to prevent.
-- QA validates artifacts (manifest, `results.jsonl`, Harbor raw job, redacted telemetry) and the rerun reproducibility against the same worktree.
-- CTO reviews the technical scope of any product fixes that landed during the loop.
-- On QA + CTO acceptance, close the loop issue with a board-level summary comment: task name, iteration count, stop reason (pass), worktree pointer, link to the final artifact root, and the list of accepted product fixes (each with its implementation issue id).
+- 依存 chain にまだ存在しない場合は QA と CTO review child を作成します（CTO review は QA に blocked とし、chain を順番どおりに起動します）。loop parent の `blockedByIssueIds` を QA / CTO review chain に設定して `blocked` に移し、QA と CTO を解除担当者として明記し、child にリンクする comment を投稿します。typed waiter は parent ではなく child に存在するため、loop parent は `in_review` ではなく `blocked` のままにします。
+- この段階で loop parent 自体を `in_review` にしたい場合（例: board user が review の実施を明示的に引き受けた場合）は、execution-policy participant、`request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction、approval、または named human owner という typed waiter を parent に直接設定します。child chain だけに依存してはいけません。parent の `in_review` と QA/CTO child による blocker を組み合わせてはいけません。この skill は、その曖昧な review 状態を防ぐために存在します。
+- QA は artifact（manifest、`results.jsonl`、Harbor raw job、redacted telemetry）と、同じ worktree での rerun の再現性を検証します。
+- CTO は loop 中に適用された product fix の技術的な範囲を review します。
+- QA と CTO が承認したら、task name、iteration count、stop reason（pass）、worktree pointer、最終 artifact root へのリンク、承認された product fix の一覧（それぞれの implementation issue id を含む）を記載した board-level summary comment で loop issue を終了します。
 
 ### 9. 停止ルール
 
-The loop **must** stop, with state explicitly recorded on the loop issue, when any of these is true:
+次のいずれかに該当する場合、loop issue に state を明示的に記録して loop を **必ず** 停止します:
 
-- **Pass.** Smoke verifier reports pass and QA + CTO accept (Step 8). Loop issue → `done`.
-- **Board rejection.** Board rejects a fix proposal and does not request a revision. Loop issue → `cancelled`. Comment names the rejected proposal and the reason.
-- **Iteration budget reached.** Iteration counter reaches the budget without a pass. Loop issue → `cancelled` (or `in_review` if the user must decide whether to extend the budget). Never silently start iteration N+1.
-- **Real blocker named.** External blocker (credentials, quota, infra, security, missing skill) cannot be resolved by the loop driver. Loop issue → `blocked` with `blockedByIssueIds` to the blocker issue and the unblock owner named.
+- **Pass。** Smoke verifier が pass を報告し、QA と CTO が承認した場合（Step 8）。Loop issue → `done`。
+- **Board rejection。** Board が fix proposal を拒否し、revision を求めない場合。Loop issue → `cancelled`。comment に拒否された proposal と理由を記載します。
+- **Iteration budget reached。** pass しないまま iteration counter が budget に達した場合。Loop issue → `cancelled`（budget 延長の判断をユーザーに求める場合は `in_review`）。iteration N+1 を黙って開始してはいけません。
+- **Real blocker named。** 外部 blocker（credentials、quota、infra、security、missing skill）を loop driver が解決できない場合。blocker issue を `blockedByIssueIds` に設定し、解除担当者を明記して Loop issue → `blocked`。
 
-A loop must never end on a prose comment alone. Every stop is a status transition with a named next-action owner.
+loop は文章 comment だけで終了させてはいけません。すべての停止には、名前付きの次のアクション担当者を伴う status transition が必要です。
 
 ## Worktree rule
 
-The loop must not test whatever Paperclip checkout happens to be current for the heartbeat. It must test the same isolated Paperclip App worktree where proposed fixes are applied.
+loop は heartbeat に使われている現在の Paperclip checkout を無作為にテストしてはいけません。提案した fix を適用するのと同じ分離 Paperclip App worktree をテストしなければなりません。
 
-- The first iteration creates the Paperclip App implementation child; that project's git-worktree policy spawns a fresh worktree.
-- The loop issue records the worktree-owning issue id and the workspace path (or workspace id).
-- Every later implementation, QA, and rerun child sets `inheritExecutionWorkspaceFromIssueId` to that worktree-owning issue, so all subsequent loop work shares one workspace.
-- The benchmark command always sets `PAPERCLIPAI_CMD` (or the equivalent command binding) to the CLI entrypoint inside that worktree, and it carries the recorded dispatch runner config (`PAPERCLIP_HARBOR_RUNNER_CONFIG` or equivalent) needed to assign the benchmark issue and start the heartbeat. The benchmark command stored on the loop issue is the source of truth — if a heartbeat needs to run the smoke from a different shell, it copies the recorded command block verbatim, not only the Harbor invocation line.
-- If the workspace is pruned or the worktree path no longer resolves, the loop is invalid until rebuilt. Mark the loop `blocked` and name the unblock owner (typically CodexCoder or the Paperclip App owner).
+- 初回 iteration で Paperclip App implementation child を作成します。その project の git-worktree policy により、新しい worktree が作成されます。
+- loop issue に worktree-owning issue id と workspace path（または workspace id）を記録します。
+- 後続の implementation、QA、rerun child はすべて `inheritExecutionWorkspaceFromIssueId` にその worktree-owning issue を設定し、以降の loop 作業で同じ workspace を共有します。
+- benchmark command は常に `PAPERCLIPAI_CMD`（または同等の command binding）をその worktree 内の CLI entrypoint に設定し、benchmark issue を割り当て heartbeat を開始するために記録済みの dispatch runner config（`PAPERCLIP_HARBOR_RUNNER_CONFIG` または同等のもの）を含めます。loop issue に保存した benchmark command が source of truth です。別の shell から smoke を実行する必要がある場合は、Harbor invocation の行だけでなく、記録済みの command block 全体をそのままコピーします。
+- workspace が prune された場合、または worktree path を解決できなくなった場合、再構築するまで loop は無効です。loop を `blocked` にし、解除担当者（通常は CodexCoder または Paperclip App owner）を明記します。
 
 ## Liveness rule
 
-Every loop issue, at the end of every heartbeat, must rest in one of:
+すべての heartbeat の終了時に、各 loop issue は必ず次のいずれかの状態になっていなければなりません:
 
-- **Terminal:** `done` or `cancelled`. No further action.
-- **Explicitly live:** `in_progress` with an active run, an upcoming queued wake, or a child issue actively executing under it.
-- **Explicitly waiting:** `in_review` with a typed waiter — execution-policy participant, `request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction, approval, or a named human owner.
-- **Explicit recovery / blocker:** `blocked` with `blockedByIssueIds` set to a real blocking issue, plus a comment naming the unblock owner and the action needed.
+- **Terminal:** `done` または `cancelled`。追加の action はありません。
+- **明示的な live:** active run、今後の queued wake、または配下で実行中の child issue を伴う `in_progress`。
+- **明示的な waiting:** typed waiter（execution-policy participant、`request_confirmation` / `ask_user_questions` / `suggest_tasks` interaction、approval、または named human owner）を伴う `in_review`。
+- **明示的な recovery / blocker:** 実際の blocking issue を `blockedByIssueIds` に設定し、解除担当者と必要な action を comment に記載した `blocked`。
 
-If a loop issue does not fit one of these on exit, the heartbeat is not done. Fix the state before exiting.
+終了時に loop issue がこれらのいずれにも当てはまらない場合、heartbeat は完了していません。終了前に state を修正します。
 
 ## Pitfalls
 
-- **Running the smoke against the operator's Paperclip checkout.** The whole point of the worktree rule is that the bench tests the worktree the fix lands in. Always set `PAPERCLIPAI_CMD` and verify the path before launching the run.
-- **Dropping the dispatch config.** A Harbor run that omits `PAPERCLIP_HARBOR_RUNNER_CONFIG` (or equivalent) may boot Paperclip and create `BEN-1`, but leave it unassigned with zero heartbeat-enabled agents. That is not a Terminal-Bench product signal. Preserve and rerun the full command block, including assignee and adapter config.
-- **Coding before approval.** No implementation child exists until a board confirmation accepts the iteration's `plan` document. Do not push code in the diagnostic phase.
-- **Skipping the recent-work survey.** When proposing a Paperclip product rule, check what already shipped in the affected liveness/execution area in the last few days. A rule that contradicts last-week's accepted contract is rework.
-- **Letting `in_review` mean done.** A loop or iteration child sitting in `in_review` with no participant, no interaction, no approval, and no human owner is a stop, not progress. Treat it as a liveness violation and route it.
-- **Silent iteration N+1.** If the iteration budget is reached, never start another iteration without an explicit budget extension recorded on the loop issue.
-- **Comparable-run drift.** This skill produces smoke runs only. If the asker wants a comparable benchmark submission, hand off to BenchmarkQualityManager and BenchmarkForensics — do not relabel a smoke as comparable.
-- **Recursive recovery.** Stranded-work recovery that recovers its own recovery issues is the canonical infinite loop. If a diagnosis surfaces it inside the smoke's subtree, refuse to deepen and route to `/diagnose-why-work-stopped` for a product-rule fix.
-- **Skill-library mutation.** This skill never installs, edits, or assigns company skills as part of a loop iteration. Library changes go to an authorized skill-library owner via a separate issue.
-- **Hiding the chain.** Do not silently delete or hide failed iteration children, retracted proposals, or rejected confirmations. The audit trail is the loop's evidence.
+- **operator の Paperclip checkout に対して smoke を実行する。** worktree rule の目的は、bench が fix を適用する worktree をテストすることです。run の開始前に必ず `PAPERCLIPAI_CMD` を設定し、path を確認します。
+- **dispatch config を落とす。** `PAPERCLIP_HARBOR_RUNNER_CONFIG`（または同等のもの）を省略した Harbor run は Paperclip を起動して `BEN-1` を作成できても、未割り当てで heartbeat-enabled agent が 0 のままになることがあります。これは Terminal-Bench の product signal ではありません。assignee と adapter config を含む command block 全体を保持して再実行します。
+- **承認前に coding する。** board confirmation が iteration の `plan` document を承認するまで、implementation child は存在しません。diagnostic phase でコードを push してはいけません。
+- **最近の作業調査を省略する。** Paperclip product rule を提案するときは、影響を受ける liveness/execution 領域で直近数日以内に何が出荷されたかを確認します。先週承認された contract と矛盾する rule は手戻りになります。
+- **`in_review` を done とみなす。** participant、interaction、approval、human owner のいずれもないまま loop または iteration child が `in_review` にある場合、それは進行ではなく停止です。liveness violation として扱い、適切な経路へ送ります。
+- **iteration N+1 を黙って開始する。** iteration budget に達した場合、loop issue に明示的な budget extension を記録せず、別の iteration を開始してはいけません。
+- **Comparable-run drift。** この skill が生成するのは smoke run のみです。依頼者が comparable benchmark submission を求める場合は BenchmarkQualityManager と BenchmarkForensics に引き継ぎ、smoke を comparable と再分類してはいけません。
+- **再帰的 recovery。** 自身の recovery issue を recovery する stranded-work recovery は典型的な無限ループです。smoke の subtree 内で診断に現れた場合は深掘りを拒否し、product-rule fix のため `/diagnose-why-work-stopped` に送ります。
+- **Skill-library mutation。** この skill は loop iteration の一環として company skill を install、編集、assign しません。library の変更は別 issue を通じて、権限のある skill-library owner に委ねます。
+- **chain を隠す。** 失敗した iteration child、撤回した proposal、拒否された confirmation を黙って削除または隠してはいけません。audit trail が loop の証拠です。
 
 ## 検証チェックリスト（loop に触れた heartbeat を終了する前）
 
-- [ ] All inputs are recorded on the top-level loop issue, including the exact benchmark command, `PAPERCLIPAI_CMD` binding, and dispatch runner config.
-- [ ] Iteration counter is up to date and within budget.
-- [ ] The Paperclip App worktree pointer still resolves, and the iteration's run/implementation/rerun children share that workspace.
-- [ ] The smoke run is captured with run ids, manifest, `results.jsonl`, Harbor raw job folder, and stop reason.
-- [ ] Paperclip telemetry shows the benchmark issue was assigned and a heartbeat was enabled/observed, or the iteration is explicitly classified as harness/setup no-dispatch.
-- [ ] Diagnosis applies the `/diagnose-why-work-stopped` pattern, classifies every non-progressing issue, and checks the three invariants.
-- [ ] No implementation child exists for an unapproved fix proposal; if one was proposed, a `request_confirmation` is open against the latest plan revision.
-- [ ] Every loop and iteration issue rests in a terminal, explicitly-live, explicitly-waiting, or named-blocker state.
-- [ ] The stop reason — if the loop stopped this heartbeat — is one of pass, board rejection, budget exhausted, or named real blocker.
-- [ ] No company-skill library mutation happened in this heartbeat.
+- [ ] 正確な benchmark command、`PAPERCLIPAI_CMD` binding、dispatch runner config を含むすべての入力が top-level loop issue に記録されている。
+- [ ] Iteration counter が最新で、budget 内に収まっている。
+- [ ] Paperclip App worktree pointer を引き続き解決でき、iteration の run/implementation/rerun child がその workspace を共有している。
+- [ ] smoke run に run id、manifest、`results.jsonl`、Harbor raw job folder、stop reason が記録されている。
+- [ ] Paperclip telemetry で benchmark issue の割り当てと heartbeat の enabled/observed が確認できるか、iteration が harness/setup no-dispatch と明示的に分類されている。
+- [ ] Diagnosis が `/diagnose-why-work-stopped` パターンを適用し、進行していない issue をすべて分類し、3 つの不変条件を確認している。
+- [ ] 未承認の fix proposal に対する implementation child が存在しない。proposal がある場合は、最新の plan revision に対する `request_confirmation` が開いている。
+- [ ] すべての loop issue と iteration issue が terminal、明示的な live、明示的な waiting、または名前付き blocker の state にある。
+- [ ] この heartbeat で loop が停止した場合、stop reason が pass、board rejection、budget exhausted、名前付きの real blocker のいずれかである。
+- [ ] この heartbeat で company-skill library mutation が発生していない。
 
 ## Deterministic smoke
 
@@ -217,13 +217,13 @@ skill を install または変更した後、live Terminal-Bench loop で operat
 pnpm smoke:terminal-bench-loop-skill
 ```
 
-The command uses the current Paperclip API token and company from `PAPERCLIP_API_URL`, `PAPERCLIP_API_KEY`, and `PAPERCLIP_COMPANY_ID`. When `PAPERCLIP_TASK_ID` is set, it attaches the smoke issues under that source issue and inherits its project/goal context. By default it cancels the short-lived smoke issues after verification; pass `-- --keep` to leave the verified `blocked` loop parent, `in_review` iteration child, and pending confirmation available for manual inspection.
+このコマンドは `PAPERCLIP_API_URL`、`PAPERCLIP_API_KEY`、`PAPERCLIP_COMPANY_ID` から現在の Paperclip API token と company を取得します。`PAPERCLIP_TASK_ID` が設定されている場合は、smoke issue をその source issue 配下に追加し、project/goal context を継承します。デフォルトでは検証後に短命な smoke issue を cancel します。`-- --keep` を渡すと、検証済みの `blocked` loop parent、`in_review` iteration child、保留中の confirmation を手動確認用に残します。
 
-The smoke is deterministic and intentionally non-comparable. It does not start Terminal-Bench, Harbor, an agent model, or a provider runtime. It verifies only the control-plane shape:
+この smoke は deterministic かつ意図的に non-comparable です。Terminal-Bench、Harbor、agent model、provider runtime は起動しません。control-plane の形だけを検証します:
 
-- local `.agents/skills/terminal-bench-loop/SKILL.md` contains the loop contract terms;
-- a top-level loop issue can be created and updated into a blocker posture;
-- an iteration child issue can be created under the loop parent;
-- mocked benchmark artifact paths are recorded on a `run` document;
-- a `diagnosis` document names the exact stop point and next-action owner;
-- a `request_confirmation` interaction is created and the iteration child rests in `in_review` with a typed waiting path rather than silent review.
+- ローカルの `.agents/skills/terminal-bench-loop/SKILL.md` に loop contract の用語が含まれていること。
+- top-level loop issue を作成し、blocker posture に更新できること。
+- loop parent 配下に iteration child issue を作成できること。
+- モックの benchmark artifact path が `run` document に記録されること。
+- `diagnosis` document に正確な stop point と次のアクション担当者が記載されること。
+- `request_confirmation` interaction が作成され、iteration child が silent review ではなく typed waiting path を伴う `in_review` に留まること。
