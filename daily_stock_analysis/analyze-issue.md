@@ -1,22 +1,22 @@
-# Analyze Issue
+# Issue 分析
 
-分析 GitHub Issue，判断其真实性、优先级、仓库责任边界与建议动作。
+GitHub Issue を分析し、その妥当性、優先度、リポジトリの責任範囲、および推奨アクションを判断します。
 
 **Repository**: https://github.com/ZhuLinsen/daily_stock_analysis/issues
 
-## Usage
+## 使用方法
 
 ```text
 /analyze-issue <issue_number>
 ```
 
-## Instructions
+## 手順
 
-分析时使用简洁中文，优先遵循仓库根目录 `AGENTS.md`。
+分析時は簡潔な日本語を使用し、リポジトリのルートにある `AGENTS.md` を優先して遵守してください。
 
-### Step 1: 同步最新代码基线
+### Step 1: 最新のコードベースを同期
 
-分析 issue 前必须先刷新远端状态，并尽量把本地安全推进到最新基线：
+Issue の分析前に、必ずリモートの状態を更新し、可能な限りローカルを安全に最新のベースラインへ進めてください。
 
 ```bash
 git status --short
@@ -25,105 +25,105 @@ git fetch --all --prune
 git pull --ff-only
 ```
 
-- 只有在工作区干净、当前分支有可 fast-forward 的上游时，才执行并接受 `git pull --ff-only` 的结果。
-- 如存在本地改动、冲突状态、未跟踪风险文件、无上游分支或无法 fast-forward，不要执行 `stash`、`reset`、强制切分支或覆盖本地状态；改用已 fetch 的 `origin/main` 或相关远端 refs 做分析。
-- 在输出文档的 `Evidence` 中记录同步结果：本地 HEAD、使用的远端基线，以及未更新本地工作树的原因（如有）。
+- ワークツリーがクリーンで、現在のブランチに fast-forward 可能な上流ブランチがある場合のみ、`git pull --ff-only` を実行し、その結果を受け入れてください。
+- ローカルの変更、競合状態、未追跡のリスクファイル、上流ブランチの不在、または fast-forward 不可のいずれかに該当する場合は、`stash`、`reset`、強制的なブランチ切り替え、ローカル状態の上書きを行わないでください。fetch 済みの `origin/main` または関連するリモート refs を使用して分析してください。
+- 出力文書の `Evidence` に同期結果として、ローカル HEAD、使用したリモートのベースライン、ローカルのワークツリーを更新しなかった理由（該当する場合）を記録してください。
 
-### Step 2: 拉取 Issue 信息
+### Step 2: Issue 情報を取得
 
 ```bash
 gh issue view <issue_number> --repo ZhuLinsen/daily_stock_analysis
 gh issue view <issue_number> --repo ZhuLinsen/daily_stock_analysis --comments
 ```
 
-如为 bug，优先核对 issue 模板中是否提供了以下信息：
+バグの場合は、Issue テンプレートに次の情報が記載されているかを優先的に確認してください。
 
-- 是否已同步到最新版本
-- commit hash / 版本基线
-- 运行环境与复现步骤
-- 日志或报错信息
+- 最新バージョンに同期済みか
+- commit hash / バージョンのベースライン
+- 実行環境と再現手順
+- ログまたはエラー情報
 
-### Step 3: 回答 4 个核心问题
+### Step 3: 4 つの主要な問いに回答
 
-1. 版本是否明确
-2. 问题是否真实且可验证
-3. 是否属于仓库责任边界
-4. 是否值得立即处理
+1. バージョンが明確か
+2. 問題が実在し、検証可能か
+3. リポジトリの責任範囲に含まれるか
+4. 直ちに対応する価値があるか
 
-### Step 4: 结合仓库现状做证据检查
+### Step 4: リポジトリの現状に基づく証拠確認
 
-- 阅读相关代码、配置、测试、脚本、工作流与文档
-- 如果问题涉及 API、数据源 fallback、报告生成、通知发送、认证、桌面端、发布流程，明确写出影响面
-- 判断是实际 bug、环境配置问题、使用方式问题、还是外部依赖问题
-- 如怀疑已被修复，检查当前代码而不是只看 issue 描述
+- 関連するコード、設定、テスト、スクリプト、ワークフロー、ドキュメントを確認してください。
+- 問題が API、データソースのフォールバック、レポート生成、通知送信、認証、デスクトップ版、リリース手順に関係する場合は、影響範囲を明確に記載してください。
+- 実際のバグ、環境設定の問題、使用方法の問題、外部依存関係の問題のいずれに該当するかを判断してください。
+- すでに修正されている可能性がある場合は、Issue の説明だけでなく現在のコードを確認してください。
 
-### Step 5: 形成结论
+### Step 5: 結論をまとめる
 
-至少给出以下字段：
+少なくとも次の項目を記載してください。
 
-- `版本基线`：最新 / 非最新 / 未提供
-- `是否合理`：是/否 + 理由
-- `是否是 issue`：是/否 + 理由
-- `是否好解决`：是/否 + 难点
-- `结论`：`成立 / 部分成立 / 不成立`
-- `分类`：`bug / feature / docs / question / external`
-- `优先级`：`P0 / P1 / P2 / P3`
-- `难度`：`easy / medium / hard`
-- `建议动作`：`立即修复 / 排期修复 / 文档澄清 / 关闭`
+- `バージョンのベースライン`：最新 / 最新ではない / 未提供
+- `妥当性`：はい/いいえ + 理由
+- `Issue に該当するか`：はい/いいえ + 理由
+- `解決しやすいか`：はい/いいえ + 難所
+- `結論`：`成立 / 部分的に成立 / 不成立`
+- `分類`：`bug / feature / docs / question / external`
+- `優先度`：`P0 / P1 / P2 / P3`
+- `難易度`：`easy / medium / hard`
+- `推奨アクション`：`直ちに修正 / 対応予定に入れて修正 / ドキュメントを明確化 / クローズ`
 
-### Step 6: 生成分析文档
+### Step 6: 分析文書を作成
 
-保存到 `.claude/reviews/issues/issue-<number>.md`
+`.claude/reviews/issues/issue-<number>.md` に保存してください。
 
-## Output Document Format
+## 出力文書の形式
 
 ```markdown
 # Issue #<number> Analysis
 
-**Date**: YYYY-MM-DD
-**Status**: Pending Review
+**日付**: YYYY-MM-DD
+**ステータス**: レビュー待ち
 
-## Summary
+## 概要
 
-- 版本基线：
-- 是否合理：
-- 是否是 issue：
-- 是否好解决：
-- 结论：
-- 分类：
-- 优先级：
-- 难度：
-- 建议动作：
+- バージョンのベースライン：
+- 妥当性：
+- Issue に該当するか：
+- 解決しやすいか：
+- 結論：
+- 分類：
+- 優先度：
+- 難易度：
+- 推奨アクション：
 
-## Evidence
+## 根拠
 
-- 代码同步基线：
-- 关键 issue 信息：
-- 关键代码/脚本/工作流证据：
+- コード同期のベースライン：
+- Issue の主要情報：
+- 主要なコード/スクリプト/ワークフローの根拠：
 
-## Impact Scope
+## 影響範囲
 
-- 受影响模块：
-- 受影响运行路径（本地 / Docker / GitHub Actions / API / Web / Desktop）：
+- 影響を受けるモジュール：
+- 影響を受ける実行経路（ローカル / Docker / GitHub Actions / API / Web / Desktop）：
 
-## Root Cause / Main Reasoning
+## 根本原因 / 主な判断理由
 
-<根因或主要判断依据>
+<根本原因または主な判断根拠>
 
-## Proposed Handling
+## 対応案
 
-<建议修复、澄清或关闭方式>
+<修正、明確化、またはクローズの方法を提案>
 
-若建议后续创建 PR，给出的 PR title 建议符合 `AGENTS.md`：使用 `<类型>: <修改内容>`，不添加 `[codex]`、`codex`、`autocode`、`copilot` 或其他工具/agent 来源前缀；该约定仅用于协作一致性提醒，不应单独作为 review process blocker。
+後続で PR を作成することを提案する場合、PR title は `AGENTS.md` に従い、`<種類>: <変更内容>` の形式にしてください。`[codex]`、`codex`、`autocode`、`copilot`、その他のツールや agent の出所を示すプレフィックスは付けないでください。この規約は協業上の一貫性を保つための注意事項であり、それだけを理由にレビューを妨げてはいけません。
 
-## Risks And Rollback
+## リスクとロールバック
 
-- 风险点：
-- 若修复，回滚方式：
+- リスク：
+- 修正した場合のロールバック方法：
 
-## Draft Reply
+## 返信案
 
-<建议回复内容>
+<返信内容の案>
 ```
 
 ## Allowed Auto-Actions (No Confirmation Needed)

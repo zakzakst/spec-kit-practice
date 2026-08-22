@@ -1,22 +1,22 @@
-# Analyze PR
+# PR 分析
 
-分析 GitHub Pull Request，评估必要性、描述完整性、验证证据、主要风险与是否可直接合入。
+GitHub Pull Request を分析し、必要性、説明の完全性、検証エビデンス、主なリスク、およびそのままマージできるかを評価します。
 
 **Repository**: https://github.com/ZhuLinsen/daily_stock_analysis/pulls
 
-## Usage
+## 使用方法
 
 ```text
 /analyze-pr <pr_number>
 ```
 
-## Instructions
+## 手順
 
-分析时使用简洁中文，优先遵循仓库根目录 `AGENTS.md` 和 `.github/PULL_REQUEST_TEMPLATE.md`。
+分析時は簡潔な日本語を使用し、リポジトリのルートにある `AGENTS.md` と `.github/PULL_REQUEST_TEMPLATE.md` を優先して遵守してください。
 
-### Step 1: 同步最新代码基线
+### Step 1: 最新のコードベースを同期
 
-分析 PR 前必须先刷新远端状态，并尽量把本地安全推进到最新基线：
+PR の分析前に、必ずリモートの状態を更新し、可能な限りローカルを安全に最新のベースラインへ進めてください。
 
 ```bash
 git status --short
@@ -25,11 +25,11 @@ git fetch --all --prune
 git pull --ff-only
 ```
 
-- 只有在工作区干净、当前分支有可 fast-forward 的上游时，才执行并接受 `git pull --ff-only` 的结果。
-- 如存在本地改动、冲突状态、未跟踪风险文件、无上游分支或无法 fast-forward，不要执行 `stash`、`reset`、强制切分支或覆盖本地状态；改用已 fetch 的 `origin/main`、PR head 或 GitHub diff 做分析。
-- 在输出文档的 `Validation Evidence` 中记录同步结果：本地 HEAD、使用的远端基线，以及未更新本地工作树的原因（如有）。
+- ワークツリーがクリーンで、現在のブランチに fast-forward 可能な上流ブランチがある場合のみ、`git pull --ff-only` を実行し、その結果を受け入れてください。
+- ローカルの変更、競合状態、未追跡のリスクファイル、上流ブランチの不在、または fast-forward 不可のいずれかに該当する場合は、`stash`、`reset`、強制的なブランチ切り替え、ローカル状態の上書きを行わないでください。fetch 済みの `origin/main`、PR head、または GitHub diff を使用して分析してください。
+- 出力文書の `Validation Evidence` に同期結果として、ローカル HEAD、使用したリモートのベースライン、ローカルのワークツリーを更新しなかった理由（該当する場合）を記録してください。
 
-### Step 2: 拉取 PR 基本信息
+### Step 2: PR の基本情報を取得
 
 ```bash
 gh pr view <pr_number> --repo ZhuLinsen/daily_stock_analysis
@@ -38,108 +38,108 @@ gh pr checks <pr_number> --repo ZhuLinsen/daily_stock_analysis
 gh pr diff <pr_number> --repo ZhuLinsen/daily_stock_analysis
 ```
 
-如有失败的 CI，优先查看失败日志，而不是立刻在本地重跑全部检查：
+CI に失敗がある場合は、すぐにローカルですべてのチェックを再実行するのではなく、まず失敗ログを確認してください。
 
 ```bash
 gh run view <run_id> --log-failed
 ```
 
-### Step 3: 检查标题与描述完整性
+### Step 3: タイトルと説明の完全性を確認
 
-先检查 PR title 是否符合 `AGENTS.md` 的非阻断建议：
+まず PR title が `AGENTS.md` の非ブロッキングの推奨事項に従っているか確認してください。
 
-- 格式应为 `<类型>: <修改内容>`，例如 `fix: 修复大盘分析历史记录丢失`
-- 类型优先为 `fix`/`feat`/`refactor`/`docs`/`chore`/`test`/`ci`
-- 不应包含 `[codex]`、`codex`、`autocode`、`copilot` 或其他工具/agent 来源前缀
-- 标题应描述实际变更；若标题与 diff 不符，在描述完整性中指出，但不应单独作为 review process blocker。
+- 形式は `<種類>: <変更内容>` とし、例として `fix: 大規模分析の履歴が失われる問題を修正` のようにしてください。
+- 種類は `fix`/`feat`/`refactor`/`docs`/`chore`/`test`/`ci` を優先してください。
+- `[codex]`、`codex`、`autocode`、`copilot`、その他のツールや agent の出所を示すプレフィックスは含めないでください。
+- タイトルは実際の変更内容を説明する必要があります。タイトルと diff が一致しない場合は説明の完全性で指摘しますが、それだけを理由にレビューを妨げてはいけません。
 
-对照 `.github/PULL_REQUEST_TEMPLATE.md`，确认是否覆盖：
+`.github/PULL_REQUEST_TEMPLATE.md` と照合し、次の項目が含まれているか確認してください。
 
 - `PR Type`
 - `Background And Problem`
 - `Scope Of Change`
 - `Issue Link`
 - `Verification Commands And Results`
-- `Visual Evidence`（仅当 PR 修改报告格式、报告渲染效果或 Web UI 界面时要求截图或替代可视证据）
+- `Visual Evidence`（PR がレポート形式、レポートのレンダリング結果、または Web UI を変更する場合のみ、スクリーンショットまたは代替となる視覚的エビデンスを要求）
 - `Compatibility And Risk`
 - `Rollback Plan`
 
-若 PR 涉及第三方模型 / API 兼容语义、请求参数固定值、OpenAI-compatible 路由、YAML alias、fallback 行为或运行时配置保存 / 清理 / 迁移逻辑，还要额外检查描述里是否明确写出：
+PR がサードパーティモデル / API の互換性に関する仕様、リクエストパラメーターの固定値、OpenAI-compatible ルーティング、YAML alias、フォールバック動作、または実行時設定の保存 / クリーンアップ / 移行ロジックに関係する場合は、説明に次の事項が明記されているか追加で確認してください。
 
-- 官方来源链接或公告
-- 当前锁定依赖 / 运行时兼容范围（例如 LiteLLM 版本窗口）
-- 已验证的调用链路覆盖面
-- 旧配置是否会被静默改写、清空、迁移或保持不变
-- 最小回滚路径（通常是 revert 本 PR）
+- 公式の情報源リンクまたは告知
+- 現在固定されている依存関係 / 実行時の互換性範囲（例：LiteLLM のバージョン範囲）
+- 検証済みの呼び出し経路のカバレッジ
+- 旧設定が暗黙的に書き換えられる、消去される、移行される、または変更されないか
+- 最小限のロールバック方法（通常はこの PR の revert）
 
-若 PR 修改报告格式、报告渲染效果或 Web UI 界面，还要检查 `Visual Evidence` 是否附受影响报告 / 页面截图；涉及前后差异时优先检查前后对比。若无法截图，描述中应说明原因与替代可视证据。
+PR がレポート形式、レポートのレンダリング結果、または Web UI を変更する場合は、`Visual Evidence` に影響を受けるレポート / ページのスクリーンショットが添付されているかも確認してください。変更前後の差異がある場合は、前後比較を優先して確認します。スクリーンショットを用意できない場合は、説明に理由と代替となる視覚的エビデンスを記載する必要があります。
 
-### Step 4: 优先使用 CI / Diff 证据
+### Step 4: CI / Diff のエビデンスを優先
 
-- 先根据 `gh pr checks`、PR diff、现有测试与工作流日志判断问题
-- 仅当 CI 未覆盖改动面、CI 结果不足以定性问题、或需要验证关键回归风险时，再补充本地最小验证
-- 不要默认切换当前分支或执行 `gh pr checkout`
+- まず `gh pr checks`、PR diff、既存のテスト、ワークフローログに基づいて問題を判断してください。
+- CI が変更範囲をカバーしていない場合、CI の結果だけでは問題を確定できない場合、または重要なリグレッションリスクを検証する必要がある場合に限り、ローカルで最小限の検証を追加してください。
+- デフォルトで現在のブランチを切り替えたり、`gh pr checkout` を実行したりしないでください。
 
-如果必须补本地验证，按改动面选择最接近的检查，例如：
+ローカル検証の追加が必要な場合は、変更範囲に最も近いチェックを選択してください。例：
 
 - 后端：`./scripts/ci_gate.sh` 或 `python -m py_compile <changed_python_files>`
 - 前端：`cd apps/dsa-web && npm ci && npm run lint && npm run build`
 - 桌面端：先构建 Web，再构建 Electron
 
-### Step 5: 评估正确性与风险
+### Step 5: 正確性とリスクを評価
 
-重点检查：
+重点的に確認する項目：
 
-- 是否解决了明确问题，且没有夹带无关改动
-- 是否破坏 API / Schema / Web / Desktop 兼容性
-- 是否破坏 fallback、降级路径、通知链路或发布流程
-- 是否存在明显逻辑错误、异常吞没、安全问题、配置语义变化未同步文档
+- 明確な問題を解決しており、無関係な変更が含まれていないか
+- API / Schema / Web / Desktop の互換性を壊していないか
+- フォールバック、縮退経路、通知経路、またはリリース手順を壊していないか
+- 明らかなロジックエラー、例外の握りつぶし、セキュリティ上の問題、設定の意味の変更がドキュメントに反映されていない問題がないか
 
-### Step 6: 生成评审文档
+### Step 6: レビュー文書を作成
 
-保存到 `.claude/reviews/prs/pr-<number>.md`
+`.claude/reviews/prs/pr-<number>.md` に保存してください。
 
-## Output Document Format
+## 出力文書の形式
 
 ```markdown
 # PR #<number> Analysis
 
-**Date**: YYYY-MM-DD
-**Status**: Pending Review
+**日付**: YYYY-MM-DD
+**ステータス**: レビュー待ち
 
-## Findings
+## 指摘事項
 
-- [严重级别] file:line - 问题描述
+- [重大度] file:line - 問題の説明
 
-## Summary
+## 概要
 
 - 必要性：
-- 是否有对应 issue：
-- PR 类型：
+- 対応する Issue の有無：
+- PR の種類：
 - PR title：
-- description 完整性：
-- 验证情况：
-- 主要风险：
-- 是否可直接合入：
+- description の完全性：
+- 検証状況：
+- 主なリスク：
+- そのままマージできるか：
 
-## Validation Evidence
+## 検証エビデンス
 
-- 代码同步基线：
-- CI 结论：
-- 本地补充验证（如有）：
+- コード同期のベースライン：
+- CI の結論：
+- ローカルで追加した検証（該当する場合）：
 
-## Compatibility And Risk
+## 互換性とリスク
 
 - API / Web / Desktop：
-- 配置 / Docker / GitHub Actions：
-- fallback / 通知 / 报告结构：
-- 第三方依赖 / 官方约束来源：
-- 运行时兼容窗口 / 已覆盖链路：
-- 旧配置迁移或静默改写风险：
+- 設定 / Docker / GitHub Actions：
+- フォールバック / 通知 / レポート構造：
+- サードパーティ依存関係 / 公式制約の情報源：
+- 実行時の互換性範囲 / カバー済みの経路：
+- 旧設定の移行または暗黙的な書き換えのリスク：
 
-## Draft Review Comment
+## レビューコメント案
 
-<建议评论内容>
+<コメント内容の案>
 ```
 
 ## Allowed Auto-Actions (No Confirmation Needed)
