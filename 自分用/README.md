@@ -35,9 +35,6 @@
   - awesome-copilot\agents\task-planner.agent.md
 - デバッグ
   - awesome-copilot\agents\debug.agent.md
-- ドキュメント生成
-  - https://zenn.dev/417/articles/ai-era-domain-knowledge-placement
-    - ドキュメントの自動生成が難しいなら設計が悪い
 - 今回の会話をpromptなどに反映
 - issueから実装までやるprompt
   - https://zenn.dev/explaza/articles/d0aeb08fcd1888
@@ -107,3 +104,6 @@
 - サービスの実現後のイメージ画像を作成する
   - ニュースやSNSで取り上げられている
   - 利用シーンイメージ
+- ドキュメント生成
+  - https://zenn.dev/417/articles/ai-era-domain-knowledge-placement
+    - ドキュメントの自動生成が難しいなら設計が悪い
